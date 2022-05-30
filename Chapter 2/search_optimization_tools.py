@@ -65,6 +65,12 @@ def get_center(G):
     center_osmid = nx.center(undir,e=eccentricity)[0]
     return center_osmid
 
+def get_paths_bounds(paths):
+    lats = [p.locations[0][0] for p in paths]
+    lngs = [p.locations[0][1] for p in paths]
+    return [[min(lats),min(lngs)],[max(lats),max(lngs)]]
+
+
 def draw_route(G, route, zoom = 15, force_leaflet=False):
     
     center_osmid = get_center(G)
@@ -94,7 +100,7 @@ def draw_route(G, route, zoom = 15, force_leaflet=False):
     m.add_layer(marker)
     marker = lf.Marker(location = end_xy, draggable = False)
     m.add_layer(marker)
-
+    pathGroup = []
     for u, v in zip(route[0:], route[1:]):
         try:
             geo = (ways_frame.query(f'u == {u} and v == {v}').to_dict('list')['geometry'])
@@ -111,6 +117,7 @@ def draw_route(G, route, zoom = 15, force_leaflet=False):
             color='red',
             pulse_color='black'
         )
+        pathGroup.append(ant_path)
         m.add_layer(ant_path)
-
+    m.fit_bounds(get_paths_bounds(pathGroup))
     return m
