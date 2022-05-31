@@ -23,6 +23,19 @@ class Node:
         # the graph
         self.G = graph
     
+    # retrieve the osmid
+    def get_id(self):
+        return self.osmid
+    
+    def get_distance(self):
+        return self.distance
+
+    def set_distance(self, distance):
+        self.distance = distance
+
+    def set_parent(self, parent):
+        self.parent = parent
+        
     # returning all the nodes adjacent to the node
     def expand(self):
         children = [Node(graph = self.G, osmid = child, distance = self.node[child][0]['length'], parent = self) \
