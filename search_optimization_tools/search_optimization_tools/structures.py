@@ -62,3 +62,11 @@ class Node:
     
     def __hash__(self):
         return hash(self.osmid)
+
+
+class Solution:
+    def __init__(self, result, time, space, explored):
+        self.result = result
+        self.time = time
+        self.space = space
+        self.explored = explored

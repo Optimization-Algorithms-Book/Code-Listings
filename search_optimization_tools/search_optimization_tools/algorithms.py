@@ -1,6 +1,9 @@
 import heapq
 import math
 from collections import deque
+from .structures import Solution
+from time import process_time
+from sys import getsizeof
 
 '''
 Requirements:
@@ -9,9 +12,12 @@ The node class must have the following public object methods:
 - expand(): generates a list of all the children (reachable nodes) from this node
 '''
 def BFS(origin, destination):
+
+    time_start = process_time() # Time tracking
+    max_frontier = 0 # Space tracking
     route = []
     frontier = deque([origin])
-    explored = set()
+    explored = set() # Explored tracking
     found = False
 
     while frontier and not found:
@@ -23,7 +29,12 @@ def BFS(origin, destination):
                     route = node.path()
                     found = True
                 frontier.append(child)
-    return route
+                if getsizeof(frontier)> max_frontier:
+                    max_frontier = getsizeof(frontier)
+
+    time_end = process_time() # Time tracking
+
+    return Solution(route, time_end-time_start, max_frontier, len(explored))
 
 
 '''
@@ -33,9 +44,12 @@ The node class must have the following public object methods:
 - expand(): generates a list of all the children (reachable nodes) from this node
 '''
 def DFS(origin, destination):
+    time_start = process_time() # Time tracking
+    max_frontier = 0 # Space tracking
+
     route = []
     frontier = deque([origin])
-    explored = set()
+    explored = set() # Explored tracking
     found = False
 
     while frontier and not found:
@@ -47,7 +61,10 @@ def DFS(origin, destination):
                     route = node.path()
                     found = True
                 frontier.append(child)
-    return route
+                if getsizeof(frontier)> max_frontier:
+                    max_frontier = getsizeof(frontier)
+    time_end = process_time() # Time tracking
+    return Solution(route, time_end-time_start, max_frontier, len(explored))
 
 
 '''
@@ -63,8 +80,11 @@ The node class must have the following public object methods:
 
 '''
 def Dijkstra(origin, destination, unrelaxed_nodes):
+    time_start = process_time() # Time tracking
+    space = getsizeof(unrelaxed_nodes) # Space tracking
+
     # Using a set here avoids the problem with self loops
-    seen = set()
+    seen = set() # explored tracking
     shortest_dist = {node.get_id(): math.inf for node in unrelaxed_nodes}
     shortest_dist[origin.get_id()] = 0
     found = False
@@ -92,15 +112,20 @@ def Dijkstra(origin, destination, unrelaxed_nodes):
             if distance < shortest_dist[child_obj.get_id()]:
                 shortest_dist[child_obj.get_id()] = distance
                 child_obj.set_parent(node)
-    return route
+    time_end = process_time() # Time tracking
+    return Solution(route, time_end-time_start, space, len(seen))
 
 # This implementation uses a heap with tuples (a,b),
 # a is the cost of a node, and b is the node itself.
 def UCS(origin, destination):
+    time_start = process_time() # Time tracking
+    max_priority = 0 # Space tracking
+
     entry_count = 1
     priority_queue = [(0, 0, origin)]
+
     found = False
-    visited = []
+    visited = [] # Explored tracking
     while priority_queue and not found:
         node = heapq.heappop(priority_queue)
         node_cost = node[0]
@@ -128,5 +153,8 @@ def UCS(origin, destination):
                     heapq.heapify(priority_queue)
             else:
                 heapq.heappush(priority_queue, (total_cost, entry_count, child))
+                if getsizeof(priority_queue)> max_priority:
+                    max_priority = getsizeof(priority_queue)
                 entry_count += 1
-    return route
+    time_end = process_time() # Time tracking
+    return Solution(route, time_end-time_start, max_priority, len(visited))
