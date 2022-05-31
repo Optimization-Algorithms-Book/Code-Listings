@@ -4,6 +4,7 @@ from collections import deque
 from .structures import Solution
 from time import process_time
 from sys import getsizeof
+from copy import deepcopy
 
 '''
 Requirements:
@@ -81,7 +82,7 @@ The node class must have the following public object methods:
 '''
 def Dijkstra(origin, destination, unrelaxed_nodes):
     time_start = process_time() # Time tracking
-    space = getsizeof(unrelaxed_nodes) # Space tracking
+    space = getsizeof(deepcopy(unrelaxed_nodes)) # Space tracking
 
     # Using a set here avoids the problem with self loops
     seen = set() # explored tracking
@@ -158,3 +159,94 @@ def UCS(origin, destination):
                 entry_count += 1
     time_end = process_time() # Time tracking
     return Solution(route, time_end-time_start, max_priority, len(visited))
+
+def Bidirectional_Dijkstra(origin, destination, unrelaxed_nodes):
+    time_start = process_time() # Time tracking
+    frontier = deepcopy(unrelaxed_nodes)
+
+    space_required = getsizeof(frontier)
+
+    explored_f = set()
+    explored_b = set()
+
+    shortest_dist_f = {node.get_id(): math.inf for node in frontier}
+    shortest_dist_b = {node.get_id(): math.inf for node in frontier}
+
+    shortest_dist_f[origin] = 0
+    shortest_dist_b[destination] = 0
+
+    found = False
+    route = []
+
+    altr_expand = True # to alternate between front and back
+
+    while frontier and not found:
+        if altr_expand: # Forward
+            node = min(frontier, key=lambda node: shortest_dist_f[node.get_id()])
+            # relaxing the node, so this node's value in shortest_dist is the shortest distance between the origin and destination
+            frontier.remove(node)
+            explored_f.add(node)
+            # if the destination node has been relaxed then that is the route we want
+            if node == destination:
+                route = node.path()
+                found = True
+                continue
+
+            # otherwise, let's relax edges of its neighbours
+            for child in node.expand():
+                # skip self-loops
+                if child.get_id() in explored_f:
+                    continue
+
+                # Check the child is collided
+                if child in explored_b:
+                    overlapped = next((node for node in explored_b if node == child))
+                    # we don't take the overlapped node twice
+                    route = child.path()[:-1] + overlapped.path()[::-1]
+                    found = True
+                    break
+
+                child_obj = next(
+                    (node for node in frontier if node.get_id() == child.get_id()), None
+                )
+                child_obj.set_distance(child.get_distance())
+                distance = shortest_dist_f[node.get_id()] + child.get_distance()
+                if distance < shortest_dist_f[child_obj.get_id()]:
+                    shortest_dist_f[child_obj.get_id()] = distance
+                    child_obj.set_parent(node)
+            altr_expand = False
+        if not altr_expand: # Backward
+            node = min(frontier, key=lambda node: shortest_dist_b[node.get_id()])
+            # relaxing the node, so this node's value in shortest_dist is the shortest distance between the origin and destination
+            frontier.remove(node)
+            explored_b.add(node)
+            # if the destination node has been relaxed then that is the route we want
+            if node == origin:
+                route = node.path()[::-1]
+                found = True
+                continue
+
+            # otherwise, let's relax edges of its neighbours
+            for child in node.expand(backwards=True):
+                # skip self-loops
+                if child.get_id() in explored_b:
+                    continue
+
+                # Check the child is collided
+                if child in explored_f:
+                    overlapped = next((node for node in explored_f if node == child), None)
+                    route = overlapped.path()[:-1] + child.path()[::-1]
+                    found = True
+                    break
+
+                child_obj = next(
+                    (node for node in frontier if node.get_id() == child.get_id()), None
+                )
+                child_obj.set_distance(child.get_distance())
+                distance = shortest_dist_b[node.get_id()] + child.get_distance()
+                if distance < shortest_dist_b[child_obj.get_id()]:
+                    shortest_dist_b[child_obj.get_id()] = distance
+                    child_obj.set_parent(node)
+            altr_expand = True
+    time_end = process_time() # Time tracking
+    return Solution(route, time_end - time_start, space_required, len(explored_f)+len(explored_b))

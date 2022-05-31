@@ -37,9 +37,15 @@ class Node:
         self.parent = parent
         
     # returning all the nodes adjacent to the node
-    def expand(self):
-        children = [Node(graph = self.G, osmid = child, distance = self.node[child][0]['length'], parent = self) \
-                        for child in self.node]
+    def expand(self, backwards=False):
+        children = []
+        for child in self.node:
+            if backwards: 
+                try: 
+                    self.G[child][self.osmid]
+                except:
+                    continue
+            children.append(Node(graph = self.G, osmid = child, distance = self.node[child][0]['length'], parent = self))        
         return children
     
     # returns the path from that node to the origin as a list and the length of that path
