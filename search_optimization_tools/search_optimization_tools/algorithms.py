@@ -19,14 +19,14 @@ def BFS(origin, destination):
     frontier = deque([origin])
     explored = set() # Explored tracking
     found = False
-
+    
     while frontier and not found:
         node = frontier.popleft()
         explored.add(node)
         for child in node.expand():
             if child not in explored and child not in frontier:
                 if child == destination:
-                    route = node.path()
+                    route = child.path()
                     found = True
                 frontier.append(child)
                 if getsizeof(frontier)> max_frontier:
@@ -58,7 +58,7 @@ def DFS(origin, destination):
         for child in node.expand():
             if child not in explored and child not in frontier:
                 if child == destination:
-                    route = node.path()
+                    route = child.path()
                     found = True
                 frontier.append(child)
                 if getsizeof(frontier)> max_frontier:
