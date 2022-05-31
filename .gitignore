@@ -1,3 +1,6 @@
 *.png
-cache/*
 *.json
+*.pyc
+search_optimization_tools/dist/*
+search_optimization_tools/search_optimization_tools.egg-info/*
+*.log
