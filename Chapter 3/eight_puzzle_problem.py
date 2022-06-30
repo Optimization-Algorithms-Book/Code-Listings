@@ -2,7 +2,7 @@ import math
 import matplotlib.pyplot as plt
 
 class State:
-    OPERATORS = ["up", "down", "left", "right"]
+    OPERATORS = ["left", "up", "right", "down"]
 
     # Checks to see if the state is solvable
     def is_solvable(self):
