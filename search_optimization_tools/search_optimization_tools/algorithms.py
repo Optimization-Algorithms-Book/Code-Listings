@@ -5,6 +5,7 @@ from .structures import Solution
 from time import process_time
 from sys import getsizeof
 from copy import deepcopy
+import networkx as nx
 
 '''
 Requirements:
@@ -250,3 +251,18 @@ def Bidirectional_Dijkstra(origin, destination, unrelaxed_nodes):
             altr_expand = True
     time_end = process_time() # Time tracking
     return Solution(route, time_end - time_start, space_required, len(explored_f)+len(explored_b))
+
+def Kruskal(G, attr = "weight"):
+    edges = sorted(G.edges(data=True), key=lambda t: t[2].get(attr, 1))
+    mst = nx.Graph()
+    mst.add_nodes_from(G)
+    for e in edges:
+        mst.add_edges_from([e])
+        try:
+            nx.find_cycle(mst)
+            mst.remove_edge(e[0], e[1])
+        except:
+            if nx.is_connected(mst):
+                break
+            continue
+    return mst
