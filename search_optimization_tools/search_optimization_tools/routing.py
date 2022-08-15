@@ -8,10 +8,10 @@ route: List of ints representing Node osmids from G that form a route.
 
 Output: The sum of the lengths of the edges in the route, rounded to 4 decimal places.
 '''
-def cost(G, route):
+def cost(G, route, attr_name='length', multigraph=True):
     weight = 0
     for u, v in zip(route, route[1:]):
-        weight += G[u][v][0]['length']   
+        weight += G[u][v][0][attr_name] if multigraph else  G[u][v][attr_name]
     return round(weight,4)
 
 
