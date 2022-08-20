@@ -1,7 +1,7 @@
 import heapq
 import math
 from collections import deque
-from .structures import Solution
+from ..structures import Solution
 from time import process_time
 from sys import getsizeof
 from copy import deepcopy
