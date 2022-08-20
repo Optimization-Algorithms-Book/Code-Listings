@@ -37,7 +37,7 @@ class Node:
         self.parent = parent
         
     # returning all the nodes adjacent to the node
-    def expand(self, backwards=False, attr_name='length', multigraph=True):
+    def expand(self, backwards=False, attr_name='length', multigraph=True, set_parent=True):
         children = []
         for child in self.node:
             if backwards: 
@@ -46,7 +46,7 @@ class Node:
                 except:
                     continue
             dist = self.node[child][0][attr_name] if multigraph else  self.node[child][attr_name]
-            children.append(Node(graph = self.G, osmid = child, distance = dist, parent = self))        
+            children.append(Node(graph = self.G, osmid = child, distance = dist, parent = self if set_parent else None))        
         return children
     
     # returns the path from that node to the origin as a list and the length of that path
