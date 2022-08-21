@@ -170,7 +170,7 @@ def UCS(origin, destination):
     return Solution(route, time_end - time_start, max_priority, len(visited))
 
 
-def Bidirectional_Dijkstra(origin, destination, unrelaxed_nodes):
+def Bidirectional_Dijkstra(origin, destination, unrelaxed_nodes, expand_kwargs = {}):
     time_start = process_time()  # Time tracking
     frontier = deepcopy(unrelaxed_nodes)
 
@@ -203,7 +203,7 @@ def Bidirectional_Dijkstra(origin, destination, unrelaxed_nodes):
                 continue
 
             # otherwise, let's relax edges of its neighbours
-            for child in node.expand():
+            for child in node.expand(**expand_kwargs):
                 # skip self-loops
                 if child.get_id() in explored_f:
                     continue
@@ -237,7 +237,7 @@ def Bidirectional_Dijkstra(origin, destination, unrelaxed_nodes):
                 continue
 
             # otherwise, let's relax edges of its neighbours
-            for child in node.expand(backwards=True):
+            for child in node.expand(backwards=True, **expand_kwargs):
                 # skip self-loops
                 if child.get_id() in explored_b:
                     continue
