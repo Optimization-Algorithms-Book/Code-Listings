@@ -1,6 +1,6 @@
 import ipyleaflet as lf
 import osmnx as ox
-from .utilities import get_paths_bounds
+from .utilities import get_paths_bounds, straight_line
 from .structures import Node
 import copy
 import math
@@ -169,3 +169,26 @@ def randomized_search(G, source, destination):
                 frontier.append(child)
 
     raise Exception("destination and source are not on same component")
+
+
+def astar_heuristic(G, origin, destination, measuring_dist = straight_line):
+    distanceGoal = dict()
+    distanceOrigin = dict()
+
+    originX = G.nodes[origin.get_id()]['x']
+    originY = G.nodes[origin.get_id()]['y']
+
+    destX = G.nodes[destination.get_id()]['x']
+    destY = G.nodes[destination.get_id()]['y']
+
+    for node in G:
+        pointX = G.nodes[node]['x']
+        pointY = G.nodes[node]['y']
+
+        originDist = measuring_dist(originX, originY, pointX, pointY)
+        destDist = measuring_dist(pointX, pointY, destX, destY)
+
+        distanceGoal[node] = originDist
+        distanceOrigin[node] = destDist
+
+    return distanceGoal, distanceOrigin

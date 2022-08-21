@@ -296,19 +296,19 @@ The node class must have the following public object methods:
 
 
 def A_Star(
-    G, origin, destination, heuristic_fn, cost_fn, cost_kwargs=[], expand_kwargs=[]
+    G, origin, destination, heuristic_fn, heuristic_kwargs={}, expand_kwargs={}
 ):
-    toDestination = heuristic_fn(G, origin, destination)
-    toOrigin = {}
+    start_time = process_time()
+    toDestination, toOrigin = heuristic_fn(G, origin, destination, **heuristic_kwargs)
+    space_td = getsizeof(toDestination) + getsizeof(toOrigin)
     route = []
     frontier = list()
     frontier.append(origin)
-    toOrigin[origin] = 0
     explored = set()
     found = False
     while frontier and not found:
         # choose a node based on its heuristic value
-        node = min(frontier, key=lambda node: toOrigin[node] + toDestination[node])
+        node = min(frontier, key=lambda node: toOrigin[node.get_id()] + toDestination[node.get_id()])
         frontier.remove(node)
         explored.add(node)
         # expand its children
@@ -319,5 +319,7 @@ def A_Star(
                     found = True
                     continue
                 frontier.append(child)
-                toOrigin[child] = cost_fn(G, child.path(), **cost_kwargs)
-    return route
+    space_ex = getsizeof(explored)
+    total_space = space_td+space_ex
+    end_time = process_time()
+    return Solution(route, end_time-start_time, total_space, len(explored))
