@@ -6,6 +6,7 @@ import copy
 import math
 import random
 from collections import deque
+import networkx as nx
 
 '''
 G: networkx.Graph, containing edges that have the 'length' attribute (most commonly osmnx graphs)
@@ -13,10 +14,13 @@ route: List of ints representing Node osmids from G that form a route.
 
 Output: The sum of the lengths of the edges in the route, rounded to 4 decimal places.
 '''
-def cost(G, route, attr_name='length', multigraph=True):
+def cost(G, route, attr_name='length'):
     weight = 0
     for u, v in zip(route, route[1:]):
-        weight += G[u][v][0][attr_name] if multigraph else  G[u][v][attr_name]
+        try:
+            weight += G[u][v][0][attr_name]
+        except:
+            weight += G[u][v][attr_name]
     return round(weight,4)
 
 
@@ -192,3 +196,126 @@ def astar_heuristic(G, origin, destination, measuring_dist = straight_line):
         distanceOrigin[node] = destDist
 
     return distanceGoal, distanceOrigin
+
+
+def generate_dijkstra(G, source, hierarchical_order, direction = 'up', weight='length'):
+
+    # initializing 
+    SP = dict()
+    parent = dict()
+    unrelaxed = list()
+    for node in G.nodes():
+        SP[node] = math.inf
+        parent[node] = None
+        unrelaxed.append(node)
+    SP[source] = 0
+
+    # dijkstra
+    while unrelaxed:
+        node = min(unrelaxed, key = lambda node : SP[node])
+        print(node)
+        unrelaxed.remove(node)
+        if SP[node] == math.inf: break
+        
+        for child in G[node]:
+            # skip unqualified edges
+            if direction == 'up':
+                if hierarchical_order[child] < hierarchical_order[node]: continue
+            if direction == 'down':
+                if hierarchical_order[child] > hierarchical_order[node]: continue
+
+            # If we're building a down graph, we need to use reverse weights
+            if direction == 'down':
+                if node not in G[child]: continue
+                distance = SP[node] + G[child][node][weight]
+            else:
+                distance = SP[node] + G[node][child][weight]
+            if distance < SP[child]:
+                SP[child] = distance
+                parent[child] = node
+    return parent, SP
+
+def build_route(G,origin, destination, parent):
+    if destination not in G[origin]:
+        # We need the parent of the destination instead
+        return build_route(G,origin,parent[destination], parent) + [destination]
+    
+    edge = G[origin][destination]
+    if 'midpoint' in edge and 'osmid' not in edge: # This is a contracted edge
+        before = build_route(G,origin,edge['midpoint'], parent)
+        after = build_route(G,edge['midpoint'], destination, parent)
+        return before[:-1] + after
+    return [origin,destination]
+
+def edge_differences(G,sp):
+    edge_diffs = dict()
+    seen_list = []
+
+    for node in G.nodes:
+        edges_incident = len(G[node])
+        if edges_incident == 1: # Handle terminating points
+            edge_diffs[node] = -1
+            continue
+        new_graph = G.copy()
+        new_graph.remove_node(node)
+        shortcuts = 0
+        for neighbour in G[node]:
+            for other_neighbour in G[node]:
+
+                if neighbour == other_neighbour: continue
+                if [neighbour,other_neighbour] in seen_list: continue
+                seen_list.append([neighbour,other_neighbour])
+                old_sp = sp[neighbour][other_neighbour]
+                old_sp_rev = sp[other_neighbour][neighbour]
+                try:
+                    new_sp = nx.shortest_path_length(new_graph,neighbour,other_neighbour, weight='length')
+                except:
+                    new_sp = math.inf
+                try:
+                    new_sp_rev = nx.shortest_path_length(new_graph,other_neighbour,neighbour, weight='length')
+                except:
+                    new_sp_rev = math.inf
+                need_new = old_sp != new_sp
+                need_new_rev = old_sp_rev != new_sp_rev
+                if need_new: shortcuts +=1
+                if need_new_rev: shortcuts+=1
+        ED = shortcuts - edges_incident
+        edge_diffs[node] = ED
+    return sorted(edge_diffs, key=lambda x:edge_diffs[x])
+
+from tqdm.notebook import tqdm
+def contract_graph(G: nx.DiGraph, edge_difference, sp):
+    # to keep track of the edges added after the algorithm finishes
+
+    seen_list = []
+
+    for node in tqdm(edge_difference):
+        edges_incident = len(G[node])
+        if edges_incident == 1: continue # Terminating points
+
+        new_graph = G.copy()
+        new_graph.remove_node(node)
+
+        for neighbour in G[node]:
+            for other_neighbour in G[node]:
+
+                if neighbour == other_neighbour: continue
+                if [neighbour,other_neighbour] in seen_list: continue
+                seen_list.append([neighbour,other_neighbour])
+                old_sp = sp[neighbour][other_neighbour]
+                old_sp_rev = sp[other_neighbour][neighbour]
+                try:
+                    new_sp = nx.shortest_path_length(new_graph,neighbour,other_neighbour, weight='length')
+                except:
+                    new_sp = math.inf
+                try:
+                    new_sp_rev = nx.shortest_path_length(new_graph,other_neighbour,neighbour, weight='length')
+                except:
+                    new_sp_rev = math.inf
+                need_new = old_sp != new_sp
+                need_new_rev = old_sp_rev != new_sp_rev
+
+                if need_new:
+                    G.add_edge(neighbour,other_neighbour,length=old_sp,midpoint=node)
+                if need_new_rev:
+                    G.add_edge(other_neighbour,neighbour,length=old_sp_rev,midpoint=node)
