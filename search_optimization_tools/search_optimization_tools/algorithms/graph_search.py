@@ -300,7 +300,7 @@ def A_Star(
 ):
     start_time = process_time()
     toDestination, toOrigin = heuristic_fn(G, origin, destination, **heuristic_kwargs)
-    space_td = getsizeof(toDestination) + getsizeof(toOrigin)
+
     route = []
     frontier = list()
     frontier.append(origin)
@@ -319,7 +319,6 @@ def A_Star(
                     found = True
                     continue
                 frontier.append(child)
-    space_ex = getsizeof(explored)
-    total_space = space_td+space_ex
+    space = getsizeof(explored)
     end_time = process_time()
-    return Solution(route, end_time-start_time, total_space, len(explored))
+    return Solution(route, end_time-start_time, space, len(explored))
