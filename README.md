@@ -6,9 +6,7 @@ Have you ever wondered how navigation apps find the fastest route from one place
 
 This book provides a comprehensive introduction to both deterministic and stochastic search and optimization algorithms, highlighting the power of these computational techniques in solving ill-structured problems. The book covers graph search algorithms, trajectory-based algorithms, evolutionary computing algorithms, swarm intelligence algorithms and statistical machine learning-based approaches. It also highlights the tuning and self-adaptation aspects of the search techniques. The book provides a wealth of examples and in-depth case studies for both novices and experts. These case studies show the ability of these search and optimization algorithms in solving continuous and discrete problems in real-world applications. Thus, it is written mainly as a project-oriented, practical book. 
 
-# Table of Content
-
-Table of contents
+# Table of Contents
 =================
 
    * [Chapter-1 Introduction to Search and Optimization](../Chapter 1)
