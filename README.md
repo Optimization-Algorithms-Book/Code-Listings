@@ -16,7 +16,7 @@ This book provides a comprehensive introduction to both deterministic and stocha
 * **Part-II Trajectory-based Algorithms**
   * Chapter 5. Tabu Search
   * Chapter 6. Simulated Annealing  
-* **Part-III Evolutionary Computing Algorithms]**
+* **Part-III Evolutionary Computing Algorithms**
   * Chapter 7. Simple Genetic Algorithms
   * Chapter 8. GA Variants  
 * **Part-IV Evolutionary Computing Algorithms**
@@ -34,5 +34,5 @@ This book provides a comprehensive introduction to both deterministic and stocha
   * Chapter 13. Machine Learning for Search and Optimization             
 * **Appendices
   * Appendix-A Tools
-  * Appendix-B Datasets]
+  * Appendix-B Datasets
 
