@@ -19,9 +19,6 @@ This book provides a comprehensive introduction to both deterministic and stocha
 * **Part-III Evolutionary Computing Algorithms**
   * Chapter 7. Simple Genetic Algorithms
   * Chapter 8. GA Variants  
-* **Part-IV Evolutionary Computing Algorithms**
-  * Chapter 7. Simple Genetic Algorithms
-  * Chapter 8. GA Variants 
 * **Part-IV Swarm Intelligence Algorithms**
   * Chapter 9. Particle Swarm Optimization
   * Chapter 10. Ant Colony Optimization 
