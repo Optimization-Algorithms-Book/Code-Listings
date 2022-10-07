@@ -1,6 +1,3 @@
-gh-md-toc
-=========
-
 # Search and Optimization Algorithms in Action
 
 Code Listings for the book: Search and Optimization Algorithms in Action. Manning Publications, 2023.
