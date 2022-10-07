@@ -9,30 +9,30 @@ This book provides a comprehensive introduction to both deterministic and stocha
 # Table of Contents
 
 * [Chapter-1 Introduction to Search and Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%201)
-* **[Part-I Deterministic Seach Algorithms]**
-  * [Chapter 2. A Deeper Look at Search and Optimization](../Chapter 2)
-  * [Chapter 3. Blind Search Algorithms](../Chapter 3)
-  * [Chapter 4. Informed Search Algorithms](../Chapter 4)
-* [Part-II Trajectory-based Algorithms]()
-  * [Chapter 5. Tabu Search](../Chapter 5)
-  * [Chapter 6. Simulated Annealing](../Chapter 6)   
-* [Part-III Evolutionary Computing Algorithms]()
-  * [Chapter 7. Simple Genetic Algorithms](../Chapter 7)
-  * [Chapter 8. GA Variants](../Chapter 8)   
-* [Part-IV Evolutionary Computing Algorithms]()
-  * [Chapter 7. Simple Genetic Algorithms](../Chapter 7)
-  * [Chapter 8. GA Variants](../Chapter 8)   
-* [Part-IV Swarm Intelligence Algorithms]()
-  * [Chapter 9. Particle Swarm Optimization](../Chapter 9)
-  * [Chapter 10. Ant Colony Optimization](../Chapter 10)   
-  * [Chapter 11. Other stigmergic and advanced computational techniques](../Chapter 11)                     
-* [Part-V Learn to Search]()
-  * [Chapter 12. Introduction to Machine Learning](../Chapter 12)
-  * [Chapter 13. Machine Learning for Search and Optimization](../Chapter 13)   
-* [Part-V Learn to Search]()
-  * [Chapter 12. Introduction to Machine Learning](../Chapter 12)
-  * [Chapter 13. Machine Learning for Search and Optimization](../Chapter 13)              
-* [Appendices]()
-  * [Appendix-A Tools](../[Appendix A)
-  * [Appendix-B Datasets](../[Appendix B)
+* **Part-I Deterministic Seach Algorithms**
+  * [Chapter 2. A Deeper Look at Search and Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%202)
+  * [Chapter 3. Blind Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%203)
+  * [Chapter 4. Informed Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%204)
+* **Part-II Trajectory-based Algorithms**
+  * Chapter 5. Tabu Search
+  * Chapter 6. Simulated Annealing  
+* **Part-III Evolutionary Computing Algorithms]**
+  * Chapter 7. Simple Genetic Algorithms
+  * Chapter 8. GA Variants  
+* **Part-IV Evolutionary Computing Algorithms**
+  * Chapter 7. Simple Genetic Algorithms
+  * Chapter 8. GA Variants 
+* **Part-IV Swarm Intelligence Algorithms**
+  * Chapter 9. Particle Swarm Optimization
+  * Chapter 10. Ant Colony Optimization 
+  * Chapter 11. Other stigmergic and advanced computational techniques                   
+* **Part-V Learn to Search**
+  * Chapter 12. Introduction to Machine Learning
+  * Chapter 13. Machine Learning for Search and Optimization 
+* **Part-V Learn to Search**
+  * Chapter 12. Introduction to Machine Learning
+  * Chapter 13. Machine Learning for Search and Optimization             
+* **Appendices
+  * Appendix-A Tools
+  * Appendix-B Datasets]
 
