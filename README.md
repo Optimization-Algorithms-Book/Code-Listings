@@ -11,7 +11,6 @@ This book provides a comprehensive introduction to both deterministic and stocha
 Table of contents
 =================
 
-<!--ts-->
    * [Chapter-1 Introduction to Search and Optimization](../Chapter 1)
    * [Part-I Deterministic Seach Algorithms]()
       * [Chapter 2. A Deeper Look at Search and Optimization](../Chapter 2)
@@ -39,4 +38,4 @@ Table of contents
    * [Appendices]()
       * [Appendix-A Tools](../[Appendix A)
       * [Appendix-B Datasets](../[Appendix B)
-<!--te-->
+
