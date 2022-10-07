@@ -28,11 +28,8 @@ This book provides a comprehensive introduction to both deterministic and stocha
   * Chapter 11. Other stigmergic and advanced computational techniques                   
 * **Part-V Learn to Search**
   * Chapter 12. Introduction to Machine Learning
-  * Chapter 13. Machine Learning for Search and Optimization 
-* **Part-V Learn to Search**
-  * Chapter 12. Introduction to Machine Learning
-  * Chapter 13. Machine Learning for Search and Optimization             
-* **Appendices
+  * Chapter 13. Machine Learning for Search and Optimization          
+* **Appendices**
   * Appendix-A Tools
   * Appendix-B Datasets
 
