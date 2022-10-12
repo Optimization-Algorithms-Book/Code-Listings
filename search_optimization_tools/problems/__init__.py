@@ -1,2 +1,2 @@
-from .__problem_base import problem_base, continuous_function_base
-from .tsp import tsp
+from .__problem_base import ProblemBase, ContinuousFunctionBase
+from .tsp import TSP

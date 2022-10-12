@@ -1,3 +1,8 @@
 ipyleaflet>=0.16.0
 osmnx>=1.1.2
 scipy
+sympy
+latexify-py
+numpy
+pandas
+matplotlib

@@ -1,7 +1,8 @@
 from .__problem_base import problem_base
 import random
 
-class tsp(problem_base):
+
+class TSP(problem_base):
     def __init__(self, dists, gen_method, **gen_method_kargs) -> None:
         super().__init__()
         self.n = len(dists)
@@ -31,4 +32,3 @@ class tsp(problem_base):
         for i in range(self.n):
             cost += self.dists[sol[i]][sol[(i+1) % self.n]]
         return cost
-

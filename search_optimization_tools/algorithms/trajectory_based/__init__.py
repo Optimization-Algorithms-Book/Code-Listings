@@ -1,1 +1,1 @@
-from ._sa import simulated_annealing
+from ._sa import SimulatedAnnealing

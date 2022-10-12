@@ -1,11 +1,11 @@
-__all__ = ['simulated_annealing']
+__all__ = ['SimulatedAnnealing']
 
 import math
 import random
 COOLING_SCHEDULES = ['linear', 'geometric', 'logarithmic', 'exponential', 'linear_inverse']
 
 
-class simulated_annealing:
+class SimulatedAnnealing:
 
     def __init__(self, problem_obj, max_iter=1000, max_iter_per_temp=10,
                  initial_temp=5230.0, final_temp=0.1,
@@ -55,9 +55,9 @@ class simulated_annealing:
         elif self.__cooling_schedule == 'geometric':
             self.t = self.initial_temp * self.__cooling_alpha ** self.iter
         elif self.__cooling_schedule == 'logarithmic':
-            self.t = self.initial_temp / math.log( 1 + self.iter)
+            self.t = self.initial_temp / math.log(1 + self.iter)
         elif self.__cooling_schedule == 'exponential':
-            self.t = self.initial_temp * math.exp( -1 * self.__cooling_alpha * self.iter ** (1 / self.max_iter))
+            self.t = self.initial_temp * math.exp(-1 * self.__cooling_alpha * self.iter ** (1 / self.max_iter))
         elif self.__cooling_schedule == 'linear_inverse':
             self.t = self.initial_temp / (1 + self.__cooling_alpha * self.iter)
         else:
