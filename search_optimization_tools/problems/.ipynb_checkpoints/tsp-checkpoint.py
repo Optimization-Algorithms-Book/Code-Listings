@@ -1,8 +1,8 @@
-from .__ProblemBase import ProblemBase
+from .__problem_base import problem_base
 import random
 
 
-class TSP(ProblemBase):
+class TSP(problem_base):
     def __init__(self, dists, gen_method, **gen_method_kargs) -> None:
         super().__init__()
         self.n = len(dists)

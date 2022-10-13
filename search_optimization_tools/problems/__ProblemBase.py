@@ -37,11 +37,12 @@ class ContinuousFunctionBase(ProblemBase):
     def eval_solution(self, sol):
         return self.__eval_func(*sol)
 
-    def plot(self, best_sol, figsize=(12, 10), fontsize=12, save_file=None):
+    def plot(self, best_sol, titl=None, figsize=(12, 10), fontsize=12, save_file=None):
         plt.figure(figsize=figsize)
+        if titl:
+            plt.title(titl)
 
         if self.__bounds.shape[0] == 1:
-            plt.title("Continuous function optimization")
             x = np.arange(self.__bounds[0][0], self.__bounds[0][1], 0.01)
             z = [self.eval_solution([_]) for _ in x]
             plt.plot(x, z, label="f(x)")
@@ -65,7 +66,6 @@ class ContinuousFunctionBase(ProblemBase):
             ax.set_zlabel("f(x)", fontsize=fontsize, rotation=0)
             ax.scatter(best_sol[0], best_sol[1], self.eval_solution(best_sol))
             ax.grid()
-            ax.set_title('Continuous function optimization')
             print("global minimum: x = %.4f, %.4f, f(x) = %.4f" % (*best_sol, self.eval_solution(best_sol)))
 
         else:
