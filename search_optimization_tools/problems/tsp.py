@@ -1,4 +1,4 @@
-from .__ProblemBase import ProblemBase
+from .__problem_base import ProblemBase
 import random
 
 
