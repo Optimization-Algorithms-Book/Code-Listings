@@ -7,10 +7,10 @@ COOLING_SCHEDULES = ['linear', 'geometric', 'logarithmic', 'exponential', 'linea
 
 class SimulatedAnnealing:
 
-    def __init__(self, problem_obj, max_iter=1000, max_iter_per_temp=10,
+    def __init__(self, max_iter=1000, max_iter_per_temp=10,
                  initial_temp=5230.0, final_temp=0.1,
                  cooling_schedule='linear_inverse', cooling_alpha=0.9) -> None:
-        self.problem_obj = problem_obj
+
         self.max_iter = max_iter if max_iter > 0 else 1000
         self.max_iter_per_temp = max_iter_per_temp if max_iter_per_temp > 0 else 10
         self.initial_temp = initial_temp if initial_temp >= 10 else 1000
@@ -30,7 +30,15 @@ class SimulatedAnnealing:
             raise ValueError("For cooling function " + self.__cooling_schedule +
                              ", cooling alpha must be in range [0.8, 0.9]")
 
-    def init_annealing(self):
+        self.t, self.iter, self.s_best, self.val_best, self.s_cur, self.val_cur, self.problem_obj = [None]*7
+
+    def init_annealing(self, problem_obj=None):
+        if problem_obj:
+            self.problem_obj = problem_obj
+        else:
+            if not self.problem_obj:
+                raise RuntimeError("Problem object need to be set!")
+
         self.t = self.initial_temp
         self.iter = 1
         self.s_best = self.problem_obj.get_init_solution()
@@ -39,6 +47,8 @@ class SimulatedAnnealing:
         self.val_cur = self.val_best
 
     def annealing_step(self):
+        if not self.problem_obj:
+            raise RuntimeError("SimulatedAnnealing problem object is not initialized, call init_annealing()")
         s_cand = self.problem_obj.get_neighbour_solution(self.s_cur)
         val_cand = self.problem_obj.eval_solution(s_cand)
         val_diff = val_cand - self.val_cur
@@ -63,8 +73,8 @@ class SimulatedAnnealing:
         else:
             raise ValueError("Undefined cooling function " + self.__cooling_schedule)
 
-    def run(self):
-        self.init_annealing()
+    def run(self, problem_obj=None):
+        self.init_annealing(problem_obj)
         while self.t > self.final_temp and self.iter <= self.max_iter:
             for _ in range(self.max_iter_per_temp):
                 self.annealing_step()
