@@ -2,6 +2,7 @@ __all__ = ['SimulatedAnnealing']
 
 import math
 import random
+from copy import deepcopy
 COOLING_SCHEDULES = ['linear', 'geometric', 'logarithmic', 'exponential', 'linear_inverse']
 
 
@@ -32,19 +33,20 @@ class SimulatedAnnealing:
 
         self.t, self.iter, self.s_best, self.val_best, self.s_cur, self.val_cur, self.problem_obj = [None]*7
 
-    def init_annealing(self, problem_obj=None):
+    def init_annealing(self, problem_obj=None, stoping_val=None):
         if problem_obj:
             self.problem_obj = problem_obj
         else:
             if not self.problem_obj:
                 raise RuntimeError("Problem object need to be set!")
 
+        self.stoping_val = stoping_val
         self.t = self.initial_temp
         self.iter = 1
         self.s_best = self.problem_obj.get_init_solution()
         self.val_best = self.problem_obj.eval_solution(self.s_best)
-        self.s_cur = self.s_best
-        self.val_cur = self.val_best
+        self.s_cur = deepcopy(self.s_best)
+        self.val_cur = deepcopy(self.val_best)
 
     def annealing_step(self):
         if not self.problem_obj:
@@ -53,11 +55,13 @@ class SimulatedAnnealing:
         val_cand = self.problem_obj.eval_solution(s_cand)
         val_diff = val_cand - self.val_cur
         if val_diff < 0 or random.random() < math.exp(-1*val_diff/self.t):
-            self.s_cur = s_cand
-            self.val_cur = val_cand
+            self.s_cur = deepcopy(s_cand)
+            self.val_cur = deepcopy(val_cand)
             if val_cand < self.val_best:
-                self.s_best = s_cand
-                self.val_best = val_cand
+                self.s_best = deepcopy(s_cand)
+                self.val_best = deepcopy(val_cand)
+                if not self.stoping_val is None and self.stoping_val == self.val_best:
+                    return True
 
     def update_temperature(self):
         if self.__cooling_schedule == 'linear':
@@ -65,7 +69,7 @@ class SimulatedAnnealing:
         elif self.__cooling_schedule == 'geometric':
             self.t = self.initial_temp * self.__cooling_alpha ** self.iter
         elif self.__cooling_schedule == 'logarithmic':
-            self.t = self.initial_temp / math.log(1 + self.iter)
+            self.t = self.initial_temp / (1 + self.__cooling_alpha * math.log(1 + self.iter))
         elif self.__cooling_schedule == 'exponential':
             self.t = self.initial_temp * math.exp(-1 * self.__cooling_alpha * self.iter ** (1 / self.max_iter))
         elif self.__cooling_schedule == 'linear_inverse':
@@ -73,10 +77,12 @@ class SimulatedAnnealing:
         else:
             raise ValueError("Undefined cooling function " + self.__cooling_schedule)
 
-    def run(self, problem_obj=None):
-        self.init_annealing(problem_obj)
+    def run(self, problem_obj=None, stoping_val=None):
+        self.init_annealing(problem_obj, stoping_val)
         while self.t > self.final_temp and self.iter <= self.max_iter:
             for _ in range(self.max_iter_per_temp):
-                self.annealing_step()
+                if not self.annealing_step() is None:
+                    print('Optimal solution reatched!')
+                    return
             self.update_temperature()
             self.iter += 1
