@@ -3,11 +3,12 @@ import random
 
 
 class TSP(ProblemBase):
-    def __init__(self, dists, gen_method, **gen_method_kargs) -> None:
+    def __init__(self, dists, gen_method, loop=True, **gen_method_kargs) -> None:
         super().__init__()
         self.n = len(dists)
         self.dists = dists
         self.gen_method = gen_method
+        self.loop = loop
         if gen_method == 'random_swap':
             if 'num_swaps' not in gen_method_kargs:
                 self.num_swaps = 1
@@ -29,6 +30,7 @@ class TSP(ProblemBase):
 
     def eval_solution(self, sol):
         cost = 0
-        for i in range(self.n):
+        sub = 0 if self.loop else 1
+        for i in range(self.n - sub):
             cost += self.dists[sol[i]][sol[(i+1) % self.n]]
         return cost

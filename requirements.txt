@@ -6,3 +6,4 @@ latexify-py
 numpy
 pandas
 matplotlib
+folium

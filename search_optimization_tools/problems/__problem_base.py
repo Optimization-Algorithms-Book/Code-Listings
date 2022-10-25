@@ -46,13 +46,13 @@ class ContinuousFunctionBase(ProblemBase):
             x = np.arange(self.__bounds[0][0], self.__bounds[0][1], 0.01)
             z = [self.eval_solution([_]) for _ in x]
             plt.plot(x, z, label="f(x)")
-            if best_sol:
+            if not best_sol is None:
                 plt.plot(best_sol, self.eval_solution(best_sol), 'sr', label="global minimum")
             plt.ylabel("f(x)", fontsize=fontsize)
             plt.xlabel("x", fontsize=fontsize)
             plt.legend(loc='best', fancybox=True, shadow=True, fontsize=fontsize)
             plt.grid()
-            if best_sol:
+            if not best_sol is None:
                 print("global minimum: x = %.4f, f(x) = %.4f" % (best_sol, self.eval_solution(best_sol)))
 
         elif self.__bounds.shape[0] == 2:
@@ -66,10 +66,10 @@ class ContinuousFunctionBase(ProblemBase):
             plt.ylabel("x2", fontsize=fontsize)
             plt.xlabel("x1", fontsize=fontsize)
             ax.set_zlabel("f(x)", fontsize=fontsize, rotation=0)
-            if best_sol:
+            if not best_sol is None:
                 ax.scatter(best_sol[0], best_sol[1], self.eval_solution(best_sol))
             ax.grid()
-            if best_sol:
+            if not best_sol is None:
                 print("global minimum: x = %.4f, %.4f, f(x) = %.4f" % (*best_sol, self.eval_solution(best_sol)))
 
         else:
