@@ -48,6 +48,7 @@ class SimulatedAnnealing:
         else:
             self.s_cur = self.problem_obj.get_init_solution()
         self.val_cur = self.problem_obj.eval_solution(self.s_cur)
+        self.s_best, self.val_best, self.s_allbest, self.val_allbest = [None] * 4
         
     def annealing_step(self):
         if not self.problem_obj:
@@ -89,9 +90,10 @@ class SimulatedAnnealing:
                         return
                 self.update_temperature()
                 self.iter += 1
-            print(f'Best solution at rep. {__+1} is:{self.val_best}')
-            if self.val_allbest is None or self.val_best < self.val_allbest:
-                self.s_allbest = deepcopy(self.s_best)
-                self.val_allbest = deepcopy(self.val_best)
-            self.val_best = None
-            self.init_annealing(problem_obj, stoping_val, self.problem_obj.get_neighbour_solution(self.s_best))
+            if __  < repetition - 1:
+                print(f'Best solution at rep. {__+1} is:{self.val_best}')
+                if self.val_allbest is None or self.val_best < self.val_allbest:
+                    self.s_allbest = deepcopy(self.s_best)
+                    self.val_allbest = deepcopy(self.val_best)
+                self.val_best = None
+                self.init_annealing(problem_obj, stoping_val, self.problem_obj.get_neighbour_solution(self.s_best))
