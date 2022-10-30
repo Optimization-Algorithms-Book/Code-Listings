@@ -31,9 +31,9 @@ class SimulatedAnnealing:
             raise ValueError("For cooling function " + self.__cooling_schedule +
                              ", cooling alpha must be in range [0.8, 0.9]")
 
-        self.t, self.iter, self.s_best, self.val_best, self.s_cur, self.val_cur, self.problem_obj = [None]*7
+        self.t, self.iter, self.s_best, self.val_best, self.s_allbest, self.val_allbest, self.s_cur, self.val_cur, self.problem_obj = [None]*9
 
-    def init_annealing(self, problem_obj=None, stoping_val=None):
+    def init_annealing(self, problem_obj=None, stoping_val=None, init=None):
         if problem_obj:
             self.problem_obj = problem_obj
         else:
@@ -43,11 +43,12 @@ class SimulatedAnnealing:
         self.stoping_val = stoping_val
         self.t = self.initial_temp
         self.iter = 1
-        self.s_best = self.problem_obj.get_init_solution()
-        self.val_best = self.problem_obj.eval_solution(self.s_best)
-        self.s_cur = deepcopy(self.s_best)
-        self.val_cur = deepcopy(self.val_best)
-
+        if not init is None:
+            self.s_cur = init
+        else:
+            self.s_cur = self.problem_obj.get_init_solution()
+        self.val_cur = self.problem_obj.eval_solution(self.s_cur)
+        
     def annealing_step(self):
         if not self.problem_obj:
             raise RuntimeError("SimulatedAnnealing problem object is not initialized, call init_annealing()")
@@ -57,7 +58,7 @@ class SimulatedAnnealing:
         if val_diff < 0 or random.random() < math.exp(-1*val_diff/self.t):
             self.s_cur = deepcopy(s_cand)
             self.val_cur = deepcopy(val_cand)
-            if val_cand < self.val_best:
+            if self.val_best is None or val_cand < self.val_best:
                 self.s_best = deepcopy(s_cand)
                 self.val_best = deepcopy(val_cand)
                 if not self.stoping_val is None and self.stoping_val == self.val_best:
@@ -77,12 +78,20 @@ class SimulatedAnnealing:
         else:
             raise ValueError("Undefined cooling function " + self.__cooling_schedule)
 
-    def run(self, problem_obj=None, stoping_val=None):
-        self.init_annealing(problem_obj, stoping_val)
-        while self.t > self.final_temp and self.iter <= self.max_iter:
-            for _ in range(self.max_iter_per_temp):
-                if not self.annealing_step() is None:
-                    print('Optimal solution reatched!')
-                    return
-            self.update_temperature()
-            self.iter += 1
+    
+    def run(self, problem_obj=None, stoping_val=None, init=None, repetition=1):
+        self.init_annealing(problem_obj, stoping_val, init)
+        for __ in range(repetition):
+            while self.t > self.final_temp and self.iter <= self.max_iter:
+                for _ in range(self.max_iter_per_temp):
+                    if not self.annealing_step() is None:
+                        print('Optimal solution reatched!')
+                        return
+                self.update_temperature()
+                self.iter += 1
+            print(f'Best solution at rep. {__+1} is:{self.val_best}')
+            if self.val_allbest is None or self.val_best < self.val_allbest:
+                self.s_allbest = deepcopy(self.s_best)
+                self.val_allbest = deepcopy(self.val_best)
+            self.val_best = None
+            self.init_annealing(problem_obj, stoping_val, self.problem_obj.get_neighbour_solution(self.s_best))
