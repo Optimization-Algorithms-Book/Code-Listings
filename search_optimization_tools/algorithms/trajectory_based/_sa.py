@@ -10,8 +10,9 @@ class SimulatedAnnealing:
 
     def __init__(self, max_iter=1000, max_iter_per_temp=10,
                  initial_temp=5230.0, final_temp=0.1,
-                 cooling_schedule='linear_inverse', cooling_alpha=0.9) -> None:
+                 cooling_schedule='linear_inverse', cooling_alpha=0.9, debug=0) -> None:
 
+        self.debug = debug
         self.max_iter = max_iter if max_iter > 0 else 1000
         self.max_iter_per_temp = max_iter_per_temp if max_iter_per_temp > 0 else 10
         self.initial_temp = initial_temp if initial_temp >= 10 else 1000
@@ -49,6 +50,8 @@ class SimulatedAnnealing:
             self.s_cur = self.problem_obj.get_init_solution()
         self.val_cur = self.problem_obj.eval_solution(self.s_cur)
         self.s_best, self.val_best, self.s_allbest, self.val_allbest = [None] * 4
+        if self.debug>0:
+            print(f"Simulated annealing is initialized:\ncurrent value = {self.val_cur}, current temp={self.t}")
         
     def annealing_step(self):
         if not self.problem_obj:
@@ -64,7 +67,7 @@ class SimulatedAnnealing:
                 self.val_best = deepcopy(val_cand)
                 if not self.stoping_val is None and self.stoping_val == self.val_best:
                     return True
-
+        
     def update_temperature(self):
         if self.__cooling_schedule == 'linear':
             self.t = self.initial_temp - (self.initial_temp - self.final_temp) * self.iter / self.max_iter
@@ -86,14 +89,26 @@ class SimulatedAnnealing:
             while self.t > self.final_temp and self.iter <= self.max_iter:
                 for _ in range(self.max_iter_per_temp):
                     if not self.annealing_step() is None:
-                        print('Optimal solution reatched!')
+                        if self.debug>0:
+                            print('Optimal solution reatched!')
                         return
+                    if self.debug>2:
+                        print(f"curr iter: {self.iter}, curr int iter: {_}, curr value: {self.val_cur}, curr best value: {self.val_best}, curr temp:{self.t}, curr best: sol: {self.s_best}")
+                if self.debug>1:
+                        print(f"curr iter: {self.iter}, curr value: {self.val_cur}, curr best value: {self.val_best}, curr temp:{self.t}, curr best: sol: {self.s_best}")
                 self.update_temperature()
                 self.iter += 1
+        
+            if self.val_allbest is None or self.val_best < self.val_allbest:
+                self.s_allbest = deepcopy(self.s_best)
+                self.val_allbest = deepcopy(self.val_best)
             if __  < repetition - 1:
-                print(f'Best solution at rep. {__+1} is:{self.val_best}')
-                if self.val_allbest is None or self.val_best < self.val_allbest:
-                    self.s_allbest = deepcopy(self.s_best)
-                    self.val_allbest = deepcopy(self.val_best)
+                if debug>0:
+                    print(f'Best solution at rep. {__+1} is:{self.val_best}')
                 self.val_best = None
                 self.init_annealing(problem_obj, stoping_val, self.problem_obj.get_neighbour_solution(self.s_best))
+        
+        self.s_best = deepcopy(self.s_allbest)
+        self.val_best = deepcopy(self.val_allbest)
+        if self.debug>0:
+            print(f"Simulated Annealing is done: \ncurr iter: {self.iter}, curr best value: {self.val_best}, curr temp:{self.t}, curr best: sol: {self.s_best}")
