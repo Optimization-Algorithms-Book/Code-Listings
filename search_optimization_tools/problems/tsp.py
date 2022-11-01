@@ -5,6 +5,41 @@ import math
 import matplotlib.pyplot as plt
 
 class TSP(ProblemBase):
+    '''
+    This class handle the Traveling Salesman (TSP) problem, https://en.wikipedia.org/wiki/Travelling_salesman_problem
+    It can be used with different optimization problem, like SA, GA, ...
+    It supports reading the either the .tsp file format found in https://github.com/coin-or/jorlib/blob/master/jorlib-core/src/test/resources/tspLib/tsp/
+    or loading the cities distances directly using  dists param. Here is the constructor params:
+    
+    load_tsp_file           the filepath for a .tsp file
+    load_tsp_url            the url link for a .tsp file
+    dists                   the dists 2D metrix that represents the 
+                            diststance between the the city in the row index to
+                            the city in the column index, it does not have to be 
+                            symatric
+    gen_method              It supports different methods for mutating a new 
+                            solution from an old one. It can be:
+                            'random_swap':  swap 2 citis in the path, it can be 
+                                            done multiple times in for 1 solition 
+                                            by using num_swaps. Also, the swap can 
+                                            be done in a smaller window the the whole
+                                            path using swap_wind = [1 - n]
+                            'reverse':      reverse the order of a subset of the cities
+                                            with len either random by using rand_len, or
+                                            with rev_len which default to 2
+                            'insert':       pick a random city and remove from the path
+                                            and re-inserting it in before a different random
+                                            city
+    loop                    By default it's true which means that the path starts and ends
+                            from the same city.
+    init_method             It support two methods of initializing the path, either:
+                            'random':       which means the path is generated 
+                                            completely random
+                            'greedy'        which try to select a sup-optimal initial path
+                                            by selecting the pairwise shortest distances 
+                                            between citis. This will not leed to the shortest
+                                            path but it much better than the random
+    '''
     def __init__(self, load_tsp_file=None, load_tsp_url=None, dists=None, gen_method=None, loop=True, **kargs) -> None:
         super().__init__()
         
