@@ -90,7 +90,8 @@ class SimulatedAnnealing:
                 for _ in range(self.max_iter_per_temp):
                     if not self.annealing_step() is None:
                         if self.debug>0:
-                            print('Optimal solution reatched!')
+                            print(f"Optimal solution reatched!: \ncurr iter: {self.iter}, curr best value: {self.val_best}, curr temp:{self.t}, curr best: sol: {self.s_best}")
+
                         return
                     if self.debug>2:
                         print(f"curr iter: {self.iter}, curr int iter: {_}, curr value: {self.val_cur}, curr best value: {self.val_best}, curr temp:{self.t}, curr best: sol: {self.s_best}")
@@ -103,7 +104,7 @@ class SimulatedAnnealing:
                 self.s_allbest = deepcopy(self.s_best)
                 self.val_allbest = deepcopy(self.val_best)
             if __  < repetition - 1:
-                if debug>0:
+                if self.debug>0:
                     print(f'Best solution at rep. {__+1} is:{self.val_best}')
                 self.val_best = None
                 self.init_annealing(problem_obj, stoping_val, self.problem_obj.get_neighbour_solution(self.s_best))
