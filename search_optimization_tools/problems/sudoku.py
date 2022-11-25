@@ -16,7 +16,6 @@ class Sudoku(ProblemBase):
                 self.num_mut = 1
             else:
                 self.num_mut = gen_method_kargs['num_mut']
-        self.elapsed_miss1, self.elapsed_cand, self.elapsed_miss2 = [0] * 3 
 
     def __get_cand__(self, i, j, sol=None):
         if sol is None:
@@ -33,19 +32,21 @@ class Sudoku(ProblemBase):
     def get_init_solution(self):
         sol = np.copy(self.fixed_sol)
         found = self.find_empty(sol)
-        if not found:
-            return sol
+
         while found:
-            (i, j) = found                
+            (i, j) = found
             cand = self.__get_cand__(i, j)
             if len(cand) == 1:
                 sol[i][j] = self.fixed_sol[i][j] = list(cand)[0]
             else:
                 sol[i][j] = np.random.choice(list(cand))
             found = self.find_empty(sol)
+
         return sol
     
-    def find_contradicting_cell(self, i, j, sol):
+    def count_contradicting_cells(self, i, j, sol=None):
+        if sol is None:
+            sol = self.fixed_sol
         val = sol[i][j]
         cont = 0
         cont += np.count_nonzero(sol[i, :]==val)-1
@@ -53,34 +54,37 @@ class Sudoku(ProblemBase):
         cont += np.count_nonzero(sol[int(i/3)*3: int(i/3)*3+3, int(j/3)*3: int(j/3)*3+3]==val)-1
         return cont
 
-    def find_contradicting_sol(self, sol):
-        while 1:
-            i = random.randrange(9)
-            j = random.randrange(9)
-            if self.fixed_sol[i][j]:
-                continue
-            cont = self.find_contradicting_cell(i, j, sol)
+    def find_contradicting_cell(self, sol):
+        if self.eval_solution(sol)==0:
+            return False
+        cands_cells = []
+        for i in range(9):
+            for j in range(9):
+                if self.fixed_sol[i][j]==0:
+                    cands_cells.append((i, j))
+        random.shuffle(cands_cells)
+        for cell in cands_cells:
+            i, j = cell
+            cont = self.count_contradicting_cells(i, j, sol)
             if cont == 0:
                 continue
-            cand = self.__get_cand__(i, j, sol)
-            cand_fixed = self.__get_cand__(i, j)
-            if len(cand_fixed) == 0:
-                raise RuntimeError(f'Problem unsolvable, pos ({i} , {j}) is contradicting with every fixed sol.')
-            if len(cand)==0 or self.fixed_sol[i][j] not in cand:
-                return (i, j), cand, cand_fixed
+            return cell
         return False
 
 
     def get_neighbour_solution(self, sol):
         if self.gen_method == 'mutate':
             for _ in range(self.num_mut):
-                found = self.find_contradicting_sol(sol)
+                found = self.find_contradicting_cell(sol)
                 if not found:
                     return sol
-                i, j = found[0]
-                cand = found[1]
-                cand_fixed = found[2]
-                k = sol[i][j]
+                i, j = found
+                cand = self.__get_cand__(i, j, sol)
+                cand_fixed = self.__get_cand__(i, j)
+                if len(cand_fixed) == 0:
+                    raise RuntimeError(f'Problem unsolvable, pos ({i} , {j}) is contradicting with every fixed sol.')
+                
+                val = sol[i][j]
                 
                 if len(cand_fixed) == 1:
                     sol[i][j] = self.fixed_sol[i][j] = list(cand_fixed)[0]
@@ -88,7 +92,7 @@ class Sudoku(ProblemBase):
                     if len(cand)==0:
                         cand = cand_fixed
                     if len(cand)>1:
-                        cand -= {sol[i][j]}
+                        cand -= {val}
                     sol[i][j] = np.random.choice(list(cand))
 
         return sol
@@ -96,9 +100,9 @@ class Sudoku(ProblemBase):
     def eval_solution(self, sol):
         cost = 0
         for i in range(9):
-            cost += 9 - np.unique(sol[:, i]).shape[0]
-            cost += 9 - np.unique(sol[i, :]).shape[0]
-            cost += 9 - np.unique(sol[i%3*3: i%3*3+3, int(i/3)*3: int(i/3)*3+3]).shape[0]
+            cost += (9 - np.unique(sol[:, i]).shape[0]) > 0
+            cost += (9 - np.unique(sol[i, :]).shape[0]) > 0
+            cost += (9 - np.unique(sol[i%3*3: i%3*3+3, int(i/3)*3: int(i/3)*3+3]).shape[0]) > 0
         return cost
 
     def find_empty(self, sol):
