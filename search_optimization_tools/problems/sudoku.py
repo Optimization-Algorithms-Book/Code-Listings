@@ -113,7 +113,7 @@ class Sudoku(ProblemBase):
 
         return False
 
-    def solve_backtrak(self):
+    def solve_backtrack(self):
         find = self.find_empty(self.fixed_sol)
         if not find:
             return True
@@ -122,7 +122,7 @@ class Sudoku(ProblemBase):
         cand = self.__get_cand__(i, j)
         for k in list(cand):
             self.fixed_sol[i][j] = k    
-            if self.solve_backtrak():
+            if self.solve_backtrack():
                 return True
 
         self.fixed_sol[i][j] = 0

@@ -14,8 +14,8 @@ This book provides a comprehensive introduction to both deterministic and stocha
   * [Chapter 3. Blind Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%203)
   * [Chapter 4. Informed Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%204)
 * **Part-II Trajectory-based Algorithms**
-  * Chapter 5. Tabu Search
-  * [Chapter 6. Simulated Annealing](https://github.com/search-and-optimization/book/tree/main/Chapter%206)  
+  * [Chapter 5. Simulated Annealing](https://github.com/search-and-optimization/book/tree/main/Chapter%205)  
+  * [Chapter 6. Tabu Search](https://github.com/search-and-optimization/book/tree/main/Chapter%206)
 * **Part-III Evolutionary Computing Algorithms**
   * Chapter 7. Simple Genetic Algorithms
   * Chapter 8. GA Variants  
