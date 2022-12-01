@@ -21,11 +21,10 @@ This book provides a comprehensive introduction to both deterministic and stocha
   * Chapter 8. GA Variants  
 * **Part-IV Swarm Intelligence Algorithms**
   * Chapter 9. Particle Swarm Optimization
-  * Chapter 10. Ant Colony Optimization 
-  * Chapter 11. Other stigmergic and advanced computational techniques                   
+  * Chapter 10. Ant Colony Optimization                 
 * **Part-V Learn to Search**
-  * Chapter 12. Introduction to Machine Learning
-  * Chapter 13. Machine Learning for Search and Optimization          
+  * Chapter 11. Introduction to Machine Learning
+  * Chapter 12. Machine Learning for Search and Optimization          
 * **Appendices**
   * Appendix-A Tools
   * Appendix-B Datasets
