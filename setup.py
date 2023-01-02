@@ -12,10 +12,10 @@ with open("LICENSE", encoding="utf-8-sig") as f:
 setup(
     name='search-optimization-tools',
     version='0.0.1',
-    author='Alaa Khamis and Mostafa Hassan',
+    author='Alaa Khamis',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author_email="mostafa.82@gmail.com",
+    author_email="alaakhamis@gmail.com",
     install_requires=requirements,
     packages=find_packages(),
     license="MIT",

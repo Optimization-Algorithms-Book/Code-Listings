@@ -26,6 +26,7 @@ This book provides a comprehensive introduction to both deterministic and stocha
   * Chapter 11. Introduction to Machine Learning
   * Chapter 12. Machine Learning for Search and Optimization          
 * **Appendices**
-  * Appendix-A Tools
-  * Appendix-B Datasets
+  * [Appendix-A Search and Optimization Libraries in Python](https://github.com/search-and-optimization/book/tree/main/Appendix%20A)
+  * Appendix-B Benchmarks and Datasets
+  * [Appendix-C Solutions to Exercises](https://github.com/search-and-optimization/book/tree/main/Appendix%20B)
 
