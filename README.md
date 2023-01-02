@@ -28,5 +28,5 @@ This book provides a comprehensive introduction to both deterministic and stocha
 * **Appendices**
   * [Appendix-A Search and Optimization Libraries in Python](https://github.com/search-and-optimization/book/tree/main/Appendix%20A)
   * Appendix-B Benchmarks and Datasets
-  * [Appendix-C Solutions to Exercises](https://github.com/search-and-optimization/book/tree/main/Appendix%20B)
+  * [Appendix-C Solutions to Exercises](https://github.com/search-and-optimization/book/tree/main/Appendix%20C)
 
