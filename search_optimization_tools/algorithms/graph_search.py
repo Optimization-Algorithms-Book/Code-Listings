@@ -237,7 +237,7 @@ def Bidirectional_Dijkstra(origin, destination, unrelaxed_nodes, expand_kwargs =
                 continue
 
             # otherwise, let's relax edges of its neighbours
-            for child in node.expand(backwards=True, **expand_kwargs):
+            for child in node.expand(reverse=True, **expand_kwargs):
                 # skip self-loops
                 if child.get_id() in explored_b:
                     continue
