@@ -1,5 +1,6 @@
-import ipyleaflet as lf
 import osmnx as ox
+import folium
+import folium.plugins
 from .utilities import get_paths_bounds, straight_line
 from .structures import Node
 import copy
@@ -27,12 +28,9 @@ def cost(G, route, attr_name='length'):
 '''
 G: osmnx Graph
 route: List of ints representing Node osmids from G that form a route. 
-force_leaflet: Override flag to force using leaflet even for large graphs (affects performance)
-
-Output: Leaflet or Folium Map with Origin/Destination Markers and a Polyline or Antpath for the route
+Output: Folium Map with Origin/Destination Markers and a Polyline or Antpath for the route
 '''
-def draw_route(G, route):
-    
+def draw_route(G, route):    
     G_gdfs = ox.graph_to_gdfs(G)
     nodes_frame = G_gdfs[0]
     ways_frame = G_gdfs[1]
@@ -41,11 +39,10 @@ def draw_route(G, route):
     start_xy = (start_node['y'], start_node['x'])
     end_xy = (end_node['y'], end_node['x'])
     
-    m = lf.Map(center = start_xy)
-    marker = lf.Marker(location = start_xy, draggable = False)
-    m.add_layer(marker)
-    marker = lf.Marker(location = end_xy, draggable = False)
-    m.add_layer(marker)
+    m = folium.Map(location = start_xy, zoom_start=15)
+    folium.Marker(location = start_xy, draggable = False).add_to(m)
+    folium.Marker(location = end_xy, draggable = False).add_to(m)
+
     pathGroup = []
     for u, v in zip(route[0:], route[1:]):
         try:
@@ -56,16 +53,16 @@ def draw_route(G, route):
             m_geo = min(geo,key=lambda x:x.length)
         x, y = m_geo.coords.xy
         points = map(list, [*zip([*y],[*x])])
-        ant_path = lf.AntPath(
+        folium.plugins.AntPath(
             locations = [*points], 
             dash_array=[1, 10],
             delay=1000,
             color='red',
             pulse_color='black'
-        )
-        pathGroup.append(ant_path)
-        m.add_layer(ant_path)
-    m.fit_bounds(get_paths_bounds(pathGroup))
+        ).add_to(m)
+    #     pathGroup.append(ant_path)
+    #     m.add_layer(ant_path)
+    # m.fit_bounds(get_paths_bounds(pathGroup))
     return m
 
 def shortest_path_with_failed_nodes(G, route ,source, target, failed : list):
