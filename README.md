@@ -15,14 +15,14 @@ This book provides a comprehensive introduction to both deterministic and stocha
   * [Chapter 4. Informed Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%204)
 * **Part-II Trajectory-based Algorithms**
   * [Chapter 5. Simulated Annealing](https://github.com/search-and-optimization/book/tree/main/Chapter%205)  
-  * [Chapter 6. Tabu Search](https://github.com/search-and-optimization/book/tree/main/Chapter%206)
+  * Chapter 6. Tabu Search
 * **Part-III Evolutionary Computing Algorithms**
   * Chapter 7. Simple Genetic Algorithms
-  * Chapter 8. GA Variants  
+  * Chapter 8. Genetic Algorithm Variants  
 * **Part-IV Swarm Intelligence Algorithms**
   * Chapter 9. Particle Swarm Optimization
   * Chapter 10. Ant Colony Optimization                 
-* **Part-V Learn to Search**
+* **Part-V Machine Learning-based Methods**
   * Chapter 11. Introduction to Machine Learning
   * Chapter 12. Machine Learning for Search and Optimization          
 * **Appendices**
