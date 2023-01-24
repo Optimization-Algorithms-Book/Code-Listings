@@ -55,7 +55,7 @@ class TSP(ProblemBase):
         self.dists = dists
         self.n = len(dists)
         
-        if self.dists == None:
+        if self.dists is None:
             raise ValueError("Distance matrix with size nxn is required (or tsp file)!")
         
         self.gen_method = 'random_swap'
@@ -123,8 +123,9 @@ class TSP(ProblemBase):
         return dists
 
     def get_init_solution(self):
+        sol = None
         if self.init_method == 'random':
-            return random.sample(range(self.n), self.n)
+            sol = random.sample(range(self.n), self.n)
         elif self.init_method == 'greedy':
             mini_dist = 10000000
             min_i, min_j = -1, -1
@@ -148,11 +149,17 @@ class TSP(ProblemBase):
                         mini_dist = self.dists[min_j][k]
                 sol.append(min_k)
                 min_j = min_k
-            
-            return sol
+        # To fit the requirement of starting and ending at 0
+        index_of_zero = sol.index(0)
+        return sol[index_of_zero:]+ sol[:index_of_zero] + [0]
 
 
     def get_neighbour_solution(self, sol):
+        # Drop the redundant zero when generating neighbor solution
+        # If the first zero in the list is not at its end, then drop the last zero
+        if (sol.index(0) != (len(sol) - 1)) and sol[-1] == 0:
+            sol.pop(-1)
+            
         if self.gen_method == "random_swap":
             for i in range(self.num_swaps):
                 c1 = random.randrange(self.n)
@@ -167,7 +174,11 @@ class TSP(ProblemBase):
                         elif c2>=self.n:
                             c2-=self.n
                 sol[c1], sol[c2] = sol[c2], sol[c1]
-            return sol
+                
+            # To fit the requirement of starting and ending at 0
+            index_of_zero = sol.index(0)
+            return sol[index_of_zero:]+ sol[:index_of_zero] + [0]
+        
         elif self.gen_method == 'reverse':
             if self.rand_len:
                 l = random.randint(2, self.n - 1)
@@ -175,7 +186,24 @@ class TSP(ProblemBase):
                 l = self.rev_len
             c1 =  random.randrange(self.n - l)
             sol[c1 : (c1 + l)] = reversed(sol[c1 : (c1 + l)])
-            return sol
+            
+            # To fit the requirement of starting and ending at 0
+            index_of_zero = sol.index(0)
+            return sol[index_of_zero:]+ sol[:index_of_zero] + [0]
+        
+        elif self.gen_method == 'mutate':
+            l = random.randint(1, (self.n - 1) //5)
+            c1 = random.randrange(self.n - l)
+            x = sol[c1 : (c1 + l)]
+            sol = sol[:min(self.n, c1)] + sol[min(self.n, c1 + l):]
+            random.shuffle(x)
+            for e in x:
+                sol.insert(random.randint(0,len(sol)),e)
+                
+            # To fit the requirement of starting and ending at 0
+            index_of_zero = sol.index(0)
+            return sol[index_of_zero:]+ sol[:index_of_zero] + [0]
+        
         elif self.gen_method == 'insert':
             c1 = random.randrange(self.n)
             c2 = c1
@@ -185,9 +213,16 @@ class TSP(ProblemBase):
             if c1 < c2:
                 c2 += 1
             del sol[c2]
-            return sol
+            
+            # To fit the requirement of starting and ending at 0
+            index_of_zero = sol.index(0)
+            return sol[index_of_zero:]+ sol[:index_of_zero] + [0]
+        
+        
 
     def eval_solution(self, sol):
+#         if (sol.index(0) != (len(sol) - 1)) and sol[-1] == 0:
+#             sol.pop(-1)
         cost = 0
         sub = 0 if self.loop else 1
         for i in range(self.n - sub):
@@ -213,10 +248,10 @@ class TSP(ProblemBase):
         a_scale = float(max(x))/float(100)
 
         # Draw the primary path for the TSP problem
-        plt.arrow(x[-1], y[-1], (x[0] - x[-1]), (y[0] - y[-1]), head_width = a_scale,
-                color ='g', length_includes_head=True)
-        for i in range(0,len(x)-1):
-            plt.arrow(x[i], y[i], (x[i+1] - x[i]), (y[i+1] - y[i]), head_width = a_scale,
+#         plt.arrow(x[-1], y[-1], (x[0] - x[-1]), (y[0] - y[-1]), head_width = a_scale,
+#                 color ='g', length_includes_head=True)
+        for i in range(1,len(x)):
+            plt.arrow(x[i-1], y[i-1], (x[i] - x[i-1]), (y[i] - y[i-1]), head_width = a_scale,
                     color = 'g', length_includes_head = True)
 
         #Set axis too slitghtly larger than the set of x and y
