@@ -1,10 +1,10 @@
-# Search and Optimization Algorithms in Action
+# Optimization Algorithms
 
-Code Listings for the book: Search and Optimization Algorithms in Action. Manning Publications, 2023.
+Code Listings for the book: Optimization Algorithms. Manning Publications, 2023.
 
-Have you ever wondered how navigation apps find the fastest route from one place to another, or how insects like ants and honeybees are able to find their way home in an ever-changing environment? What about the systems that online food delivery platforms and last-mile delivery couriers use to minimize deadheading and calculate pricing? Search and Optimization Algorithms in Action introduces the artificial intelligence algorithms that make these and more happen in different domains. This book examines the algorithms that power the technologies and mechanisms that are often taken for granted: how do ridesharing/ridehailing apps direct drivers to hotspot regions to minimize wait time, how are emergency vehicles dispatched and routed to efficiently respond to incidents, and how are new locations for electric vehicle charging stations selected? In the natural world, questions such as why fish swim in schools, or how bacteria in colonies search for food will also be considered. Search and optimization are ubiquitous and important in both natural and artificial systems.
+Optimization problems are ubiquitous in different aspects of life. This book is written for practitioners interested in solving ill-structured search and optimization problems using modern derivative-free algorithms. The book will get you up to speed with the core concepts of search and optimization and endow you with the ability to deal with practical design, planning and control problems.
 
-This book provides a comprehensive introduction to both deterministic and stochastic search and optimization algorithms, highlighting the power of these computational techniques in solving ill-structured problems. The book covers graph search algorithms, trajectory-based algorithms, evolutionary computing algorithms, swarm intelligence algorithms and statistical machine learning-based approaches. It also highlights the tuning and self-adaptation aspects of the search techniques. The book provides a wealth of examples and in-depth case studies for both novices and experts. These case studies show the ability of these search and optimization algorithms in solving continuous and discrete problems in real-world applications. Thus, it is written mainly as a project-oriented, practical book. 
+Without assuming any prior knowledge of search and optimization and with an intermediate knowledge of data structures and Python, this book has been written to take most anyone from never solving search and optimization problems to being a well-rounded search and optimization practitioner able to select, implement and adapt the right solver for the right problem.
 
 # Table of Contents
 
