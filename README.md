@@ -1,6 +1,6 @@
-# Optimization Algorithms
+# Optimization Algorithms: AI techniques for design, planning, and control problems
 
-Code Listings for the book: Optimization Algorithms. Manning Publications, 2023.
+Code Listings for the book: Optimization Algorithms:Optimization Algorithms: AI techniques for design, planning, and control problems. Manning Publications, 2023.
 
 Optimization problems are ubiquitous in different aspects of life. This book is written for practitioners interested in solving ill-structured search and optimization problems using modern derivative-free algorithms. The book will get you up to speed with the core concepts of search and optimization and endow you with the ability to deal with practical design, planning and control problems.
 
@@ -14,7 +14,7 @@ Without assuming any prior knowledge of search and optimization and with an inte
   * [Chapter 3. Blind Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%203)
   * [Chapter 4. Informed Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%204)
 * **Part-II Trajectory-based Algorithms**
-  * [Chapter 5. Simulated Annealing](https://github.com/search-and-optimization/book/tree/main/Chapter%205)  
+  * Chapter 5. Simulated Annealing
   * Chapter 6. Tabu Search
 * **Part-III Evolutionary Computing Algorithms**
   * Chapter 7. Simple Genetic Algorithms
