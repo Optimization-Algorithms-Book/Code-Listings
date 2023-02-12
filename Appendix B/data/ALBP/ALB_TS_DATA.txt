@@ -1,0 +1,7 @@
+Task,Duration
+T1,2
+T2,3
+T3,3
+T4,1
+T5,3
+T6,3
