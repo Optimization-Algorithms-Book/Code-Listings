@@ -36,7 +36,7 @@ class TabuSearch:
 
     def __init__(self, max_iter=1000, tabu_tenure=1000, neighbor_size=10,
                 use_aspiration=True, aspiration_limit=None, use_longterm=False, 
-                 debug=0) -> None:
+                 debug=0, **kargs) -> None:
 
         self.debug = debug
         self.max_iter = max_iter if max_iter and max_iter > 0 else 1000
@@ -45,6 +45,8 @@ class TabuSearch:
         self.use_aspiration = use_aspiration
         self.aspiration_limit = aspiration_limit if aspiration_limit and aspiration_limit > 0 else tabu_tenure + 1
         self.use_longterm = use_longterm
+        self.maximize = True if 'maximize' in kargs else False
+        self.penalize = True if "penalize" in kargs else False
 
     def init_ts(self, problem_obj=None, stoping_val=None, init=None):
         if problem_obj:
@@ -70,68 +72,90 @@ class TabuSearch:
             self.longterm = {}
         if self.debug>0:
             print(f"Tabu search is initialized:\ncurrent value = {self.val_cur}")
+
+    def evaluate_with_penalty(self, value, step):
+        if self.penalize and step:
+            if value < 0:
+                if step in self.tabu_list:
+                    return max(value, self.tabu_list[step])
+                return 0
+            if step not in self.tabu_list:
+                return value
+            return (value - self.tabu_list[step])
+        return value
         
+
+    def get_best_neighbour(self, s_cur, val_cur):
+        s_cands = set()
+        tmp_dict = {}
+        while len(s_cands) < self.neighbor_size:
+            solution, step = None, None
+            solution = self.problem_obj.get_neighbour_solution(s_cur.v)
+            if isinstance(solution, tuple):
+                step = solution[1]
+                solution = solution[0]
+            key = deepcopy(Hashing(solution))
+            s_cands.add(key)
+            tmp_dict[key] = step if step else key
+
+
+        s_cands = [k for k in s_cands if not tmp_dict[k] in self.tabu_list or
+                                                    (self.use_aspiration and 
+                                                     self.problem_obj.eval_solution(k.v)<self.val_cur and 
+                                                     self.aspiration_limit>self.tabu_list[tmp_dict[k]])]
+        
+        if len(s_cands) == 0:
+            return None, None, None
+
+        best_cand = None 
+        val_best_cand = -float("inf") if self.maximize else float("inf")
+
+        for s_cand in s_cands:
+            val_cand = self.problem_obj.eval_solution(s_cand.v)
+            penalized = self.evaluate_with_penalty(val_cand - val_cur, tmp_dict[s_cand])
+            comparison = (penalized > (val_best_cand - val_cur)) if self.maximize else (penalized < (val_best_cand - val_cur))  #(val_cand < val_best_cand)
+            if (not self.use_longterm or not tmp_dict[s_cand] in self.longterm or 
+                random.random() < self.longterm[tmp_dict[s_cand]] / self.total_sol) and comparison:  #:val_cand > val_best_cand
+                val_best_cand = val_cand
+                best_cand = s_cand
+
+        return best_cand, val_best_cand, None if best_cand not in tmp_dict else tmp_dict[best_cand]
+
+
     def ts_step(self):
         if not self.problem_obj:
             raise RuntimeError("Tabu search problem object is not initialized, call init_ts()")
 
-        s_cand, val_cand = [None] *2
+        s_cand, val_cand, best_step = [None] *3
         i = 0
         while s_cand is None:
-            s_cand, val_cand = self.get_best_neighbour(self.s_cur)
+            s_cand, val_cand, best_step = self.get_best_neighbour(self.s_cur, self.val_cur)
             i += 1
-            if i>1000:
+            if i > 1000:
                 if self.debug>0:
                     print(f"Optimal solution so far!: \ncurr iter: {self.iter}, curr best value: {self.val_best}, curr best: sol: {self.s_best}, found at iter: {self.iter_best}")
                 raise RuntimeError(f"Search space is too narrow (probably {len(self.tabu_list)}) which are all in the tabu list, try to increase the search space or set stopping value")
-        
-        # if i > 1:
-        #     print(i, len(self.tabu_list))
 
         
-        if val_cand < self.val_best:
+        if (val_cand > self.val_best) == self.maximize and (val_cand != self.val_best):
             self.s_best = deepcopy(s_cand)
             self.val_best = deepcopy(val_cand)
             self.iter_best = self.iter    
         
         self.s_cur = deepcopy(s_cand)
         self.val_cur = deepcopy(val_cand)
-        
+
         self.tabu_list = {k: v-1 for k,v in self.tabu_list.items() if v>1}
 
-        if self.use_longterm:
-            self.total_sol += 1
-            if not self.s_cur in self.longterm:
-                self.longterm[self.s_cur] = 0      
-            self.longterm[self.s_cur] += 1
+        if best_step:
+            if self.use_longterm:
+                self.total_sol += 1
+                if not best_step in self.longterm:
+                    self.longterm[best_step] = 0      
+                self.longterm[best_step] += 1
 
-        self.tabu_list[self.s_cur] = self.tabu_tenure
-        
-    def get_best_neighbour(self, s_cur):
-        s_cands = set()
-        while len(s_cands) < self.neighbor_size:
-            s_cands.add(deepcopy(Hashing(self.problem_obj.get_neighbour_solution(s_cur.v))))
-
-        s_cands = [k for k in s_cands if not k in self.tabu_list or 
-                                                    (self.use_aspiration and 
-                                                     self.problem_obj.eval_solution(k.v)<self.val_cur and 
-                                                     self.aspiration_limit>self.tabu_list[k])]
-        
-        if len(s_cands) == 0:
-            return None, None
-
-        best_cand = None
-        val_best_cand = 1000000000
-
-        for s_cand in s_cands:
-            val_cand = self.problem_obj.eval_solution(s_cand.v)
-            if (not self.use_longterm or not s_cand in self.longterm or 
-                random.random() < self.longterm[s_cand] / self.total_sol) and val_cand < val_best_cand:
-                val_best_cand = val_cand
-                best_cand = s_cand
-
-        return best_cand, val_best_cand
-
+            self.tabu_list[best_step] = self.tabu_tenure
+        # print(best_step)
     
     def run(self, problem_obj=None, stoping_val=None, init=None, repetition=1):
         self.init_ts(problem_obj, stoping_val, init)
