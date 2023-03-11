@@ -1,4 +1,4 @@
-id,name,latitude,longitude,if in real route
+id,name,latitude,longitude,whether in real route
 1,conestoga station(start),43.498156,-80.529183,1
 2,king street north,43.49682,-80.529223,0
 3,king/highway 85,43.495403,-80.528892,1
