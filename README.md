@@ -17,8 +17,8 @@ Without assuming any prior knowledge of search and optimization and with an inte
   * [Chapter 5. Simulated Annealing](https://github.com/search-and-optimization/book/tree/main/Chapter%205)
   * [Chapter 6. Tabu Search](https://github.com/search-and-optimization/book/tree/main/Chapter%206)
 * **Part-III Evolutionary Computing Algorithms**
-  * [Chapter 7. Simple Genetic Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%207)
-  * Chapter 8. Genetic Algorithm Variants  
+  * [Chapter 7. Genetic Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%207)
+  * [Chapter 8. Genetic Algorithm Variants](https://github.com/search-and-optimization/book/tree/main/Chapter%208)
 * **Part-IV Swarm Intelligence Algorithms**
   * Chapter 9. Particle Swarm Optimization
   * Chapter 10. Ant Colony Optimization                 
