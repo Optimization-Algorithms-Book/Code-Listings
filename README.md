@@ -20,10 +20,10 @@ Without assuming any prior knowledge of search and optimization and with an inte
   * [Chapter 7. Genetic Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%207)
   * [Chapter 8. Genetic Algorithm Variants](https://github.com/search-and-optimization/book/tree/main/Chapter%208)
 * **Part-IV Swarm Intelligence Algorithms**
-  * Chapter 9. Particle Swarm Optimization
+  * [Chapter 9. Particle Swarm Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%209)
   * Chapter 10. Ant Colony Optimization                 
 * **Part-V Machine Learning-based Methods**
-  * Chapter 11. Introduction to Machine Learning
+  * Chapter 11. Graph Machine Learning
   * Chapter 12. Machine Learning for Search and Optimization          
 * **Appendices**
   * [Appendix-A Search and Optimization Libraries in Python](https://github.com/search-and-optimization/book/tree/main/Appendix%20A)
