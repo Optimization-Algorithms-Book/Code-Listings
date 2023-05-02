@@ -10,7 +10,7 @@ with open("LICENSE", encoding="utf-8-sig") as f:
     license = f.readlines()
 
 setup(
-    name='search-optimization-tools',
+    name='optalgotools',
     version='0.0.1',
     author='Alaa Khamis',
     long_description=long_description,

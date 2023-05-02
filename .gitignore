@@ -1,8 +1,6 @@
 *.png
 *.json
 *.pyc
-search_optimization_tools/dist/*
-search_optimization_tools/search_optimization_tools.egg-info/*
 *.log
 *.docx
 01 Manning template PC_2021.dotx
