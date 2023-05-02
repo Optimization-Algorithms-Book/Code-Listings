@@ -2,7 +2,7 @@
 
 Code Listings for the book: Optimization Algorithms:Optimization Algorithms: AI techniques for design, planning, and control problems. Manning Publications, 2023.
 
-![Example Image](images/Khamis-MEAP-HI.png)
+![Optimization Algorithms: AI techniques for design, planning, and control problems](images/Khamis-MEAP-HI.png)
 
 Optimization problems are ubiquitous in different aspects of life. This book is written for practitioners interested in solving ill-structured search and optimization problems using modern derivative-free algorithms. The book will get you up to speed with the core concepts of search and optimization and endow you with the ability to deal with practical design, planning and control problems.
 
