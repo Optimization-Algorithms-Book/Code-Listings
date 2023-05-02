@@ -30,4 +30,4 @@ Without assuming any prior knowledge of search and optimization and with an inte
   * [Appendix-B Benchmarks and Datasets](https://github.com/search-and-optimization/book/tree/main/Appendix%20B)
   * [Appendix-C Solutions to Exercises](https://github.com/search-and-optimization/book/tree/main/Appendix%20C)
 
-![Optimization Algorithms: AI techniques for design, planning, and control problems](images/Khamis-MEAP-HI.png)
+<a href="https://www.manning.com/books/optimization-algorithms">![Optimization Algorithms: AI techniques for design, planning, and control problems](images/Khamis-MEAP-HI.png)</a>
