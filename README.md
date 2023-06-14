@@ -24,7 +24,7 @@ Without assuming any prior knowledge of search and optimization and with an inte
   * [Chapter 10. Other SI Algorithms to Explore](https://github.com/search-and-optimization/book/tree/main/Chapter%2010)
 * **Part-V Machine Learning-based Methods**
   * [Chapter 11. Graph Machine Learning](https://github.com/search-and-optimization/book/tree/main/Chapter%2011)
-  * Chapter 12. Machine Learning for Search and Optimization          
+  * [Chapter 12. Machine Learning for Search and Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%2012)          
 * **Appendices**
   * [Appendix-A Search and Optimization Libraries in Python](https://github.com/search-and-optimization/book/tree/main/Appendix%20A)
   * [Appendix-B Benchmarks and Datasets](https://github.com/search-and-optimization/book/tree/main/Appendix%20B)
