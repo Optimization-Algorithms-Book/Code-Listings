@@ -40,16 +40,10 @@ Alaa Khamis. <i>Optimization Algorithms: AI techniques for design, planning, and
 
 BibTeX:
 
-@book{Khamis2023,
-
-  title     = "Optimization Algorithms: AI techniques for design, planning, and control problems",
-
-  author    = "Alaa Khamis",
-
-  year      = 2023,
-
-  publisher = "Manning",
-
-  address   = "Shelter Island, NY"
-
+@book{Khamis2023,\n
+  title     = "Optimization Algorithms: AI techniques for design, planning, and control problems",\n
+  author    = "Alaa Khamis",\n
+  year      = 2023,\n
+  publisher = "Manning",\n
+  address   = "Shelter Island, NY"\n
 }
