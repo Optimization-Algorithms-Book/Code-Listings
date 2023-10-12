@@ -44,7 +44,7 @@ BibTeX:
   title     = "Optimization Algorithms: AI techniques for design, planning, and control problems",
   author    = "Alaa Khamis",
   year      = 2023,
-  publisher = "Manning",
-  address   = "Shelter Island, NY"
+  publisher = "Manning Publications",
+  address   = "Shelter Island, New York, United States"
 }
 ```
