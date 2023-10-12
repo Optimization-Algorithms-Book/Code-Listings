@@ -22,6 +22,7 @@ gurobipy
 pyswarms
 acopy
 torch
+ipywidgets
 minisom
 gym
 gymnasium
