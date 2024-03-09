@@ -19,7 +19,7 @@ Without assuming any prior knowledge of search and optimization and with an inte
   * [Chapter 8. Genetic Algorithm Variants](https://github.com/search-and-optimization/book/tree/main/Chapter%208)
 * **Part-IV Swarm Intelligence Algorithms**
   * [Chapter 9. Particle Swarm Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%209)
-  * [Chapter 10. Other SI Algorithms to Explore](https://github.com/search-and-optimization/book/tree/main/Chapter%2010)
+  * [Chapter 10. Other Swarm Intelligence Algorithms to Explore](https://github.com/search-and-optimization/book/tree/main/Chapter%2010)
 * **Part-V Machine Learning-based Methods**
   * [Chapter 11. Supervised and Unsupervised Learning](https://github.com/search-and-optimization/book/tree/main/Chapter%2011)
   * [Chapter 12. Reinforcement Learning](https://github.com/search-and-optimization/book/tree/main/Chapter%2012)          
