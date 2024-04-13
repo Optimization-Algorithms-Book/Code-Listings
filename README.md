@@ -6,8 +6,8 @@ Without assuming any prior knowledge of search and optimization and with an inte
 
 # Table of Contents
 
-* [Chapter-1 Introduction to Search and Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%201)
 * **Part-I Deterministic Seach Algorithms**
+  * [Chapter-1 Introduction to Search and Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%201)
   * [Chapter 2. A Deeper Look at Search and Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%202)
   * [Chapter 3. Blind Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%203)
   * [Chapter 4. Informed Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%204)
