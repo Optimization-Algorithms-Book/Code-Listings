@@ -35,15 +35,16 @@ Without assuming any prior knowledge of search and optimization and with an inte
 
 Plain text (IEEE style):
 
-Alaa Khamis. <i>Optimization Algorithms: AI techniques for design, planning, and control problems</i>. Manning Publications, ISBN 9781633438835, 2023.
+Alaa Khamis. <i>Optimization Algorithms: AI techniques for design, planning, and control problems</i>. Manning Publications, ISBN 9781633438835, 2024.
 
 BibTeX:
 ```
 @book{Khamis2023,
   title     = "Optimization Algorithms: AI techniques for design, planning, and control problems",
   author    = "Alaa Khamis",
-  year      = 2023,
+  year      = 2024,
+  isbn = "ISBN 9781633438835",
   publisher = "Manning Publications",
-  address   = "Shelter Island, New York, United States"
+  address   = "New York, United States"
 }
 ```
