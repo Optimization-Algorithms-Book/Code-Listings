@@ -39,7 +39,7 @@ Alaa Khamis. <i>Optimization Algorithms: AI techniques for design, planning, and
 
 BibTeX:
 ```
-@book{Khamis2023,
+@book{Khamis2024,
   title     = "Optimization Algorithms: AI techniques for design, planning, and control problems",
   author    = "Alaa Khamis",
   year      = 2024,
