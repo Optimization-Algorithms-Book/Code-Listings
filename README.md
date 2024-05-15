@@ -6,6 +6,8 @@ Without assuming any prior knowledge of search and optimization and with an inte
 
 ![First Chapter Summary](https://www.youtube.com/watch?v=RAVFSvgks3Q)
 
+[<img src="images/Khamis.jpg" alt="Optimization Algorithms: AI techniques for design, planning, and control problems" width="50%">](https://www.youtube.com/watch?v=RAVFSvgks3Q "First Chapter Summary")
+
 # Table of Contents
 
 * **Part-I Deterministic Seach Algorithms**
@@ -51,12 +53,12 @@ Alaa Khamis. <i>Optimization Algorithms: AI techniques for design, planning, and
 BibTeX:
 ```
 @book{Khamis2024,
-  title     = {Optimization Algorithms: AI techniques for design, planning, and control problems},
-  author    = {Alaa Khamis},
-  year      = {2024},
-  isbn = {ISBN 9781633438835},
-  url          = {https://www.manning.com/books/optimization-algorithms},
+  title = {Optimization Algorithms: AI techniques for design, planning, and control problems},
+  author  = {Alaa Khamis},
+  year  = {2024},
+  isbn  = {ISBN 9781633438835},
+  url = {https://www.manning.com/books/optimization-algorithms},
   publisher = {Manning Publications},
-  address   = {New York, United States}
+  address = {New York, United States}
 }
 ```
