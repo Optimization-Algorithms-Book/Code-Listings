@@ -4,10 +4,6 @@ This book is written for practitioners interested in solving ill-structured sear
 
 Without assuming any prior knowledge of search and optimization and with an intermediate knowledge of data structures and Python, this book has been written to take most anyone from never solving search and optimization problems to being a well-rounded search and optimization practitioner able to select, implement and adapt the right solver for the right problem.
 
-![First Chapter Summary](https://www.youtube.com/watch?v=RAVFSvgks3Q)
-
-[<img src="images/Khamis.jpg" alt="Optimization Algorithms: AI techniques for design, planning, and control problems" width="50%">](https://www.youtube.com/watch?v=RAVFSvgks3Q "First Chapter Summary")
-
 # Table of Contents
 
 * **Part-I Deterministic Seach Algorithms**
