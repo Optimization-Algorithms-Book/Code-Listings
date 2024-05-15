@@ -35,9 +35,9 @@ Without assuming any prior knowledge of search and optimization and with an inte
 
 If you dowbloaded the code bundle from the Manning website, please consider checking out thee official code repository on GitHub at: https://github.com/Optimization-Algorithms-Book/Code-Listings for the most recent version.
 
-# Errata
+<!-- # Errata
 
-You can find errata for the book [here](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/errata.md).
+You can find errata for the book [here](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/errata.md). -->
 
 
 # Citation
