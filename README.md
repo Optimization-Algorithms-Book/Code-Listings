@@ -39,7 +39,7 @@ If you dowbloaded the code bundle from the Manning website, please consider chec
 
 # Errata
 
-You can find errata for the book [here](https://github.com/search-and-optimization/book/tree/main/errata.md).
+You can find errata for the book [here](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/errata.md).
 
 
 # Citation
