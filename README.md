@@ -4,6 +4,8 @@ This book is written for practitioners interested in solving ill-structured sear
 
 Without assuming any prior knowledge of search and optimization and with an intermediate knowledge of data structures and Python, this book has been written to take most anyone from never solving search and optimization problems to being a well-rounded search and optimization practitioner able to select, implement and adapt the right solver for the right problem.
 
+![First Chapter Summary](https://www.youtube.com/watch?v=RAVFSvgks3Q)
+
 # Table of Contents
 
 * **Part-I Deterministic Seach Algorithms**
@@ -31,6 +33,15 @@ Without assuming any prior knowledge of search and optimization and with an inte
 <a href="https://www.manning.com/books/optimization-algorithms">
 <img src="images/Khamis.jpg" alt="Optimization Algorithms: AI techniques for design, planning, and control problems" width="50%"></a>
 
+# Note
+
+If you dowbloaded the code bundle from the Manning website, please consider checking out thee official code repository on GitHub at: https://github.com/Optimization-Algorithms-Book/Code-Listings for the most recent version.
+
+# Errata
+
+You can find errata for the book [here](https://github.com/search-and-optimization/book/tree/main/errata.md).
+
+
 # Citation
 
 Plain text (IEEE style):
@@ -40,11 +51,12 @@ Alaa Khamis. <i>Optimization Algorithms: AI techniques for design, planning, and
 BibTeX:
 ```
 @book{Khamis2024,
-  title     = "Optimization Algorithms: AI techniques for design, planning, and control problems",
-  author    = "Alaa Khamis",
-  year      = 2024,
-  isbn = "ISBN 9781633438835",
-  publisher = "Manning Publications",
-  address   = "New York, United States"
+  title     = {Optimization Algorithms: AI techniques for design, planning, and control problems},
+  author    = {Alaa Khamis},
+  year      = {2024},
+  isbn = {ISBN 9781633438835},
+  url          = {https://www.manning.com/books/optimization-algorithms},
+  publisher = {Manning Publications},
+  address   = {New York, United States}
 }
 ```
