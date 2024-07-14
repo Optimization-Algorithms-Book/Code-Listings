@@ -7,26 +7,26 @@ Without assuming any prior knowledge of search and optimization and with an inte
 # Table of Contents
 
 * **Part-I Deterministic Seach Algorithms**
-  * [Chapter-1 Introduction to Search and Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%201)
-  * [Chapter 2. A Deeper Look at Search and Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%202)
-  * [Chapter 3. Blind Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%203)
-  * [Chapter 4. Informed Search Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%204)
+  * [Chapter-1 Introduction to search and optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%201)
+  * [Chapter 2. A deeper look at search and optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%202)
+  * [Chapter 3. Blind search algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%203)
+  * [Chapter 4. Informed search algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%204)
 * **Part-II Trajectory-based Algorithms**
-  * [Chapter 5. Simulated Annealing](https://github.com/search-and-optimization/book/tree/main/Chapter%205)
-  * [Chapter 6. Tabu Search](https://github.com/search-and-optimization/book/tree/main/Chapter%206)
+  * [Chapter 5. Simulated annealing](https://github.com/search-and-optimization/book/tree/main/Chapter%205)
+  * [Chapter 6. Tabu search](https://github.com/search-and-optimization/book/tree/main/Chapter%206)
 * **Part-III Evolutionary Computing Algorithms**
-  * [Chapter 7. Genetic Algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%207)
-  * [Chapter 8. Genetic Algorithm Variants](https://github.com/search-and-optimization/book/tree/main/Chapter%208)
+  * [Chapter 7. Genetic algorithms](https://github.com/search-and-optimization/book/tree/main/Chapter%207)
+  * [Chapter 8. Genetic algorithm variants](https://github.com/search-and-optimization/book/tree/main/Chapter%208)
 * **Part-IV Swarm Intelligence Algorithms**
-  * [Chapter 9. Particle Swarm Optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%209)
-  * [Chapter 10. Other Swarm Intelligence Algorithms to Explore](https://github.com/search-and-optimization/book/tree/main/Chapter%2010)
+  * [Chapter 9. Particle swarm optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%209)
+  * [Chapter 10. Other Swarm intelligence algorithms to explore](https://github.com/search-and-optimization/book/tree/main/Chapter%2010)
 * **Part-V Machine Learning-based Methods**
-  * [Chapter 11. Supervised and Unsupervised Learning](https://github.com/search-and-optimization/book/tree/main/Chapter%2011)
-  * [Chapter 12. Reinforcement Learning](https://github.com/search-and-optimization/book/tree/main/Chapter%2012)          
+  * [Chapter 11. Supervised and unsupervised learning](https://github.com/search-and-optimization/book/tree/main/Chapter%2011)
+  * [Chapter 12. Reinforcement learning](https://github.com/search-and-optimization/book/tree/main/Chapter%2012)          
 * **Appendices**
-  * [Appendix-A Search and Optimization Libraries in Python](https://github.com/search-and-optimization/book/tree/main/Appendix%20A)
-  * [Appendix-B Benchmarks and Datasets](https://github.com/search-and-optimization/book/tree/main/Appendix%20B)
-  * [Appendix-C Solutions to Exercises](https://github.com/search-and-optimization/book/tree/main/Appendix%20C)
+  * [Appendix-A Search and optimization libraries in Python](https://github.com/search-and-optimization/book/tree/main/Appendix%20A)
+  * [Appendix-B Benchmarks and datasets](https://github.com/search-and-optimization/book/tree/main/Appendix%20B)
+  * [Appendix-C Exercises and solutions](https://github.com/search-and-optimization/book/tree/main/Appendix%20C)
 
 <a href="https://www.manning.com/books/optimization-algorithms">
 <img src="images/Khamis.jpg" alt="Optimization Algorithms: AI techniques for design, planning, and control problems" width="50%"></a>
