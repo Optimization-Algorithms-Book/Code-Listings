@@ -33,7 +33,7 @@ Without assuming any prior knowledge of search and optimization, and with only a
 
 # Note
 
-If you dowbloaded the code bundle from the Manning website, please consider checking out thee official code repository on GitHub at: https://github.com/Optimization-Algorithms-Book/Code-Listings for the most recent version.
+If you dowbloaded the code bundle from the Manning website, please consider checking out the official code repository on GitHub at: https://github.com/Optimization-Algorithms-Book/Code-Listings for the most recent version.
 
 <!-- # Errata
 
