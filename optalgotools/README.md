@@ -17,4 +17,4 @@ It contains the following modules:
 * `cost(G, route)`
 * `draw_route(G, route)`
 
-[More information](https://github.com/search-and-optimization/Code-Listings)
+[More information](https://pypi.org/project/optalgotools/)
