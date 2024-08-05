@@ -44,7 +44,7 @@ You can find errata for the book [here](https://github.com/Optimization-Algorith
 
 Plain text (IEEE style):
 
-Alaa Khamis. <i>Optimization Algorithms: AI techniques for design, planning, and control problems</i>. Manning Publications, ISBN 9781633438835, 2024.
+Alaa Khamis. <i>Optimization Algorithms: AI techniques for design, planning, and control problems</i>. Manning Publications, ISBN 978-1633438835, 2024.
 
 BibTeX:
 ```
@@ -52,9 +52,7 @@ BibTeX:
   title = {Optimization Algorithms: AI techniques for design, planning, and control problems},
   author  = {Alaa Khamis},
   year  = {2024},
-  isbn  = {ISBN 9781633438835},
-  url = {https://www.manning.com/books/optimization-algorithms},
-  publisher = {Manning Publications},
-  address = {New York, United States}
+  isbn  = {ISBN 978-1633438835},
+  publisher = {Manning Publications}
 }
 ```
