@@ -15,7 +15,7 @@ haversine           # Ch04
 optalgotools        # Ch04, 05 & 06 and Appendix C
 pymoo               # Ch08 and Appendix C
 pulp                # Ch02 & 05 and Appendix A & C
-or-tools            # Ch06
+ortools            # Ch06
 gurobipy            # Appendix A
 pyswarms            # Ch09 and Appendix C
 acopy               # Appendix C
