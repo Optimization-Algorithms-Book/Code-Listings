@@ -39,6 +39,31 @@ If you dowbloaded the code bundle from the Manning website, please consider chec
 
 You can find errata for the book [here](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/errata.md).
 
+## Reviews
+
+> "*Elegantly covers modern optimization algorithms in depth and breadth. A great resource.*"
+>    
+> **Ajit Jaokar** - Course Director at [University of Oxford](https://www.conted.ox.ac.uk/tutors/4164)
+
+---
+
+> "*A treasure trove. Perfect for anyone looking to navigate the intricate world of optimization in real-world scenarios.*"
+>
+> **Sergei Kalinin** - Weston Fulton Professor at [University of Tennessee](https://tickle.utk.edu/mse/faculty/sergei-kalinin/)
+
+---
+
+> "*An exceptional book on the most prominent optimization algorithms.*"
+>
+> **Maxim Volgin** - Data Scientist at [KLM Royal Dutch Airlines](https://nl.linkedin.com/in/maxvol)
+
+---
+
+> "*This little gem introduces the reader to the algorithms and how you should apply them to real-world problems. A must-read!*"
+>
+> **Marcello La Rocca** - Author of [Grokking Data Structures and Advanced Algorithms and Data Structures](https://github.com/mlarocca)
+
+---
 
 # Citation
 
