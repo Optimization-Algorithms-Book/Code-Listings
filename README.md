@@ -39,10 +39,6 @@ If you dowbloaded the code bundle from the Manning website, please consider chec
 
 You can find errata for the book [here](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/errata.md).
 
-# Video Summary
-
-[![Watch the video](https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=RAVFSvgks3Q)
-
 
 # Reviews
 
