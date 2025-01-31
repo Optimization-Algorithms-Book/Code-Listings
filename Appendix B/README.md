@@ -6,11 +6,11 @@
 | Optimization test functions  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Listing%20B.1_Optimization_test_functions.ipynb)  |
 | Combinatorial optimization benchmark datasets  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Listing%20B.2_CO_datasets.ipynb)  |
 | Geospatial data  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Listing%20B.3_Geospatial_data.ipynb)  |
-| Toronto bikeshare data  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Listing B.4_Geospatial_data_TBS.ipynb)  |
+| Toronto bikeshare data  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Listing%20B.4_Geospatial_data_TBS.ipynb)  |
 | Neural combinatorial optimization datasets  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Listing%20B.5_ML_datasets.ipynb)  |
 
 > [!IMPORTANT]
-> The data folder included in the GitHub repo of the book (https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix B/data) includes the following sample data:
+> The data folder included in this GitHub repo includes the following sample data:
 * ALBP—Dataset for the assembly line balancing problem in chapter 6
 * AdministrativeBoundaries—Administrative boundaries of different regions of interest around the world in geoJSON format, which can be used for map visualization
 * BikeShare—Bike Share Toronto (TBS) ridership data containing anonymized trip data, including trip start day and time, trip end day and time, trip duration, trip start station, trip end station, and user type (see listing B.4: Listing B.4_Geospatial_data_TBS.ipynb)
