@@ -7,11 +7,17 @@ This course provides a comprehensive introduction to the field of optimization u
 
 ## 🎯 Learning Outcomes
 By the end of this course, students will be able to:
+
 ✅ Understand core concepts of search and optimization.
+
 ✅ Apply deterministic and stochastic optimization techniques to practical problems.
+
 ✅ Implement and adapt graph search algorithms, trajectory-based algorithms, and evolutionary computing algorithms.
+
 ✅ Leverage swarm intelligence and machine learning methods for optimization.
+
 ✅ Use state-of-the-art Python libraries for optimization tasks.
+
 ✅ Evaluate and compare different optimization strategies to determine the most effective approach for given scenarios.
 
 ## 📑 Course Outline
@@ -92,4 +98,4 @@ By the end of this course, students will be able to:
 Contributors are welcome to enhance this course content. Please fork the repository and submit pull requests for improvements or additional resources.
 
 ## License
-This course content is provided under the [MIT License](LICENSE).
+This course content is provided under the [MIT License](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/LICENSE).
