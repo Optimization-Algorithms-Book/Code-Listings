@@ -8,5 +8,5 @@
 | Solving ticket pricing problem using `scipy`    | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%201/TicketPricing.ipynbb)  |
 
 > [!TIP]
-> Here you can find the complete solutions to the coding exercises presented in Appendix C of the book. Before checking the solutions, I encourage you to attempt the coding exercises on your own. This will help you strengthen your problem-solving skills and deepen your understanding of the concepts. 
-> Make sure to install the necessary libraries by uncommenting the `pip` command included at the beginning of each cell.
+* You can either set up a Python environment on your machine by installing the required libraries or run all examples online using Google Colab, a free platform that provides a ready-to-use Python environment in your browser.
+* Make sure to install the necessary libraries by uncommenting the `pip` command included at the beginning of each cell.
