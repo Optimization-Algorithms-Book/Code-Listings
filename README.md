@@ -1,3 +1,9 @@
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/LICENSE)
+![Last Commit](https://img.shields.io/github/last-commit/Optimization-Algorithms-Book/Code-Listings)
+![Repo Size](https://img.shields.io/github/repo-size/Optimization-Algorithms-Book/Code-Listings)
+![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
+![GitHub Stars](https://img.shields.io/github/stars/Optimization-Algorithms-Book/Code-Listings?style=social)
+
 # Optimization Algorithms: AI techniques for design, planning, and control problems
 
 This book is written for practitioners interested in solving ill-structured search and optimization problems using modern derivative-free algorithms. It will get you up to speed with the core concepts of search and optimization and endow you with the ability to handle practical design, planning and control problems.
