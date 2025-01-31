@@ -17,4 +17,4 @@
 
 
 > [!Note]
-> Extras folder contains implementatio  of bidirectional Dijkstra and Uniform Cost Search algorithms and the Big O visualization.
+> [Extras](https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Chapter%203/Extras) folder contains implementatio  of bidirectional Dijkstra and Uniform Cost Search algorithms and the Big O visualization.
