@@ -47,7 +47,7 @@ Click the thumbnail to watch on YouTube!
 
 ## 🗒 Note
 
-If you dowbloaded the code bundle from the Manning website, please consider checking out the official code repository on GitHub at: https://github.com/Optimization-Algorithms-Book/Code-Listings for the most recent version.
+If you downloaded the code bundle from the Manning website, please consider checking out the [official code repository on GitHub](https://github.com/Optimization-Algorithms-Book/Code-Listings) for the most recent version.
 
 ## 📂 Course and PowerPoint Slides
 
@@ -58,7 +58,6 @@ This book can be used as a textbook for courses about optimization algorithms. D
 ## 🛠 Errata
 
 You can find errata for the book [here](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/errata.md).
-
 
 ## 💬 Testimonials
 
