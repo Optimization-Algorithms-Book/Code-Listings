@@ -22,7 +22,7 @@ By the end of this course, students will be able to:
 
 ## 📑 Course Outline
 
-### Week 1: Introduction to Search and Optimization
+### Week 1-2: Introduction to Search and Optimization
 - **Topics:** 
   - What are search and optimization?
   - Going from toy problems to real-world solutions.
@@ -32,7 +32,7 @@ By the end of this course, students will be able to:
   - Chapter 1: Introduction to search and optimization
   - Chapter 2: A deeper look at search and optimization
 
-### Week 2-3: Graph Search Algorithms
+### Week 3-4: Graph Search Algorithms
 - **Topics:** 
   - Blind search algorithms.
   - Informed search algorithms.
@@ -40,7 +40,7 @@ By the end of this course, students will be able to:
   - Chapter 3: Blind search algorithms
   - Chapter 4: Informed search algorithms
 
-### Week 4-5: Trajectory-Based Optimization
+### Week 5-6: Trajectory-Based Optimization
 - **Topics:** 
   - Simulated annealing.
   - Tabu search.
@@ -48,7 +48,7 @@ By the end of this course, students will be able to:
   - Chapter 5: Simulated annealing
   - Chapter 6: Tabu search
 
-### Week 6-7: Evolutionary Computing Algorithms
+### Week 7-8: Evolutionary Computing Algorithms
 - **Topics:** 
   - Genetic algorithms.
   - Genetic algorithm variants.
@@ -56,7 +56,7 @@ By the end of this course, students will be able to:
   - Chapter 7: Genetic algorithms
   - Chapter 8: Genetic algorithm variants
 
-### Week 8-9: Swarm Intelligence Algorithms
+### Week 9-10: Swarm Intelligence Algorithms
 - **Topics:** 
   - Particle swarm optimization.
   - Other swarm intelligence algorithms.
@@ -64,7 +64,7 @@ By the end of this course, students will be able to:
   - Chapter 9: Particle swarm optimization
   - Chapter 10: Other swarm intelligence algorithms to explore
 
-### Week 10-11: Machine Learning for Optimization
+### Week 11-12: Machine Learning for Optimization
 - **Topics:** 
   - Supervised and unsupervised learning.
   - Reinforcement learning.
@@ -72,7 +72,7 @@ By the end of this course, students will be able to:
   - Chapter 11: Supervised and unsupervised learning
   - Chapter 12: Reinforcement learning
 
-### Week 12: Practical Applications and Case Studies
+<!-- ### Week 12: Practical Applications and Case Studies
 - **Topics:** 
   - Real-world applications of optimization algorithms.
   - Case studies using industry data.
@@ -87,7 +87,7 @@ By the end of this course, students will be able to:
 ### Week 15: Final Exam and Course Wrap-Up
 - **Activities:** 
   - Final examination covering theoretical and practical aspects.
-  - Course feedback and discussion on future learning paths.
+  - Course feedback and discussion on future learning paths. -->
 
 ## Course Resources
 - **Textbook:** [Optimization Algorithms: AI techniques for design, planning, and control problems](https://www.manning.com/books/optimization-algorithms)
