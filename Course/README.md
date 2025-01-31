@@ -1,6 +1,6 @@
 # Optimization Algorithms Course
 
-📌 <span style="color:red">*This is work in progress. Stay tuned for updates and resources!*  </span>
+📌 <span style="color:red"> This is work in progress. Stay tuned for updates and resources! </span>
 
 ## 📖 Course Description
 This course provides a comprehensive introduction to the field of optimization using modern AI techniques. Students will learn to apply various optimization algorithms to solve real-world design, planning, and control problems. The course will explore both deterministic and stochastic methods, including graph search, trajectory-based, evolutionary, and swarm intelligence algorithms, as well as machine learning approaches to optimization.
