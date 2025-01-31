@@ -1,6 +1,6 @@
 # Optimization Algorithms Course
 
-📌 *This work in progress. Stay tuned for updates and resources!*  
+📌 <span style="color:red">*This is work in progress. Stay tuned for updates and resources!*  </span>
 
 ## 📖 Course Description
 This course provides a comprehensive introduction to the field of optimization using modern AI techniques. Students will learn to apply various optimization algorithms to solve real-world design, planning, and control problems. The course will explore both deterministic and stochastic methods, including graph search, trajectory-based, evolutionary, and swarm intelligence algorithms, as well as machine learning approaches to optimization.
@@ -92,10 +92,6 @@ By the end of this course, students will be able to:
 ## Course Resources
 - **Textbook:** [Optimization Algorithms: AI techniques for design, planning, and control problems](https://www.manning.com/books/optimization-algorithms)
 - **Code Examples:** Available on the GitHub repository of textbook.
-
-
-## Contribution
-Contributors are welcome to enhance this course content. Please fork the repository and submit pull requests for improvements or additional resources.
 
 ## License
 This course content is provided under the [MIT License](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/LICENSE).
