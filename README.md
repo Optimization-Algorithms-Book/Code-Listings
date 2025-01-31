@@ -10,6 +10,9 @@ This book is written for practitioners interested in solving ill-structured sear
 
 Without assuming any prior knowledge of search and optimization, and with only an intermediate knowledge of data structures and Python, this book is designed to take anyone from never having solved search and optimization problems to being a well-rounded practitioner. You will be able to select, implement, and adapt the right solver for the right problem.
 
+<a href="https://www.manning.com/books/optimization-algorithms">
+<img src="images/Khamis.jpg" alt="Optimization Algorithms: AI techniques for design, planning, and control problems" width="50%"></a>
+
 ## 🎥 Video Summary of the Book
 
 Watch a quick video summary of the book here:  
@@ -18,7 +21,7 @@ Watch a quick video summary of the book here:
 
 Click the thumbnail to watch on YouTube!
 
-# 📑 Table of Contents
+## 📑 Table of Contents
 
 * **Part-I Deterministic Search Algorithms**
   * [Chapter-1 Introduction to search and optimization](https://github.com/search-and-optimization/book/tree/main/Chapter%201)
@@ -42,19 +45,16 @@ Click the thumbnail to watch on YouTube!
   * [Appendix-B Benchmarks and datasets](https://github.com/search-and-optimization/book/tree/main/Appendix%20B)
   * [Appendix-C Exercises and solutions](https://github.com/search-and-optimization/book/tree/main/Appendix%20C)
 
-<a href="https://www.manning.com/books/optimization-algorithms">
-<img src="images/Khamis.jpg" alt="Optimization Algorithms: AI techniques for design, planning, and control problems" width="50%"></a>
-
-# 🗒 Note
+## 🗒 Note
 
 If you dowbloaded the code bundle from the Manning website, please consider checking out the official code repository on GitHub at: https://github.com/Optimization-Algorithms-Book/Code-Listings for the most recent version.
 
-# ❌ Errata
+## 🛠 Errata
 
 You can find errata for the book [here](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/errata.md).
 
 
-# 💬 Testimonials
+## 💬 Testimonials
 
 > "*Elegantly covers modern optimization algorithms in depth and breadth. A great resource.*"
 >    
@@ -80,7 +80,7 @@ You can find errata for the book [here](https://github.com/Optimization-Algorith
 
 ---
 
-# 🔖 Citation
+## 🔖 Citation
 
 Plain text (IEEE style):
 
