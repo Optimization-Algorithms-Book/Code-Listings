@@ -10,7 +10,7 @@
 | Neural combinatorial optimization datasets  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Listing%20B.5_ML_datasets.ipynb)  |
 
 > [!IMPORTANT]
-> The data folder included in this GitHub repo includes the following sample data:
+> The [data](https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20B/data) folder included in this GitHub repo includes the following sample data:
 > * ALBP—Dataset for the assembly line balancing problem in chapter 6
 > * AdministrativeBoundaries—Administrative boundaries of different regions of interest around the world in geoJSON format, which can be used for map visualization
 > * BikeShare—Bike Share Toronto (TBS) ridership data containing anonymized trip data, including trip start day and time, trip end day and time, trip duration, trip start station, trip end station, and user type (see listing B.4: Listing B.4_Geospatial_data_TBS.ipynb)
