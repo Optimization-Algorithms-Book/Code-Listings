@@ -70,11 +70,31 @@ By the end of this course, students will be able to:
   - Chapter 11: Supervised and unsupervised learning
   - Chapter 12: Reinforcement learning
 
-## Course Resources
+## 📚 Course Resources
 - **Textbook:** [Optimization Algorithms: AI techniques for design, planning, and control problems](https://www.manning.com/books/optimization-algorithms)
 - **Code Examples:** Available on the GitHub repository of textbook.
 - **Exercises and solutions:** Available in *Appendix C* of of textbook.
 - **Sample Projects:** Available on [AI4SM](https://medium.com/ai4sm) Medium Publication hub.
 
-## License
+## 📜 License
 This course content is provided under the [MIT License](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/LICENSE).
+
+## 🔖 Citation  
+
+If you use the slides from this course, please cite the textbook:  
+
+**Alaa Khamis. "Optimization Algorithms: AI Techniques for Design, Planning, and Control Problems." Manning Publications, 2024.**  
+📖 [Book Link](https://www.manning.com/books/optimization-algorithms)  
+
+When referencing the slides, you may use the following citation format:  
+
+```
+@misc{Khamis2024Slides,
+  author    = {Alaa Khamis},
+  title     = {Optimization Algorithms - Course Slides},
+  year      = {2024},
+  url       = {https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Course  
+  note      = {Based on the textbook "Optimization Algorithms" (Manning, 2024)}
+}
+```
+
