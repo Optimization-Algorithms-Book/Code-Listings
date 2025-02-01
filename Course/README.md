@@ -76,9 +76,6 @@ By the end of this course, students will be able to:
 - **Exercises and solutions:** Available in *Appendix C* of of textbook.
 - **Sample Projects:** Available on [AI4SM](https://medium.com/ai4sm) Medium Publication hub.
 
-## 📜 License
-This course content is provided under the [MIT License](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/LICENSE).
-
 ## 🔖 Citation  
 
 If you use the slides from this course, please cite the textbook:  
