@@ -83,8 +83,7 @@ This course content is provided under the [MIT License](https://github.com/Optim
 
 If you use the slides from this course, please cite the textbook:  
 
-**Alaa Khamis. "Optimization Algorithms: AI Techniques for Design, Planning, and Control Problems." Manning Publications, 2024.**  
-📖 [Book Link](https://www.manning.com/books/optimization-algorithms)  
+Alaa Khamis. *[Optimization Algorithms: AI techniques for design, planning, and control problems](https://www.manning.com/books/optimization-algorithms)*. Manning Publications, 2024.
 
 When referencing the slides, you may use the following citation format:  
 
