@@ -24,10 +24,8 @@ By the end of this course, students will be able to:
 
 ### Week 1-2: Introduction to Search and Optimization
 - **Topics:** 
-  - What are search and optimization?
-  - Going from toy problems to real-world solutions.
-  - Defining optimization problems.
-  - Well-structured vs. ill-structured problems.
+  - [Coourse Presentation](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/Course/L1-Course%20Presentation.pptx)
+  - Introduction to search and optimization
 - **Readings:** 
   - Chapter 1: Introduction to search and optimization
   - Chapter 2: A deeper look at search and optimization
@@ -72,26 +70,11 @@ By the end of this course, students will be able to:
   - Chapter 11: Supervised and unsupervised learning
   - Chapter 12: Reinforcement learning
 
-<!-- ### Week 12: Practical Applications and Case Studies
-- **Topics:** 
-  - Real-world applications of optimization algorithms.
-  - Case studies using industry data.
-- **Readings:** 
-  - Review of all chapters with focus on practical exercises and case studies.
-
-### Week 13-14: Project Work and Review
-- **Activities:** 
-  - Group projects where students apply learned algorithms to solve a practical optimization problem.
-  - Peer review and presentation of projects.
-
-### Week 15: Final Exam and Course Wrap-Up
-- **Activities:** 
-  - Final examination covering theoretical and practical aspects.
-  - Course feedback and discussion on future learning paths. -->
-
 ## Course Resources
 - **Textbook:** [Optimization Algorithms: AI techniques for design, planning, and control problems](https://www.manning.com/books/optimization-algorithms)
 - **Code Examples:** Available on the GitHub repository of textbook.
+- **Exercises and solutions:** Available in *Appendix C* of of textbook.
+- **Sample Projects:** Available on [AI4SM](https://medium.com/ai4sm) Medium Publication hub.
 
 ## License
 This course content is provided under the [MIT License](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/LICENSE).
