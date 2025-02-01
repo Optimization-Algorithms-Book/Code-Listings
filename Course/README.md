@@ -32,41 +32,42 @@ By the end of this course, students will be able to:
 
 ### Week 3-4: Graph Search Algorithms
 - **Topics:** 
-  - Blind search algorithms.
-  - Informed search algorithms.
+  - Blind search algorithms
+  - Informed search algorithms
 - **Readings:** 
   - Chapter 3: Blind search algorithms
   - Chapter 4: Informed search algorithms
 
 ### Week 5-6: Trajectory-Based Optimization
 - **Topics:** 
-  - Simulated annealing.
-  - Tabu search.
+  - Simulated annealing
+  - Tabu search
 - **Readings:** 
   - Chapter 5: Simulated annealing
   - Chapter 6: Tabu search
 
 ### Week 7-8: Evolutionary Computing Algorithms
 - **Topics:** 
-  - Genetic algorithms.
-  - Genetic algorithm variants.
+  - Binary Genetic algorithm (BGA)
+  - Gray-coded, Real-valued, and Permutation GA
 - **Readings:** 
-  - Chapter 7: Genetic algorithms
+  - Chapter 7: Genetic algorithms 
   - Chapter 8: Genetic algorithm variants
 
 ### Week 9-10: Swarm Intelligence Algorithms
 - **Topics:** 
-  - Particle swarm optimization (PSO).
-  - Ant colony optimization (ACO).
-  - Artificial bee colony (ABC).
+  - Particle swarm optimization (PSO)
+  - Ant colony optimization (ACO)
+  - Artificial bee colony (ABC)
 - **Readings:** 
   - Chapter 9: Particle swarm optimization
   - Chapter 10: Other swarm intelligence algorithms to explore
 
 ### Week 11-12: Machine Learning for Optimization
 - **Topics:** 
-  - Supervised and unsupervised learning.
-  - Reinforcement learning.
+  - Self-organizing map (SOM)
+  - Graph Machine Learning
+  - Reinforcement learning
 - **Readings:** 
   - Chapter 11: Supervised and unsupervised learning
   - Chapter 12: Reinforcement learning
