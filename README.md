@@ -53,7 +53,7 @@ If you downloaded the code bundle from the Manning website, please consider chec
 
 This book can be used as a textbook for courses about optimization algorithms. Download the accompanying **PowerPoint slides** for lectures and presentations based on the book. These slides provide key concepts, visual explanations, and examples to support learning and teaching.
 
-📥 [Download Slides](https://github.com/search-and-optimization/book/tree/main/Course) *TBD*
+📥 [Download Slides](https://github.com/search-and-optimization/book/tree/main/Course)
 
 ## 🛠 Errata
 
