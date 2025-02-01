@@ -56,8 +56,9 @@ By the end of this course, students will be able to:
 
 ### Week 9-10: Swarm Intelligence Algorithms
 - **Topics:** 
-  - Particle swarm optimization.
-  - Other swarm intelligence algorithms.
+  - Particle swarm optimization (PSO).
+  - Ant colony optimization (ACO).
+  - Artificial bee colony (ABC).
 - **Readings:** 
   - Chapter 9: Particle swarm optimization
   - Chapter 10: Other swarm intelligence algorithms to explore
