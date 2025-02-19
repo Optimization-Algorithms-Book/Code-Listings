@@ -2,8 +2,6 @@
 
 This file contains errata for the [Optimization Algorithms: AI techniques for design, planning, and control problems](https://www.manning.com/books/optimization-algorithms) book.
 
-![Book Cover](https://images.manning.com/book/a/027e69d-f16e-4550-a895-5dcbeba89248/Khamis-HI.png)
-
 ---
 
 ### Chapter 2, Section 2.1.1, Page 28
