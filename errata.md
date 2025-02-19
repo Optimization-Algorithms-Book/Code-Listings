@@ -6,5 +6,6 @@ This file contains errata for the [Optimization Algorithms: AI techniques for de
 * Chapter 3 Page 79 Figure 3.17: The S and SE arrows are shifted a bit downward.
 * Chapter 4 Page 119 Figure 4.17: Number 6,7,8 are missing in the last row of the goal node.
 * Chapter 5 Page 164 Algorithm 5.1: new location/state x_n+1 >> new location/state x_{n+1}
+* Chapter 6 Page 226 As the three swaps... >> As the four swaps...
 * Chapter 7 Page 256 Figure 7.12: The final selected individual is x=110, f(x)=90000
 * Appendix A Page 497: car manufacturing problem >> chess set problem
