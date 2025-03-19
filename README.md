@@ -51,8 +51,7 @@ If you downloaded the code bundle from the Manning website, please consider chec
 
 ## 📂 Supplementary Materials
 
-📌 **PowerPoint Slides** (📑 Teaching Supplement)  
-If this book is used as a textbook for teaching **Optimization Algorithms**, these [PowerPoint slides](https://github.com/Dr-AlaaKhamis/Optimization-Algorithms-Course) are provided as supplementary materials to support lectures and classroom discussions.
+📌 **PowerPoint Slides** This book can be used as a textbook for teaching **Optimization Algorithms**. These [PowerPoint slides](https://github.com/Dr-AlaaKhamis/Optimization-Algorithms-Course) are provided as supplementary materials to support lectures and classroom discussions.
 
 ## 🛠 Errata
 
