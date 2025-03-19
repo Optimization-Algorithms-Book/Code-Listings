@@ -49,6 +49,11 @@ Click the thumbnail to watch on YouTube!
 
 If you downloaded the code bundle from the Manning website, please consider checking out the [official code repository on GitHub](https://github.com/Optimization-Algorithms-Book/Code-Listings) for the most recent version.
 
+## 📂 Supplementary Materials
+
+📌 **PowerPoint Slides** (📑 Teaching Supplement)  
+If this book is used as a textbook for teaching **Optimization Algorithms**, these [PowerPoint slides](https://github.com/Dr-AlaaKhamis/Optimization-Algorithms-Course) are provided as supplementary materials to support lectures and classroom discussions.
+
 ## 🛠 Errata
 
 You can find errata for the book [here](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/errata.md).
