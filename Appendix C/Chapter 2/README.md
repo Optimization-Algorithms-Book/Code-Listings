@@ -1,5 +1,5 @@
 
-#  Chapter 2. A deeper look at search and optimization
+#  Chapter 2. Exercises
 
 | Example  | Notebook  |
 |---|---|
