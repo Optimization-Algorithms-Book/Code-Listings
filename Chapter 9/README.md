@@ -3,6 +3,7 @@
 
 | Example  | Notebook  |
 |---|---|
+| Interactive companion to Chapter 9 | [View Dashboard](https://htmlpreview.github.io/?https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/PSO_Lab.html) |
 | Solving Michalewicz function using PSO | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%209/Listing%209.1_Michalewicz_function.ipynb)  |
 | Solving TSP using binary PSO (BPSO) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%209/Listing%209.2_TSP.ipynb)  |
 | Neural Network training PSO | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%209/Listing%209.3_NN_Training.ipynb)  |
