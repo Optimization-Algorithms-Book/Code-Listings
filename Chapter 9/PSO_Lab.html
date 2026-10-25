@@ -66,6 +66,7 @@ code,.mono{font-family:var(--f-mono);font-size:.92em}
 .theme-switch button:hover{color:var(--ink)}
 .theme-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
 .main{margin-left:264px}
+@media (min-width:1280px){ .main .wrap{margin-left:0;padding-left:max(clamp(32px,3.5vw,56px),env(safe-area-inset-left,0px))} }
 .toc-toggle{display:none}
 .scrim{display:none}
 @media (max-width:1279px){
@@ -2069,7 +2070,8 @@ function tspStep(S, p) {
     btns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === mode)));
   }
   let saved = null; try { saved = localStorage.getItem("pso-lab-theme"); } catch (e) {}
-  apply(saved || (root.getAttribute("data-theme") || "system"));
+  const host = root.getAttribute("data-theme");
+  apply(["light", "dark", "system"].includes(saved) ? saved : host === "light" || host === "dark" ? host : "system");
   btns.forEach(b => b.addEventListener("click", () => { apply(b.dataset.themeSet); try { localStorage.setItem("pso-lab-theme", b.dataset.themeSet); } catch (e) {} }));
 })();
 
