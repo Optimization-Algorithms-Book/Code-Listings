@@ -3,7 +3,7 @@
 
 | Example  | Notebook  |
 |---|---|
-| Interactive companion | [Treasure Hunting Mission](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%209/Treasure_Hunting_Mission.html) |
+| Interactive companion | [Treasure Hunting Mission](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%202/Treasure_Hunting_Mission.html) |
 | Plotting unimodal, multimodal and deceptive using `matplotlib` and `sympy` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.1_ObjFcn.ipynb)  |
 | n-Queen Problem  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.2_NQueen.ipynb)  |
 | Solving n-Queen problem using `OR-Tools` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.3_NQueen_OR.ipynb)  |
