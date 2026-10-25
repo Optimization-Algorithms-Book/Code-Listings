@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive treasure-hunting mission illustrating every algorithm in Optimization Algorithms by Alaa Khamis (Manning, 2024).">
+<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<title>The Treasure-Hunting Mission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a nautical chart on the left as the stage, a field notebook of controls on the right, the book's five parts as the mission route. */
+:root{
+  --bg:#EDF2EF; --surface:#FFFFFF; --sunk:#E2EAE5; --ink:#13232B; --muted:#53656D; --line:#C9D6D0; --grid:#DCE5E0;
+  --accent:#0B5D8A; --accent-ink:#FFFFFF; --accent-soft:#D7E8F2; --gold:#B5701A; --gold-soft:#F6E7D2; --red:#B4372E; --good:#2E7D4F;
+  --p1:#0B5D8A; --p2:#B5701A; --p3:#7A4AB0; --p4:#2E7D4F; --p5:#B4372E;
+  --f-chart:"IM Fell English SC", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", Consolas, "Courier New", monospace;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#071118; --surface:#0E1C25; --sunk:#0A161E; --ink:#DCE6EA; --muted:#8DA1AB; --line:#213642; --grid:#16262F;
+  --accent:#5DB8EA; --accent-ink:#04131C; --accent-soft:#11314A; --gold:#F0A257; --gold-soft:#3A2814; --red:#F07D72; --good:#5CC48A;
+  --p1:#5DB8EA; --p2:#F0A257; --p3:#B99BEB; --p4:#5CC48A; --p5:#F07D72; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#071118; --surface:#0E1C25; --sunk:#0A161E; --ink:#DCE6EA; --muted:#8DA1AB; --line:#213642; --grid:#16262F;
+  --accent:#5DB8EA; --accent-ink:#04131C; --accent-soft:#11314A; --gold:#F0A257; --gold-soft:#3A2814; --red:#F07D72; --good:#5CC48A;
+  --p1:#5DB8EA; --p2:#F0A257; --p3:#B99BEB; --p4:#5CC48A; --p5:#F07D72; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{margin:0;text-wrap:balance}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cap{font-size:.8rem;color:var(--muted);margin:0}
+
+/* header */
+header.top{padding-block:1.6rem 1rem;border-bottom:1px solid var(--line)}
+.top-row{display:flex;justify-content:space-between;align-items:flex-end;gap:1.5rem;flex-wrap:wrap}
+.top h1{font-family:var(--f-chart);font-weight:400;font-size:clamp(2rem,4.2vw,3.1rem);line-height:1.05;letter-spacing:.01em}
+.top .lede{max-width:70ch;color:var(--muted);margin:.5rem 0 0}
+.cite{font-size:.82rem;color:var(--muted);margin-top:.5rem}
+.cite a{color:var(--ink)}
+.theme-switch{display:flex;gap:2px;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:2px}
+.theme-switch button{border:0;background:none;font:inherit;font-size:.78rem;font-weight:500;padding:.3rem .7rem;border-radius:6px;color:var(--muted);cursor:pointer}
+.theme-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+
+/* route (the five parts) */
+.route{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.8rem 1.2rem;align-items:center;padding-block:1rem}
+.tour-btns{display:flex;gap:.45rem;flex-wrap:wrap}
+.parts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.5rem}
+.part{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:.5rem .6rem;min-width:0;border-top:4px solid var(--pc)}
+.part h3{font-size:.78rem;font-weight:600;margin:0 0 .35rem;display:flex;justify-content:space-between;gap:.3rem}
+.part h3 span{font-family:var(--f-mono);font-weight:500;color:var(--muted);font-size:.68rem}
+.chips{display:flex;flex-wrap:wrap;gap:.25rem}
+.chip{font:inherit;font-size:.76rem;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:.18rem .55rem;cursor:pointer;white-space:nowrap}
+.chip:hover{border-color:var(--pc)}
+.chip[aria-pressed="true"]{background:var(--pc);border-color:var(--pc);color:var(--surface);font-weight:600}
+.chip.done::after{content:" ✓";font-size:.7rem}
+
+/* app */
+.app{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;align-items:start}
+.mapwrap{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:var(--sunk)}
+#map{display:block;width:100%;aspect-ratio:10/7}
+.caption{position:absolute;left:12px;right:12px;bottom:12px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-left:4px solid var(--pc,var(--accent));border-radius:8px;padding:.55rem .8rem;font-size:.86rem;max-width:640px;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.caption b{display:block;font-size:.72rem;font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.pill{position:absolute;top:12px;left:12px;font-family:var(--f-mono);font-size:.75rem;padding:.25rem .6rem;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.pill.found{background:var(--good);color:var(--surface);border-color:var(--good)}
+.pill.stuck{background:var(--gold);color:var(--surface);border-color:var(--gold)}
+.legend{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;font-size:.78rem;color:var(--muted);padding:.6rem .2rem}
+.legend i{display:inline-block;width:11px;height:11px;margin-right:.35rem;vertical-align:-1px;border-radius:2px}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);display:flex;flex-direction:column;min-width:0}
+.panel section{padding:.9rem 1rem;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:.6rem}
+.panel section:last-child{border-bottom:0}
+.story h2{font-family:var(--f-chart);font-weight:400;font-size:1.6rem;line-height:1.1}
+.story p{margin:0;font-size:.9rem}
+.story .maps{font-size:.82rem;color:var(--muted);border-left:3px solid var(--pc,var(--accent));padding-left:.6rem}
+.story .links{display:flex;gap:.8rem;flex-wrap:wrap;font-size:.8rem}
+.ctl{display:flex;flex-direction:column;gap:.12rem}
+.ctl label{display:flex;justify-content:space-between;gap:.5rem;font-size:.82rem;font-weight:500}
+.ctl output{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.ctl small{font-size:.72rem;color:var(--muted);line-height:1.35}
+.ctl-check label{justify-content:flex-start;align-items:center;font-weight:400}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.86rem;padding:.3rem .4rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:100%}
+.btns{display:flex;gap:.4rem;flex-wrap:wrap}
+button.b{font:inherit;font-size:.85rem;font-weight:500;padding:.42rem .85rem;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button.b:hover{border-color:var(--accent)}
+button.b.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.stat{background:var(--sunk);border-radius:7px;padding:.35rem .55rem;min-width:0}
+.stat span{display:block;font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat b{font-family:var(--f-mono);font-weight:500;font-size:.9rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+
+/* lower */
+.lower{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:1.4rem;padding-block:1.6rem 2.4rem;align-items:start}
+.lower > div,.app > div{min-width:0}
+.lower h2{font-family:var(--f-chart);font-weight:400;font-size:1.5rem;margin-bottom:.6rem}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th,td{padding:.4rem .6rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--sunk);font-size:.74rem;font-weight:600}
+td.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;padding:.05rem .45rem;border-radius:999px;color:var(--surface)}
+.tag.found{background:var(--good)} .tag.stuck{background:var(--gold)}
+td .sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:.4rem}
+footer{border-top:1px solid var(--line);padding-block:1.2rem 2rem;font-size:.82rem;color:var(--muted)}
+footer a{color:var(--ink)}
+
+@media (max-width:1100px){ .app{grid-template-columns:minmax(0,1fr)} .parts{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))} .route{grid-template-columns:1fr} }
+@media (max-width:760px){ .lower{grid-template-columns:minmax(0,1fr)} .caption{position:static;margin:0;border-radius:0;max-width:none;box-shadow:none;border-left-width:4px;border-top:1px solid var(--line)} }
+@media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div>
+        <div class="eyebrow">Interactive companion · Chapter 2 sidebar · Every algorithm family in the book</div>
+        <h1>The Treasure-Hunting Mission</h1>
+        <p class="lede">Searching for an optimal solution is like hunting for pirate treasure on an island. You and your friends are the search agents, and every part of the book gives you a different way to search. Pick a hunting strategy, press Run, and watch it work on the same island.</p>
+        <p class="cite">Based on Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024.</p>
+      </div>
+      <div class="theme-switch" role="group" aria-label="Color theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="system">System</button></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="route">
+    <div class="tour-btns">
+      <button class="b primary" id="tourBtn">▶ Play the whole mission</button>
+      <button class="b" id="tourNext" hidden>Skip to next</button>
+    </div>
+    <div class="parts" id="parts"></div>
+  </div>
+
+  <div class="app">
+    <div>
+      <div class="mapwrap" id="mapwrap">
+        <canvas id="map" aria-label="Treasure island search space with the hunters"></canvas>
+        <div class="pill" id="pill">Ready</div>
+        <div class="caption" id="caption"></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:linear-gradient(90deg,#CFE0B4,#86B472,#CDBB98)"></i>Island: feasible search space, shaded by elevation (the objective)</span>
+        <span><i style="background:#E0461F"></i>Active volcano: infeasible region</span>
+        <span><i style="background:var(--red);border-radius:0;transform:rotate(45deg)"></i>X: the treasure (global optimum)</span>
+        <span><i style="background:#8a7a5a"></i>▲ Lower hills: local optima</span>
+      </div>
+    </div>
+    <aside class="panel" aria-label="Mission controls">
+      <section class="story" id="story"></section>
+      <section>
+        <div class="btns"><button class="b primary" id="run">Run</button><button class="b" id="step">Step</button><button class="b" id="reset">New attempt</button></div>
+        <div id="common"></div>
+      </section>
+      <section><div class="stats" id="stats"></div></section>
+      <section id="paramsSec"><div class="eyebrow">Strategy parameters</div><div id="params"></div></section>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <div>
+      <h2>Expedition log</h2>
+      <p class="cap" style="margin-bottom:.6rem">Every finished attempt is logged here, so you can compare strategies on the same island. "Spots checked" counts objective evaluations: how many places a hunter had to inspect.</p>
+      <div class="tbl-wrap"><table id="log"><thead><tr><th>#</th><th>Strategy</th><th>Part</th><th>Outcome</th><th class="n" style="text-align:right">Spots checked</th><th class="n" style="text-align:right">Best elevation</th></tr></thead><tbody></tbody></table></div>
+      <div class="btns" style="margin-top:.6rem"><button class="b" id="clearLog">Clear log</button></div>
+    </div>
+    <div>
+      <h2>The metaphor, decoded</h2>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>On the island</th><th>In optimization</th></tr></thead>
+        <tbody>
+          <tr><td>The whole island except the active volcano</td><td>Feasible search space</td></tr>
+          <tr><td>The active volcano (and the sea)</td><td>Infeasible region: violates a constraint</td></tr>
+          <tr><td>The treasure, marked X</td><td>The optimal solution (global optimum)</td></tr>
+          <tr><td>Elevation, because pirates hid treasure on high spots</td><td>The objective function to maximize</td></tr>
+          <tr><td>Lower hills such as Parrot Hill</td><td>Local optima that can trap a search</td></tr>
+          <tr><td>You and your friends</td><td>Search agents</td></tr>
+          <tr><td>Strength of the metal detector signal</td><td>Reward signal for learning-based methods</td></tr>
+          <tr><td>Records of earlier treasure hunts</td><td>Historical data to train a predictive model</td></tr>
+        </tbody></table></div>
+      <p class="cap" style="margin-top:.6rem">Fire Mountain is the highest point on the island, but it is an active volcano, so it can never be the answer. This is why constraints matter: the best feasible solution is not always the highest point overall.</p>
+    </div>
+  </div>
+</div>
+<footer><div class="wrap">Interactive companion to <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024). Code for every chapter: <a href="https://github.com/Optimization-Algorithms-Book/Code-Listings" target="_blank" rel="noopener">Optimization-Algorithms-Book/Code-Listings</a>.</div></footer>
+
+<script>
+"use strict";
+/* ---------- theme switch (runs first so nothing later can disable it) ---------- */
+(function themeSwitch() {
+  const root = document.documentElement, btns = [...document.querySelectorAll("[data-theme-set]")];
+  function apply(mode) {
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
+    btns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === mode)));
+  }
+  let saved = null; try { saved = localStorage.getItem("treasure-theme"); } catch (e) {}
+  const host = root.getAttribute("data-theme");
+  apply(["light", "dark", "system"].includes(saved) ? saved : host === "light" || host === "dark" ? host : "system");
+  btns.forEach(b => b.addEventListener("click", () => { apply(b.dataset.themeSet); try { localStorage.setItem("treasure-theme", b.dataset.themeSet); } catch (e) {} }));
+})();
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const PI = Math.PI, MONO = '"IBM Plex Mono", Consolas, monospace', CHART = '"IM Fell English SC", Georgia, serif';
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function mulberry32(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const gauss = rnd => Math.sqrt(-2 * Math.log(rnd() + 1e-12)) * Math.cos(2 * PI * rnd());
+const isDark = () => { const t = document.documentElement.getAttribute("data-theme"); return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
+const fmt = (v, d = 3) => isFinite(v) ? v.toFixed(d) : "n/a";
+function makeControls(el, specs, onChange) {
+  const api = {}; el.innerHTML = "";
+  for (const s of specs) {
+    const wrap = document.createElement("div"); wrap.className = "ctl";
+    if (s.type === "select") wrap.innerHTML = `<label for="${s.id}">${s.label}</label><select id="${s.id}">${s.options.map(o => `<option value="${o[0]}"${o[0] == s.value ? " selected" : ""}>${o[1]}</option>`).join("")}</select>`;
+    else if (s.type === "check") { wrap.className = "ctl ctl-check"; wrap.innerHTML = `<label><input type="checkbox" id="${s.id}"${s.value ? " checked" : ""}>&nbsp;${s.label}</label>`; }
+    else wrap.innerHTML = `<label for="${s.id}">${s.label}<output></output></label><input type="range" id="${s.id}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.value}">`;
+    if (s.hint) wrap.insertAdjacentHTML("beforeend", `<small>${s.hint}</small>`);
+    el.appendChild(wrap);
+    const inp = wrap.querySelector("input,select"), out = wrap.querySelector("output"), f = s.fmt || (v => v);
+    const read = () => s.type === "select" ? inp.value : s.type === "check" ? inp.checked : parseFloat(inp.value);
+    const upd = () => { if (out) out.textContent = f(read()); }; upd();
+    inp.addEventListener(s.type === "select" || s.type === "check" ? "change" : "input", () => { upd(); onChange && onChange(s.key, read()); });
+    Object.defineProperty(api, s.key, { get: read, set(v) { if (s.type === "check") inp.checked = v; else inp.value = v; upd(); }, enumerable: true });
+  }
+  return api;
+}
+
+/* ---------- the island ---------- */
+const WY = 0.7, C0 = [0.5, 0.35], LAVA_R = 0.062, FOUND_R = 0.025;
+const PEAKS = [
+  { n: "Eagle Peak", x: 0.715, y: 0.305, h: 0.95, s: 0.05 },
+  { n: "Fire Mountain", x: 0.47, y: 0.245, h: 1.2, s: 0.065, volcano: true },
+  { n: "Parrot Hill", x: 0.27, y: 0.40, h: 0.72, s: 0.07 },
+  { n: "Lookout Knoll", x: 0.56, y: 0.47, h: 0.55, s: 0.045 },
+  { n: "Coconut Ridge", x: 0.31, y: 0.21, h: 0.5, s: 0.04 },
+  { n: "Monkey Mound", x: 0.66, y: 0.43, h: 0.45, s: 0.04 }
+];
+const VOL = PEAKS[1];
+const islandR = th => 0.33 + 0.035 * Math.sin(3 * th + 0.6) + 0.025 * Math.sin(5 * th + 2.1) + 0.015 * Math.sin(9 * th + 0.3);
+function landMask(x, y) { const dx = x - C0[0], dy = (y - C0[1]) / 0.72; return islandR(Math.atan2(dy, dx)) - Math.hypot(dx, dy); }
+function elev(x, y) {
+  const m = landMask(x, y); if (m <= 0) return m * 4;
+  const taper = Math.min(1, m / 0.05);
+  let e = 0.1 * Math.min(1, m / 0.06);
+  for (const p of PEAKS) e += taper * p.h * Math.exp(-((x - p.x) ** 2 + (y - p.y) ** 2) / (2 * p.s * p.s));
+  const dv = Math.hypot(x - VOL.x, y - VOL.y); e -= 0.3 * Math.exp(-dv * dv / (2 * 0.02 * 0.02));   // crater
+  e += taper * 0.022 * Math.sin(41 * x + 3 * y) * Math.sin(33 * y - 2 * x);                      // small bumps
+  return e;
+}
+const inLava = (x, y) => Math.hypot(x - VOL.x, y - VOL.y) <= LAVA_R;
+const feasible = (x, y) => x > 0 && x < 1 && y > 0 && y < WY && landMask(x, y) > 0.004 && !inLava(x, y);
+const fit = (x, y) => feasible(x, y) ? elev(x, y) : -1;   // death penalty outside the feasible space
+// treasure = highest feasible point; base camp = Landing Cove on the west shore
+const TREASURE = (() => { let b = { e: -9 }; for (let i = 600; i <= 900; i++) for (let j = 150; j <= 400; j++) { const x = i / 1000, y = j / 1000; if (feasible(x, y)) { const e = elev(x, y); if (e > b.e) b = { x, y, e }; } } return b; })();
+const COVE = (() => { const a = PI * 0.93; for (let r = 0; r < 0.5; r += 0.001) { const x = C0[0] + r * Math.cos(a), y = C0[1] + r * 0.72 * Math.sin(a); if (landMask(x, y) < 0.012) return { x, y }; } })();
+const nearTreasure = (x, y) => Math.hypot(x - TREASURE.x, y - TREASURE.y) < FOUND_R;
+function randomFeasible(rnd) { for (let k = 0; k < 2000; k++) { const x = rnd(), y = rnd() * WY; if (feasible(x, y)) return [x, y]; } return [COVE.x, COVE.y]; }
+
+/* grid used by graph search, hill climbing, beam and tabu search */
+const G = 0.01, GX = 100, GY = 70;
+const cellX = i => (i + .5) * G, cellY = j => (j + .5) * G;
+const GFEAS = new Uint8Array(GX * GY), GELEV = new Float32Array(GX * GY);
+for (let j = 0; j < GY; j++) for (let i = 0; i < GX; i++) { const k = j * GX + i; GFEAS[k] = feasible(cellX(i), cellY(j)) ? 1 : 0; GELEV[k] = elev(cellX(i), cellY(j)); }
+const toCell = (x, y) => Math.min(GY - 1, Math.max(0, Math.floor(y / G))) * GX + Math.min(GX - 1, Math.max(0, Math.floor(x / G)));
+const COVE_CELL = toCell(COVE.x, COVE.y), GOAL_CELL = toCell(TREASURE.x, TREASURE.y);
+const N8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+function nbrs(k, ring = 1) {
+  const i = k % GX, j = (k / GX) | 0, out = [];
+  for (let dy = -ring; dy <= ring; dy++) for (let dx = -ring; dx <= ring; dx++) {
+    if (!dx && !dy) continue; const a = i + dx, b = j + dy;
+    if (a < 0 || b < 0 || a >= GX || b >= GY) continue; const n = b * GX + a; if (GFEAS[n]) out.push(n);
+  }
+  return out;
+}
+const cellNear = k => nearTreasure(cellX(k % GX), cellY((k / GX) | 0));
+function randomCell(rnd) { for (let t = 0; t < 5000; t++) { const k = ((rnd() * GX) | 0) + ((rnd() * GY) | 0) * GX; if (GFEAS[k]) return k; } return COVE_CELL; }
+// nearest feasible point to (x, y): used so every initial solution starts on the island and outside the volcano
+function nearestFeasible(x, y) { if (feasible(x, y)) return [x, y]; for (let r = .005; r < .4; r += .005) for (let a = 0; a < 2 * PI; a += PI / 16) { const X = x + r * Math.cos(a), Y = y + r * Math.sin(a); if (feasible(X, Y)) return [X, Y]; } return [COVE.x, COVE.y]; }
+
+/* ---------- map rendering ---------- */
+const LIGHT_LAND = [[0, "#E7E0C3"], [.12, "#D3E3B6"], [.3, "#AFD08F"], [.5, "#8BB775"], [.68, "#B3A47C"], [.86, "#CDBC98"], [1.05, "#E9E1D0"]];
+const DARK_LAND = [[0, "#2A3426"], [.12, "#24372A"], [.3, "#2A4430"], [.5, "#2F4C34"], [.68, "#46493A"], [.86, "#58553F"], [1.05, "#6D6A57"]];
+const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+function ramp(stops, v) {
+  if (v <= stops[0][0]) return hex(stops[0][1]);
+  for (let i = 1; i < stops.length; i++) if (v <= stops[i][0]) { const [a, ca] = stops[i - 1], [b, cb] = stops[i], t = (v - a) / (b - a), A = hex(ca), B = hex(cb); return A.map((q, k) => q + (B[k] - q) * t); }
+  return hex(stops[stops.length - 1][1]);
+}
+let terrainCache = { key: "", cv: null };
+function terrainLayer(w, h, dpr) {
+  const dark = isDark(), key = [w, h, dpr, dark].join("|");
+  if (terrainCache.key === key) return terrainCache.cv;
+  const RW = Math.round(Math.min(1100, w * dpr)), RH = Math.round(RW * WY);
+  const cv = document.createElement("canvas"); cv.width = RW; cv.height = RH;
+  const ctx = cv.getContext("2d"), img = ctx.createImageData(RW, RH), band = new Int16Array(RW * RH), land = new Uint8Array(RW * RH);
+  const LAND = dark ? DARK_LAND : LIGHT_LAND, seaS = hex(dark ? "#0E2636" : "#CFE5EC"), seaD = hex(dark ? "#081621" : "#93BED3");
+  for (let py = 0; py < RH; py++) for (let px = 0; px < RW; px++) {
+    const x = (px + .5) / RW, y = (py + .5) / RW, m = landMask(x, y), k = py * RW + px;
+    let c;
+    if (m <= 0) { const t = Math.min(1, -m / 0.12); c = seaS.map((q, i) => q + (seaD[i] - q) * t); band[k] = -1 - Math.floor(-m / 0.03); }
+    else { const e = elev(x, y); c = ramp(LAND, e); band[k] = Math.floor(e / 0.1); land[k] = 1; }
+    img.data[k * 4] = c[0]; img.data[k * 4 + 1] = c[1]; img.data[k * 4 + 2] = c[2]; img.data[k * 4 + 3] = 255;
+  }
+  const contour = dark ? [150, 160, 120] : [92, 104, 70], coast = dark ? [170, 190, 200] : [40, 66, 80], depth = dark ? [40, 80, 105] : [120, 165, 190];
+  for (let py = 0; py < RH - 1; py++) for (let px = 0; px < RW - 1; px++) {
+    const k = py * RW + px, r = k + 1, d = k + RW;
+    if (land[k] !== land[r] || land[k] !== land[d]) { for (let i = 0; i < 3; i++) img.data[k * 4 + i] = coast[i]; }
+    else if (band[k] !== band[r] || band[k] !== band[d]) { const c = land[k] ? contour : depth, a = land[k] ? .45 : .35; for (let i = 0; i < 3; i++) img.data[k * 4 + i] = img.data[k * 4 + i] * (1 - a) + c[i] * a; }
+  }
+  ctx.putImageData(img, 0, 0);
+  // chart furniture, drawn in CSS pixels
+  const s = RW / w; ctx.save(); ctx.scale(s, s);
+  const X = x => x * w, Y = y => y * w, ink = dark ? "#C9D6DC" : "#2B3E47", soft = dark ? "#6F8794" : "#6A8794";
+  const rs = mulberry32(17); ctx.font = `10px ${MONO}`; ctx.fillStyle = soft; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  const nSound = w < 600 ? 30 : 70;
+  for (let n = 0; n < nSound; n++) { const x = rs(), y = rs() * WY, m = landMask(x, y), clear = !(y < .08 && Math.abs(x - .5) < .18) && Math.hypot(x - .91, y - .1) > .07 && !(x < .25 && y > WY - .09); if (m < -0.03 && clear && x > .03 && x < .97 && y > .03 && y < WY - .03) ctx.fillText(String(Math.round(4 + 30 * Math.min(1, -m / 0.2) + rs() * 6)), X(x), Y(y)); }
+  // compass rose
+  const cx = X(0.91), cy = Y(0.1), R = w * 0.045;
+  ctx.strokeStyle = ink; ctx.fillStyle = ink; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * PI); ctx.stroke(); ctx.beginPath(); ctx.arc(cx, cy, R * .78, 0, 2 * PI); ctx.globalAlpha = .5; ctx.stroke(); ctx.globalAlpha = 1;
+  for (let q = 0; q < 4; q++) { const a = q * PI / 2 - PI / 2; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * R * 1.05, cy + Math.sin(a) * R * 1.05); ctx.lineTo(cx + Math.cos(a + PI / 2) * R * .16, cy + Math.sin(a + PI / 2) * R * .16); ctx.lineTo(cx + Math.cos(a - PI / 2) * R * .16, cy + Math.sin(a - PI / 2) * R * .16); ctx.closePath(); q === 0 ? ctx.fill() : ctx.stroke(); }
+  ctx.font = `${Math.max(11, w * .016)}px ${CHART}`; ctx.fillText("N", cx, cy - R * 1.32);
+  // scale bar (island about 3 km across)
+  const sx = X(0.04), sy = Y(WY - 0.04), seg = w * (1 / 6) / 2;
+  ctx.lineWidth = 1; for (let q = 0; q < 2; q++) { ctx.fillStyle = q ? (dark ? "#0A161E" : "#fff") : ink; ctx.fillRect(sx + q * seg, sy, seg, 5); ctx.strokeRect(sx + q * seg, sy, seg, 5); }
+  ctx.fillStyle = ink; ctx.font = `10px ${MONO}`; ctx.textBaseline = "top"; ["0", "250", "500 m"].forEach((t, q) => ctx.fillText(t, sx + q * seg, sy + 8));
+  // landmark names
+  ctx.textBaseline = "middle"; ctx.font = `${Math.max(11, w * .015)}px ${CHART}`;
+  const halo = (t, x, y) => { ctx.lineWidth = 3; ctx.strokeStyle = dark ? "rgba(7,17,24,.8)" : "rgba(255,255,255,.75)"; ctx.strokeText(t, x, y); ctx.fillStyle = ink; ctx.fillText(t, x, y); };
+  for (const p of PEAKS) { const ly = p.volcano ? p.y - LAVA_R - 0.02 : p.y + 0.028; halo((p.volcano ? "" : "▲ ") + p.n + (p.volcano ? " (active volcano)" : ""), X(p.x), Y(ly)); }
+  ctx.textAlign = "right"; halo("Landing Cove", X(COVE.x) - 10, Y(COVE.y)); ctx.textAlign = "center";
+  ctx.font = `${Math.max(14, w * .024)}px ${CHART}`; ctx.globalAlpha = .7; halo("Treasure Island", X(0.5), Y(0.045)); ctx.globalAlpha = 1;
+  ctx.restore();
+  terrainCache = { key, cv }; return cv;
+}
+
+/* ---------- algorithms ---------- */
+const PARTS = [
+  { n: 1, name: "Deterministic search", ch: "Chapters 3 and 4" },
+  { n: 2, name: "Trajectory-based", ch: "Chapters 5 and 6" },
+  { n: 3, name: "Evolutionary computing", ch: "Chapters 7 and 8" },
+  { n: 4, name: "Swarm intelligence", ch: "Chapters 9 and 10" },
+  { n: 5, name: "Machine learning", ch: "Chapters 11 and 12" }
+];
+const CODE = n => `https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Chapter%20${n}`;
+const ALGOS = [];
+const reg = a => ALGOS.push(a);
+
+/* ---- Part 1: graph search on the island grid ---- */
+class Heap { constructor() { this.a = []; } push(p, v) { const a = this.a; a.push([p, v]); let i = a.length - 1; while (i) { const q = (i - 1) >> 1; if (a[q][0] <= a[i][0]) break; [a[q], a[i]] = [a[i], a[q]]; i = q; } }
+  pop() { const a = this.a, top = a[0], last = a.pop(); if (a.length) { a[0] = last; let i = 0; for (;;) { const l = 2 * i + 1, r = l + 1; let m = i; if (l < a.length && a[l][0] < a[m][0]) m = l; if (r < a.length && a[r][0] < a[m][0]) m = r; if (m === i) break; [a[m], a[i]] = [a[i], a[m]]; i = m; } } return top; }
+  get size() { return this.a.length; } }
+function graphSearch(kind) {
+  return {
+    init(P) {
+      const S = { kind, evals: 0, status: "running", closed: new Uint8Array(GX * GY), open: new Uint8Array(GX * GY), prev: new Int32Array(GX * GY).fill(-1), g: new Float64Array(GX * GY).fill(Infinity), path: null, cur: COVE_CELL };
+      S.g[COVE_CELL] = 0; S.open[COVE_CELL] = 1;
+      if (kind === "bfs") { S.q = [COVE_CELL]; S.head = 0; } else if (kind === "dfs") S.q = [COVE_CELL]; else { S.h = new Heap(); S.h.push(kind === "astar" ? heur(COVE_CELL) * P.hw : 0, COVE_CELL); }
+      S.best = { e: GELEV[COVE_CELL], k: COVE_CELL }; return S;
+    },
+    step(S, P) {
+      let k = -1;
+      if (S.kind === "bfs") { while (S.head < S.q.length) { const c = S.q[S.head++]; if (!S.closed[c]) { k = c; break; } } }
+      else if (S.kind === "dfs") { while (S.q.length) { const c = S.q.pop(); if (!S.closed[c]) { k = c; break; } } }
+      else { while (S.h.size) { const [, c] = S.h.pop(); if (!S.closed[c]) { k = c; break; } } }
+      if (k < 0) { S.status = "stuck"; S.msg = "Searched everywhere reachable"; return; }
+      S.closed[k] = 1; S.open[k] = 0; S.evals++; S.cur = k;
+      if (GELEV[k] > S.best.e) S.best = { e: GELEV[k], k };
+      if (k === GOAL_CELL || cellNear(k)) { S.status = "found"; S.best = { e: GELEV[k], k }; const p = []; for (let c = k; c >= 0; c = S.prev[c]) p.push(c); S.path = p.reverse(); S.msg = `Path of ${S.path.length} steps`; return; }
+      const list = nbrs(k);
+      if (S.kind === "dfs") list.reverse();
+      for (const n of list) {
+        if (S.closed[n]) continue;
+        const dx = Math.abs((n % GX) - (k % GX)), dy = Math.abs(((n / GX) | 0) - ((k / GX) | 0)), len = Math.hypot(dx, dy);
+        const cost = S.kind === "bfs" || S.kind === "dfs" ? 1 : len * (1 + 12 * Math.abs(GELEV[n] - GELEV[k]));   // walking effort: distance plus climbing
+        if (S.kind === "bfs") { if (!S.open[n]) { S.open[n] = 1; S.prev[n] = k; S.q.push(n); } }
+        else if (S.kind === "dfs") { S.open[n] = 1; S.prev[n] = k; S.q.push(n); }
+        else { const g = S.g[k] + cost; if (g < S.g[n]) { S.g[n] = g; S.prev[n] = k; S.open[n] = 1; S.h.push(g + (S.kind === "astar" ? heur(n) * P.hw : 0), n); } }
+      }
+    },
+    draw(ctx, S, w, col) {
+      const cs = G * w;
+      ctx.fillStyle = col; ctx.globalAlpha = .3;
+      for (let k = 0; k < GX * GY; k++) if (S.closed[k]) ctx.fillRect((k % GX) * cs, ((k / GX) | 0) * cs, cs + .5, cs + .5);
+      ctx.globalAlpha = .85; ctx.fillStyle = css("--gold");
+      for (let k = 0; k < GX * GY; k++) if (S.open[k] && !S.closed[k]) ctx.fillRect((k % GX) * cs + cs * .25, ((k / GX) | 0) * cs + cs * .25, cs * .5, cs * .5);
+      ctx.globalAlpha = 1;
+      const trace = S.path || (() => { const p = []; for (let c = S.cur; c >= 0 && p.length < 400; c = S.prev[c]) p.push(c); return p.reverse(); })();
+      drawCellPath(ctx, trace, w, S.path ? css("--red") : col, S.path ? 3 : 2);
+      hunter(ctx, cellX(S.cur % GX) * w, cellY((S.cur / GX) | 0) * w, col);
+    },
+    stats: S => [["Spots checked", S.evals], ["Frontier", S.kind === "bfs" ? S.q.length - S.head : S.kind === "dfs" ? S.q.length : S.h.size], ["Path length", S.path ? S.path.length + " steps" : "n/a"], ["Elevation here", fmt(GELEV[S.cur])]]
+  };
+}
+const heur = k => Math.hypot((k % GX) - (GOAL_CELL % GX), ((k / GX) | 0) - ((GOAL_CELL / GX) | 0));
+function drawCellPath(ctx, p, w, col, lw) { if (!p || p.length < 2) return; ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = "round"; ctx.beginPath(); p.forEach((k, i) => { const x = cellX(k % GX) * w, y = cellY((k / GX) | 0) * w; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke(); }
+
+reg(Object.assign(graphSearch("bfs"), { key: "bfs", part: 1, chap: 3, name: "Breadth-first search", short: "BFS",
+  story: "You have no map and no clues. Starting at Landing Cove, you check every spot one step away, then every spot two steps away, and so on, in ever-wider rings.",
+  maps: "Blind (uninformed) search: guaranteed to find the treasure, but it inspects almost the whole island first.", speed: 600, params: [] }));
+reg(Object.assign(graphSearch("dfs"), { key: "dfs", part: 1, chap: 3, name: "Depth-first search", short: "DFS",
+  story: "Still blind, but impatient: you follow one trail as far as it goes and only backtrack at a dead end.",
+  maps: "Blind search with a stack. It can stumble on the treasure early or wander for a long time, and its path is far from the shortest.", speed: 600, params: [] }));
+reg(Object.assign(graphSearch("ucs"), { key: "ucs", part: 1, chap: 3, name: "Dijkstra / uniform-cost search", short: "Dijkstra",
+  story: "Climbing is tiring, so each step costs its distance plus the effort of going up or down. You always continue from the spot that is cheapest to reach from camp.",
+  maps: "Blind shortest-path search: the explored area grows by cost, not by step count, and the path found is the least effort route.", speed: 600, params: [] }));
+reg(Object.assign(graphSearch("astar"), { key: "astar", part: 1, chap: 4, name: "A* search", short: "A*",
+  story: "You found an old pirate map with an X on it. Now every candidate spot is ranked by effort so far plus the straight-line distance still to go.",
+  maps: "Informed search: the heuristic focuses exploration toward the goal, so far fewer spots are checked than with Dijkstra.", speed: 300,
+  params: [{ key: "hw", id: "pHw", label: "Heuristic weight", min: 0, max: 3, step: .1, value: 1, hint: "0 turns A* into Dijkstra. Above 1 is greedier: faster, but the path may not be the cheapest." }] }));
+
+reg({ key: "hc", part: 1, chap: 4, name: "Hill climbing", short: "Hill climbing",
+  story: "You know the pirates hid treasure on elevated spots, so you always step to the highest neighboring spot. When no neighbor is higher, you stop.",
+  maps: "Informed local search: fast, but it stops on the first peak it reaches, which may be a lower hill (a local optimum).", speed: 12,
+  params: [{ key: "restarts", id: "pRs", label: "Random restarts", min: 0, max: 15, step: 1, value: 0, hint: "When stuck, start climbing again from a random spot." }],
+  init(P, rnd) { return { evals: 0, status: "running", cur: COVE_CELL, trail: [COVE_CELL], old: [], peaks: [], left: P.restarts, rnd, best: { e: GELEV[COVE_CELL], k: COVE_CELL } }; },
+  step(S) {
+    let b = -1, be = GELEV[S.cur];
+    for (const n of nbrs(S.cur)) { S.evals++; if (GELEV[n] > be + 1e-9) { be = GELEV[n]; b = n; } }
+    if (b >= 0) { S.cur = b; S.trail.push(b); if (be > S.best.e) S.best = { e: be, k: b }; if (cellNear(b)) { S.status = "found"; S.msg = "Reached the treasure"; } return; }
+    S.peaks.push(S.cur);
+    if (cellNear(S.cur)) { S.status = "found"; return; }
+    if (S.left > 0) { S.left--; S.old.push(S.trail); S.cur = randomCell(S.rnd); S.trail = [S.cur]; return; }
+    S.status = "stuck"; S.msg = "No higher neighbor: stuck on a local peak";
+  },
+  draw(ctx, S, w, col) {
+    ctx.globalAlpha = .45; S.old.forEach(t => drawCellPath(ctx, t, w, col, 2)); ctx.globalAlpha = 1;
+    drawCellPath(ctx, S.trail, w, col, 3);
+    S.peaks.forEach(k => flag(ctx, cellX(k % GX) * w, cellY((k / GX) | 0) * w, css("--gold")));
+    hunter(ctx, cellX(S.cur % GX) * w, cellY((S.cur / GX) | 0) * w, col);
+  },
+  stats: S => [["Spots checked", S.evals], ["Peaks reached", S.peaks.length], ["Elevation here", fmt(GELEV[S.cur])], ["Restarts left", S.left]] });
+
+reg({ key: "beam", part: 1, chap: 4, name: "Beam search", short: "Beam search",
+  story: "A few friends land at random spots. In every round the group looks at all spots next to anyone, and only the k highest are kept for the next round.",
+  maps: "Informed search with a beam of width k: sharing the k best candidates beats k separate climbers, but a narrow beam can still miss.", speed: 8,
+  params: [{ key: "k", id: "pK", label: "Beam width k", min: 1, max: 12, step: 1, value: 5 }],
+  init(P, rnd) { const beam = []; while (beam.length < P.k) { const c = randomCell(rnd); if (!beam.includes(c)) beam.push(c); } return { evals: beam.length, status: "running", beam, seen: new Set(beam), hist: [beam.slice()], best: beam.reduce((b, k) => GELEV[k] > b.e ? { e: GELEV[k], k } : b, { e: -9 }) }; },
+  step(S, P) {
+    const pool = new Set(S.beam);
+    for (const k of S.beam) for (const n of nbrs(k)) { if (!S.seen.has(n)) { S.seen.add(n); S.evals++; } pool.add(n); }
+    const nb = [...pool].sort((a, b) => GELEV[b] - GELEV[a]).slice(0, P.k);
+    const same = nb.every(k => S.beam.includes(k));
+    S.beam = nb; S.hist.push(nb.slice()); if (S.hist.length > 60) S.hist.shift();
+    if (GELEV[nb[0]] > S.best.e) S.best = { e: GELEV[nb[0]], k: nb[0] };
+    if (nb.some(cellNear)) { S.status = "found"; S.msg = "A beam member reached the treasure"; return; }
+    if (same) { S.status = "stuck"; S.msg = "The beam stopped improving on a local peak"; }
+  },
+  draw(ctx, S, w, col) {
+    S.hist.forEach((b, i) => { ctx.globalAlpha = .15 + .5 * i / S.hist.length; b.forEach(k => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(cellX(k % GX) * w, cellY((k / GX) | 0) * w, 2, 0, 7); ctx.fill(); }); });
+    ctx.globalAlpha = 1; S.beam.forEach(k => hunter(ctx, cellX(k % GX) * w, cellY((k / GX) | 0) * w, col));
+  },
+  stats: S => [["Spots checked", S.evals], ["Beam best", fmt(GELEV[S.beam[0]])], ["Rounds", S.hist.length - 1], ["Best elevation", fmt(S.best.e)]] });
+
+/* ---- Part 2: trajectory-based ---- */
+reg({ key: "sa", part: 2, chap: 5, name: "Simulated annealing", short: "Simulated annealing",
+  story: "Trial and error, one hunter. You try a random nearby spot. Higher spots are always accepted; lower ones are sometimes accepted while you are still \"hot\", which lets you walk down off a small hill.",
+  maps: "Trajectory-based search: the temperature T sets how often downhill moves are accepted, and it cools over time.", speed: 80,
+  params: [{ key: "T0", id: "pT0", label: "Initial temperature T₀", min: .005, max: 1, step: .005, value: .6 },
+           { key: "alpha", id: "pAl", label: "Cooling rate α", min: .95, max: .999, step: .001, value: .997, fmt: v => v.toFixed(3) },
+           { key: "stepSize", id: "pSs", label: "Step size", min: .01, max: .08, step: .005, value: .05 },
+           { key: "iters", id: "pIt", label: "Max moves", min: 100, max: 3000, step: 50, value: 1500 }],
+  init(P, rnd) { const e = fit(COVE.x, COVE.y); return { evals: 1, status: "running", rnd, x: COVE.x, y: COVE.y, e, T: P.T0, it: 0, trail: [[COVE.x, COVE.y, 0]], best: { e, x: COVE.x, y: COVE.y }, down: 0 }; },
+  step(S, P) {
+    const nx = S.x + gauss(S.rnd) * P.stepSize, ny = S.y + gauss(S.rnd) * P.stepSize, ne = fit(nx, ny); S.evals++; S.it++;
+    let kind = 0;
+    if (ne > -1) { const d = ne - S.e; if (d >= 0 || S.rnd() < Math.exp(d / S.T)) { kind = d < 0 ? 1 : 0; if (kind) S.down++; S.x = nx; S.y = ny; S.e = ne; S.trail.push([nx, ny, kind]); if (S.trail.length > 400) S.trail.shift(); } }
+    if (S.e > S.best.e) S.best = { e: S.e, x: S.x, y: S.y };
+    S.T *= P.alpha;
+    if (nearTreasure(S.x, S.y)) { S.status = "found"; return; }
+    if (S.it >= P.iters) { S.status = nearTreasure(S.best.x, S.best.y) ? "found" : "stuck"; S.msg = "Frozen: the temperature is too low to escape"; }
+  },
+  draw(ctx, S, w, col) {
+    trail(ctx, S.trail, w, col);
+    S.trail.forEach(p => { if (p[2]) { ctx.fillStyle = css("--gold"); ctx.beginPath(); ctx.arc(p[0] * w, p[1] * w, 2.5, 0, 7); ctx.fill(); } });
+    hunter(ctx, S.x * w, S.y * w, col);
+    gauge(ctx, w, "Temperature", S.T / (S.T0 || 1), col);
+  },
+  stats: S => [["Spots checked", S.evals], ["Temperature", fmt(S.T, 4)], ["Downhill moves accepted", S.down], ["Best elevation", fmt(S.best.e)]] });
+
+reg({ key: "tabu", part: 2, chap: 6, name: "Tabu search", short: "Tabu search",
+  story: "You carry a notebook of the spots you visited recently and refuse to go back near them. Each move goes to the best of a few candidate spots outside the notebook, even if it is lower, so you are pushed off a hill top and on to new ground.",
+  maps: "Trajectory-based search with memory: the tabu list (short-term memory) prevents cycling, and the aspiration criterion allows a tabu move if it beats the best ever found.", speed: 25,
+  params: [{ key: "tenure", id: "pTn", label: "Tabu tenure (notebook length)", min: 0, max: 120, step: 5, value: 80, hint: "0 turns tabu search into a randomized hill climber." },
+           { key: "cand", id: "pCd", label: "Candidate moves per step", min: 4, max: 40, step: 1, value: 16 },
+           { key: "radius", id: "pRd", label: "Move radius", min: .02, max: .1, step: .005, value: .05 },
+           { key: "iters", id: "pIt2", label: "Max moves", min: 50, max: 1000, step: 10, value: 500 }],
+  init(P, rnd) { const e = fit(COVE.x, COVE.y); return { evals: 1, status: "running", rnd, x: COVE.x, y: COVE.y, e, tabu: [[COVE.x, COVE.y]], trail: [[COVE.x, COVE.y, 0]], it: 0, cands: [], best: { e, x: COVE.x, y: COVE.y } }; },
+  step(S, P) {
+    const r = S.rnd, TZ = .022, isTabu = (x, y) => S.tabu.some(t => Math.hypot(t[0] - x, t[1] - y) < TZ);
+    let b = null; S.cands = [];
+    for (let c = 0; c < P.cand; c++) {
+      const a = r() * 2 * PI, d = P.radius * (.35 + .65 * r()), x = S.x + d * Math.cos(a), y = S.y + d * Math.sin(a), e = fit(x, y); S.evals++;
+      if (e < 0) continue; const tb = isTabu(x, y); S.cands.push([x, y, tb]);
+      if ((!tb || e > S.best.e) && (!b || e > b.e)) b = { x, y, e };      // best admissible move (aspiration overrides tabu)
+    }
+    S.it++;
+    if (b) { S.x = b.x; S.y = b.y; S.e = b.e; S.trail.push([b.x, b.y, 0]); if (S.trail.length > 500) S.trail.shift(); S.tabu.push([b.x, b.y]); while (S.tabu.length > P.tenure) S.tabu.shift(); if (b.e > S.best.e) S.best = { e: b.e, x: b.x, y: b.y }; }
+    if (nearTreasure(S.x, S.y)) { S.status = "found"; return; }
+    if (S.it >= P.iters) { S.status = "stuck"; S.msg = "Out of moves before reaching the treasure"; }
+  },
+  draw(ctx, S, w, col) {
+    ctx.fillStyle = css("--red"); ctx.globalAlpha = .13; S.tabu.forEach(t => { ctx.beginPath(); ctx.arc(t[0] * w, t[1] * w, .022 * w, 0, 7); ctx.fill(); });
+    ctx.globalAlpha = .9; ctx.strokeStyle = css("--red"); ctx.lineWidth = 1; S.tabu.forEach(t => { const x = t[0] * w, y = t[1] * w, q = 2.5; ctx.beginPath(); ctx.moveTo(x - q, y - q); ctx.lineTo(x + q, y + q); ctx.moveTo(x + q, y - q); ctx.lineTo(x - q, y + q); ctx.stroke(); });
+    ctx.globalAlpha = 1; trail(ctx, S.trail, w, col);
+    S.cands.forEach(c => { ctx.strokeStyle = c[2] ? css("--red") : col; ctx.globalAlpha = .7; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(c[0] * w, c[1] * w, 2.5, 0, 7); ctx.stroke(); }); ctx.globalAlpha = 1;
+    hunter(ctx, S.x * w, S.y * w, col);
+  },
+  stats: S => [["Spots checked", S.evals], ["Notebook (tabu) size", S.tabu.length], ["Elevation here", fmt(S.e)], ["Best elevation", fmt(S.best.e)]] });
+
+/* ---- Part 3: evolutionary ---- */
+reg({ key: "ga", part: 3, chap: 7, name: "Genetic algorithm", short: "Genetic algorithm",
+  story: "You hunt as a team. After every round only the better-performing hunters are kept; the others are replaced by new recruits, each one placed between two good hunters (crossover) and nudged a little (mutation).",
+  maps: "Evolutionary computing: selection, crossover, mutation and elitism. The fittest survive and pass on their position.", speed: 3,
+  params: [{ key: "N", id: "pN", label: "Population size", min: 6, max: 40, step: 1, value: 30 },
+           { key: "pm", id: "pPm", label: "Mutation probability", min: 0, max: 1, step: .05, value: .5 },
+           { key: "sigma", id: "pSg", label: "Mutation size σ", min: .005, max: .15, step: .005, value: .1 },
+           { key: "elite", id: "pEl", label: "Elite hunters kept", min: 0, max: 6, step: 1, value: 2 },
+           { key: "gens", id: "pGn", label: "Generations", min: 10, max: 100, step: 5, value: 60 }],
+  init(P, rnd) { const pop = []; for (let i = 0; i < P.N; i++) { const [x, y] = randomFeasible(rnd); pop.push({ x, y, f: fit(x, y) }); } return { evals: P.N, status: "running", rnd, pop, ghosts: [], gen: 0, best: bestOf(pop) }; },
+  step(S, P) {
+    const r = S.rnd, pop = S.pop.slice().sort((a, b) => b.f - a.f);
+    const tour = () => { let b = pop[(r() * pop.length) | 0]; for (let i = 0; i < 2; i++) { const c = pop[(r() * pop.length) | 0]; if (c.f > b.f) b = c; } return b; };
+    const next = pop.slice(0, P.elite).map(p => Object.assign({}, p, { elite: true, fresh: false }));
+    while (next.length < P.N) {
+      const a = tour(), b = tour(), u = r();
+      let x = a.x + u * (b.x - a.x) + (r() - .5) * .3 * Math.abs(b.x - a.x), y = a.y + u * (b.y - a.y) + (r() - .5) * .3 * Math.abs(b.y - a.y);   // blend crossover
+      if (r() < P.pm) { x += gauss(r) * P.sigma; y += gauss(r) * P.sigma; }                                                               // mutation
+      x = Math.min(.999, Math.max(.001, x)); y = Math.min(WY - .001, Math.max(.001, y));
+      next.push({ x, y, f: fit(x, y), fresh: true, pa: [a.x, a.y], pb: [b.x, b.y] }); S.evals++;
+    }
+    const kept = new Set(next.filter(p => p.elite).map(p => p.x + "," + p.y));
+    S.ghosts = S.pop.filter(p => !kept.has(p.x + "," + p.y));
+    S.pop = next; S.gen++;
+    const b = bestOf(next); if (b.f > S.best.f) S.best = b;
+    if (next.some(p => nearTreasure(p.x, p.y))) { S.status = "found"; return; }
+    if (S.gen >= P.gens) { S.status = "stuck"; S.msg = "The population converged on a lower hill"; }
+  },
+  draw(ctx, S, w, col) {
+    ctx.globalAlpha = .35; S.ghosts.forEach(p => { ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(p.x * w, p.y * w, 4, 0, 7); ctx.stroke(); }); ctx.globalAlpha = 1;
+    S.pop.forEach(p => { if (p.fresh && p.pa) { ctx.strokeStyle = col; ctx.globalAlpha = .25; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p.pa[0] * w, p.pa[1] * w); ctx.lineTo(p.x * w, p.y * w); ctx.lineTo(p.pb[0] * w, p.pb[1] * w); ctx.stroke(); ctx.globalAlpha = 1; } });
+    S.pop.forEach(p => hunter(ctx, p.x * w, p.y * w, p.f < 0 ? css("--muted") : col, p.elite ? css("--gold") : null));
+  },
+  stats: S => [["Spots checked", S.evals], ["Generation", S.gen], ["Best elevation", fmt(S.best.f)], ["Recruits this round", S.pop.filter(p => p.fresh).length]] });
+const bestOf = pop => pop.reduce((b, p) => p.f > b.f ? p : b, { f: -Infinity });
+
+/* ---- Part 4: swarm intelligence ---- */
+reg({ key: "pso", part: 4, chap: 9, name: "Particle swarm optimization", short: "PSO",
+  story: "Nobody is replaced and nobody new is recruited. Every hunter keeps moving, remembers the best spot they have found, and is drawn toward the best spot found by their neighbors in the team.",
+  maps: "Swarm intelligence: inertia, cognitive pull toward the personal best and social pull toward the global best.", speed: 6,
+  params: [{ key: "N", id: "pN2", label: "Swarm size", min: 4, max: 40, step: 1, value: 24 },
+           { key: "w", id: "pW", label: "Inertia w", min: 0, max: 1.2, step: .01, value: .72 },
+           { key: "c1", id: "pC1", label: "Cognitive c1", min: 0, max: 3, step: .05, value: 1.5 },
+           { key: "c2", id: "pC2", label: "Social c2", min: 0, max: 3, step: .05, value: 1.5 },
+           { key: "vmax", id: "pVm", label: "Max velocity", min: .01, max: .2, step: .01, value: .08 },
+           { key: "top", id: "pTop", type: "select", label: "Neighborhood", value: "ring", options: [["star", "Star: follow the whole team's best"], ["ring", "Ring: follow your two neighbors' best"]] },
+           { key: "iters", id: "pIt3", label: "Iterations", min: 10, max: 200, step: 10, value: 120 }],
+  init(P, rnd) { const sw = []; for (let i = 0; i < P.N; i++) { const [x, y] = randomFeasible(rnd), f = fit(x, y); sw.push({ x, y, vx: 0, vy: 0, px: x, py: y, pf: f, tr: [[x, y]] }); } const S = { evals: P.N, status: "running", rnd, sw, it: 0 }; S.best = gb(S); return S; },
+  step(S, P) {
+    const r = S.rnd, n = S.sw.length;
+    const lead = S.sw.map((p, i) => P.top === "ring" ? [S.sw[(i + n - 1) % n], p, S.sw[(i + 1) % n]].reduce((b, q) => q.pf > b.pf ? q : b) : null);
+    S.sw.forEach((p, i) => {
+      const g = lead[i] ? { x: lead[i].px, y: lead[i].py } : S.best;
+      p.vx = P.w * p.vx + P.c1 * r() * (p.px - p.x) + P.c2 * r() * (g.x - p.x); p.vy = P.w * p.vy + P.c1 * r() * (p.py - p.y) + P.c2 * r() * (g.y - p.y);
+      const vm = P.vmax, s = Math.hypot(p.vx, p.vy); if (s > vm) { p.vx *= vm / s; p.vy *= vm / s; }
+      p.x = Math.min(.999, Math.max(.001, p.x + p.vx)); p.y = Math.min(WY - .001, Math.max(.001, p.y + p.vy));
+      const f = fit(p.x, p.y); S.evals++; if (f > p.pf) { p.pf = f; p.px = p.x; p.py = p.y; }
+      p.tr.push([p.x, p.y]); if (p.tr.length > 8) p.tr.shift();
+    });
+    S.best = gb(S); S.it++;
+    if (S.sw.some(p => nearTreasure(p.x, p.y))) { S.status = "found"; return; }
+    if (S.it >= P.iters) { S.status = nearTreasure(S.best.x, S.best.y) ? "found" : "stuck"; S.msg = "The swarm settled on a lower hill"; }
+  },
+  draw(ctx, S, w, col) { S.sw.forEach(p => trail(ctx, p.tr.map(q => [q[0], q[1], 0]), w, col, .5)); S.sw.forEach(p => hunter(ctx, p.x * w, p.y * w, col)); star(ctx, S.best.x * w, S.best.y * w, 8, css("--gold")); },
+  stats: S => [["Spots checked", S.evals], ["Iteration", S.it], ["Team best elevation", fmt(S.best.f)], ["Hunters", S.sw.length]] });
+function gb(S) { let b = { f: -Infinity }; for (const p of S.sw) if (p.pf > b.f) b = { f: p.pf, x: p.px, y: p.py }; b.e = b.f; return b; }
+
+/* ACO on a waypoint graph */
+const WAY = (() => {
+  const r = mulberry32(23), pts = [[COVE.x, COVE.y], [TREASURE.x, TREASURE.y]];
+  for (const p of PEAKS) if (!p.volcano && p.n !== "Eagle Peak") pts.push([p.x, p.y]);
+  for (let t = 0; t < 6000 && pts.length < 90; t++) { const [x, y] = randomFeasible(r); if (pts.every(q => Math.hypot(q[0] - x, q[1] - y) > .04)) pts.push([x, y]); }
+  const segOk = (a, b) => { for (let s = 1; s < 10; s++) { const t = s / 10; if (!feasible(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)) return false; } return true; };
+  const adj = pts.map(() => []), edges = [];
+  pts.forEach((a, i) => { const near = pts.map((b, j) => [Math.hypot(a[0] - b[0], a[1] - b[1]), j]).filter(([d, j]) => j !== i && d < .13).sort((p, q) => p[0] - q[0]).slice(0, 6);
+    for (const [d, j] of near) if (!adj[i].some(e => e.j === j) && segOk(a, pts[j])) { const e = { a: i, b: j, d, tau: .1 }; edges.push(e); adj[i].push({ j, e }); adj[j].push({ j: i, e }); } });
+  return { pts, adj, edges };
+})();
+reg({ key: "aco", part: 4, chap: 10, name: "Ant colony optimization", short: "ACO",
+  story: "As treasure-hunting ants, you all start at base camp and explore paths across the island, leaving a trail of chalk (pheromone). More promising paths get more chalk, and friends who find a trail tend to follow it.",
+  maps: "Swarm intelligence on a graph: pheromone τ and heuristic η (prefer higher ground) guide each ant; evaporation ρ forgets old trails.", speed: 14,
+  params: [{ key: "ants", id: "pAn", label: "Ants per iteration", min: 4, max: 30, step: 1, value: 14 },
+           { key: "a", id: "pA", label: "Pheromone weight α", min: 0, max: 3, step: .1, value: 1 },
+           { key: "b", id: "pB", label: "Heuristic weight β", min: 0, max: 5, step: .1, value: 2 },
+           { key: "rho", id: "pRho", label: "Evaporation ρ", min: .01, max: .5, step: .01, value: .1 },
+           { key: "iters", id: "pIt4", label: "Iterations", min: 5, max: 60, step: 1, value: 30 }],
+  init(P, rnd) { WAY.edges.forEach(e => e.tau = .1); const S = { evals: 0, status: "running", rnd, it: 0, ants: [], bestPath: null, bestLen: Infinity, hits: 0, firstHit: null, best: { e: elev(COVE.x, COVE.y) } }; spawnAnts(S, P); return S; },
+  step(S, P) {
+    let moving = false;
+    for (const a of S.ants) {
+      if (a.done) continue; moving = true;
+      const cur = a.path[a.path.length - 1], opts = WAY.adj[cur].filter(o => !a.path.includes(o.j));
+      if (!opts.length || a.path.length > 40) { a.done = true; continue; }
+      const wts = opts.map(o => Math.pow(o.e.tau, P.a) * Math.pow(Math.max(.05, elev(...WAY.pts[o.j]) + .3) / o.e.d, P.b));
+      let r = S.rnd() * wts.reduce((s, v) => s + v, 0), k = 0; while (r > wts[k] && k < wts.length - 1) r -= wts[k++];
+      a.path.push(opts[k].j); a.len += opts[k].e.d; S.evals++;
+      const e = elev(...WAY.pts[opts[k].j]); if (e > a.maxE) a.maxE = e; if (e > S.best.e) S.best = { e };
+      if (opts[k].j === 1) { a.done = true; a.ok = true; }
+    }
+    if (moving) return;
+    // all ants finished: evaporate, then deposit chalk
+    WAY.edges.forEach(e => e.tau = Math.max(.005, e.tau * (1 - P.rho)));
+    for (const a of S.ants) {
+      const dep = a.ok ? 1 / a.len : .08 * a.maxE / a.len;
+      for (let i = 1; i < a.path.length; i++) { const o = WAY.adj[a.path[i - 1]].find(q => q.j === a.path[i]); o.e.tau += dep; }
+      if (a.ok && a.len < S.bestLen) { S.bestLen = a.len; S.bestPath = a.path.slice(); }
+    }
+    const hits = S.ants.filter(a => a.ok).length; S.hits = hits; if (hits && S.firstHit == null) S.firstHit = S.it + 1;
+    S.it++;
+    if (hits / S.ants.length >= .7) { S.status = "found"; S.msg = "Most ants now follow the chalk trail to the treasure"; return; }
+    if (S.it >= P.iters) { S.status = S.bestPath ? "found" : "stuck"; S.msg = S.bestPath ? "Some ants reach the treasure; the trail has not fully converged" : "No ant reached the treasure"; return; }
+    spawnAnts(S, P);
+  },
+  draw(ctx, S, w, col) {
+    const mx = Math.max(...WAY.edges.map(e => e.tau));
+    WAY.edges.forEach(e => { const A = WAY.pts[e.a], B = WAY.pts[e.b], t = e.tau / mx; ctx.strokeStyle = col; ctx.globalAlpha = .12 + .8 * t; ctx.lineWidth = .6 + 5 * t; ctx.beginPath(); ctx.moveTo(A[0] * w, A[1] * w); ctx.lineTo(B[0] * w, B[1] * w); ctx.stroke(); });
+    ctx.globalAlpha = 1; ctx.fillStyle = css("--muted"); WAY.pts.forEach(p => { ctx.beginPath(); ctx.arc(p[0] * w, p[1] * w, 1.6, 0, 7); ctx.fill(); });
+    if (S.bestPath) { ctx.strokeStyle = css("--gold"); ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.beginPath(); S.bestPath.forEach((j, i) => { const p = WAY.pts[j]; i ? ctx.lineTo(p[0] * w, p[1] * w) : ctx.moveTo(p[0] * w, p[1] * w); }); ctx.stroke(); ctx.setLineDash([]); }
+    S.ants.forEach(a => { const p = WAY.pts[a.path[a.path.length - 1]]; ant(ctx, p[0] * w, p[1] * w, a.ok ? css("--gold") : col); });
+  },
+  stats: S => [["Spots checked", S.evals], ["Iteration", S.it], ["Ants reaching treasure", S.hits + " / " + S.ants.length], ["Shortest trail", isFinite(S.bestLen) ? (S.bestLen * 3).toFixed(2) + " km" : "n/a"]] });
+function spawnAnts(S, P) { S.ants = []; for (let i = 0; i < P.ants; i++) S.ants.push({ path: [0], len: 0, maxE: 0, done: false, ok: false }); }
+
+reg({ key: "abc", part: 4, chap: 10, name: "Artificial bee colony", short: "ABC",
+  story: "As treasure-hunting bees: forager (employed) bees search near promising spots, onlooker bees at base camp pick spots based on the waggle dance, and scout bees fly off to random places when a spot stops improving.",
+  maps: "Swarm intelligence with three roles: exploitation by employed and onlooker bees, exploration by scouts after a spot is abandoned.", speed: 4,
+  params: [{ key: "SN", id: "pSN", label: "Food sources (spots)", min: 3, max: 20, step: 1, value: 8 },
+           { key: "limit", id: "pLm", label: "Abandon limit", min: 2, max: 40, step: 1, value: 10 },
+           { key: "cycles", id: "pCy", label: "Cycles", min: 10, max: 120, step: 5, value: 60 }],
+  init(P, rnd) { const src = []; for (let i = 0; i < P.SN; i++) { const [x, y] = randomFeasible(rnd); src.push({ x, y, f: fit(x, y), trial: 0, on: 0 }); } return { evals: P.SN, status: "running", rnd, src, phase: 0, cycle: 0, scouts: [], best: bestOf(src) }; },
+  step(S, P) {
+    const r = S.rnd, tryNear = i => { const s = S.src[i], k = (i + 1 + ((r() * (S.src.length - 1)) | 0)) % S.src.length, o = S.src[k], phi = () => r() * 2 - 1;
+      const x = Math.min(.999, Math.max(.001, s.x + phi() * (s.x - o.x) + gauss(r) * .004)), y = Math.min(WY - .001, Math.max(.001, s.y + phi() * (s.y - o.y) + gauss(r) * .004)), f = fit(x, y); S.evals++;
+      if (f > s.f) { s.x = x; s.y = y; s.f = f; s.trial = 0; } else s.trial++; };
+    if (S.phase === 0) { S.scouts = []; S.src.forEach(s => s.on = 0); for (let i = 0; i < S.src.length; i++) tryNear(i); }            // employed bees
+    else if (S.phase === 1) { const q = S.src.map(s => Math.max(0, s.f) + .05), tot = q.reduce((a, b) => a + b, 0);                  // onlookers follow the waggle dance
+      for (let n = 0; n < S.src.length; n++) { let v = r() * tot, i = 0; while (v > q[i] && i < q.length - 1) v -= q[i++]; S.src[i].on++; tryNear(i); } }
+    else { S.src.forEach(s => { if (s.trial > P.limit) { const [x, y] = randomFeasible(r); S.scouts.push([s.x, s.y, x, y]); s.x = x; s.y = y; s.f = fit(x, y); s.trial = 0; S.evals++; } }); S.cycle++; }  // scouts
+    S.phase = (S.phase + 1) % 3;
+    const b = bestOf(S.src); if (b.f > S.best.f) S.best = { f: b.f, x: b.x, y: b.y };
+    if (S.src.some(s => nearTreasure(s.x, s.y))) { S.status = "found"; return; }
+    if (S.cycle >= P.cycles) { S.status = "stuck"; S.msg = "The colony is still circling lower hills"; }
+  },
+  draw(ctx, S, w, col) {
+    const hx = COVE.x * w, hy = COVE.y * w;
+    S.src.forEach(s => { if (s.on) { ctx.strokeStyle = col; ctx.globalAlpha = .5; ctx.lineWidth = 1 + 1.5 * s.on; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(s.x * w, s.y * w); ctx.stroke(); } });
+    ctx.globalAlpha = 1; ctx.strokeStyle = css("--muted"); ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+    S.scouts.forEach(([a, b, c, d]) => { ctx.beginPath(); ctx.moveTo(a * w, b * w); ctx.lineTo(c * w, d * w); ctx.stroke(); }); ctx.setLineDash([]);
+    S.src.forEach(s => { flower(ctx, s.x * w, s.y * w, col, Math.min(1, s.trial / (S.limit || 10))); });
+    hive(ctx, hx, hy, col);
+    const label = ["Employed bees exploit their spots", "Onlookers follow the waggle dance", "Scouts replace exhausted spots"][(S.phase + 2) % 3];
+    note(ctx, w, label);
+  },
+  stats: S => [["Spots checked", S.evals], ["Cycle", S.cycle], ["Best elevation", fmt(S.best.f)], ["Scouts sent this cycle", S.scouts.length]] });
+
+/* ---- Part 5: machine learning ---- */
+/* unsupervised: self-organizing map over unlabeled clue sightings */
+reg({ key: "som", part: 5, chap: 11, name: "Unsupervised learning", short: "Unsupervised learning",
+  story: "Earlier crews left hundreds of clue sightings: only where they saw pirate marks, never what they found. With no labels at all, you stretch a flexible net of neurons over the island. Each sighting pulls its closest neuron and that neuron's neighbors toward it, so the net organizes itself around the hot zones. Then you dig at the busiest zones first.",
+  maps: "Unsupervised learning with a self-organizing map (SOM): competitive learning with a shrinking neighborhood turns unlabeled data into prototypes that capture its structure. Averaging can place a prototype in an infeasible spot (the volcano), which you must skip.", speed: 30,
+  params: [{ key: "side", id: "pSd", label: "Map size (neurons per side)", min: 3, max: 12, step: 1, value: 9, hint: "A coarse map (try 4) blurs nearby hot zones together." },
+           { key: "M", id: "pM", label: "Clue sightings (unlabeled data)", min: 50, max: 800, step: 10, value: 400 },
+           { key: "train", id: "pTr", label: "Training steps", min: 500, max: 8000, step: 250, value: 4000 },
+           { key: "eta", id: "pEta", label: "Initial learning rate η₀", min: .05, max: 1, step: .05, value: .5 },
+           { key: "sig", id: "pSig", label: "Initial neighborhood radius σ₀", min: .5, max: 5, step: .25, value: 2.5 }],
+  init(P, rnd) {
+    // sightings: crews spent most time on high ground, so sightings are denser where the land is higher
+    const data = []; let guard = 0;
+    while (data.length < P.M && guard++ < 200000) { const [x, y] = randomFeasible(rnd), e = elev(x, y); if (rnd() < .12 || rnd() < Math.pow(Math.max(0, e) / TREASURE.e, 8)) data.push([x, y]); }
+    // the net starts as a regular grid in the middle of the island; every neuron is snapped to a feasible spot
+    const n = P.side, W = [];
+    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) W.push(nearestFeasible(.32 + .36 * i / (n - 1), .22 + .26 * j / (n - 1)));
+    return { evals: 0, status: "running", rnd, data, W, n, t: 0, phase: "train", hits: new Array(n * n).fill(0), order: [], dug: [], skipped: [], last: null, best: { e: -1 } };
+  },
+  step(S, P) {
+    if (S.phase === "train") {
+      for (let b = 0; b < 25 && S.t < P.train; b++, S.t++) {
+        const f = S.t / P.train, eta = P.eta * (1 - f) + .01, sg = P.sig * Math.pow(.3 / P.sig, f), x = S.data[(S.rnd() * S.data.length) | 0];
+        let bmu = 0, bd = Infinity; S.W.forEach((w, k) => { const d = (w[0] - x[0]) ** 2 + (w[1] - x[1]) ** 2; if (d < bd) { bd = d; bmu = k; } });
+        const bi = bmu % S.n, bj = (bmu / S.n) | 0;
+        S.W.forEach((w, k) => { const gi = k % S.n - bi, gj = ((k / S.n) | 0) - bj, h = Math.exp(-(gi * gi + gj * gj) / (2 * sg * sg)); w[0] += eta * h * (x[0] - w[0]); w[1] += eta * h * (x[1] - w[1]); });
+        S.last = x; S.eta = eta; S.sg = sg;
+      }
+      if (S.t >= P.train) {   // count sightings per neuron, then dig at the busiest zones first
+        S.data.forEach(x => { let bmu = 0, bd = Infinity; S.W.forEach((w, k) => { const d = (w[0] - x[0]) ** 2 + (w[1] - x[1]) ** 2; if (d < bd) { bd = d; bmu = k; } }); S.hits[bmu]++; });
+        S.order = S.W.map((w, k) => k).filter(k => S.hits[k] > 0).sort((a, b) => S.hits[b] - S.hits[a]); S.phase = "dig"; S.last = null;
+      }
+      return;
+    }
+    const k = S.order.shift();
+    if (k == null) { S.status = "stuck"; S.msg = "Dug at every hot zone without finding the treasure"; return; }
+    const [x, y] = S.W[k];
+    if (!feasible(x, y)) { S.skipped.push(k); S.msg = "A prototype landed in the volcano and was skipped"; return; }
+    const e = elev(x, y); S.evals++; S.dug.push(k); if (e > S.best.e) S.best = { e, x, y };
+    if (nearTreasure(x, y)) { S.status = "found"; S.msg = `Found in hot zone #${S.dug.length + S.skipped.length}`; }
+  },
+  draw(ctx, S, w, col) {
+    ctx.fillStyle = css("--muted"); ctx.globalAlpha = .55; S.data.forEach(p => ctx.fillRect(p[0] * w - 1, p[1] * w - 1, 2, 2)); ctx.globalAlpha = 1;
+    ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.globalAlpha = .75;
+    for (let k = 0; k < S.W.length; k++) { const i = k % S.n, j = (k / S.n) | 0, a = S.W[k];
+      if (i < S.n - 1) { const b = S.W[k + 1]; ctx.beginPath(); ctx.moveTo(a[0] * w, a[1] * w); ctx.lineTo(b[0] * w, b[1] * w); ctx.stroke(); }
+      if (j < S.n - 1) { const b = S.W[k + S.n]; ctx.beginPath(); ctx.moveTo(a[0] * w, a[1] * w); ctx.lineTo(b[0] * w, b[1] * w); ctx.stroke(); } }
+    ctx.globalAlpha = 1;
+    const mh = Math.max(1, ...S.hits);
+    S.W.forEach((p, k) => { const r = S.phase === "dig" ? 2.5 + 6 * S.hits[k] / mh : 3.2; ctx.beginPath(); ctx.arc(p[0] * w, p[1] * w, r, 0, 7); ctx.fillStyle = S.dug.includes(k) ? css("--gold") : S.skipped.includes(k) ? css("--red") : col; ctx.fill(); ctx.strokeStyle = isDark() ? "#071118" : "#fff"; ctx.lineWidth = 1; ctx.stroke(); });
+    if (S.last) { ctx.strokeStyle = css("--ink"); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(S.last[0] * w, S.last[1] * w, 5, 0, 7); ctx.stroke(); }
+    note(ctx, w, S.phase === "train" ? "Training: grey dots are unlabeled clue sightings" : "Digging: bigger neurons = busier hot zones (gold = dug)");
+  },
+  stats: S => [["Spots checked", S.evals], ["Phase", S.phase === "train" ? "Training" : "Digging"], ["Training step", S.t], [S.phase === "train" ? "Neighborhood σ" : "Zones skipped (lava)", S.phase === "train" ? fmt(S.sg ?? 0, 2) : S.skipped.length]] });
+
+reg({ key: "sup", part: 5, chap: 11, name: "Supervised learning", short: "Supervised learning",
+  story: "You build a mental model from the records of previous treasure hunts: elevations measured at some spots. The model predicts the elevation everywhere; you dig where it looks most promising, then add what you learn to the records.",
+  maps: "Machine learning for optimization: a surrogate model trained on historical data guides where to evaluate next. κ trades exploiting the prediction against exploring unknown areas.", speed: 3,
+  params: [{ key: "n0", id: "pN0", label: "Records from past missions", min: 3, max: 80, step: 1, value: 40, hint: "More historical data gives a better model: try 10 records, then 60." },
+           { key: "model", id: "pMd", type: "select", label: "Model", value: "lin", options: [["lin", "Local linear regression"], ["idw", "Inverse-distance weighting"], ["knn", "k-nearest neighbors (k = 4)"]] },
+           { key: "kappa", id: "pKp", label: "Exploration κ", min: 0, max: 2, step: .05, value: .6, hint: "0 always digs where the model predicts the highest elevation. Distance-based models cannot predict above the best record, so they need exploration." },
+           { key: "digs", id: "pDg", label: "Digs allowed", min: 5, max: 60, step: 1, value: 30 }],
+  init(P, rnd) { const D = []; for (let i = 0; i < P.n0; i++) { const [x, y] = randomFeasible(rnd); D.push({ x, y, e: elev(x, y), old: true }); } const S = { evals: P.n0, status: "running", D, digs: 0, best: { e: Math.max(...D.map(d => d.e)) } }; refit(S, P); return S; },
+  step(S, P) {
+    const c = S.next; if (!c) { S.status = "stuck"; return; }
+    const e = elev(c.x, c.y); S.D.push({ x: c.x, y: c.y, e }); S.evals++; S.digs++;
+    if (e > S.best.e) S.best = { e, x: c.x, y: c.y };
+    if (nearTreasure(c.x, c.y)) { S.status = "found"; S.msg = "The model led you to the treasure"; return; }
+    if (S.digs >= P.digs) { S.status = "stuck"; S.msg = "Out of digs"; return; }
+    refit(S, P);
+  },
+  draw(ctx, S, w, col) {
+    if (S.grid) { const cs = w / S.gw; ctx.globalAlpha = .55; S.grid.forEach((v, k) => { if (v == null) return; const c = ramp(isDark() ? DARK_LAND : LIGHT_LAND, v); ctx.fillStyle = `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})`; ctx.fillRect((k % S.gw) * cs, ((k / S.gw) | 0) * cs, cs + .5, cs + .5); }); ctx.globalAlpha = 1; }
+    S.D.forEach(d => { ctx.fillStyle = d.old ? css("--muted") : col; ctx.beginPath(); ctx.arc(d.x * w, d.y * w, d.old ? 3 : 4, 0, 7); ctx.fill(); });
+    if (S.next && S.status === "running") { ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(S.next.x * w, S.next.y * w, 9, 0, 7); ctx.stroke(); ctx.fillStyle = css("--ink"); ctx.font = `11px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText("dig next", S.next.x * w + 12, S.next.y * w); }
+    note(ctx, w, "Shaded: the model's predicted map");
+  },
+  stats: S => [["Spots checked", S.evals], ["Digs", S.digs], ["Best elevation", fmt(S.best.e)], ["Records", S.D.length]] });
+// weighted least squares plane e = a + b·dx + c·dy around (x, y): follows the local slope
+function localLinear(D, x, y) {
+  const bw = .045; let s00 = 0, s01 = 0, s02 = 0, s11 = 0, s12 = 0, s22 = 0, t0 = 0, t1 = 0, t2 = 0;
+  for (const d of D) { const dx = d.x - x, dy = d.y - y, q = Math.exp(-(dx * dx + dy * dy) / (2 * bw * bw)) + 1e-9;
+    s00 += q; s01 += q * dx; s02 += q * dy; s11 += q * dx * dx; s12 += q * dx * dy; s22 += q * dy * dy; t0 += q * d.e; t1 += q * dx * d.e; t2 += q * dy * d.e; }
+  const lam = 1e-4 * s00; s11 += lam; s22 += lam;
+  const det = s00 * (s11 * s22 - s12 * s12) - s01 * (s01 * s22 - s12 * s02) + s02 * (s01 * s12 - s11 * s02);
+  if (Math.abs(det) < 1e-14) return t0 / s00;
+  return (t0 * (s11 * s22 - s12 * s12) - s01 * (t1 * s22 - s12 * t2) + s02 * (t1 * s12 - s11 * t2)) / det;   // Cramer's rule for the intercept a
+}
+function refit(S, P) {
+  const gw = 60, gh = 42, grid = new Array(gw * gh).fill(null); let best = null, bv = -Infinity;
+  const lo = Math.min(...S.D.map(d => d.e)), hi = Math.max(...S.D.map(d => d.e));
+  const pred = (x, y) => { if (P.model === "lin") return Math.max(lo - .2, Math.min(hi + .25, localLinear(S.D, x, y)));
+    if (P.model === "knn") { const ds = S.D.map(d => [Math.hypot(d.x - x, d.y - y), d.e]).sort((a, b) => a[0] - b[0]).slice(0, 4); return ds.reduce((s, q) => s + q[1], 0) / ds.length; }
+    let sw = 0, se = 0; for (const d of S.D) { const q = 1 / (Math.hypot(d.x - x, d.y - y) ** 2 + 1e-5); sw += q; se += q * d.e; } return se / sw; };
+  for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
+    const x = (i + .5) / gw, y = (j + .5) / gw; if (!feasible(x, y)) continue;
+    const v = pred(x, y); grid[j * gw + i] = v;
+    const dn = Math.min(...S.D.map(d => Math.hypot(d.x - x, d.y - y)));
+    if (dn < .012) continue;
+    const a = v + P.kappa * .5 * Math.min(1, dn / .15);
+    if (a > bv) { bv = a; best = { x, y }; }
+  }
+  S.grid = grid; S.gw = gw; S.next = best;
+}
+
+const RG = 0.025, RX = 40, RY = 28;
+const RL_FEAS = (() => { const f = new Uint8Array(RX * RY); for (let j = 0; j < RY; j++) for (let i = 0; i < RX; i++) f[j * RX + i] = feasible((i + .5) * RG, (j + .5) * RG) ? 1 : 0; return f; })();
+const rlPos = s => [((s % RX) + .5) * RG, (((s / RX) | 0) + .5) * RG];
+const RL_START = (() => { const i = Math.floor(COVE.x / RG), j = Math.floor(COVE.y / RG); let s = j * RX + i; if (!RL_FEAS[s]) { let b = s, bd = 9; for (let k = 0; k < RX * RY; k++) if (RL_FEAS[k]) { const [x, y] = rlPos(k), d = Math.hypot(x - COVE.x, y - COVE.y); if (d < bd) { bd = d; b = k; } } s = b; } return s; })();
+const detector = (x, y, sg) => Math.exp(-((x - TREASURE.x) ** 2 + (y - TREASURE.y) ** 2) / (2 * sg * sg));
+reg({ key: "rl", part: 5, chap: 12, name: "Reinforcement learning", short: "Reinforcement learning",
+  story: "You learn by trial and error. The strength of your metal detector signal is the reward: walking toward a stronger signal is good, stepping into the volcano or the sea is bad. After many attempts (episodes) you learn which move to make from every spot.",
+  maps: "Reinforcement learning (Q-learning): the agent learns action values from rewards, balancing exploration (ε) and exploitation, until its greedy policy walks straight to the treasure.", speed: 900,
+  params: [{ key: "lr", id: "pLr", label: "Learning rate α", min: .05, max: 1, step: .05, value: .4 },
+           { key: "gamma", id: "pGm", label: "Discount γ", min: .5, max: .99, step: .01, value: .95 },
+           { key: "decay", id: "pDc", label: "Exploration decay per episode", min: .8, max: .995, step: .005, value: .95, fmt: v => v.toFixed(3) },
+           { key: "sg", id: "pSgD", label: "Detector range", min: .05, max: .4, step: .01, value: .15 },
+           { key: "eps", id: "pEp", label: "Max episodes", min: 20, max: 400, step: 10, value: 200 }],
+  init(P, rnd) { return { evals: 0, status: "running", rnd, Q: new Float32Array(RX * RY * 8), s: RL_START, path: [RL_START], ep: 0, eps: 1, steps: 0, succ: [], greedyOk: 0, lastLen: null, best: { e: elev(...rlPos(RL_START)) } }; },
+  step(S, P) {
+    const r = S.rnd, s = S.s, q = i => S.Q[s * 8 + i];
+    let a; if (r() < S.eps) a = (r() * 8) | 0; else { a = 0; for (let i = 1; i < 8; i++) if (q(i) > q(a)) a = i; }
+    const i0 = s % RX, j0 = (s / RX) | 0, i1 = i0 + N8[a][0], j1 = j0 + N8[a][1];
+    const [x0, y0] = rlPos(s); let rew, done = false, ns = s;
+    if (i1 < 0 || j1 < 0 || i1 >= RX || j1 >= RY || !RL_FEAS[j1 * RX + i1]) { rew = -5; done = true; }       // volcano or sea
+    else { ns = j1 * RX + i1; const [x1, y1] = rlPos(ns); rew = 20 * (detector(x1, y1, P.sg) - detector(x0, y0, P.sg)) - .05; if (nearTreasure(x1, y1) || Math.hypot(x1 - TREASURE.x, y1 - TREASURE.y) < RG * .8) { rew += 10; done = true; } }
+    let mx = 0; if (!done) { mx = S.Q[ns * 8]; for (let k = 1; k < 8; k++) mx = Math.max(mx, S.Q[ns * 8 + k]); }
+    S.Q[s * 8 + a] += P.lr * (rew + P.gamma * mx - S.Q[s * 8 + a]);
+    S.evals++; S.steps++;
+    if (!done) { S.s = ns; S.path.push(ns); const e = elev(...rlPos(ns)); if (e > S.best.e) S.best = { e }; }
+    if (done || S.steps > 160) {
+      const ok = done && rew > 0; S.succ.push(ok ? 1 : 0); if (S.succ.length > 20) S.succ.shift();
+      S.ep++; S.eps = Math.max(.02, S.eps * P.decay); S.lastPath = S.path; S.lastOk = ok; S.lastLen = S.steps;
+      const g = greedy(S); S.greedy = g.path; S.greedyOk = g.ok ? S.greedyOk + 1 : 0;
+      if (S.greedyOk >= 3) { S.status = "found"; S.msg = `Learned a direct route in ${S.ep} episodes`; return; }
+      if (S.ep >= P.eps) { S.status = "stuck"; S.msg = "Not enough episodes to learn a reliable route"; return; }
+      S.s = RL_START; S.path = [RL_START]; S.steps = 0;
+    }
+  },
+  draw(ctx, S, w, col) {
+    const cs = RG * w; let mx = 1e-6; const V = new Float32Array(RX * RY);
+    for (let k = 0; k < RX * RY; k++) { if (!RL_FEAS[k]) continue; let v = S.Q[k * 8]; for (let a = 1; a < 8; a++) v = Math.max(v, S.Q[k * 8 + a]); V[k] = Math.max(0, v); mx = Math.max(mx, V[k]); }
+    ctx.fillStyle = col; for (let k = 0; k < RX * RY; k++) if (V[k] > 0) { ctx.globalAlpha = .55 * V[k] / mx; ctx.fillRect((k % RX) * cs, ((k / RX) | 0) * cs, cs, cs); }
+    ctx.globalAlpha = 1;
+    const line = (p, c, lw, dash) => { if (!p || p.length < 2) return; ctx.strokeStyle = c; ctx.lineWidth = lw; ctx.setLineDash(dash || []); ctx.beginPath(); p.forEach((s, i) => { const [x, y] = rlPos(s); i ? ctx.lineTo(x * w, y * w) : ctx.moveTo(x * w, y * w); }); ctx.stroke(); ctx.setLineDash([]); };
+    line(S.path, col, 1.5); line(S.greedy, css("--gold"), 2.5, [6, 4]);
+    const [x, y] = rlPos(S.s), sig = detector(x, y, S.sg || .15);
+    for (let k = 1; k <= 3; k++) { ctx.strokeStyle = col; ctx.globalAlpha = sig * (1 - k / 4); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x * w, y * w, 6 + k * 6, 0, 7); ctx.stroke(); }
+    ctx.globalAlpha = 1; hunter(ctx, x * w, y * w, col);
+    note(ctx, w, "Shaded: learned value of each spot · dashed: current greedy route");
+  },
+  stats: S => [["Environment steps", S.evals], ["Episode", S.ep], ["Exploration ε", fmt(S.eps, 2)], ["Success, last 20", S.succ.length ? Math.round(100 * S.succ.reduce((a, b) => a + b, 0) / S.succ.length) + "%" : "n/a"]] });
+function greedy(S) { let s = RL_START; const p = [s]; for (let t = 0; t < 120; t++) { let a = 0; for (let i = 1; i < 8; i++) if (S.Q[s * 8 + i] > S.Q[s * 8 + a]) a = i; const i1 = s % RX + N8[a][0], j1 = ((s / RX) | 0) + N8[a][1]; if (i1 < 0 || j1 < 0 || i1 >= RX || j1 >= RY || !RL_FEAS[j1 * RX + i1]) return { path: p, ok: false }; s = j1 * RX + i1; p.push(s); const [x, y] = rlPos(s); if (Math.hypot(x - TREASURE.x, y - TREASURE.y) < Math.max(FOUND_R, RG * .8)) return { path: p, ok: true }; } return { path: p, ok: false }; }
+
+/* ---------- sprites ---------- */
+function hunter(ctx, x, y, col, ring) { ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fillStyle = col; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = isDark() ? "#071118" : "#fff"; ctx.stroke(); if (ring) { ctx.beginPath(); ctx.arc(x, y, 8.5, 0, 7); ctx.strokeStyle = ring; ctx.lineWidth = 2; ctx.stroke(); } }
+function star(ctx, x, y, r, col) { ctx.beginPath(); for (let k = 0; k < 10; k++) { const a = -PI / 2 + k * PI / 5, q = k % 2 ? r * .45 : r; ctx.lineTo(x + q * Math.cos(a), y + q * Math.sin(a)); } ctx.closePath(); ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = "#13232B"; ctx.lineWidth = 1; ctx.stroke(); }
+function flag(ctx, x, y, col) { ctx.strokeStyle = css("--ink"); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 16); ctx.stroke(); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x, y - 16); ctx.lineTo(x + 10, y - 12); ctx.lineTo(x, y - 8); ctx.fill(); }
+function ant(ctx, x, y, col) { ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(x, y, 4, 2.6, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(x + 4, y, 1.8, 0, 7); ctx.fill(); }
+function flower(ctx, x, y, col, tired) { ctx.fillStyle = col; for (let k = 0; k < 5; k++) { const a = k * 2 * PI / 5; ctx.beginPath(); ctx.arc(x + 4 * Math.cos(a), y + 4 * Math.sin(a), 2.8, 0, 7); ctx.globalAlpha = 1 - .6 * tired; ctx.fill(); } ctx.globalAlpha = 1; ctx.fillStyle = css("--gold"); ctx.beginPath(); ctx.arc(x, y, 2.4, 0, 7); ctx.fill(); }
+function hive(ctx, x, y, col) { ctx.fillStyle = css("--gold"); ctx.strokeStyle = css("--ink"); ctx.lineWidth = 1; ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = PI / 6 + k * PI / 3; ctx.lineTo(x + 8 * Math.cos(a), y + 8 * Math.sin(a)); } ctx.closePath(); ctx.fill(); ctx.stroke(); }
+function trail(ctx, pts, w, col, alpha = .8) { if (pts.length < 2) return; ctx.strokeStyle = col; ctx.lineWidth = 1.6; ctx.globalAlpha = alpha; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0] * w, p[1] * w) : ctx.moveTo(p[0] * w, p[1] * w)); ctx.stroke(); ctx.globalAlpha = 1; }
+// one-line note at the top of the map; hidden on narrow maps where it would not fit
+function note(ctx, w, text) { if (w < 520) return; note(ctx, w, text); }
+function gauge(ctx, w, label, v, col) { const x = 12, y = 40, W = 140; ctx.fillStyle = css("--surface"); ctx.globalAlpha = .85; ctx.fillRect(x - 4, y - 4, W + 8, 30); ctx.globalAlpha = 1; ctx.fillStyle = css("--ink"); ctx.font = `11px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(label, x, y); ctx.fillStyle = css("--line"); ctx.fillRect(x, y + 15, W, 6); ctx.fillStyle = col; ctx.fillRect(x, y + 15, W * Math.max(0, Math.min(1, v)), 6); }
+
+/* ---------- app ---------- */
+const partColor = n => css("--p" + n);
+let cur = ALGOS[0], P = null, S = null, runOn = false, acc = 0, lastT = 0, seed = 1, attempts = 0, logged = false;
+const tourOrder = ["bfs", "dfs", "ucs", "astar", "hc", "beam", "sa", "tabu", "ga", "pso", "aco", "abc", "som", "sup", "rl"];
+let tour = { on: false, i: 0, timer: null };
+const common = makeControls($("#common"), [
+  { key: "speed", id: "cSpeed", label: "Animation speed", min: .1, max: 4, step: .1, value: 1, fmt: v => v.toFixed(1) + "×" },
+  { key: "reveal", id: "cReveal", type: "check", label: "Show where the treasure is (X)", value: true },
+  { key: "newSeed", id: "cSeed", type: "check", label: "New random start on every attempt", value: true }
+], () => draw());
+
+function buildParts() {
+  $("#parts").innerHTML = PARTS.map(p => `<div class="part" style="--pc:var(--p${p.n})"><h3>Part ${p.n}. ${p.name}<span>${p.ch.replace("Chapters ", "Ch. ")}</span></h3><div class="chips">${ALGOS.filter(a => a.part === p.n).map(a => `<button class="chip" data-k="${a.key}" style="--pc:var(--p${p.n})">${a.short}</button>`).join("")}</div></div>`).join("");
+  $("#parts").querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => { stopTour(); select(b.dataset.k); }));
+}
+function select(key, preset) {
+  stop(); cur = ALGOS.find(a => a.key === key);
+  document.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === key)));
+  const part = PARTS[cur.part - 1];
+  $("#story").style.setProperty("--pc", `var(--p${cur.part})`);
+  $("#story").innerHTML = `<div class="eyebrow">Part ${part.n} · ${part.name} · Chapter ${cur.chap}</div><h2>${cur.name}</h2><p>${cur.story}</p><p class="maps">${cur.maps}</p><div class="links"><a href="${CODE(cur.chap)}" target="_blank" rel="noopener">Chapter ${cur.chap} code on GitHub</a></div>`;
+  $("#paramsSec").hidden = !cur.params.length;
+  P = makeControls($("#params"), cur.params.map(s => Object.assign({}, s)), () => reset());
+  if (preset) for (const k in preset) P[k] = preset[k];
+  $("#caption").style.setProperty("--pc", `var(--p${cur.part})`);
+  $("#caption").innerHTML = `<b>Part ${part.n} · Chapter ${cur.chap} · ${cur.name}</b>${cur.story}`;
+  reset();
+}
+function initialPoints(S) {
+  const pts = [], c = k => [cellX(k % GX), cellY((k / GX) | 0)];
+  if (S.cur != null) pts.push(c(S.cur)); if (S.beam) S.beam.forEach(k => pts.push(c(k)));
+  if (S.x != null) pts.push([S.x, S.y]); ["pop", "sw", "src", "D"].forEach(f => S[f] && S[f].forEach(p => pts.push([p.x, p.y])));
+  if (S.W) S.W.forEach(p => pts.push(p)); if (cur.key === "rl") pts.push(rlPos(S.s));
+  return pts;
+}
+function reset() {
+  stop(); if (common.newSeed) seed = (Math.random() * 1e9) | 0;
+  S = cur.init(P, mulberry32(seed));
+  const bad = initialPoints(S).filter(p => !feasible(p[0], p[1])).length;
+  if (bad) console.warn(`${cur.name}: ${bad} initial position(s) outside the feasible space`); S.limit = P.limit; S.T0 = P.T0; S.sg = P.sg; logged = false; draw();
+}
+function stop() { runOn = false; $("#run").textContent = "Run"; }
+function start() { if (S.status !== "running") reset(); runOn = true; $("#run").textContent = "Pause"; lastT = 0; acc = 1; requestAnimationFrame(frame); }
+function frame(t) {
+  if (!runOn) return;
+  const dt = lastT ? Math.min(.1, (t - lastT) / 1000) : 0; lastT = t; acc += dt * cur.speed * common.speed;
+  let n = 0; while (acc >= 1 && n < 2000 && S.status === "running") { acc -= 1; cur.step(S, P); n++; }
+  draw();
+  if (S.status !== "running") { stop(); finish(); return; }
+  requestAnimationFrame(frame);
+}
+function finish() {
+  if (logged) return; logged = true; attempts++;
+  const tb = $("#log tbody"), best = S.best && (S.best.e ?? S.best.f);
+  tb.insertAdjacentHTML("afterbegin", `<tr><td class="n">${attempts}</td><td><span class="sw" style="background:var(--p${cur.part})"></span>${cur.name}</td><td>Part ${cur.part}</td><td><span class="tag ${S.status}">${S.status === "found" ? "Found the treasure" : "Stopped short"}</span>${S.msg ? `<br><span class="cap">${S.msg}</span>` : ""}</td><td class="n">${S.evals.toLocaleString("en-US")}</td><td class="n">${fmt(best)}</td></tr>`);
+  const chip = document.querySelector(`.chip[data-k="${cur.key}"]`); if (chip && S.status === "found") chip.classList.add("done");
+  if (tour.on) { tour.timer = setTimeout(() => { tour.i++; tourStep(); }, 2200); }
+}
+$("#run").addEventListener("click", () => { stopTour(); runOn ? stop() : start(); });
+$("#step").addEventListener("click", () => { stopTour(); stop(); if (S.status !== "running") reset(); cur.step(S, P); draw(); if (S.status !== "running") finish(); });
+$("#reset").addEventListener("click", () => { stopTour(); reset(); });
+$("#clearLog").addEventListener("click", () => { $("#log tbody").innerHTML = ""; attempts = 0; document.querySelectorAll(".chip.done").forEach(c => c.classList.remove("done")); });
+
+function tourStep() {
+  clearTimeout(tour.timer);
+  if (tour.i >= tourOrder.length) { stopTour(); $("#caption").innerHTML = `<b>Mission complete</b>From blind search to reinforcement learning: every part of the book gives the hunters a different way to use information. Check the expedition log to compare them.`; return; }
+  select(tourOrder[tour.i]); setTimeout(() => { if (tour.on) start(); }, 900);
+}
+function stopTour() { if (!tour.on) return; tour.on = false; clearTimeout(tour.timer); $("#tourBtn").textContent = "▶ Play the whole mission"; $("#tourNext").hidden = true; }
+$("#tourBtn").addEventListener("click", () => { if (tour.on) { stopTour(); stop(); return; } tour = { on: true, i: 0, timer: null }; $("#tourBtn").textContent = "■ Stop the tour"; $("#tourNext").hidden = false; tourStep(); });
+$("#tourNext").addEventListener("click", () => { if (!tour.on) return; stop(); tour.i++; tourStep(); });
+
+/* ---------- drawing ---------- */
+function draw() {
+  const cv = $("#map"), r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1, w = Math.max(10, Math.round(r.width)), h = Math.round(w * WY);
+  if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.drawImage(terrainLayer(w, h, dpr), 0, 0, w, h);
+  // the active volcano: infeasible region
+  const t = performance.now() / 1000, vx = VOL.x * w, vy = VOL.y * w, vr = LAVA_R * w;
+  const g = ctx.createRadialGradient(vx, vy, 0, vx, vy, vr);
+  g.addColorStop(0, `rgba(255,176,60,${.85 + (reduceMotion ? 0 : .1 * Math.sin(t * 3))})`); g.addColorStop(.55, "rgba(224,70,31,.75)"); g.addColorStop(1, "rgba(160,30,20,.25)");
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(vx, vy, vr, 0, 7); ctx.fill();
+  ctx.strokeStyle = "#B4372E"; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.arc(vx, vy, vr, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+  // base camp
+  const cx = COVE.x * w, cy = COVE.y * w; ctx.fillStyle = isDark() ? "#DCE6EA" : "#13232B"; ctx.beginPath(); ctx.moveTo(cx, cy - 9); ctx.lineTo(cx + 7, cy + 4); ctx.lineTo(cx - 7, cy + 4); ctx.closePath(); ctx.fill();
+  // algorithm layer
+  if (S) cur.draw(ctx, S, w, partColor(cur.part));
+  // treasure
+  if (common.reveal || (S && S.status === "found")) { const tx = TREASURE.x * w, ty = TREASURE.y * w, q = 7; ctx.lineCap = "round"; ctx.strokeStyle = isDark() ? "#071118" : "#fff"; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(tx - q, ty - q); ctx.lineTo(tx + q, ty + q); ctx.moveTo(tx + q, ty - q); ctx.lineTo(tx - q, ty + q); ctx.stroke(); ctx.strokeStyle = css("--red"); ctx.lineWidth = 3; ctx.stroke(); ctx.lineCap = "butt"; }
+  // status
+  if (S) {
+    const pill = $("#pill"); pill.className = "pill " + (S.status === "running" ? "" : S.status);
+    pill.textContent = S.status === "found" ? "Treasure found" : S.status === "stuck" ? "Stopped short" : runOn ? "Searching…" : "Ready";
+    $("#stats").innerHTML = cur.stats(S).map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join("");
+  }
+}
+let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(draw, 80); }).observe($("#map"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+if (!reduceMotion) (function lava() { if (!runOn && document.visibilityState === "visible") draw(); setTimeout(() => requestAnimationFrame(lava), 120); })();
+
+buildParts(); select("hc");
+</script>
+</body>
+</html>
