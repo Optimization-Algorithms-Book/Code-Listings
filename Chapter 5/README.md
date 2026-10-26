@@ -3,6 +3,7 @@
 
 | Example  | Notebook  |
 |---|---|
+| Interactive companion to Chapter 5 | [SA Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%205/SA_Lab.html) |
 | Solving Bohachevsky function using `scipy` and `mealpy` simulated annealing | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.1_FcnOpt.ipynb)  |
 | Solving function optimization using `optalgotools` simulated annealing | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.2_FcnOpt_SA.ipynb)  |
 | Solving Sudoku problem | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.3_Sudoku.ipynb)  |
