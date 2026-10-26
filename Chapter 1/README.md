@@ -3,6 +3,7 @@
 
 | Example  | Notebook  |
 |---|---|
+| Interactive companion to Chapter 1 | [Optimization Basics Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%201/Ch1_Lab.html) |
 | Plotting base mathemtical function and its inverse  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%201/MathPlots.ipynbb)  |
 | Acceleration time [0-60 mph (s)] vs EPA Range [miles] plot  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%201/Acceleration_vs_EPA.ipynb)  |
 | Solving ticket pricing problem using `scipy`    | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%201/TicketPricing.ipynbb)  |

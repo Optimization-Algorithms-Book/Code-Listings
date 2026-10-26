@@ -1,0 +1,1310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive companion to Chapter 2 (A deeper look at search and optimization) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
+<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<title>Problems and Heuristics Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+
+/* Layout: a long-form lab notebook. Reading column for concepts, full-width "bench" panels for each simulation. */
+:root{
+  --bg:#F5F8FA; --surface:#FFFFFF; --sunk:#EAF0F4; --ink:#10212D; --muted:#53687A; --line:#D3DEE6; --grid:#E3EAF0;
+  --accent:#00629B; --accent-ink:#FFFFFF; --accent-soft:#DCEBF5; --gold:#C76E12; --gold-soft:#FBEBD9;
+  --s1:#00629B; --s2:#C76E12; --s3:#2E8B57; --s4:#9B3FA6;
+  --good:#2E8B57; --bad:#B4372E;
+  --map-water:#D3E3EC; --map-land:#FAFBFA; --map-state:#C7D3DB; --map-border:#93A6B4;
+  --code-bg:#0E1B25; --code-ink:#D9E6EF; --code-dim:#7F97A8;
+  --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", Consolas, "Courier New", monospace;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0A141B; --surface:#111E28; --sunk:#0D1820; --ink:#E3ECF2; --muted:#93A7B6; --line:#24384A; --grid:#1B2B38;
+  --accent:#55B4EA; --accent-ink:#06121A; --accent-soft:#12324A; --gold:#F0A257; --gold-soft:#3A2814;
+  --s1:#55B4EA; --s2:#F0A257; --s3:#5CC48A; --s4:#D08ADB; --good:#5CC48A; --bad:#F07D72; --map-water:#0B1A24; --map-land:#1A2933; --map-state:#2F4250; --map-border:#4F6676;
+  --code-bg:#08121A; --code-ink:#D9E6EF; --code-dim:#7F97A8; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0A141B; --surface:#111E28; --sunk:#0D1820; --ink:#E3ECF2; --muted:#93A7B6; --line:#24384A; --grid:#1B2B38;
+  --accent:#55B4EA; --accent-ink:#06121A; --accent-soft:#12324A; --gold:#F0A257; --gold-soft:#3A2814;
+  --s1:#55B4EA; --s2:#F0A257; --s3:#5CC48A; --s4:#D08ADB; --good:#5CC48A; --bad:#F07D72; --map-water:#0B1A24; --map-land:#1A2933; --map-state:#2F4250; --map-border:#4F6676;
+  --code-bg:#08121A; --code-ink:#D9E6EF; --code-dim:#7F97A8; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prose{max-width:72ch}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h2{font-size:clamp(1.7rem,3.2vw,2.3rem);font-weight:700}
+h3{font-size:1.3rem;font-weight:600;margin-top:2.2rem}
+p{margin:.7rem 0}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+.num{font-variant-numeric:tabular-nums}
+
+/* side menu */
+.toc{position:fixed;top:0;left:0;bottom:0;width:264px;overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:calc(1.4rem + env(safe-area-inset-top,0px)) .9rem calc(1.5rem + env(safe-area-inset-bottom,0px)) max(.9rem,env(safe-area-inset-left,0px));z-index:20;scrollbar-width:thin}
+.toc-brand{padding:0 .5rem 1rem;margin-bottom:.8rem;border-bottom:1px solid var(--line)}
+.toc-brand b{display:block;font-family:var(--f-display);font-size:1.25rem}
+.toc-brand span{font-size:.78rem;color:var(--muted)}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc > nav > ol > li{margin-bottom:.15rem}
+.toc nav a{display:flex;gap:.55rem;align-items:baseline;text-decoration:none;color:var(--muted);font-size:.93rem;padding:.38rem .55rem;border-radius:7px;line-height:1.35}
+.toc nav a b{font-family:var(--f-mono);font-weight:500;font-size:.72rem;min-width:1rem;color:var(--muted)}
+.toc nav a:hover{color:var(--ink);background:var(--sunk)}
+.toc nav a.active{color:var(--ink);background:var(--accent-soft);font-weight:600}
+.toc nav a.active b{color:var(--accent)}
+.toc ol ol{display:none;margin:.15rem 0 .45rem 1.45rem;padding-left:.2rem;border-left:1px solid var(--line)}
+.toc li.current > ol{display:block}
+.toc ol ol a{font-size:.84rem;padding:.24rem .6rem}
+.toc ol ol a.active{background:none;color:var(--accent);font-weight:600}
+.toc-foot{margin-top:1.2rem;padding:.8rem .5rem 0;border-top:1px solid var(--line);font-size:.76rem;color:var(--muted);line-height:1.5}
+.toc-foot a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px}
+.toc-foot a:hover{text-decoration-color:var(--accent)}
+.theme-switch{display:flex;gap:2px;margin-top:.8rem;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:2px}
+.theme-switch button{flex:1;border:0;background:none;font-size:.76rem;font-weight:500;padding:.32rem .3rem;border-radius:6px;color:var(--muted)}
+.theme-switch button:hover{color:var(--ink)}
+.theme-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.main{margin-left:264px}
+@media (min-width:1280px){ .main .wrap{margin-left:0;padding-left:max(clamp(32px,3.5vw,56px),env(safe-area-inset-left,0px))} }
+.toc-toggle{display:none}
+.scrim{display:none}
+@media (max-width:1279px){
+  .main{margin-left:0}
+  .toc{width:min(300px,86vw);transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.25)}
+  .toc.open{transform:none}
+  .toc-toggle{display:inline-flex;align-items:center;gap:.45rem;position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:21;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:.65rem 1rem;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+  .scrim.show{display:block;position:fixed;inset:0;background:rgba(5,12,18,.45);z-index:19}
+}
+@media (prefers-reduced-motion:reduce){ .toc{transition:none} }
+section.chapter,h3[id],.bench[id],.two[id],.opgrid[id]{scroll-margin-top:16px}
+
+/* hero */
+header.hero{padding-block:3rem 2rem;border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:2.5rem;align-items:center}
+.hero h1{font-size:clamp(2.3rem,5.4vw,3.9rem);font-weight:700;letter-spacing:-.01em}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+.hero .lede{font-size:1.12rem;color:var(--muted);max-width:52ch}
+.cite{font-size:.86rem;color:var(--muted);border-left:3px solid var(--accent);padding-left:.8rem;margin-top:1.2rem}
+.hero-canvas{width:100%;aspect-ratio:5/4;max-width:100%;border-radius:var(--radius);background:var(--sunk);display:block}
+.variants{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.chip{display:inline-flex;gap:.35rem;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.2rem .7rem;font-size:.84rem;text-decoration:none;color:var(--ink)}
+.chip b{font-family:var(--f-mono);font-weight:500;color:var(--accent)}
+
+section.chapter{padding-block:3.2rem 1rem;border-bottom:1px solid var(--line)}
+section.chapter > .wrap > .eyebrow{display:block;margin-bottom:.4rem}
+
+/* bench (simulation panel) */
+.bench{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-block:1.4rem;overflow:hidden}
+.bench-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;padding:.9rem 1.1rem;border-bottom:1px solid var(--line);background:var(--sunk)}
+.bench-head h4{margin:0;font-family:var(--f-display);font-size:1.12rem}
+.bench-head .eyebrow{font-size:.68rem}
+.bench-body{display:grid;grid-template-columns:270px minmax(0,1fr);gap:0}
+.bench-body.wide-right{grid-template-columns:minmax(0,1fr) 300px}
+.side{padding:1rem 1.1rem;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:.75rem;min-width:0}
+.wide-right .side{border-right:0;border-left:1px solid var(--line)}
+.stage{padding:1rem 1.1rem;min-width:0;display:flex;flex-direction:column;gap:.9rem}
+.ctl{display:flex;flex-direction:column;gap:.15rem}
+.ctl label{display:flex;justify-content:space-between;gap:.5rem;font-size:.84rem;font-weight:500}
+.ctl output{font-family:var(--f-mono);font-size:.82rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.ctl small{font-size:.74rem;color:var(--muted);line-height:1.35}
+.ctl-check label{justify-content:flex-start;align-items:center;font-weight:400}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=text],input[type=number]{font:inherit;font-size:.88rem;padding:.35rem .45rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:100%}
+.btns{display:flex;gap:.45rem;flex-wrap:wrap}
+button{font:inherit;font-size:.86rem;font-weight:500;padding:.45rem .85rem;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.small{font-size:.78rem;padding:.3rem .6rem}
+.group-label{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line);padding-top:.6rem;margin-top:.2rem}
+canvas{display:block;width:100%;max-width:100%}
+.cv-land{aspect-ratio:1/1;border-radius:8px;background:var(--sunk);touch-action:none}
+.cv-chart{height:170px;border-radius:8px;background:var(--sunk)}
+.cv-map{aspect-ratio:16/9;border-radius:8px;background:var(--sunk)}
+.stage-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem}
+.stage-grid > div{min-width:0;display:flex;flex-direction:column;gap:.7rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem}
+.stat{background:var(--sunk);border-radius:8px;padding:.45rem .6rem}
+.stat span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat b{font-family:var(--f-mono);font-weight:500;font-size:.95rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.3rem;vertical-align:-1px}
+.legend i.sq{border-radius:2px}
+.cap{font-size:.8rem;color:var(--muted);margin:0}
+
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;padding:1rem 1.1rem;border-top:1px solid var(--line)}
+.preset{text-align:left;display:flex;flex-direction:column;gap:.2rem;padding:.6rem .75rem;background:var(--bg)}
+.preset b{font-size:.86rem}
+.preset span{font-size:.78rem;color:var(--muted);font-weight:400;line-height:1.4}
+
+/* math and tables */
+.eq{font-family:var(--f-display);font-size:1.15rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1.1rem;margin:1rem 0;overflow-x:auto;white-space:nowrap}
+.eq i{font-style:italic}
+.eq .tag{float:right;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);margin-left:1rem}
+.eq .t-in{color:var(--muted)} .eq .t-cog{color:var(--accent)} .eq .t-soc{color:var(--gold)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:.42rem .65rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;background:var(--sunk);font-size:.78rem}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.hl td{background:var(--gold-soft)}
+.pseudo{background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);padding:1rem 1.2rem;font-family:var(--f-mono);font-size:.86rem;line-height:1.65;overflow-x:auto;white-space:pre;margin:1rem 0}
+.pseudo .k{color:#7CC4F0} .pseudo .c{color:var(--code-dim)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:start}
+.two > *{min-width:0}
+.cards3{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.2rem 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
+.card h5{margin:0 0 .3rem;font-size:.95rem}
+.card p{margin:0;font-size:.88rem;color:var(--muted)}
+.steps{list-style:none;padding:0;margin:1rem 0;counter-reset:s;display:grid;gap:.4rem}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2rem 1fr;gap:.6rem;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.5rem .7rem;font-size:.92rem}
+.steps li::before{content:counter(s);font-family:var(--f-mono);font-size:.8rem;color:var(--accent-ink);background:var(--accent);border-radius:50%;width:1.6rem;height:1.6rem;display:grid;place-items:center}
+.steps li.loop{border-style:dashed}
+.note{background:var(--accent-soft);border-radius:8px;padding:.7rem .9rem;font-size:.88rem;margin:1rem 0}
+.note.warn{background:var(--gold-soft)}
+blockquote{font-family:var(--f-display);font-style:italic;font-size:1.2rem;border-left:3px solid var(--gold);margin:1.4rem 0;padding:.2rem 0 .2rem 1rem}
+blockquote footer{font-family:var(--f-body);font-style:normal;font-size:.85rem;color:var(--muted);margin-top:.4rem}
+
+/* binary + permutation widgets */
+.bits{display:flex;gap:4px;flex-wrap:wrap}
+.bit{width:2rem;height:2.3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface);font-size:1rem}
+.bit.on{background:var(--accent-soft)}
+.bit.sel{outline:2px solid var(--gold);outline-offset:1px}
+.bit.changed{background:var(--gold);color:#fff}
+.calc{font-family:var(--f-mono);font-size:.86rem;line-height:1.8;background:var(--sunk);border-radius:8px;padding:.7rem .9rem;overflow-x:auto;white-space:nowrap}
+.perm{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.perm .cell{min-width:2.1rem;height:2.1rem;padding:0 .3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+.perm .cell.a{background:var(--accent-soft);border-color:var(--accent)}
+.perm .cell.b{background:var(--gold-soft);border-color:var(--gold)}
+.swap{display:inline-block;font-family:var(--f-mono);font-size:.86rem;border:1px solid var(--line);border-radius:5px;padding:.15rem .45rem;margin:2px;background:var(--surface)}
+.swap.now{background:var(--gold);color:#fff;border-color:var(--gold)}
+.swap.dim{opacity:.45;text-decoration:line-through}
+.opgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.op{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.op h4{margin:0;font-family:var(--f-display);font-size:1.05rem}
+.portfolio{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.35rem}
+.proj{font-size:.76rem;border:1px solid var(--line);border-radius:6px;padding:.3rem .45rem;background:var(--surface);display:flex;justify-content:space-between;gap:.3rem}
+.proj.in{background:var(--accent-soft);border-color:var(--accent)}
+.proj span{font-family:var(--f-mono);color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.bar > div{height:100%;background:var(--accent)}
+.bar.over > div{background:var(--bad)}
+.tour{font-size:.8rem;color:var(--muted);line-height:1.5}
+
+/* code */
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:0 1.1rem;background:var(--sunk)}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;padding:.7rem .8rem;color:var(--muted)}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);font-family:var(--f-mono);font-size:.8rem;line-height:1.6;padding:1rem 1.2rem;overflow:auto;max-height:560px}
+pre.code .cm{color:var(--code-dim)} pre.code .kw{color:#7CC4F0} pre.code .st{color:#E8B572} pre.code .nm{color:#9ED7A8}
+.code-bar{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.7rem 1.1rem;border-bottom:1px solid var(--line)}
+.colab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.7rem;margin:1rem 0}
+.colab{display:flex;flex-direction:column;gap:.25rem;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.75rem .9rem}
+.colab:hover{border-color:var(--accent)}
+.colab b{font-size:.9rem}
+.colab span{font-size:.78rem;color:var(--muted)}
+.colab em{font-style:normal;font-family:var(--f-mono);font-size:.7rem;color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
+.runbox{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;background:var(--sunk);border-radius:var(--radius);padding:.8rem 1rem;margin:1.2rem 0;font-size:.88rem}
+.runbox b{margin-right:.3rem}
+.colab-btn{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:500;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:.25rem .7rem}
+.colab-btn::before{content:"";width:.7rem;height:.7rem;border-radius:50%;background:var(--gold)}
+.zoom{display:grid;gap:.7rem}
+.zoom .card h5{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline}
+.zoom .card h5 span{font-family:var(--f-mono);font-size:.74rem;font-weight:500;color:var(--muted)}
+.zoom .card.ex{border-left:4px solid var(--s2)}
+.zoom .card.it{border-left:4px solid var(--s1)}
+.dspace{position:relative;padding:1.7rem 0 1.6rem;margin-inline:.5rem}
+.dspace .track{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--s2),var(--s1))}
+.dspace .tick{position:absolute;top:0;transform:translateX(-50%);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.dspace .end{position:absolute;bottom:0;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dspace .mark{position:absolute;top:1.32rem;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transition:left .15s}
+@media (prefers-reduced-motion:reduce){ .dspace .mark{transition:none} }
+@media (max-width:600px){ .dspace .tick.mid{display:none} }
+footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
+
+@media (max-width:900px){
+  .hero-grid,.two,.stage-grid{grid-template-columns:1fr}
+  .bench-body,.bench-body.wide-right{grid-template-columns:1fr}
+  .side{border-right:0;border-bottom:1px solid var(--line)}
+  .wide-right .side{border-left:0;border-top:1px solid var(--line);border-bottom:0}
+  .cards3,.opgrid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto!important} }
+
+/* Problems and heuristics additions */
+.cv-sq{aspect-ratio:4/3;border-radius:8px;background:var(--sunk)}
+.mono{font-family:var(--f-mono)}
+.ttab td,.ttab th{padding:.3rem .5rem;font-size:.82rem}
+tr.best td{background:var(--accent-soft)}
+tr.dim td{color:var(--muted)}
+tr.bad td{color:var(--bad)}
+.legend-row{display:flex;gap:.9rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);align-items:center}
+.legend-row i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.3rem;vertical-align:-1px}
+.tags{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.5rem}
+.tags div{border:1px solid var(--line);border-radius:8px;padding:.45rem .6rem;background:var(--surface)}
+.tags small{display:block;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+.tags b{font-size:.88rem;font-weight:600}
+.bigcount{font-family:var(--f-mono);font-size:.95rem;line-height:1.7;word-break:break-all;background:var(--sunk);border-radius:8px;padding:.6rem .8rem}
+.board{display:grid;gap:0;margin:0 auto;border:2px solid var(--ink);width:min(100%,360px);aspect-ratio:1/1}
+.board span{display:grid;place-items:center;cursor:pointer;font-size:1.5rem;user-select:none;position:relative}
+.board span.l{background:var(--surface)} .board span.d{background:var(--sunk)}
+.board span.hit{box-shadow:inset 0 0 0 3px var(--bad)}
+.board span.q{color:var(--ink)} .board span.q.bad{color:var(--bad)}
+.bits{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.bits button{padding:.45rem 0;font-family:var(--f-mono);font-size:.95rem;border-radius:6px}
+.bits button.on{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}
+.bits small{display:block;font-size:.65rem;opacity:.75}
+.dgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-width:520px;margin:0 auto}
+.dgrid span{aspect-ratio:1/1;display:grid;place-items:center;border-radius:4px;font-family:var(--f-mono);font-weight:600;font-size:.85rem;cursor:pointer;color:#fff;user-select:none}
+.dpick{display:flex;gap:.35rem;flex-wrap:wrap}
+.dpick button{min-width:2.4rem}
+.dpick button[aria-pressed="true"]{outline:3px solid var(--ink)}
+@media (max-width:600px){ .bits{grid-template-columns:repeat(5,1fr)} }
+</style>
+</head>
+<body>
+<aside class="toc" id="toc" aria-label="Contents">
+  <div class="toc-brand"><b>Problems and Heuristics Lab</b><span>Interactive companion to Chapter 2</span>
+    <div class="theme-switch" role="group" aria-label="Color theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="system">System</button></div></div>
+  <nav><ol>
+    <li><a href="#top"><b>0</b>Overview</a></li>
+    <li><a href="#classify"><b>1</b>Classifying problems</a><ol>
+      <li><a href="#combinatorics">Counting search spaces</a></li>
+      <li><a href="#landscapes">Landscapes</a></li>
+      <li><a href="#nqueen">n-queen CSP</a></li>
+      <li><a href="#lagrange">Lagrange multipliers</a></li>
+      <li><a href="#lp">Linear programming</a></li>
+      <li><a href="#timescale">Design, planning, control</a></li></ol></li>
+    <li><a href="#algorithms"><b>2</b>Classifying algorithms</a></li>
+    <li><a href="#heuristics"><b>3</b>Heuristics</a><ol>
+      <li><a href="#binpack">Bin packing</a></li>
+      <li><a href="#strategies">Search strategies</a></li></ol></li>
+    <li><a href="#nature"><b>4</b>Nature-inspired algorithms</a></li>
+    <li><a href="#python"><b>5</b>Python and Colab</a><ol>
+      <li><a href="#notebooks">Notebooks</a></li>
+      <li><a href="#code">From-scratch code</a></li></ol></li>
+    <li><a href="#summary"><b>6</b>Summary</a></li>
+  </ol></nav>
+  <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 2, A deeper look at search and optimization.</div>
+</aside>
+<button class="toc-toggle" id="tocBtn" aria-controls="toc" aria-expanded="false">☰ Contents</button>
+<div class="scrim" id="scrim"></div>
+<div class="main">
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Interactive companion · Chapter 2 · A deeper look at search and optimization</div>
+      <h1>Problems and Heuristics <em>Lab</em></h1>
+      <p class="lede">Before choosing an algorithm, classify the problem: how many variables, of what type, how many objectives, what kind of landscape, which constraints, and how much time you have. Then pick a search strategy, often a heuristic: a rule of thumb that finds good answers fast without promising the best.</p>
+      <div class="variants">
+        <a class="chip" href="#combinatorics"><b>n!</b> Search spaces</a>
+        <a class="chip" href="#landscapes"><b>f(x,y)</b> Landscapes</a>
+        <a class="chip" href="#nqueen"><b>♛</b> n-queen</a>
+        <a class="chip" href="#lp"><b>LP</b> Feed mix</a>
+        <a class="chip" href="#binpack"><b>▤</b> Bin packing</a>
+      </div>
+      <p class="cite">Based on Chapter 2, “A deeper look at search and optimization,” in Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning Publications, 2024 (ISBN 978-1633438835).</p>
+    </div>
+    <div>
+      <canvas id="heroCv" class="hero-canvas" aria-label="Min-conflicts repairing an 8-queen board"></canvas>
+      <p class="cap" style="margin-top:.4rem" id="heroCap">Min-conflicts repairing an 8-queen board.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== CLASSIFY ===================== -->
+<section class="chapter" id="classify">
+  <div class="wrap">
+    <span class="eyebrow">Part 1 · Section 2.1</span>
+    <h2>Classifying optimization problems</h2>
+    <p class="prose">Classifying problems lets us group similar ones and reuse solutions: a traveling salesman model of cities and roads can also minimize wire length in a VLSI chip. Figure 2.1 classifies a problem by its decision variables (number and type), its objectives (number and landscape), its constraints (equality or inequality, hard or soft), the linearity of objectives and constraints, and the time allowed versus the quality expected. Pick an example to see how it is classified.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Problem classifier</h4><span class="eyebrow">Examples from Chapters 1 and 2</span></div>
+      <div class="stage"><div id="clCtl"></div><div class="tags" id="clTags"></div><p class="cap" id="clNote"></p></div>
+    </div>
+
+    <h3 id="combinatorics">Counting search spaces (Section 2.1.1)</h3>
+    <div class="two">
+      <div class="prose">
+        <p><b>Combinatorial</b> problems have solutions that are sets, combinations or permutations. Order matters in a permutation, not in a combination. Choosing 3 of 5 exercises (jogging, swimming, biking, yoga, aerobics) for a weekly plan gives 35 combinations with repetition, 10 without (“5 choose 3”), 125 permutations with repetition and 60 without.</p>
+        <p>The <b>TSP</b> solution is a permutation of cities: 13 cities in the Greater Toronto Area give 13! = 6,227,020,800 tours. Dynamic programming (Bellman-Held-Karp) needs about 2ⁿn² steps; the Christofides algorithm guarantees a tour at most 50% longer than optimal in O(n³).</p>
+        <p><b>Clustering</b> partitions objects into groups. The <b>Stirling number of the second kind</b> S(n, k) counts the ways to split n objects into k non-empty groups (equation 2.1): 50 smart carts and 4 assembly points give about 5.3 × 10²⁸ partitions.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Count it</h4></div>
+        <div class="stage"><div id="cbCtl"></div><div class="bigcount" id="cbOut"></div><div id="cbCtl2"></div><div class="bigcount" id="cbTsp"></div><div id="cbCtl3"></div><div class="bigcount" id="cbStir"></div></div></div>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Class</th><th>Meaning</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td><b>P</b></td><td>Solvable in polynomial time by a deterministic algorithm (tractable)</td><td>MST, shortest path, maximum flow, some single-machine scheduling</td></tr>
+        <tr><td><b>NP</b></td><td>A “yes” answer can be verified in polynomial time given a witness</td><td>Integer factorization, graph isomorphism</td></tr>
+        <tr><td><b>NP-complete</b></td><td>In NP and at least as hard as every problem in NP</td><td>Bin packing, knapsack, subset sum, Hamiltonian circuit, vertex cover, SAT</td></tr>
+        <tr><td><b>NP-hard</b></td><td>At least as hard as the hardest NP problems; solutions may not even be verifiable quickly</td><td>TSP, graph coloring, set covering, vehicle routing, districting</td></tr>
+      </tbody></table><p class="cap" style="padding:.4rem .6rem">Problem classes by hardness and completeness (sidebar in Section 2.1.1).</p></div>
+
+    <h3 id="landscapes">Landscapes: unimodal, multimodal and deceptive (Listing 2.1)</h3>
+    <p class="prose">A <b>unimodal</b> landscape has one optimum. A <b>multimodal</b> one has several. A <b>deceptive</b> one hides the global minimum in a narrow valley while a wide basin leads elsewhere (Figure 2.4). Click the map to start a search there. The deterministic compass search always follows the same path from the same start; the stochastic searches change from run to run.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Search a landscape</h4><span class="eyebrow">Minimize: brighter is lower · click to start</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="lsCtl"></div><div class="btns"><button id="lsRun" class="primary">Run again</button><button id="lsClear">Clear</button></div><div class="stats" id="lsStats"></div></div>
+        <div class="stage"><canvas id="lsCv" class="cv-sq" style="aspect-ratio:1/1;max-height:540px;cursor:crosshair" aria-label="Objective landscape"></canvas><p class="cap" id="lsNote"></p></div>
+      </div>
+    </div>
+
+    <h3 id="nqueen">Constraint satisfaction: the n-queen problem (Listings 2.2 and 2.3)</h3>
+    <div class="two">
+      <div class="prose">
+        <p>A constraint-satisfaction problem has no objective, only constraints: place n queens so no two share a row, column or diagonal. Figure 2.5 repairs a 4-queen board by moving queens to reduce conflicts (5, 3, 1, 0). <b>Min-conflicts</b> does this automatically: pick a queen under attack and move it within its column to the row with the fewest conflicts.</p>
+        <p><b>Listing 2.2</b> places queens column by column; when a column has no safe row, it drops the first column, slides the board left and retries. For n = 4 it finds a solution in 6 steps (Figure 2.6), but it is not a general method: for n = 6 it returns to an earlier state and cycles forever. <b>Listing 2.3</b> instead hands the model to OR-Tools’ CP-SAT solver with three all-different constraints (rows and both diagonals).</p>
+        <p>Click a square to move that column’s queen there.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Place the queens</h4></div>
+        <div class="stage"><div id="nqCtl"></div><div class="board" id="nqBoard"></div><div class="btns"><button id="nqMc" class="primary small">Min-conflicts move</button><button id="nqSolve" class="small">Solve</button><button id="nqBook" class="small">Listing 2.2 step</button><button id="nqRand" class="small">Random</button></div><div class="stats" id="nqStats"></div><p class="cap" id="nqNote"></p></div></div>
+    </div>
+
+    <h3 id="lagrange">Constraints and Lagrange multipliers (Listings 2.4 and 2.5)</h3>
+    <div class="two">
+      <div class="prose">
+        <p>Listing 2.4 solves the Chapter 1 ticket pricing problem with SciPy’s bounded scalar minimizer: $155 and a profit of $130,500. Now the event also sells online tickets, and a welcome package limited to 10,000 units means x in-person and y online tickets must satisfy <b>x + y = 10,000</b>. The profit is f(x, y) = 155x + (0.001x<sup>3/2</sup> + 70)y − 1,000,000 (equation 2.2): online tickets earn more as the venue looks more crowded.</p>
+        <p>The <b>Lagrangian</b> L(x, y, λ) = f(x, y) − λ(x + y − 10,000) turns this into an unconstrained problem: set ∂L/∂x = ∂L/∂y = ∂L/∂λ = 0 (Figure 2.8). SymPy finds x = 6,424 and y = 3,576 with a profit of $2,087,260.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Split 10,000 tickets</h4></div>
+        <div class="stage"><div id="lgCtl"></div><canvas id="lgCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Profit along the constraint x + y = 10,000"></canvas><div class="stats" id="lgStats"></div><p class="cap" id="lgNote"></p></div></div>
+    </div>
+
+    <h3 id="lp">Linear programming: the animal feed mix (Listing 2.6)</h3>
+    <div class="two">
+      <div class="prose">
+        <p>When the objective and every constraint are linear, the problem is a <b>linear program</b>. Mix corn, limestone and soybean meal (Table 2.1) at minimum cost per kg, with calcium between 0.8% and 1.2%, protein at least 22% and fiber at most 5%; the proportions sum to 1.</p>
+        <p>Because the proportions sum to 1, limestone = 1 − corn − soy and the problem can be drawn in two dimensions. The feasible region is a polygon, cost lines are parallel, and the optimum sits at a vertex: about <b>64.9% corn, 2.8% limestone and 32.3% soybean meal at $0.4916 per kg</b>. PuLP’s CBC solver gives the same answer, rounded to 65%, 3% and 32%. Click inside the plot to test any mix.</p>
+        <p>If an objective or a constraint is nonlinear, the problem is <b>nonlinear programming</b>; with a quadratic objective it is <b>quadratic programming</b>, such as the plant layout problem (Figure 2.9). The MineProbe wheel design and the hanging-chain catenary are nonlinear too.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Find the cheapest feasible mix</h4></div>
+        <div class="stage"><canvas id="lpCv" class="cv-sq" style="aspect-ratio:1/1;cursor:crosshair" aria-label="Feasible region of the feed mix LP"></canvas>
+          <div class="legend-row"><span><i style="background:var(--accent);opacity:.35"></i>feasible region</span><span><i style="background:var(--good)"></i>optimum</span><span><i style="background:var(--gold)"></i>your mix</span></div>
+          <div class="tbl-wrap"><table class="ttab" id="lpTbl"></table></div><div class="btns"><button id="lpOpt" class="small primary">Go to the optimum</button></div><p class="cap" id="lpNote"></p></div></div>
+    </div>
+
+    <h3 id="timescale">Design, planning and control problems (Section 2.1.5)</h3>
+    <div class="two">
+      <div class="prose">
+        <p><b>Design</b> problems (strategic) can run offline for minutes or days because quality matters most: vehicle design, class scheduling, flight scheduling, political districting. <b>Planning</b> problems (tactical) need answers in seconds to minutes: ride-sharing, dispatching, surgery and crew scheduling. <b>Control</b> problems (operational) need answers in milliseconds, repeatedly: vehicle motion control, or a swarm of micro aerial vehicles forming a communication relay to a trapped victim, where small errors are fixed in the next cycle (Figure 2.12).</p>
+        <p><b>Political districting</b> groups basic units into districts with balanced population, contiguity, compactness and respect for boundaries. Drawing the lines to favor a party is <b>gerrymandering</b> (Figure 2.13). Paint the 50 voters below into 5 districts of 10 and see who wins.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Type</th><th>Search time</th><th>Quality</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td>Design</td><td>Minutes to days, infrequent</td><td>High</td><td>Vehicle design, asset allocation, districting</td></tr>
+          <tr><td>Planning</td><td>Seconds to minutes, intermittent</td><td>Medium</td><td>Motion planning, ride-sharing, crew scheduling</td></tr>
+          <tr><td>Control</td><td>Milliseconds to seconds, continuous</td><td>Lower</td><td>Motion control, traffic control, relaying</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Draw the districts</h4><span class="eyebrow">Illustrative: 20 Shield and 30 Bell voters</span></div>
+      <div class="bench-body">
+        <div class="side"><div class="group-label">Paint with district</div><div class="dpick" id="gmPick"></div><div class="group-label">Preset maps</div><div class="btns" id="gmPresets"></div><div class="stats" id="gmStats"></div></div>
+        <div class="stage"><div class="dgrid" id="gmGrid"></div><div class="tbl-wrap"><table class="ttab" id="gmTbl"></table></div><p class="cap" id="gmNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ALGORITHMS ===================== -->
+<section class="chapter" id="algorithms">
+  <div class="wrap">
+    <span class="eyebrow">Part 2 · Section 2.2</span>
+    <h2>Classifying search and optimization algorithms</h2>
+    <div class="two">
+      <div class="prose">
+        <p><b>Local search</b> uses only information around the current solution and finds local optima; <b>global search</b> uses more of the search space to look for global optima. <b>Deterministic</b> algorithms repeat the same path from the same start; <b>stochastic</b> algorithms use randomness, so their paths and running times vary, which helps them escape local optima (Figure 2.16). The landscape lab above shows the difference.</p>
+        <p>The <b>treasure-hunting mission</b> makes this concrete: the island is the feasible search space, the volcano is infeasible, the treasure is the optimum, and you and your friends are search agents. Searching with no clues is blind search; climbing the steepest cliff is hill climbing; moving from hint to hint is trajectory-based search; recruiting the best hunters is evolution; copying the best hunters is swarm intelligence; learning from a metal detector is machine learning.</p>
+        <p><a class="colab-btn" target="_blank" rel="noopener" href="https://optimization-algorithms-book.github.io/Code-Listings/Chapter%202/Treasure_Hunting_Mission.html">Open the Treasure Hunting Mission</a></p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Family</th><th>Examples</th><th>Book</th></tr></thead>
+        <tbody>
+          <tr><td colspan="3"><b>Deterministic</b></td></tr>
+          <tr><td>Numerical / classical</td><td>Graphical, gradient and Hessian, penalty, gradient projection</td><td>Appendix A</td></tr>
+          <tr><td>Blind graph search</td><td>BFS, DFS, Dijkstra</td><td>Chapter 3</td></tr>
+          <tr><td>Informed graph search</td><td>Hill climbing, beam, best-first, A*, contraction hierarchies</td><td>Chapter 4</td></tr>
+          <tr><td colspan="3"><b>Stochastic</b></td></tr>
+          <tr><td>Trajectory-based</td><td>Simulated annealing, tabu search</td><td>Part 2</td></tr>
+          <tr><td>Evolutionary computing</td><td>Genetic algorithm, differential evolution</td><td>Part 3</td></tr>
+          <tr><td>Swarm intelligence</td><td>PSO, ACO, artificial bee colony</td><td>Part 4</td></tr>
+          <tr><td>Machine learning-based</td><td>Graph neural networks, self-organizing maps, reinforcement learning</td><td>Part 5</td></tr>
+        </tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HEURISTICS ===================== -->
+<section class="chapter" id="heuristics">
+  <div class="wrap">
+    <span class="eyebrow">Part 3 · Section 2.3</span>
+    <h2>Heuristics and metaheuristics</h2>
+    <p class="prose"><b>Heuristics</b> (from the Greek <i>heuriskein</i>, to find; Archimedes’ “Eureka!”) are rules of thumb that find acceptable solutions in practical time without guaranteeing feasibility or optimality. <b>Metaheuristics</b>, a term coined by Fred Glover, are higher-level strategies that guide other heuristics and balance exploration and exploitation.</p>
+    <h3 id="binpack">Bin packing (Figures 2.17 to 2.20, Listing 2.7)</h3>
+    <div class="bench">
+      <div class="bench-head"><h4>Pack objects into bins of size 7</h4><span class="eyebrow">Lower bound = ⌈total / capacity⌉</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="bpCtl"></div><div class="btns"><button id="bpBook" class="small">Book objects</button><button id="bpRand" class="small">Random objects</button></div><div class="stats" id="bpStats"></div></div>
+        <div class="stage"><canvas id="bpCv" class="cv-sq" style="aspect-ratio:16/8" aria-label="Bins"></canvas><div class="tbl-wrap"><table class="ttab" id="bpTbl"></table></div><p class="cap" id="bpNote"></p></div>
+      </div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Load a 4 × 8 container (Listing 2.7)</h4><span class="eyebrow">Objects 3×1, 3×3, 5×1, 4×2, 3×2</span></div>
+      <div class="stage"><canvas id="ctCv" class="cv-sq" style="aspect-ratio:16/8" aria-label="Container loading heuristics"></canvas><p class="cap" id="ctNote"></p></div>
+    </div>
+
+    <h3 id="strategies">Heuristic search strategies: the cargo bike again</h3>
+    <div class="two">
+      <div class="prose">
+        <p>Three ways to generate candidate solutions, applied to the cargo bike of Section 1.3.3 (100 kg payload), with a solution written as a bit string (item 1 first):</p>
+        <ul>
+          <li><b>Repeated construction</b> builds a solution from scratch, here greedily by efficiency ($/kg) (Table 2.3), as in graph search and ant colony optimization.</li>
+          <li><b>Repeated modification</b> changes an existing solution, here swapping item 9 out and item 5 in, as in tabu search, simulated annealing and PSO.</li>
+          <li><b>Repeated recombination</b> mixes solutions, here the first genes of S1 with the rest of S2 (Figure 2.21), as in genetic algorithms and differential evolution.</li>
+        </ul>
+        <p>Click the bits to edit the current solution.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Build, modify, recombine</h4></div>
+        <div class="stage"><div class="bits" id="sgBits"></div><div class="stats" id="sgStats"></div>
+          <div class="btns"><button id="sgCons" class="small primary">Construct (greedy)</button><button id="sgMod" class="small">Modify (9 out, 5 in)</button><button id="sgRec" class="small">Recombine S1 + S2</button><button id="sgBest" class="small">Optimum</button></div>
+          <div id="sgCtl"></div>
+          <div class="tbl-wrap"><table class="ttab" id="sgTbl"></table></div><p class="cap" id="sgNote"></p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NATURE ===================== -->
+<section class="chapter" id="nature">
+  <div class="wrap">
+    <span class="eyebrow">Part 4 · Section 2.4</span>
+    <h2>Nature-inspired algorithms</h2>
+    <p class="prose">Problems in nature are ill-structured, dynamic, partially observable, multimodal and multi-objective, and nature solves them without global information. Nature-inspired algorithms mimic those behaviors.</p>
+    <div class="cards3">
+      <div class="card"><h5>Physics <span>Chapter 5</span></h5><p>Molecular dynamics and thermal annealing inspire simulated annealing.</p></div>
+      <div class="card"><h5>Behavioral psychology <span>Chapter 6</span></h5><p>Adaptive memory and responsive exploration inspire tabu search.</p></div>
+      <div class="card"><h5>Evolutionary biology <span>Part 3</span></h5><p>Genetic algorithms, genetic programming, evolution strategies, differential evolution, cultural algorithms, co-evolution.</p></div>
+      <div class="card"><h5>Ethology <span>Part 4</span></h5><p>Swarm intelligence: PSO, ACO, artificial bee colony, firefly, bat, grey wolf and many more.</p></div>
+      <div class="card"><h5>Neuroscience <span>Part 5</span></h5><p>Neural networks: graph convolutional and attention networks, self-organizing maps.</p></div>
+      <div class="card"><h5>Psychology and control <span>Part 5</span></h5><p>Reinforcement learning: actor-critic, PPO, multi-armed and contextual bandits.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PYTHON ===================== -->
+<section class="chapter" id="python">
+  <div class="wrap">
+    <span class="eyebrow">Part 5 · Code</span>
+    <h2>Python in Google Colab</h2>
+    <p class="prose">Open the book’s Chapter 2 notebooks directly in Colab, or the Problems and Heuristics Lab companion notebook with the from-scratch implementations below. The companion needs only the Python standard library; the book’s notebooks use SciPy, SymPy, PuLP and OR-Tools.</p>
+    <h3 id="notebooks">Notebooks</h3>
+    <div class="colab-grid">
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Ch2_Lab_Companion.ipynb"><em>All examples</em><b>Problems and Heuristics Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.1_ObjFcn.ipynb"><em>Chapter 2</em><b>Listing 2.1</b><span>Unimodal, multimodal and deceptive functions</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.2_NQueen.ipynb"><em>Chapter 2</em><b>Listing 2.2</b><span>n-queen by sliding placement</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.3_NQueen_OR.ipynb"><em>Chapter 2</em><b>Listing 2.3</b><span>n-queen with OR-Tools CP-SAT</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.4_TicketPrice.ipynb"><em>Chapter 2</em><b>Listing 2.4</b><span>Ticket pricing with SciPy</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.5_Lagrange.ipynb"><em>Chapter 2</em><b>Listing 2.5</b><span>Lagrange multipliers with SymPy</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.6_AnimalFeedMix.ipynb"><em>Chapter 2</em><b>Listing 2.6</b><span>Animal feed mix with PuLP</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.7_BinPacking.ipynb"><em>Chapter 2</em><b>Listing 2.7</b><span>Container loading heuristics</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://optimization-algorithms-book.github.io/Code-Listings/Chapter%202/Treasure_Hunting_Mission.html"><em>Interactive</em><b>Treasure Hunting Mission</b><span>Search strategies as a treasure hunt</span></a>
+    </div>
+    <h3 id="code">From-scratch implementations</h3>
+    <div class="bench">
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-code="k">Combinatorics</button>
+        <button role="tab" aria-selected="false" data-code="l">Landscapes</button>
+        <button role="tab" aria-selected="false" data-code="q">n-queen</button>
+        <button role="tab" aria-selected="false" data-code="c">Lagrange and LP</button>
+        <button role="tab" aria-selected="false" data-code="h">Heuristics</button>
+      </div>
+      <div class="code-bar">
+        <span class="cap" id="codeCap"></span>
+        <div class="btns"><button class="small primary" id="codeCopy">Copy code</button><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Ch2_Lab_Companion.ipynb">Open all five in Colab</a></div>
+      </div>
+      <pre class="code" id="code-k"><span class="cm"># Counting search spaces (Section 2.1.1)</span>
+<span class="kw">import</span> math
+
+<span class="cm"># Fitness plan: choose r = 3 of n = 5 exercises</span>
+n, r = <span class="nm">5</span>, <span class="nm">3</span>
+print(<span class="st">"combinations with repetition:   "</span>, math.comb(n + r - <span class="nm">1</span>, r))       <span class="cm"># 35</span>
+print(<span class="st">"combinations without repetition:"</span>, math.comb(n, r))               <span class="cm"># 10, "5 choose 3"</span>
+print(<span class="st">"permutations with repetition:   "</span>, n ** r)                        <span class="cm"># 125</span>
+print(<span class="st">"permutations without repetition:"</span>, math.perm(n, r))               <span class="cm"># 60</span>
+
+<span class="cm"># Traveling salesman problem: brute force vs. dynamic programming (Bellman-Held-Karp)</span>
+<span class="kw">for</span> cities <span class="kw">in</span> (<span class="nm">5</span>, <span class="nm">10</span>, <span class="nm">13</span>, <span class="nm">20</span>):
+    print(f<span class="st">"{cities:2d} cities: {math.factorial(cities):.3e} tours (ATSP), "</span>
+          f<span class="st">"{math.factorial(cities - 1) // 2:.3e} distinct symmetric tours, Held-Karp ~ {2 ** cities * cities ** 2:.3e} steps"</span>)
+
+
+<span class="kw">def</span> stirling2(n, k):
+    <span class="st">"""Stirling number of the second kind: ways to partition n objects into k non-empty groups (equation 2.1)."""</span>
+    <span class="kw">return</span> sum((-<span class="nm">1</span>) ** i * math.comb(k, i) * (k - i) ** n <span class="kw">for</span> i <span class="kw">in</span> range(k + <span class="nm">1</span>)) // math.factorial(k)
+
+
+<span class="cm"># Smart cart clustering: n carts around k assembly points</span>
+print(f<span class="st">"S(50, 4) = {stirling2(50, 4):.2e}"</span>)                              <span class="cm"># 5.3e28</span>
+print(f<span class="st">"S(100, 4) = {stirling2(100, 4):.2e}"</span>)                            <span class="cm"># 6.7e58</span></pre>
+      <pre class="code" id="code-l" hidden><span class="cm"># Unimodal, multimodal and deceptive landscapes; deterministic vs. stochastic search (Listing 2.1, Section 2.2)</span>
+<span class="kw">import</span> math
+<span class="kw">import</span> random
+
+
+<span class="kw">def</span> t(a):
+    <span class="st">"""|sin(pi a)| / (pi a), the factor in Listing 2.1, taken as 1 at a = 0 (the formula divides by zero there)."""</span>
+    <span class="kw">return</span> <span class="nm">1.0</span> <span class="kw">if</span> abs(a) &lt; <span class="nm">1e-12</span> <span class="kw">else</span> abs(math.sin(math.pi * a)) / (math.pi * a)
+
+
+unimodal = <span class="kw">lambda</span> x, y: x ** <span class="nm">2</span> + y ** <span class="nm">2</span>
+multimodal = <span class="kw">lambda</span> x, y: math.sin(x) * math.cos(y)
+deceptive = <span class="kw">lambda</span> x, y: (<span class="nm">1</span> - (t(x - <span class="nm">2</span>) * t(y - <span class="nm">2</span>)) ** <span class="nm">5</span>) * (<span class="nm">2</span> + (x - <span class="nm">7</span>) ** <span class="nm">2</span> + <span class="nm">2</span> * (y - <span class="nm">7</span>) ** <span class="nm">2</span>)   <span class="cm"># Listing 2.1</span>
+
+
+<span class="kw">def</span> compass_search(f, x, y, step=<span class="nm">0.5</span>, lo=-<span class="nm">3</span>, hi=<span class="nm">3</span>):
+    <span class="st">"""Deterministic local search: try the four compass moves, halve the step when none improves."""</span>
+    moves = <span class="nm">0</span>
+    <span class="kw">while</span> step &gt; <span class="nm">1e-4</span>:
+        cand = [(x + dx, y + dy) <span class="kw">for</span> dx, dy <span class="kw">in</span> ((step, <span class="nm">0</span>), (-step, <span class="nm">0</span>), (<span class="nm">0</span>, step), (<span class="nm">0</span>, -step)) <span class="kw">if</span> lo &lt;= x + dx &lt;= hi <span class="kw">and</span> lo &lt;= y + dy &lt;= hi]
+        best = min(cand, key=<span class="kw">lambda</span> p: f(*p))
+        <span class="kw">if</span> f(*best) &lt; f(x, y):
+            (x, y), moves = best, moves + <span class="nm">1</span>
+        <span class="kw">else</span>:
+            step /= <span class="nm">2</span>
+    <span class="kw">return</span> x, y
+
+
+<span class="kw">def</span> random_walk_search(f, x, y, rng, sigma=<span class="nm">0.4</span>, iters=<span class="nm">400</span>, lo=-<span class="nm">3</span>, hi=<span class="nm">3</span>):
+    <span class="st">"""Stochastic local search: accept a random nearby point when it is better."""</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> range(iters):
+        nx, ny = min(hi, max(lo, x + rng.gauss(<span class="nm">0</span>, sigma))), min(hi, max(lo, y + rng.gauss(<span class="nm">0</span>, sigma)))
+        <span class="kw">if</span> f(nx, ny) &lt; f(x, y):
+            x, y = nx, ny
+    <span class="kw">return</span> x, y
+
+
+<span class="kw">for</span> name, f <span class="kw">in</span> ((<span class="st">"unimodal"</span>, unimodal), (<span class="st">"multimodal"</span>, multimodal), (<span class="st">"deceptive"</span>, deceptive)):
+    a, b = compass_search(f, <span class="nm">2.5</span>, <span class="nm">2.5</span>), compass_search(f, <span class="nm">2.5</span>, <span class="nm">2.5</span>)
+    print(f<span class="st">"{name:10s} deterministic, two runs: ({a[0]:.3f}, {a[1]:.3f}) and ({b[0]:.3f}, {b[1]:.3f}), f = {f(*a):.4f}"</span>)
+    <span class="kw">for</span> seed <span class="kw">in</span> (<span class="nm">1</span>, <span class="nm">2</span>):
+        x, y = random_walk_search(f, <span class="nm">2.5</span>, <span class="nm">2.5</span>, random.Random(seed))
+        print(f<span class="st">"{'':10s} stochastic, seed {seed}: ({x:.3f}, {y:.3f}), f = {f(x, y):.4f}"</span>)</pre>
+      <pre class="code" id="code-q" hidden><span class="cm"># The n-queen constraint-satisfaction problem (Section 2.1.2, Listing 2.2, Figure 2.5)</span>
+<span class="kw">import</span> random
+
+
+<span class="kw">def</span> attacks(q, c):
+    <span class="st">"""Columns whose queens attack the queen in column c (same row or same diagonal)."""</span>
+    <span class="kw">return</span> [j <span class="kw">for</span> j <span class="kw">in</span> range(len(q)) <span class="kw">if</span> j != c <span class="kw">and</span> (q[j] == q[c] <span class="kw">or</span> abs(q[j] - q[c]) == abs(j - c))]
+
+
+<span class="kw">def</span> conflicts(q):
+    <span class="st">"""q[c] is the row of the queen in column c; count attacking pairs."""</span>
+    <span class="kw">return</span> sum(len(attacks(q, c)) <span class="kw">for</span> c <span class="kw">in</span> range(len(q))) // <span class="nm">2</span>
+
+
+<span class="kw">def</span> book_sliding(n, max_steps=<span class="nm">500</span>):
+    <span class="st">"""Listing 2.2: place column by column; when a column is impossible, drop the first column and slide the board."""</span>
+    board, col, seen = [<span class="nm">0</span>] + [<span class="kw">None</span>] * (n - <span class="nm">1</span>), <span class="nm">1</span>, set()
+    <span class="kw">for</span> step <span class="kw">in</span> range(<span class="nm">1</span>, max_steps):
+        <span class="kw">if</span> col == n:
+            <span class="kw">return</span> board, step
+        <span class="kw">if</span> (tuple(board), col) <span class="kw">in</span> seen:
+            <span class="kw">return</span> <span class="kw">None</span>, step                          <span class="cm"># the same state again: the procedure cycles forever</span>
+        seen.add((tuple(board), col))
+        placed = [(c, board[c]) <span class="kw">for</span> c <span class="kw">in</span> range(col)]
+        <span class="kw">for</span> row <span class="kw">in</span> range(n):
+            <span class="kw">if</span> all(row != r <span class="kw">and</span> abs(row - r) != col - c <span class="kw">for</span> c, r <span class="kw">in</span> placed):
+                board[col] = row
+                col += <span class="nm">1</span>
+                <span class="kw">break</span>
+        <span class="kw">else</span>:
+            board = board[<span class="nm">1</span>:] + [<span class="kw">None</span>]
+            col -= <span class="nm">1</span>
+    <span class="kw">return</span> <span class="kw">None</span>, max_steps
+
+
+<span class="kw">def</span> min_conflicts(n, rng, max_moves=<span class="nm">1000</span>):
+    <span class="st">"""Heuristic repair (Figure 2.5): move a conflicted queen to the row with the fewest conflicts."""</span>
+    q = [rng.randrange(n) <span class="kw">for</span> _ <span class="kw">in</span> range(n)]
+    <span class="kw">for</span> move <span class="kw">in</span> range(max_moves):
+        bad = [c <span class="kw">for</span> c <span class="kw">in</span> range(n) <span class="kw">if</span> attacks(q, c)]
+        <span class="kw">if</span> <span class="kw">not</span> bad:
+            <span class="kw">return</span> q, move
+        c = rng.choice(bad)
+        q[c] = min(range(n), key=<span class="kw">lambda</span> r: (len(attacks(q[:c] + [r] + q[c + <span class="nm">1</span>:], c)), rng.random()))
+    <span class="kw">return</span> <span class="kw">None</span>, max_moves
+
+
+<span class="kw">def</span> count_solutions(n, col=<span class="nm">0</span>, rows=(), d1=(), d2=()):
+    <span class="st">"""Backtracking search that counts every solution."""</span>
+    <span class="kw">if</span> col == n:
+        <span class="kw">return</span> <span class="nm">1</span>
+    <span class="kw">return</span> sum(count_solutions(n, col + <span class="nm">1</span>, rows + (r,), d1 + (r - col,), d2 + (r + col,))
+               <span class="kw">for</span> r <span class="kw">in</span> range(n) <span class="kw">if</span> r <span class="kw">not</span> <span class="kw">in</span> rows <span class="kw">and</span> r - col <span class="kw">not</span> <span class="kw">in</span> d1 <span class="kw">and</span> r + col <span class="kw">not</span> <span class="kw">in</span> d2)
+
+
+<span class="kw">for</span> n <span class="kw">in</span> range(<span class="nm">4</span>, <span class="nm">9</span>):
+    sol, steps = book_sliding(n)
+    q, k = min_conflicts(n, random.Random(n))
+    print(f<span class="st">"n = {n}: Listing 2.2 {'reaches ' + str(sol) + ' in ' + str(steps) + ' steps' if sol else 'cycles and never finishes'}; "</span>
+          f<span class="st">"min-conflicts needs {k} moves; {count_solutions(n)} solutions exist"</span>)</pre>
+      <pre class="code" id="code-c" hidden><span class="cm"># Constrained optimization: Lagrange multipliers and linear programming (Sections 2.1.3 and 2.1.4)</span>
+<span class="kw">from</span> itertools <span class="kw">import</span> combinations
+
+<span class="cm"># 1. Ticket sales with an equality constraint x + y = 10,000 (Listing 2.5)</span>
+f = <span class="kw">lambda</span> x, y: <span class="nm">155</span> * x + (<span class="nm">0.001</span> * x ** <span class="nm">1.5</span> + <span class="nm">70</span>) * y - 1_000_000
+g = <span class="kw">lambda</span> x: f(x, 10_000 - x)                  <span class="cm"># substitute the constraint: one variable is left</span>
+lo, hi = <span class="nm">0.0</span>, 10_000.<span class="nm">0</span>
+<span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">200</span>):                            <span class="cm"># ternary search on the profit along the constraint line</span>
+    m1, m2 = lo + (hi - lo) / <span class="nm">3</span>, hi - (hi - lo) / <span class="nm">3</span>
+    lo, hi = (m1, hi) <span class="kw">if</span> g(m1) &lt; g(m2) <span class="kw">else</span> (lo, m2)
+x = (lo + hi) / <span class="nm">2</span>
+y = 10_000 - x
+lam = <span class="nm">155</span> + <span class="nm">0.0015</span> * x ** <span class="nm">0.5</span> * y               <span class="cm"># dL/dx = 0 gives lambda = df/dx</span>
+print(f<span class="st">"in person x = {x:.0f}, online y = {y:.0f}, profit = ${f(x, y):,.0f}, lambda = {lam:.2f} (= df/dy = {0.001 * x ** 1.5 + 70:.2f})"</span>)
+
+<span class="cm"># 2. Animal feed mix LP (Table 2.1, Listing 2.6). With limestone = 1 - corn - soy, the problem lives in the</span>
+<span class="cm">#    (corn, soy) plane; each constraint is written as a*c + b*s &lt;= r.</span>
+cons = {
+    <span class="st">"calcium &gt;= 0.8%"</span>: (<span class="nm">0.379</span>, <span class="nm">0.378</span>, <span class="nm">0.38</span> - <span class="nm">0.008</span>),   <span class="cm"># calcium = 0.38 - 0.379c - 0.378s</span>
+    <span class="st">"calcium &lt;= 1.2%"</span>: (-<span class="nm">0.379</span>, -<span class="nm">0.378</span>, <span class="nm">0.012</span> - <span class="nm">0.38</span>),
+    <span class="st">"protein &gt;= 22%"</span>: (-<span class="nm">0.09</span>, -<span class="nm">0.5</span>, -<span class="nm">0.22</span>),
+    <span class="st">"fiber &lt;= 5%"</span>: (<span class="nm">0.02</span>, <span class="nm">0.08</span>, <span class="nm">0.05</span>),
+    <span class="st">"corn &gt;= 0"</span>: (-<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>),
+    <span class="st">"soybean meal &gt;= 0"</span>: (<span class="nm">0</span>, -<span class="nm">1</span>, <span class="nm">0</span>),
+    <span class="st">"limestone &gt;= 0"</span>: (<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>),
+}
+cost = <span class="kw">lambda</span> c, s: <span class="nm">30.5</span> * c + <span class="nm">10</span> * (<span class="nm">1</span> - c - s) + <span class="nm">90</span> * s    <span class="cm"># cents per kg</span>
+feasible = <span class="kw">lambda</span> c, s: all(a * c + b * s &lt;= r + <span class="nm">1e-9</span> <span class="kw">for</span> a, b, r <span class="kw">in</span> cons.values())
+vertices = []
+<span class="kw">for</span> (a1, b1, r1), (a2, b2, r2) <span class="kw">in</span> combinations(cons.values(), <span class="nm">2</span>):
+    det = a1 * b2 - a2 * b1
+    <span class="kw">if</span> abs(det) &gt; <span class="nm">1e-12</span>:
+        c, s = (r1 * b2 - r2 * b1) / det, (a1 * r2 - a2 * r1) / det
+        <span class="kw">if</span> feasible(c, s):
+            vertices.append((c, s))
+c, s = min(vertices, key=<span class="kw">lambda</span> v: cost(*v))    <span class="cm"># a linear objective is optimal at a vertex of the feasible region</span>
+print(f<span class="st">"{len(vertices)} feasible vertices; best: corn {c:.2%}, limestone {1 - c - s:.2%}, soybean meal {s:.2%}, "</span>
+      f<span class="st">"cost ${cost(c, s) / 100:.4f} per kg"</span>)</pre>
+      <pre class="code" id="code-h" hidden><span class="cm"># Heuristics: bin packing and the cargo bike search strategies (Section 2.3)</span>
+
+<span class="cm"># 1. One-dimensional bin packing (Figure 2.17)</span>
+<span class="kw">def</span> first_fit(items, cap=<span class="nm">7</span>):
+    bins = []
+    <span class="kw">for</span> it <span class="kw">in</span> items:
+        <span class="kw">for</span> b <span class="kw">in</span> bins:
+            <span class="kw">if</span> sum(b) + it &lt;= cap:
+                b.append(it)
+                <span class="kw">break</span>
+        <span class="kw">else</span>:
+            bins.append([it])
+    <span class="kw">return</span> bins
+
+
+items = [<span class="nm">2</span>, <span class="nm">4</span>, <span class="nm">3</span>, <span class="nm">6</span>, <span class="nm">5</span>, <span class="nm">1</span>]
+print(<span class="st">"lower bound:"</span>, -(-sum(items) // <span class="nm">7</span>), <span class="st">"bins"</span>)
+print(<span class="st">"first fit:           "</span>, first_fit(items))
+print(<span class="st">"first fit decreasing:"</span>, first_fit(sorted(items, reverse=<span class="kw">True</span>)))
+
+<span class="cm"># 2. Loading a 4 x 8 container (Listing 2.7, written without NumPy)</span>
+W, H = <span class="nm">4</span>, <span class="nm">8</span>
+
+
+<span class="kw">def</span> load(objects):
+    grid = [[<span class="nm">0</span>] * W <span class="kw">for</span> _ <span class="kw">in</span> range(H)]
+
+    <span class="kw">def</span> fit(w, h, k, rotate=<span class="kw">True</span>):
+        <span class="kw">for</span> i <span class="kw">in</span> range(H - h + <span class="nm">1</span>):              <span class="cm"># move down first, then right</span>
+            <span class="kw">for</span> j <span class="kw">in</span> range(W - w + <span class="nm">1</span>):
+                <span class="kw">if</span> all(grid[i + a][j + b] == <span class="nm">0</span> <span class="kw">for</span> a <span class="kw">in</span> range(h) <span class="kw">for</span> b <span class="kw">in</span> range(w)):
+                    <span class="kw">for</span> a <span class="kw">in</span> range(h):
+                        <span class="kw">for</span> b <span class="kw">in</span> range(w):
+                            grid[i + a][j + b] = k
+                    <span class="kw">return</span> <span class="kw">True</span>
+        <span class="kw">return</span> rotate <span class="kw">and</span> fit(h, w, k, <span class="kw">False</span>)   <span class="cm"># last resort: rotate by 90 degrees</span>
+
+    left_out = [o <span class="kw">for</span> k, o <span class="kw">in</span> enumerate(objects, <span class="nm">1</span>) <span class="kw">if</span> <span class="kw">not</span> fit(*o, k)]
+    <span class="kw">return</span> grid, left_out
+
+
+objects = [[<span class="nm">3</span>, <span class="nm">1</span>], [<span class="nm">3</span>, <span class="nm">3</span>], [<span class="nm">5</span>, <span class="nm">1</span>], [<span class="nm">4</span>, <span class="nm">2</span>], [<span class="nm">3</span>, <span class="nm">2</span>]]   <span class="cm"># [width, height]</span>
+<span class="kw">for</span> name, order <span class="kw">in</span> ((<span class="st">"largest first"</span>, sorted(objects, key=<span class="kw">lambda</span> o: o[<span class="nm">0</span>] * o[<span class="nm">1</span>], reverse=<span class="kw">True</span>)),
+                    (<span class="st">"smallest width first"</span>, sorted(objects, key=<span class="kw">lambda</span> o: (o[<span class="nm">0</span>], o[<span class="nm">0</span>] * o[<span class="nm">1</span>])))):
+    grid, left_out = load(order)
+    print(f<span class="st">"{name}: left out {left_out}"</span>)
+    <span class="kw">for</span> row <span class="kw">in</span> reversed(grid):
+        print(<span class="st">"   "</span>, <span class="st">" "</span>.join(str(v) <span class="kw">if</span> v <span class="kw">else</span> <span class="st">"."</span> <span class="kw">for</span> v <span class="kw">in</span> row))
+
+<span class="cm"># 3. Cargo bike: construction, modification and recombination (Tables 2.2 and 2.3, Figure 2.21)</span>
+weight = [<span class="nm">14.6</span>, <span class="nm">20</span>, <span class="nm">8.5</span>, <span class="nm">10</span>, <span class="nm">13</span>, <span class="nm">9.6</span>, <span class="nm">4.9</span>, <span class="nm">16.5</span>, <span class="nm">8.77</span>, <span class="nm">7.8</span>]
+profit = [<span class="nm">14.54</span>, <span class="nm">15.26</span>, <span class="nm">5.8</span>, <span class="nm">12.12</span>, <span class="nm">8.2</span>, <span class="nm">7.4</span>, <span class="nm">10.3</span>, <span class="nm">13.5</span>, <span class="nm">6.6</span>, <span class="nm">20.9</span>]
+total = <span class="kw">lambda</span> x: (round(sum(w <span class="kw">for</span> w, b <span class="kw">in</span> zip(weight, x) <span class="kw">if</span> b), <span class="nm">2</span>), round(sum(p <span class="kw">for</span> p, b <span class="kw">in</span> zip(profit, x) <span class="kw">if</span> b), <span class="nm">2</span>))
+
+x, load_kg = [<span class="nm">0</span>] * <span class="nm">10</span>, <span class="nm">0.0</span>
+<span class="kw">for</span> i <span class="kw">in</span> sorted(range(<span class="nm">10</span>), key=<span class="kw">lambda</span> i: profit[i] / weight[i], reverse=<span class="kw">True</span>):    <span class="cm"># greedy by efficiency ($/kg)</span>
+    <span class="kw">if</span> load_kg + weight[i] &lt;= <span class="nm">100</span>:
+        x[i] = <span class="nm">1</span>
+        load_kg += weight[i]
+print(<span class="st">"construction: "</span>, tuple(x), <span class="st">"kg, $ ="</span>, total(x))
+y = x[:]
+y[<span class="nm">8</span>], y[<span class="nm">4</span>] = <span class="nm">0</span>, <span class="nm">1</span>                                                              <span class="cm"># take item 9 out, put item 5 in</span>
+print(<span class="st">"modification: "</span>, tuple(y), <span class="st">"kg, $ ="</span>, total(y))
+S1, S2 = (<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>), (<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>)
+S3 = S1[:<span class="nm">2</span>] + S2[<span class="nm">2</span>:]                                                           <span class="cm"># first two genes of S1, last eight of S2</span>
+print(<span class="st">"recombination:"</span>, S1, total(S1), <span class="st">"+"</span>, S2, total(S2), <span class="st">"-&gt;"</span>, S3, total(S3))</pre>
+    </div>
+    <p class="cap">To run: open the companion notebook in Colab and press Shift+Enter in each cell, or paste a tab’s code into any notebook.</p>
+  </div>
+</section>
+
+<!-- ===================== SUMMARY ===================== -->
+<section class="chapter" id="summary">
+  <div class="wrap">
+    <span class="eyebrow">Part 6 · Summary</span>
+    <h2>What to remember</h2>
+    <div class="cards3">
+      <div class="card"><h5>Classify the problem</h5><p>Variables (number, type), objectives (number, landscape), constraints (type, hardness), linearity, and the time allowed versus the quality needed.</p></div>
+      <div class="card"><h5>Search spaces explode</h5><p>Permutations, partitions and state spaces grow factorially or exponentially, so exhaustive search quickly becomes impossible.</p></div>
+      <div class="card"><h5>Classify the algorithm</h5><p>Local or global, deterministic or stochastic, offline or online: each fits different problems.</p></div>
+      <div class="card"><h5>Heuristics</h5><p>Rules of thumb find good solutions fast without guarantees; metaheuristics guide them by balancing exploration and exploitation.</p></div>
+    </div>
+    <div class="prose">
+      <p class="muted">References: M. Held and R. M. Karp, “A dynamic programming approach to sequencing problems,” 1962. N. Christofides, “Worst-case analysis of a new heuristic for the travelling salesman problem,” 1976. P. A. Jensen and J. F. Bard, <i>Operations Research Models and Methods</i>, 2003. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 2.</p>
+    </div>
+  </div>
+</section>
+<footer class="end"><div class="wrap">Interactive companion to Chapter 2 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
+</div>
+<script>
+"use strict";
+/* ---------- light / dark / system theme ---------- */
+// runs first, so an error in any later widget cannot disable the theme switch
+(function themeSwitch() {
+  const root = document.documentElement, btns = [...document.querySelectorAll("[data-theme-set]")];
+  function apply(mode) {
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
+    btns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === mode)));
+  }
+  let saved = null; try { saved = localStorage.getItem("pso-lab-theme"); } catch (e) {}
+  const host = root.getAttribute("data-theme");
+  apply(["light", "dark", "system"].includes(saved) ? saved : host === "light" || host === "dark" ? host : "system");
+  btns.forEach(b => b.addEventListener("click", () => { apply(b.dataset.themeSet); try { localStorage.setItem("pso-lab-theme", b.dataset.themeSet); } catch (e) {} }));
+})();
+
+/* ---------- shared helpers ---------- */
+const $ = s => document.querySelector(s);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const MONO = '"IBM Plex Mono", Consolas, monospace';
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function colors() {
+  const k = ["bg","surface","sunk","ink","muted","line","grid","accent","gold","s1","s2","s3","s4","good","bad","map-water","map-land","map-state","map-border"];
+  const o = {}; k.forEach(n => o[n] = css("--" + n)); return o;
+}
+function setupCanvas(cv, fixedH) {
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  const w = Math.max(10, Math.round(r.width)), h = Math.max(10, Math.round(fixedH || r.height));
+  if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return { ctx, w, h };
+}
+function fmtNum(v, d) {
+  if (!isFinite(v)) return "n/a";
+  const a = Math.abs(v);
+  if (d != null) return v.toFixed(d);
+  if (a >= 1000) return Math.round(v).toLocaleString("en-US");
+  if (a >= 100) return v.toFixed(1);
+  if (a >= 1) return v.toFixed(3);
+  if (a === 0) return "0";
+  if (a < 1e-3) return v.toExponential(2);
+  return v.toFixed(4);
+}
+const redrawers = [];
+function onRedraw(fn) { redrawers.push(fn); }
+let rzT; const ro = new ResizeObserver(() => { clearTimeout(rzT); rzT = setTimeout(() => redrawers.forEach(f => f()), 60); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redrawers.forEach(f => f()));
+new MutationObserver(() => redrawers.forEach(f => f())).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+function makeControls(el, specs, onChange) {
+  const api = {};
+  for (const s of specs) {
+    if (s.type === "group") { el.insertAdjacentHTML("beforeend", `<div class="group-label">${s.label}</div>`); continue; }
+    const wrap = document.createElement("div"); wrap.className = "ctl";
+    if (s.type === "select") {
+      wrap.innerHTML = `<label for="${s.id}">${s.label}</label><select id="${s.id}">${s.options.map(o => `<option value="${o[0]}"${o[0] == s.value ? " selected" : ""}>${o[1]}</option>`).join("")}</select>`;
+    } else if (s.type === "check") {
+      wrap.className = "ctl ctl-check";
+      wrap.innerHTML = `<label><input type="checkbox" id="${s.id}"${s.value ? " checked" : ""}>&nbsp;${s.label}</label>`;
+    } else {
+      wrap.innerHTML = `<label for="${s.id}">${s.label}<output id="${s.id}-o"></output></label><input type="range" id="${s.id}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.value}">`;
+    }
+    if (s.hint) wrap.insertAdjacentHTML("beforeend", `<small>${s.hint}</small>`);
+    el.appendChild(wrap);
+    const inp = wrap.querySelector("input,select"), out = wrap.querySelector("output");
+    const fmt = s.fmt || (v => v);
+    const read = () => s.type === "select" ? inp.value : s.type === "check" ? inp.checked : parseFloat(inp.value);
+    const upd = () => { if (out) out.textContent = fmt(read()); };
+    upd();
+    inp.addEventListener(s.type === "select" || s.type === "check" ? "change" : "input", () => { upd(); onChange && onChange(s.key, read()); });
+    Object.defineProperty(api, s.key, { get: read, set(v) { if (s.type === "check") inp.checked = v; else inp.value = v; upd(); }, enumerable: true });
+  }
+  return api;
+}
+function runner(step, draw, speed, done, btn) {
+  let on = false, acc = 0, last = 0;
+  function frame(t) {
+    if (!on) return;
+    const dt = last ? Math.min(0.1, (t - last) / 1000) : 0; last = t; acc += dt * speed();
+    let n = 0;
+    while (acc >= 1 && n < 60) { acc -= 1; if (done()) { stop(); break; } step(); n++; }
+    if (n) draw();
+    if (on) requestAnimationFrame(frame);
+  }
+  function start() { if (on) return; if (done()) return; on = true; last = 0; acc = 1; btn.textContent = "Pause"; requestAnimationFrame(frame); }
+  function stop() { on = false; btn.textContent = "Run"; }
+  btn.addEventListener("click", () => on ? stop() : start());
+  return { start, stop, get on() { return on; } };
+}
+function lineChart(cv, series, o = {}) {
+  const { ctx, w, h } = setupCanvas(cv); const c = colors();
+  ctx.clearRect(0, 0, w, h);
+  const pad = { l: 58, r: 12, t: 10, b: 22 };
+  let xs = o.xmax || 1, ymin = Infinity, ymax = -Infinity;
+  for (const s of series) { xs = Math.max(xs, s.data.length - 1); for (const v of s.data) if (isFinite(v)) { ymin = Math.min(ymin, v); ymax = Math.max(ymax, v); } }
+  for (const r of (o.refs || [])) { ymin = Math.min(ymin, r.v); ymax = Math.max(ymax, r.v); }
+  if (!isFinite(ymin)) { ymin = 0; ymax = 1; }
+  if (ymax - ymin < 1e-9) { ymax += 1; ymin -= 1; }
+  const sp = ymax - ymin; ymin -= sp * .06; ymax += sp * .06;
+  const X = i => pad.l + (w - pad.l - pad.r) * i / xs, Y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - ymin) / (ymax - ymin));
+  ctx.font = "11px " + MONO; ctx.lineWidth = 1;
+  for (let k = 0; k <= 4; k++) {
+    const v = ymin + (ymax - ymin) * k / 4, y = Y(v);
+    ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(fmtNum(v), pad.l - 6, y);
+  }
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  for (let k = 0; k <= 4; k++) { const i = Math.round(xs * k / 4); ctx.fillText(i, X(i), h - pad.b + 6); }
+  for (const r of (o.refs || [])) {
+    ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = r.color || c.bad; ctx.beginPath(); ctx.moveTo(pad.l, Y(r.v)); ctx.lineTo(w - pad.r, Y(r.v)); ctx.stroke(); ctx.restore();
+    if (r.label) { ctx.fillStyle = r.color || c.bad; ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText(r.label, w - pad.r - 2, Y(r.v) - 2); }
+  }
+  if (o.vline != null) { ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = c.ink; ctx.globalAlpha = .55; ctx.beginPath(); ctx.moveTo(X(o.vline), pad.t); ctx.lineTo(X(o.vline), h - pad.b); ctx.stroke(); ctx.restore(); }
+  for (const s of series) {
+    if (!s.data.length) continue;
+    ctx.strokeStyle = s.color; ctx.globalAlpha = s.alpha || 1; ctx.lineWidth = s.width || 2; ctx.beginPath();
+    s.data.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v))); ctx.stroke();
+    if (!s.alpha) { const i = s.data.length - 1; ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(X(i), Y(s.data[i]), 3, 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  }
+  if (o.labels) { let x = pad.l + 6; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.font = "11px " + MONO;
+    for (const s of series) if (s.label) { ctx.fillStyle = s.color; ctx.fillText("■ " + s.label, x, pad.t + 2); x += ctx.measureText("■ " + s.label).width + 12; } }
+}
+function stats(el, items) { el.innerHTML = items.map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join(""); }
+function presets(el, list, apply) {
+  el.innerHTML = list.map((p, i) => `<button class="preset" data-i="${i}"><b>${p.t}</b><span>${p.d}</span></button>`).join("");
+  el.querySelectorAll("button").forEach(b => b.addEventListener("click", () => apply(list[+b.dataset.i])));
+}
+
+
+/* ================= Problems and Heuristics Lab ================= */
+// Everything below is written for this page; the shared plumbing comes from the PSO Lab build.
+const newSeed = () => Math.floor(Math.random() * 1e9);
+const gauss = rnd => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
+const VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
+const ramp = t => { t = Math.max(0, Math.min(1, t)) * (VIR.length - 1); const i = Math.min(VIR.length - 2, Math.floor(t)), u = t - i; return VIR[i].map((v, k) => Math.round(v + (VIR[i + 1][k] - v) * u)); };
+const big = b => { const s = b.toString(); return s.length <= 15 ? Number(b).toLocaleString("en-US") : `${s[0]}.${s.slice(1, 4)} × 10<sup>${s.length - 1}</sup>`; };
+const factB = n => { let r = 1n; for (let i = 2n; i <= BigInt(n); i++) r *= i; return r; };
+const combB = (n, k) => { if (k < 0 || k > n) return 0n; let r = 1n; for (let i = 0; i < k; i++) r = r * BigInt(n - i) / BigInt(i + 1); return r; };
+
+/* ---------- n-queen helpers ---------- */
+const attackers = (q, c) => { const o = []; for (let j = 0; j < q.length; j++) if (j !== c && q[j] != null && q[c] != null && (q[j] === q[c] || Math.abs(q[j] - q[c]) === Math.abs(j - c))) o.push(j); return o; };
+const conflictPairs = q => { const p = []; for (let i = 0; i < q.length; i++) for (let j = i + 1; j < q.length; j++) if (q[i] != null && q[j] != null && (q[i] === q[j] || Math.abs(q[i] - q[j]) === j - i)) p.push([i, j]); return p; };
+function minConflictsMove(q, rnd) {
+  const bad = q.map((_, c) => c).filter(c => attackers(q, c).length); if (!bad.length) return null;
+  const c = bad[Math.floor(rnd() * bad.length)]; let best = [], bv = Infinity;
+  for (let r = 0; r < q.length; r++) { const t = q.slice(); t[c] = r; const v = attackers(t, c).length; if (v < bv) { bv = v; best = [r]; } else if (v === bv) best.push(r); }
+  const opts = best.filter(r => r !== q[c]), r = (opts.length ? opts : best)[Math.floor(rnd() * (opts.length ? opts : best).length)]; q[c] = r; return c;
+}
+function drawBoardCanvas(cv, q, cap) {
+  const { ctx, w, h } = setupCanvas(cv), c = colors(), n = q.length, s = Math.min(w, h) / n, ox = (w - s * n) / 2, oy = (h - s * n) / 2;
+  ctx.clearRect(0, 0, w, h);
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) { ctx.fillStyle = (r + k) % 2 ? c.sunk : c.surface; ctx.fillRect(ox + k * s, oy + r * s, s, s); }
+  const pairs = conflictPairs(q); ctx.strokeStyle = c.bad; ctx.globalAlpha = .55; ctx.lineWidth = 2;
+  pairs.forEach(([i, j]) => { ctx.beginPath(); ctx.moveTo(ox + (i + .5) * s, oy + (q[i] + .5) * s); ctx.lineTo(ox + (j + .5) * s, oy + (q[j] + .5) * s); ctx.stroke(); }); ctx.globalAlpha = 1;
+  ctx.font = `${Math.round(s * .62)}px serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  q.forEach((r, k) => { if (r == null) return; ctx.fillStyle = attackers(q, k).length ? c.bad : c.ink; ctx.fillText("♛", ox + (k + .5) * s, oy + (r + .55) * s); });
+  ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.strokeRect(ox, oy, s * n, s * n);
+}
+
+(function hero() {
+  const cv = $("#heroCv"); let rnd = mulberry32(5), q = Array.from({ length: 8 }, () => Math.floor(rnd() * 8)), moves = 0, hold = 0;
+  const draw = () => { drawBoardCanvas(cv, q); const k = conflictPairs(q).length; $("#heroCap").textContent = `Min-conflicts on 8 queens: move ${moves}, ${k} attacking pair${k === 1 ? "" : "s"}${k ? "" : ". Solved"}.`; };
+  ro.observe(cv); onRedraw(draw);
+  if (reduceMotion) { while (minConflictsMove(q, rnd) != null && moves < 500) moves++; draw(); return; }
+  draw();
+  let vis = true; new IntersectionObserver(e => { vis = e[0].isIntersecting; }).observe(cv);
+  setInterval(() => { if (!vis) return; if (!conflictPairs(q).length || moves > 300) { if (++hold > 6) { hold = 0; moves = 0; q = q.map(() => Math.floor(rnd() * 8)); } } else { minConflictsMove(q, rnd); moves++; } draw(); }, 450);
+})();
+
+/* ---------- problem classifier (Figure 2.1) ---------- */
+(function classifier() {
+  const K = ["Decision variables", "Variable type", "Objectives", "Landscape", "Constraints", "Linearity", "Time and quality"];
+  const EX = {
+    ticket: ["Ticket pricing (Section 1.3.1)", ["Univariate: price x", "Continuous", "Mono-objective: profit", "Unimodal (concave)", "Boundary only: 0 ≤ x ≤ 250", "Nonlinear (quadratic: QP)", "Not time-critical"], "Solved exactly by setting the derivative to zero, or with SciPy (Listing 2.4)."],
+    online: ["Ticket pricing with online sales (Listing 2.5)", ["Bivariate: x in person, y online", "Continuous (treated as such)", "Mono-objective: profit", "Unimodal along the constraint", "Equality: x + y = 10,000", "Nonlinear objective", "Not time-critical"], "The equality constraint is handled with a Lagrange multiplier."],
+    fuel: ["Vehicle fuel economy (Section 2.1.1)", ["Univariate (speed), bivariate (+ acceleration) or multivariate (+ tire pressure)", "Continuous", "Mono-objective: distance per unit of fuel", "Not stated", "Boundary", "Nonlinear", "Depends on use"], "The number of decision variables alone changes the class."],
+    ev: ["Electric vehicle design (Figure 1.6)", ["Multivariate: wheel size, motor power, battery", "Mixed", "Multi-objective: acceleration, EPA range", "Conflicting objectives", "Design bounds", "Nonlinear", "Design: high quality, long search"], "Handled by weighting the objectives or by finding the Pareto front (Chapter 8)."],
+    tsp: ["Traveling salesman, 13 GTA cities (Figure 2.2)", ["Multivariate: the visiting order", "Discrete, combinatorial (permutation)", "Mono-objective: tour length or time", "Multimodal", "Hard: visit every city once, return home", "NP-hard", "Planning"], "13! = 6,227,020,800 tours for the asymmetric version."],
+    queens: ["n-queen (Figure 2.5)", ["Multivariate: one row per column", "Discrete", "None: constraint-satisfaction problem", "Not applicable", "Hard: no shared row, column or diagonal", "Not applicable", "Toy problem"], "Any configuration with zero conflicts is a solution; none is better than another."],
+    feed: ["Animal feed mix (Table 2.1)", ["Multivariate: 3 proportions", "Continuous", "Mono-objective: cost per kg", "Unimodal (linear)", "Equality (sum = 1) and inequalities (nutrients)", "Linear: LP", "Design or planning"], "Solved exactly with PuLP and CBC (Listing 2.6)."],
+    plant: ["Plant layout (Figure 2.9)", ["Multivariate: a location per department", "Discrete assignment", "Mono-objective: material handling cost", "Multimodal", "Hard: one department per location", "Quadratic: QAP", "Design"], "TMHC = trace(W X D Xᵀ) in matrix form."],
+    wheel: ["MineProbe wheel design (Figure 2.10)", ["Multivariate: diameter, width, loading", "Continuous", "Multi-objective: sinkage, resistance, torque, power, slope", "Not stated", "Boundary: [4, 8.2], [3, 5], [22, 24]", "Nonlinear", "Design"], "Sinkage depends nonlinearly on the soil and wheel parameters (equation 2.4)."],
+    catenary: ["Finite catenary (Figure 2.11)", ["Multivariate: joint coordinates", "Continuous", "Mono-objective: potential energy", "Not stated", "Equality: fixed beam lengths", "Linear objective, nonlinear constraints: NLP", "Design"], "One nonlinear constraint is enough to make the problem nonlinear."],
+    district: ["Political districting (Figure 2.13)", ["Multivariate: a district per basic unit", "Discrete", "Multi-objective, combined by weights (equation 2.7)", "Multimodal", "Contiguity, compactness, near-equal population", "Nonlinear", "Design: run offline, rarely"], "Try the districting lab below."],
+    ride: ["Ride-sharing (Figure 2.14)", ["Multivariate: rider order per driver", "Discrete (mixed in practice)", "Multi-objective: distance, wait, earnings, matches…", "Multimodal", "Hard (serve each rider once, time windows) and soft (ratings)", "Nonlinear", "Planning: seconds to minutes"], "Slow answers mean lost trips."],
+    mav: ["MAV communication relay (Figure 2.15)", ["Multivariate: positions of the swarm", "Continuous", "Multi-objective: coverage, visibility, short relay path", "Dynamic", "Range 100 m, no hovering, battery", "Nonlinear", "Control: milliseconds, repeated"], "Speed beats accuracy: errors are corrected in the next cycle."],
+    elevator: ["Elevator dispatching (Figure 1.9)", ["Multivariate: car assignments", "Discrete", "Multi-objective: waiting time, system time, fairness", "Dynamic, partially observable", "Capacity, direction", "Nonlinear", "Control"], "About 2.88 × 10²¹ states: an ill-structured problem."],
+    cargo: ["Cargo bike loading (Figure 1.7)", ["10 binary variables", "Discrete (0/1)", "Multi-objective: maximize profit, minimize weight", "Multimodal", "Soft: penalty above 100 kg", "Linear objectives", "Planning"], "Revisited in Section 2.3 with three search strategies."],
+    carts: ["Smart cart clustering (Figure 2.3)", ["Multivariate: a group per cart", "Discrete partition", "Mono-objective: distance to assembly points", "Multimodal", "k non-empty groups", "Nonlinear", "Planning"], "S(50, 4) ≈ 5.3 × 10²⁸ partitions."]
+  };
+  const ctl = makeControls($("#clCtl"), [{ key: "ex", id: "clEx", type: "select", label: "Example problem", value: "tsp", options: Object.entries(EX).map(([k, v]) => [k, v[0]]) }], () => show());
+  function show() { const [, t, note] = EX[ctl.ex]; $("#clTags").innerHTML = K.map((k, i) => `<div><small>${k}</small><b>${t[i]}</b></div>`).join(""); $("#clNote").textContent = note; }
+  show();
+})();
+
+/* ---------- counting search spaces ---------- */
+(function counting() {
+  const c1 = makeControls($("#cbCtl"), [{ key: "n", id: "cbN", label: "Options n", min: 1, max: 30, step: 1, value: 5 }, { key: "r", id: "cbR", label: "Chosen r", min: 1, max: 15, step: 1, value: 3 }], () => upd());
+  const c2 = makeControls($("#cbCtl2"), [{ key: "n", id: "cbT", label: "TSP cities", min: 3, max: 40, step: 1, value: 13 }], () => upd());
+  const c3 = makeControls($("#cbCtl3"), [{ key: "n", id: "cbSn", label: "Carts n", min: 1, max: 200, step: 1, value: 50 }, { key: "k", id: "cbSk", label: "Assembly points k", min: 1, max: 10, step: 1, value: 4 }], () => upd());
+  const stirling = (n, k) => { let s = 0n; for (let i = 0; i <= k; i++) s += (i % 2 ? -1n : 1n) * combB(k, i) * BigInt(k - i) ** BigInt(n); return s / factB(k); };
+  function upd() {
+    const n = c1.n, r = c1.r;
+    $("#cbOut").innerHTML = `combinations with repetition (n + r − 1)! / r!(n − 1)! = <b>${big(combB(n + r - 1, r))}</b><br>combinations without repetition n! / r!(n − r)! = <b>${big(combB(n, r))}</b><br>permutations with repetition nʳ = <b>${big(BigInt(n) ** BigInt(r))}</b><br>permutations without repetition n! / (n − r)! = <b>${r > n ? 0 : big(factB(n) / factB(n - r))}</b>`;
+    const t = c2.n;
+    $("#cbTsp").innerHTML = `brute force, asymmetric: ${t}! = <b>${big(factB(t))}</b> tours<br>symmetric: (${t} − 1)! / 2 = <b>${big(factB(t - 1) / 2n)}</b><br>Bellman-Held-Karp: 2ⁿn² ≈ <b>${big(2n ** BigInt(t) * BigInt(t * t))}</b> steps`;
+    $("#cbStir").innerHTML = `S(${c3.n}, ${c3.k}) = <b>${big(stirling(c3.n, c3.k))}</b> ways to split ${c3.n} carts into ${c3.k} non-empty groups`;
+  }
+  upd();
+})();
+
+/* ---------- landscapes (Listing 2.1) and deterministic vs. stochastic search ---------- */
+(function landscapes() {
+  const tf = a => Math.abs(a) < 1e-12 ? 1 : Math.abs(Math.sin(Math.PI * a)) / (Math.PI * a);   // |sin(πa)| / (πa), 1 at a = 0
+  const FN = {
+    uni: ["Unimodal: x² + y²", (x, y) => x * x + y * y, -3, 3, [0, 0]],
+    multi: ["Multimodal: sin(x) cos(y)", (x, y) => Math.sin(x) * Math.cos(y), -3, 3, [-Math.PI / 2, 0]],
+    dec: ["Deceptive, on [−3, 3] as in Listing 2.1", (x, y) => (1 - (tf(x - 2) * tf(y - 2)) ** 5) * (2 + (x - 7) ** 2 + 2 * (y - 7) ** 2), -3, 3, [2, 2]],
+    dec10: ["Deceptive, on [0, 10]", (x, y) => (1 - (tf(x - 2) * tf(y - 2)) ** 5) * (2 + (x - 7) ** 2 + 2 * (y - 7) ** 2), 0, 10, [2, 2]]
+  };
+  const ctl = makeControls($("#lsCtl"), [
+    { key: "fn", id: "lsFn", type: "select", label: "Function", value: "dec", options: Object.entries(FN).map(([k, v]) => [k, v[0]]) },
+    { key: "alg", id: "lsAlg", type: "select", label: "Search", value: "compass", options: [["compass", "Deterministic local: compass search"], ["walk", "Stochastic local: random nearby moves"], ["random", "Stochastic global: random search"]] },
+    { key: "sig", id: "lsSig", label: "Step size (fraction of the range)", min: .02, max: .3, step: .01, value: .08, fmt: v => v.toFixed(2) },
+    { key: "it", id: "lsIt", label: "Evaluations", min: 50, max: 1000, step: 50, value: 300 }
+  ], k => { if (k === "fn") { start = null; runs = []; } draw(); });
+  let start = null, runs = [], layerKey = "", layer = null;
+  const F = () => FN[ctl.fn];
+  function run() {
+    const [, f, lo, hi] = F(), R = hi - lo, rnd = mulberry32(newSeed()), clamp = v => Math.max(lo, Math.min(hi, v)); let [x, y] = start, best = f(x, y); const path = [[x, y]];
+    if (ctl.alg === "compass") { let step = ctl.sig * R, ev = 1; while (step > 1e-4 * R && ev < ctl.it) { const cand = [[x + step, y], [x - step, y], [x, y + step], [x, y - step]].filter(([a, b]) => a >= lo && a <= hi && b >= lo && b <= hi); let moved = false; for (const p of cand) { ev++; const v = f(...p); if (v < best - 1e-12 && (!moved || v < f(x, y))) { best = v; [x, y] = p; moved = true; } } if (moved) path.push([x, y]); else step /= 2; } }
+    else for (let i = 1; i < ctl.it; i++) { const p = ctl.alg === "walk" ? [clamp(x + ctl.sig * R * gauss(rnd)), clamp(y + ctl.sig * R * gauss(rnd))] : [lo + R * rnd(), lo + R * rnd()], v = f(...p); if (v < best) { best = v; [x, y] = p; path.push(p); } }
+    runs.push({ path, best, alg: ctl.alg }); if (runs.length > 6) runs.shift();
+  }
+  function draw() {
+    const { ctx, w, h } = setupCanvas($("#lsCv")), c = colors(), [name, f, lo, hi, gmin] = F(), s = Math.min(w, h), ox = (w - s) / 2, oy = (h - s) / 2, P = (x, y) => [ox + (x - lo) / (hi - lo) * s, oy + (hi - y) / (hi - lo) * s];
+    if (layerKey !== ctl.fn) {
+      const n = 180, vals = []; let mn = Infinity, mx = -Infinity;
+      for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const v = f(lo + (hi - lo) * (i + .5) / n, hi - (hi - lo) * (j + .5) / n); vals.push(v); mn = Math.min(mn, v); mx = Math.max(mx, v); }
+      layer = document.createElement("canvas"); layer.width = layer.height = n; const lctx = layer.getContext("2d"), img = lctx.createImageData(n, n), L = v => Math.log1p((v - mn) / (mx - mn) * 50) / Math.log1p(50);
+      vals.forEach((v, k) => { const [r, g, b] = ramp(1 - L(v)); img.data.set([r, g, b, 255], 4 * k); }); lctx.putImageData(img, 0, 0); layerKey = ctl.fn;
+    }
+    ctx.clearRect(0, 0, w, h); ctx.drawImage(layer, ox, oy, s, s);
+    ctx.strokeStyle = c.good; ctx.lineWidth = 2.5; const [gx, gy] = P(...gmin); ctx.beginPath(); ctx.arc(gx, gy, 10, 0, 7); ctx.stroke();
+    const pal = [c.accent, c.gold, c.s3, c.s2, c.s4, c.bad];
+    runs.forEach((r, k) => { ctx.strokeStyle = pal[k % pal.length]; ctx.fillStyle = pal[k % pal.length]; ctx.lineWidth = 2.2; ctx.beginPath(); r.path.forEach((p, i) => { const [x, y] = P(...p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke(); const [ex, ey] = P(...r.path[r.path.length - 1]); ctx.beginPath(); ctx.arc(ex, ey, 6, 0, 7); ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke(); });
+    if (start) { const [sx, sy] = P(...start); ctx.fillStyle = "#fff"; ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(sx, sy, 6, 0, 7); ctx.fill(); ctx.stroke(); }
+    ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.font = `11px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText(`x, y ∈ [${lo}, ${hi}]`, ox + 6, oy + s - 5);
+    const last = runs[runs.length - 1], ends = runs.map(r => r.path[r.path.length - 1]), same = runs.length > 1 && ends.every(e => Math.hypot(e[0] - ends[0][0], e[1] - ends[0][1]) < 1e-9);
+    stats($("#lsStats"), [["Runs shown", runs.length], ["Last end point", last ? `(${last.path[last.path.length - 1].map(v => v.toFixed(2)).join(", ")})` : "click the map"], ["Last f", last ? last.best.toFixed(4) : "–"], ["Global minimum", `f(${gmin.map(v => v.toFixed(2)).join(", ")}) = ${f(...gmin).toFixed(3)}`]]);
+    $("#lsNote").textContent = !start ? "Click anywhere on the map to start a search there (white dot). The green ring marks the global minimum." : (runs.length > 1 ? (same ? "All runs from this start ended at the same point: the search is deterministic. " : "The runs ended at different points: randomness changes the path. ") : "") + (ctl.fn.startsWith("dec") ? "On the deceptive function the global minimum (2, 2) sits in a narrow valley, while the wide basin pulls local searches toward (7, 7)." : ctl.fn === "multi" ? "sin(x) cos(y) has several valleys; a local search finds the one nearest its start." : "With a single valley, every local search finds the global minimum.");
+  }
+  $("#lsCv").addEventListener("click", e => { const r = $("#lsCv").getBoundingClientRect(), s = Math.min(r.width, r.height), [, , lo, hi] = F(), x = lo + (e.clientX - r.left - (r.width - s) / 2) / s * (hi - lo), y = hi - (e.clientY - r.top - (r.height - s) / 2) / s * (hi - lo); if (x < lo || x > hi || y < lo || y > hi) return; start = [x, y]; runs = []; run(); draw(); });
+  $("#lsRun").addEventListener("click", () => { if (!start) { const [, , lo, hi] = F(); start = [lo + .85 * (hi - lo), lo + .85 * (hi - lo)]; } run(); draw(); });
+  $("#lsClear").addEventListener("click", () => { runs = []; draw(); });
+  ro.observe($("#lsCv")); onRedraw(draw); start = [2.5, 2.5]; run(); draw();
+})();
+
+/* ---------- n-queen ---------- */
+(function nqueen() {
+  const SOL = { 4: 2, 5: 10, 6: 4, 7: 40, 8: 92 };
+  const ctl = makeControls($("#nqCtl"), [{ key: "n", id: "nqN", type: "select", label: "Board size n", value: "4", options: [4, 5, 6, 7, 8].map(v => [String(v), `${v} × ${v}`]) }], () => reset());
+  let q, moves, book, rnd = mulberry32(newSeed()), timer = null, note = "";
+  function reset() { clearInterval(timer); const n = +ctl.n; q = n === 4 ? [0, 1, 2, 1] : Array.from({ length: n }, () => Math.floor(rnd() * n)); moves = 0; book = null; note = n === 4 ? "This start has the five conflicts of Figure 2.5: Q1-Q2, Q1-Q3, Q2-Q3, Q2-Q4 and Q3-Q4." : "Random start: one queen per column."; draw(); }
+  const fill = () => { if (q.some(r => r == null)) q = q.map(r => r == null ? Math.floor(rnd() * q.length) : r); book = null; };
+  function bookStep() {
+    const n = q.length;
+    if (!book) { book = { board: [0].concat(Array(n - 1).fill(null)), col: 1, seen: new Set(), steps: 1, done: false }; q = book.board.slice(); note = "Listing 2.2, step 1: the first queen goes in the top-left corner."; return; }
+    if (book.done) return;
+    if (book.col === n) { book.done = true; note = `Listing 2.2 finished in ${book.steps} steps.`; return; }
+    const key = book.board.join(",") + "|" + book.col;
+    if (book.seen.has(key)) { book.done = true; note = `Listing 2.2 is back in a state it has already visited (step ${book.steps}), so it would cycle forever: the sliding procedure does not always find a solution.`; return; }
+    book.seen.add(key); book.steps++;
+    const placed = book.board.slice(0, book.col).map((r, c) => [c, r]); let row = -1;
+    for (let r = 0; r < n; r++) if (placed.every(([c, pr]) => r !== pr && Math.abs(r - pr) !== book.col - c)) { row = r; break; }
+    if (row >= 0) { book.board[book.col] = row; note = `Step ${book.steps}: column ${book.col + 1} gets a queen in row ${row + 1}.`; book.col++; }
+    else { book.board = book.board.slice(1).concat(null); book.col--; note = `Step ${book.steps}: no safe row in column ${book.col + 2}, so the first column is dropped and the board slides left.`; }
+    q = book.board.slice();
+    if (book.col === n) { book.done = true; note += ` Solved in ${book.steps} steps.`; }
+  }
+  function draw() {
+    const n = q.length, el = $("#nqBoard"), pairs = conflictPairs(q), bad = new Set(pairs.flat());
+    el.style.gridTemplateColumns = `repeat(${n},1fr)`;
+    el.innerHTML = Array.from({ length: n * n }, (_, k) => { const r = Math.floor(k / n), c = k % n, has = q[c] === r; return `<span class="${(r + c) % 2 ? "d" : "l"}${has ? " q" + (bad.has(c) ? " bad" : "") : ""}" data-r="${r}" data-c="${c}" style="font-size:${Math.round(150 / n) / 10}rem">${has ? "♛" : ""}</span>`; }).join("");
+    el.querySelectorAll("span").forEach(sp => sp.addEventListener("click", () => { clearInterval(timer); fill(); q[+sp.dataset.c] = +sp.dataset.r; moves++; note = ""; draw(); }));
+    stats($("#nqStats"), [["Attacking pairs", pairs.length], ["Pairs", pairs.length ? pairs.slice(0, 6).map(([i, j]) => `Q${i + 1}-Q${j + 1}`).join(", ") + (pairs.length > 6 ? " …" : "") : q.includes(null) ? "partial board" : "none: solved"], ["Moves", moves], [`Solutions for n = ${n}`, SOL[n]]]);
+    $("#nqNote").textContent = note || (pairs.length ? "Queens under attack are red." : q.includes(null) ? "" : "No queen attacks another: a solution.");
+  }
+  $("#nqMc").addEventListener("click", () => { clearInterval(timer); fill(); const c = minConflictsMove(q, rnd); if (c != null) { moves++; note = `Moved Q${c + 1} to the row with the fewest conflicts.`; } draw(); });
+  $("#nqSolve").addEventListener("click", () => { clearInterval(timer); fill(); note = ""; timer = setInterval(() => { if (minConflictsMove(q, rnd) == null || moves > 500) { clearInterval(timer); note = conflictPairs(q).length ? "Gave up after 500 moves; try again." : `Solved by min-conflicts after ${moves} moves.`; } else moves++; draw(); }, 160); });
+  $("#nqBook").addEventListener("click", () => { clearInterval(timer); bookStep(); draw(); });
+  $("#nqRand").addEventListener("click", () => { clearInterval(timer); const n = +ctl.n; q = Array.from({ length: n }, () => Math.floor(rnd() * n)); moves = 0; book = null; note = "Random start."; draw(); });
+  reset();
+})();
+
+/* ---------- Lagrange multipliers (Listing 2.5) ---------- */
+(function lagrange() {
+  const f = (x, y) => 155 * x + (.001 * x ** 1.5 + 70) * y - 1e6, g = x => f(x, 1e4 - x);
+  let xs = 0, lo = 0, hi = 1e4; for (let i = 0; i < 200; i++) { const a = lo + (hi - lo) / 3, b = hi - (hi - lo) / 3; if (g(a) < g(b)) lo = a; else hi = b; } xs = (lo + hi) / 2;
+  const ctl = makeControls($("#lgCtl"), [{ key: "x", id: "lgX", label: "In-person tickets x (online y = 10,000 − x)", min: 0, max: 10000, step: 1, value: 3000, fmt: v => v.toLocaleString("en-US") }], () => draw());
+  function draw() {
+    const { ctx, w, h } = setupCanvas($("#lgCv")), c = colors(), pad = { l: 58, r: 14, t: 14, b: 32 }, X = x => pad.l + x / 1e4 * (w - pad.l - pad.r), y0 = -.5, y1 = 2.5, Y = v => pad.t + (y1 - v) / (y1 - y0) * (h - pad.t - pad.b);
+    ctx.clearRect(0, 0, w, h); ctx.font = `11px ${MONO}`;
+    for (let v = 0; v <= 2.5; v += .5) { ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(w - pad.r, Y(v)); ctx.stroke(); ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(v.toFixed(1), pad.l - 6, Y(v)); }
+    ctx.textAlign = "center"; ctx.textBaseline = "top"; for (let x = 0; x <= 1e4; x += 2000) ctx.fillText(x.toLocaleString("en-US"), X(x), h - pad.b + 6);
+    ctx.save(); ctx.translate(12, pad.t + 4); ctx.rotate(-Math.PI / 2); ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText("profit ($ million)", 0, 0); ctx.restore();
+    ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i <= 400; i++) { const x = i * 25; i ? ctx.lineTo(X(x), Y(g(x) / 1e6)) : ctx.moveTo(X(x), Y(g(x) / 1e6)); } ctx.stroke();
+    [[xs, c.accent, 8], [ctl.x, c.gold, 6]].forEach(([x, col, r]) => { ctx.fillStyle = col; ctx.strokeStyle = c.bg; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(x), Y(g(x) / 1e6), r, 0, 7); ctx.fill(); ctx.stroke(); });
+    const x = ctl.x, y = 1e4 - x, fx = 155 + .0015 * Math.sqrt(x) * y, fy = .001 * x ** 1.5 + 70;
+    stats($("#lgStats"), [["In person x", x.toLocaleString("en-US")], ["Online y", y.toLocaleString("en-US")], ["Profit", "$" + Math.round(f(x, y)).toLocaleString("en-US")], ["∂f/∂x", fx.toFixed(1)], ["∂f/∂y", fy.toFixed(1)]]);
+    $("#lgNote").innerHTML = `Optimum (blue): x = ${Math.round(xs).toLocaleString("en-US")}, y = ${Math.round(1e4 - xs).toLocaleString("en-US")}, profit $${Math.round(g(xs)).toLocaleString("en-US")}. There ∂f/∂x = ∂f/∂y = λ ≈ ${(.001 * xs ** 1.5 + 70).toFixed(1)}: one more ticket earns the same whichever way it is sold, so shifting sales cannot help. ${Math.abs(fx - fy) < 2 ? "You are at the optimum." : fx > fy ? "Here an in-person ticket earns more: move right." : "Here an online ticket earns more: move left."}`;
+  }
+  ro.observe($("#lgCv")); onRedraw(draw); draw();
+})();
+
+/* ---------- linear programming: animal feed mix ---------- */
+(function feedMix() {
+  // in the (corn c, soy s) plane, limestone = 1 - c - s; each constraint is a*c + b*s <= r
+  const CONS = [["calcium ≥ 0.8%", .379, .378, .372], ["calcium ≤ 1.2%", -.379, -.378, -.368], ["protein ≥ 22%", -.09, -.5, -.22], ["fiber ≤ 5%", .02, .08, .05], ["corn ≥ 0", -1, 0, 0], ["soybean meal ≥ 0", 0, -1, 0], ["limestone ≥ 0", 1, 1, 1]];
+  const cost = (c, s) => 30.5 * c + 10 * (1 - c - s) + 90 * s;
+  const nutr = (c, s) => { const l = 1 - c - s; return { ca: .001 * c + .38 * l + .002 * s, pr: .09 * c + .5 * s, fi: .02 * c + .08 * s, l }; };
+  let poly = [[0, 0], [1, 0], [0, 1]];
+  CONS.forEach(([, a, b, r]) => { const out = [], inside = p => a * p[0] + b * p[1] <= r + 1e-12; for (let i = 0; i < poly.length; i++) { const P = poly[i], Q = poly[(i + 1) % poly.length], pi = inside(P), qi = inside(Q); if (pi) out.push(P); if (pi !== qi) { const t = (r - a * P[0] - b * P[1]) / (a * (Q[0] - P[0]) + b * (Q[1] - P[1])); out.push([P[0] + t * (Q[0] - P[0]), P[1] + t * (Q[1] - P[1])]); } } poly = out; });
+  const OPT = poly.reduce((p, q) => cost(...q) < cost(...p) ? q : p);
+  let pick = [.6, .3];
+  const V = { c0: .3, c1: 1, s0: 0, s1: .7 };
+  function draw() {
+    const { ctx, w, h } = setupCanvas($("#lpCv")), c = colors(), pad = { l: 46, r: 12, t: 12, b: 34 }, X = x => pad.l + (x - V.c0) / (V.c1 - V.c0) * (w - pad.l - pad.r), Y = y => pad.t + (V.s1 - y) / (V.s1 - V.s0) * (h - pad.t - pad.b);
+    ctx.clearRect(0, 0, w, h); ctx.font = `11px ${MONO}`;
+    for (let k = 0; k <= 7; k++) { const v = V.c0 + k * .1; ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(X(v), pad.t); ctx.lineTo(X(v), h - pad.b); ctx.stroke(); ctx.fillStyle = c.muted; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText(Math.round(v * 100) + "%", X(v), h - pad.b + 6); }
+    for (let k = 0; k <= 7; k++) { const v = k * .1; ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(w - pad.r, Y(v)); ctx.stroke(); ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(Math.round(v * 100) + "%", pad.l - 6, Y(v)); }
+    ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText("corn →", w - pad.r, h - pad.b - 2); ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText("↑ soybean meal", pad.l + 4, pad.t + 2);
+    ctx.save(); ctx.beginPath(); ctx.rect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b); ctx.clip();
+    for (let k = 40; k <= 80; k += 5) { ctx.strokeStyle = c.muted; ctx.globalAlpha = .45; ctx.setLineDash([3, 4]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(0), Y((k - 10) / 80)); ctx.lineTo(X(1), Y((k - 10 - 20.5) / 80)); ctx.stroke(); }
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+    const lineCol = { "calcium ≥ 0.8%": c.s3, "calcium ≤ 1.2%": c.s3, "protein ≥ 22%": c.s2, "fiber ≤ 5%": c.bad, "limestone ≥ 0": c.ink };
+    CONS.forEach(([name, a, b, r]) => { if (!lineCol[name]) return; ctx.strokeStyle = lineCol[name]; ctx.lineWidth = 1.5; ctx.beginPath(); if (Math.abs(b) > 1e-9) { ctx.moveTo(X(0), Y(r / b)); ctx.lineTo(X(1), Y((r - a) / b)); } ctx.stroke(); });
+    ctx.fillStyle = c.accent; ctx.globalAlpha = .35; ctx.beginPath(); poly.forEach((p, i) => i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = c.accent; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.restore();
+    ctx.font = `600 11px ${MONO}`; [["protein ≥ 22%", .45, (.22 - .09 * .45) / .5, c.s2], ["fiber ≤ 5%", .32, (.05 - .02 * .32) / .08, c.bad], ["calcium limits", .78, (.372 - .379 * .78) / .378, c.s3]].forEach(([t, x, y, col]) => { ctx.fillStyle = col; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText(t, X(x) + 4, Y(y) - 4); });
+    [[OPT, c.good, 8], [pick, c.gold, 6]].forEach(([p, col, r]) => { ctx.fillStyle = col; ctx.strokeStyle = c.bg; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), r, 0, 7); ctx.fill(); ctx.stroke(); });
+    const [pc, ps] = pick, nu = nutr(pc, ps), rows = [["Corn", (pc * 100).toFixed(1) + "%", "", true], ["Limestone", (nu.l * 100).toFixed(1) + "%", "≥ 0", nu.l >= -1e-9], ["Soybean meal", (ps * 100).toFixed(1) + "%", "", true], ["Calcium", (nu.ca * 100).toFixed(2) + "%", "0.8% to 1.2%", nu.ca >= .008 - 1e-9 && nu.ca <= .012 + 1e-9], ["Protein", (nu.pr * 100).toFixed(1) + "%", "≥ 22%", nu.pr >= .22 - 1e-9], ["Fiber", (nu.fi * 100).toFixed(2) + "%", "≤ 5%", nu.fi <= .05 + 1e-9]];
+    const ok = rows.every(r => r[3]);
+    $("#lpTbl").innerHTML = `<thead><tr><th>Your mix</th><th class="n">Value</th><th>Limit</th><th>OK</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r[3] ? "" : "bad"}"><td>${r[0]}</td><td class="n">${r[1]}</td><td>${r[2]}</td><td>${r[3] ? "yes" : "no"}</td></tr>`).join("") + `<tr class="best"><td>Cost per kg</td><td class="n">$${(cost(pc, ps) / 100).toFixed(4)}</td><td colspan="2">${ok ? "feasible" : "infeasible"}</td></tr></tbody>`;
+    $("#lpNote").textContent = `Optimum: corn ${(OPT[0] * 100).toFixed(2)}%, limestone ${((1 - OPT[0] - OPT[1]) * 100).toFixed(2)}%, soybean meal ${(OPT[1] * 100).toFixed(2)}%, $${(cost(...OPT) / 100).toFixed(4)} per kg. The two calcium limits are nearly parallel and close together, so they squeeze the feasible region into a thin band: limestone must stay near 2 to 3%. Dashed gray lines are equal-cost lines; cost falls toward the lower left.`;
+  }
+  $("#lpCv").addEventListener("click", e => { const r = $("#lpCv").getBoundingClientRect(), pl = 46, pr = 12, pt = 12, pb = 34, x = V.c0 + (e.clientX - r.left - pl) / (r.width - pl - pr) * (V.c1 - V.c0), y = V.s1 - (e.clientY - r.top - pt) / (r.height - pt - pb) * (V.s1 - V.s0); if (x < 0 || y < 0 || x + y > 1) return; pick = [x, y]; draw(); });
+  $("#lpOpt").addEventListener("click", () => { pick = OPT.slice(); draw(); });
+  ro.observe($("#lpCv")); onRedraw(draw); draw();
+})();
+
+/* ---------- districting and gerrymandering ---------- */
+(function districting() {
+  const R = 5, C = 10, party = (r, c) => c < 4 ? "S" : "B";
+  const PRE = {
+    "Two-column strips": (r, c) => Math.floor(c / 2),
+    "Rows": (r) => r,
+    "Shield gerrymander": (r, c) => r === 0 ? (c <= 7 ? 0 : 4) : r === 1 ? (c <= 1 ? 0 : c <= 7 ? 1 : 4) : r === 2 ? (c <= 3 ? 1 : 4) : r === 3 ? (c <= 7 ? 2 : 3) : (c <= 1 ? 2 : 3)
+  };
+  let map = [], brush = 0;
+  const DC = () => { const c = colors(); return [c.s1, c.s2, c.s3, c.s4, c.gold]; };
+  const setPre = k => { map = []; for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) map.push(PRE[k](r, c)); draw(k); };
+  $("#gmPresets").innerHTML = Object.keys(PRE).map(k => `<button class="small" data-k="${k}">${k}</button>`).join("");
+  $("#gmPresets").querySelectorAll("button").forEach(b => b.addEventListener("click", () => setPre(b.dataset.k)));
+  function contiguous(d) { const cells = map.map((v, i) => v === d ? i : -1).filter(i => i >= 0); if (!cells.length) return false; const seen = new Set([cells[0]]), st = [cells[0]]; while (st.length) { const i = st.pop(), r = Math.floor(i / C), c = i % C; [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]].forEach(([a, b]) => { const j = a * C + b; if (a >= 0 && b >= 0 && a < R && b < C && map[j] === d && !seen.has(j)) { seen.add(j); st.push(j); } }); } return seen.size === cells.length; }
+  function draw(preset) {
+    const col = DC();
+    $("#gmPick").innerHTML = col.map((cc, d) => `<button class="small" data-d="${d}" aria-pressed="${d === brush}" style="background:${cc};color:#fff;border-color:${cc}">${d + 1}</button>`).join("");
+    $("#gmPick").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { brush = +b.dataset.d; draw(); }));
+    $("#gmGrid").innerHTML = map.map((d, i) => `<span data-i="${i}" style="background:${col[d]}">${party(Math.floor(i / C), i % C) === "S" ? "▲" : "●"}</span>`).join("");
+    $("#gmGrid").querySelectorAll("span").forEach(sp => sp.addEventListener("click", () => { map[+sp.dataset.i] = brush; draw(); }));
+    let seat = { S: 0, B: 0, T: 0 }, valid = true;
+    const rows = [0, 1, 2, 3, 4].map(d => { const cells = map.map((v, i) => v === d ? i : -1).filter(i => i >= 0), s = cells.filter(i => party(Math.floor(i / C), i % C) === "S").length, b = cells.length - s, ct = contiguous(d), win = s > b ? "Shield" : b > s ? "Bell" : "tie"; if (cells.length !== 10 || !ct) valid = false; seat[win === "Shield" ? "S" : win === "Bell" ? "B" : "T"]++; return `<tr><td><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${col[d]}"></i> ${d + 1}</td><td class="n">${s}</td><td class="n">${b}</td><td class="n">${cells.length}</td><td>${ct ? "yes" : "no"}</td><td>${win}</td></tr>`; });
+    $("#gmTbl").innerHTML = `<thead><tr><th>District</th><th class="n">▲ Shield</th><th class="n">● Bell</th><th class="n">Size</th><th>Contiguous</th><th>Winner</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+    stats($("#gmStats"), [["Shield seats", seat.S], ["Bell seats", seat.B], ["Ties", seat.T], ["Valid map", valid ? "yes" : "no (sizes 10, contiguous)"]]);
+    $("#gmNote").textContent = `Shield (▲) has 40% of the votes, Bell (●) 60%. ` + (preset === "Rows" ? "Rows mix both parties evenly, so Bell wins every district: 5 to 0." : preset === "Shield gerrymander" ? "Packing 6 Shield voters into each of three districts and wasting Bell’s votes elsewhere hands Shield a 3 to 2 majority with only 40% of the votes." : preset === "Two-column strips" ? "Compact strips give a result close to the vote shares: Bell 3, Shield 2." : "Pick a district number, then click voters to repaint them.");
+  }
+  setPre("Two-column strips");
+})();
+
+/* ---------- bin packing ---------- */
+(function binPacking() {
+  const H = {
+    nf: ["Next fit", items => items], ff: ["First fit", items => items], ffd: ["First fit decreasing", items => items.slice().sort((a, b) => b - a)], bfd: ["Best fit decreasing", items => items.slice().sort((a, b) => b - a)]
+  };
+  const ctl = makeControls($("#bpCtl"), [
+    { key: "h", id: "bpH", type: "select", label: "Heuristic", value: "ff", options: Object.entries(H).map(([k, v]) => [k, v[0]]) },
+    { key: "cap", id: "bpCap", label: "Bin capacity", min: 5, max: 15, step: 1, value: 7 }
+  ], () => draw());
+  $("#bpCtl").insertAdjacentHTML("beforeend", `<div class="ctl"><label for="bpItems">Object sizes</label><input id="bpItems" type="text" value="2, 4, 3, 6, 5, 1" style="font-family:var(--f-mono);padding:.35rem .5rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)"></div>`);
+  $("#bpItems").addEventListener("input", () => draw());
+  const items = () => $("#bpItems").value.split(/[\s,;]+/).map(Number).filter(v => v > 0 && Number.isFinite(v));
+  function pack(k, list, cap) {
+    const bins = [], order = H[k][1](list);
+    for (const it of order) {
+      if (it > cap) continue;
+      let b = null;
+      if (k === "nf") { const last = bins[bins.length - 1]; if (last && last.s + it <= cap) b = last; }
+      else if (k === "bfd") { for (const x of bins) if (x.s + it <= cap && (!b || x.s > b.s)) b = x; }
+      else b = bins.find(x => x.s + it <= cap) || null;
+      if (!b) { b = { s: 0, items: [] }; bins.push(b); }
+      b.items.push(it); b.s += it;
+    }
+    return bins;
+  }
+  function draw() {
+    const list = items(), cap = ctl.cap, lb = Math.ceil(list.reduce((a, b) => a + b, 0) / cap), bins = pack(ctl.h, list, cap), c = colors();
+    const { ctx, w, h } = setupCanvas($("#bpCv")), pal = [c.s1, c.s2, c.s3, c.s4, c.gold, c.accent], n = Math.max(bins.length, lb, 1), bw = Math.min(90, (w - 20) / n - 10), x0 = (w - n * (bw + 10)) / 2, top = 24, unit = (h - top - 30) / cap;
+    ctx.clearRect(0, 0, w, h); ctx.font = `600 13px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    bins.forEach((b, i) => { const x = x0 + i * (bw + 10) + 5; let y = h - 30; b.items.forEach(it => { ctx.fillStyle = pal[(it - 1) % pal.length]; ctx.fillRect(x + 2, y - it * unit + 1, bw - 4, it * unit - 2); ctx.fillStyle = "#fff"; ctx.fillText(it, x + bw / 2, y - it * unit / 2); y -= it * unit; }); ctx.strokeStyle = c.ink; ctx.lineWidth = 1.5; ctx.strokeRect(x, h - 30 - cap * unit, bw, cap * unit); ctx.fillStyle = c.muted; ctx.font = `11px ${MONO}`; ctx.fillText(`bin ${i + 1}: ${cap - b.s} free`, x + bw / 2, h - 14); ctx.font = `600 13px ${MONO}`; });
+    const tooBig = list.filter(v => v > cap);
+    stats($("#bpStats"), [["Objects", list.length], ["Lower bound", lb + " bins"], ["Bins used", bins.length], ["Unused space", bins.reduce((a, b) => a + cap - b.s, 0)]]);
+    $("#bpTbl").innerHTML = `<thead><tr><th>Heuristic</th><th class="n">Bins</th><th class="n">Unused space</th><th>Reaches the lower bound</th></tr></thead><tbody>` + Object.keys(H).map(k => { const b = pack(k, list, cap); return `<tr class="${k === ctl.h ? "best" : ""}"><td>${H[k][0]}</td><td class="n">${b.length}</td><td class="n">${b.reduce((a, x) => a + cap - x.s, 0)}</td><td>${b.length === lb ? "yes" : "no"}</td></tr>`; }).join("") + "</tbody>";
+    $("#bpNote").textContent = (tooBig.length ? `Objects larger than the capacity are skipped: ${tooBig.join(", ")}. ` : "") + "First fit packs objects in the given order into the first bin with room; sorting the objects first (first fit decreasing) usually wastes less space. With the book’s objects, first fit needs 4 bins with 7 units unused, first fit decreasing reaches the lower bound of 3 (Figure 2.17).";
+  }
+  $("#bpBook").addEventListener("click", () => { $("#bpItems").value = "2, 4, 3, 6, 5, 1"; ctl.cap = 7; draw(); });
+  $("#bpRand").addEventListener("click", () => { const rnd = mulberry32(newSeed()); $("#bpItems").value = Array.from({ length: 8 + Math.floor(rnd() * 5) }, () => 1 + Math.floor(rnd() * (ctl.cap - 1))).join(", "); draw(); });
+  ro.observe($("#bpCv")); onRedraw(draw); draw();
+})();
+
+/* ---------- container loading (Listing 2.7) ---------- */
+(function container() {
+  const W = 4, Hh = 8, OBJ = [[3, 1], [3, 3], [5, 1], [4, 2], [3, 2]];
+  function load(order) {
+    const g = Array.from({ length: Hh }, () => Array(W).fill(-1)), out = [];
+    const fit = (w, h, id, rot = true) => { for (let i = 0; i <= Hh - h; i++) for (let j = 0; j <= W - w; j++) { let ok = true; for (let a = 0; a < h && ok; a++) for (let b = 0; b < w; b++) if (g[i + a][j + b] >= 0) { ok = false; break; } if (ok) { for (let a = 0; a < h; a++) for (let b = 0; b < w; b++) g[i + a][j + b] = id; return true; } } return rot && fit(h, w, id, false); };
+    order.forEach(id => { if (!fit(...OBJ[id], id)) out.push(id); });
+    return { g, out };
+  }
+  const area = id => OBJ[id][0] * OBJ[id][1];
+  const L = load([0, 1, 2, 3, 4].sort((a, b) => area(b) - area(a))), S = load([0, 1, 2, 3, 4].sort((a, b) => OBJ[a][0] - OBJ[b][0] || area(a) - area(b)));
+  function draw() {
+    const { ctx, w, h } = setupCanvas($("#ctCv")), c = colors(), pal = [c.s1, c.s2, c.s3, c.s4, c.bad], cell = Math.min((h - 44) / Hh, (w / 2 - 40) / W);
+    ctx.clearRect(0, 0, w, h);
+    [[L, "Largest first", 0], [S, "Smallest width first", 1]].forEach(([res, title, k]) => {
+      const ox = k * w / 2 + (w / 2 - cell * W) / 2, oy = 24;
+      ctx.fillStyle = c.ink; ctx.font = `600 12px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText(title + (res.out.length ? `: ${res.out.map(i => OBJ[i].join("×")).join(", ")} left out` : ": everything fits"), ox + cell * W / 2, 4);
+      for (let i = 0; i < Hh; i++) for (let j = 0; j < W; j++) { const id = res.g[i][j], y = oy + (Hh - 1 - i) * cell; ctx.fillStyle = id >= 0 ? pal[id] : c.surface; ctx.fillRect(ox + j * cell + 1, y + 1, cell - 2, cell - 2); if (id >= 0) { ctx.fillStyle = "#fff"; ctx.font = `600 11px ${MONO}`; ctx.textBaseline = "middle"; ctx.fillText(OBJ[id].join("×"), ox + (j + .5) * cell, y + cell / 2); } }
+      ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.strokeRect(ox, oy, cell * W, cell * Hh);
+    });
+  }
+  $("#ctNote").textContent = "Each object goes into the first free spot, scanning each row from left to right and the rows from the bottom up, and is rotated by 90° as a last resort (as in the book, the container is flipped so the first row is at the bottom). Sorting by area puts the 5×1 object last, when no 5-long gap is left; sorting by width first places everything (Figures 2.19 and 2.20).";
+  ro.observe($("#ctCv")); onRedraw(draw); draw();
+})();
+
+/* ---------- search strategies on the cargo bike ---------- */
+(function strategies() {
+  const Wt = [14.6, 20, 8.5, 10, 13, 9.6, 4.9, 16.5, 8.77, 7.8], Pr = [14.54, 15.26, 5.8, 12.12, 8.2, 7.4, 10.3, 13.5, 6.6, 20.9];
+  const S1 = [1, 1, 1, 1, 1, 0, 0, 1, 0, 1], S2 = [0, 1, 0, 1, 1, 0, 1, 1, 1, 1];
+  const tot = x => ({ w: x.reduce((a, b, i) => a + b * Wt[i], 0), p: x.reduce((a, b, i) => a + b * Pr[i], 0) });
+  const fmt = x => { const t = tot(x); return `(${x.join(",")}): ${t.w.toFixed(2)} kg, $${t.p.toFixed(2)}`; };
+  const ctl = makeControls($("#sgCtl"), [{ key: "k", id: "sgK", label: "Crossover point (genes taken from S1)", min: 1, max: 9, step: 1, value: 2 }], () => {});
+  let x = Array(10).fill(0), log = [], note = "Click a button, or click the bits.";
+  function draw() {
+    $("#sgBits").innerHTML = x.map((b, i) => `<button class="${b ? "on" : ""}" data-i="${i}">${b}<small>item ${i + 1}</small></button>`).join("");
+    $("#sgBits").querySelectorAll("button").forEach(bt => bt.addEventListener("click", () => { x[+bt.dataset.i] ^= 1; log = []; note = "Edited by hand."; draw(); }));
+    const t = tot(x);
+    stats($("#sgStats"), [["Weight", t.w.toFixed(2) + " / 100 kg"], ["Profit", "$" + t.p.toFixed(2)], ["Feasible", t.w <= 100 + 1e-9 ? "yes" : "no"]]);
+    $("#sgTbl").innerHTML = log.length ? `<thead><tr>${log[0].map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>` + log.slice(1).map(r => `<tr class="${r[2] === "No" ? "dim" : ""}">${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("") + "</tbody>" : "";
+    $("#sgNote").textContent = note;
+  }
+  $("#sgCons").addEventListener("click", () => {
+    x = Array(10).fill(0); let w = 0, p = 0; log = [["Step", "Item", "Add?", "Total weight (kg)", "Total profit ($)"]];
+    [...Wt.keys()].sort((a, b) => Pr[b] / Wt[b] - Pr[a] / Wt[a]).forEach((i, k) => { if (w + Wt[i] <= 100) { x[i] = 1; w += Wt[i]; p += Pr[i]; log.push([k + 1, i + 1, "Yes", w.toFixed(2), p.toFixed(2)]); } else log.push([k + 1, i + 1, "No", `(${(w + Wt[i]).toFixed(2)})`, "–"]); });
+    note = "Table 2.3: add items in order of efficiency while the load stays within 100 kg. In the book, the last row reads 113.67 for item 5, which adds item 5 to the rejected item 3; after rejecting item 3 the load would be 105.17 kg."; draw();
+  });
+  $("#sgMod").addEventListener("click", () => { const before = x.slice(); x[8] = 0; x[4] = 1; log = [["", "Solution"], ["before", fmt(before)], ["after", fmt(x)]]; note = "Repeated modification: take item 9 out and put item 5 in. Starting from the greedy solution, this gives $102.22 at 96.4 kg, which is in fact the best possible load."; draw(); });
+  $("#sgRec").addEventListener("click", () => { const k = ctl.k; x = S1.slice(0, k).concat(S2.slice(k)); log = [["", "Solution"], ["S1", fmt(S1)], ["S2", fmt(S2)], [`S1[:${k}] + S2[${k}:]`, fmt(x)]]; note = `Recombination: the first ${k} genes of S1 and the last ${10 - k} of S2.` + (k === 2 ? " With k = 2 this is S3 of Figure 2.21: 95.57 kg and $101.42. Note that S1 as printed weighs 90.4 kg with a profit of $90.32, not 75.8 kg and $75.78 as the book states." : ""); draw(); });
+  $("#sgBest").addEventListener("click", () => { let b = null, bp = -1; for (let m = 0; m < 1024; m++) { const s = [...Array(10)].map((_, i) => m >> i & 1), t = tot(s); if (t.w <= 100 && t.p > bp) { bp = t.p; b = s; } } x = b; log = [["", "Solution"], ["optimum", fmt(x)]]; note = "Exhaustive search over all 1,024 subsets."; draw(); });
+  draw();
+})();
+
+/* ---------- code tabs ---------- */
+(function codeTabs() {
+  const caps = { k: "Combinations, permutations, TSP tour counts and Stirling numbers", l: "The three landscapes of Listing 2.1 searched by deterministic compass search and a stochastic random walk", q: "Listing 2.2’s sliding procedure with cycle detection, min-conflicts repair and a backtracking count", c: "The Lagrange ticket problem along the constraint, and the feed mix LP by vertex enumeration", h: "First fit and first fit decreasing, Listing 2.7 without NumPy, and the cargo bike strategies" };
+  const keys = Object.keys(caps); let cur = "k";
+  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").textContent = caps[k]; }
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.code)));
+  $("#codeCopy").addEventListener("click", async () => {
+    const pre = $("#code-" + cur), btn = $("#codeCopy");
+    try { await navigator.clipboard.writeText(pre.textContent); btn.textContent = "Copied"; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected, press Ctrl+C"; }
+    setTimeout(() => btn.textContent = "Copy code", 2000);
+  });
+  show("k");
+})();
+
+/* ---------- side menu ---------- */
+(function sideMenu() {
+  const toc = $("#toc"), btn = $("#tocBtn"), scrim = $("#scrim");
+  // read each link's #hash, not its raw href: hosts such as htmlpreview rewrite in-page links to full URLs
+  const links = [...toc.querySelectorAll("nav a")].filter(a => a.hash);
+  const targets = links.map(a => document.getElementById(decodeURIComponent(a.hash.slice(1))));
+  function setOpen(o) { toc.classList.toggle("open", o); scrim.classList.toggle("show", o); btn.setAttribute("aria-expanded", String(o)); }
+  btn.addEventListener("click", () => setOpen(!toc.classList.contains("open")));
+  scrim.addEventListener("click", () => setOpen(false));
+  links.forEach(a => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setOpen(false); });
+  let ticking = false, lastCur = -1;
+  function spy() {
+    ticking = false; let cur = 0;
+    targets.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= 140) cur = i; });
+    if (cur === lastCur) return; lastCur = cur;
+    links.forEach(a => a.classList.remove("active")); toc.querySelectorAll("li.current").forEach(l => l.classList.remove("current"));
+    const a = links[cur], topLi = a && a.closest("nav > ol > li");
+    if (!topLi) return;
+    a.classList.add("active"); topLi.classList.add("current"); topLi.querySelector(":scope > a").classList.add("active");
+    const y = a.offsetTop; if (y < toc.scrollTop + 60 || y > toc.scrollTop + toc.clientHeight - 60) toc.scrollTop = y - toc.clientHeight / 3;
+  }
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+  spy();
+})();
+
+</script>
+</body>
+</html>
