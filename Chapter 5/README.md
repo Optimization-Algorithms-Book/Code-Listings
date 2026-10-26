@@ -9,7 +9,7 @@
 | Solving Sudoku problem | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.3_Sudoku.ipynb)  |
 | Solving simple TSP | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.4_TSP.ipynb)  |
 | Solving Belin52 TSP  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.5_Berlin52.ipynb)  |
-| Solving delivery semi-truck routing problem  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.6_Walmart.ipynb)  |
+| Solving delivery semi-truck routing problem  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.6_Walmart.ipynb)  | 
 
 
 > [!Note]
