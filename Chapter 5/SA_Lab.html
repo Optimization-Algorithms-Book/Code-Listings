@@ -54,6 +54,8 @@ code,.mono{font-family:var(--f-mono);font-size:.92em}
 .toc-brand{padding:0 .5rem 1rem;margin-bottom:.8rem;border-bottom:1px solid var(--line)}
 .toc-brand b{display:block;font-family:var(--f-display);font-size:1.25rem}
 .toc-brand span{font-size:.78rem;color:var(--muted)}
+.toc-home{display:inline-flex;align-items:center;gap:.35rem;margin-bottom:.75rem;padding:.28rem .6rem;font-size:.78rem;font-weight:500;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:6px}
+.toc-home:hover{color:var(--accent);border-color:var(--accent)}
 .toc ol{list-style:none;margin:0;padding:0}
 .toc > nav > ol > li{margin-bottom:.15rem}
 .toc nav a{display:flex;gap:.55rem;align-items:baseline;text-decoration:none;color:var(--muted);font-size:.93rem;padding:.38rem .55rem;border-radius:7px;line-height:1.35}
@@ -276,7 +278,7 @@ tr.rej td{color:var(--muted)}
 </head>
 <body>
 <aside class="toc" id="toc" aria-label="Contents">
-  <div class="toc-brand"><b>SA Lab</b><span>Interactive companion to Chapter 5</span>
+  <div class="toc-brand"><a class="toc-home" href="../index.html" title="Back to the book page with every lab"><span aria-hidden="true">&larr;</span> All labs</a><b>SA Lab</b><span>Interactive companion to Chapter 5</span>
     <div class="theme-switch" role="group" aria-label="Color theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="system">System</button></div></div>
   <nav><ol>
     <li><a href="#top"><b>0</b>Overview</a></li>
