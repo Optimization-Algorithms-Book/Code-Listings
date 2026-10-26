@@ -8,8 +8,6 @@
 # Optimization Algorithms: AI techniques for design, planning, and control problems
 
 > ### 🌐 [Visit the book’s website](https://optimization-algorithms-book.github.io/Code-Listings/)
-> Play the **Treasure-Hunting Mission**, open an **interactive lab for every chapter**, and find all the code in one place:
-> **https://optimization-algorithms-book.github.io/Code-Listings/**
 
 <a href="https://www.manning.com/books/optimization-algorithms">
 <img src="images/Khamis.jpg" alt="Optimization Algorithms: AI techniques for design, planning, and control problems" width="260" align="right"></a>
