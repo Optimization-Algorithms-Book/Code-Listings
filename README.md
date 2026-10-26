@@ -7,7 +7,7 @@
 
 # Optimization Algorithms: AI techniques for design, planning, and control problems
 
-> ### 🌐 [Visit the book’s website](https://optimization-algorithms-book.github.io/Code-Listings/)
+> ### 🌐 [Visit the book’s interactive website](https://optimization-algorithms-book.github.io/Code-Listings/)
 
 <a href="https://www.manning.com/books/optimization-algorithms">
 <img src="images/Khamis.jpg" alt="Optimization Algorithms: AI techniques for design, planning, and control problems" width="260" align="right"></a>
@@ -21,7 +21,6 @@ Without assuming any prior knowledge of search and optimization, and with only a
 **Quick links:**
 [📘 Get the book (Manning)](https://www.manning.com/books/optimization-algorithms) ·
 [🌐 Website](https://optimization-algorithms-book.github.io/Code-Listings/) ·
-[🏝️ Treasure-Hunting Mission](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%202/Treasure_Hunting_Mission.html) ·
 [🎥 Video summary](https://www.youtube.com/watch?v=RAVFSvgks3Q) ·
 [🛠 Errata](errata.md) ·
 [🔖 Cite](#-citation)
