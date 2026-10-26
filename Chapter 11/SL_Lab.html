@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive companion to Chapter 11 (Supervised and unsupervised learning): supervised and graph machine learning of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
+<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<title>Supervised Learning Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+
+/* Layout: a long-form lab notebook. Reading column for concepts, full-width "bench" panels for each simulation. */
+:root{
+  --bg:#F5F8FA; --surface:#FFFFFF; --sunk:#EAF0F4; --ink:#10212D; --muted:#53687A; --line:#D3DEE6; --grid:#E3EAF0;
+  --accent:#00629B; --accent-ink:#FFFFFF; --accent-soft:#DCEBF5; --gold:#C76E12; --gold-soft:#FBEBD9;
+  --s1:#00629B; --s2:#C76E12; --s3:#2E8B57; --s4:#9B3FA6;
+  --good:#2E8B57; --bad:#B4372E;
+  --map-water:#D3E3EC; --map-land:#FAFBFA; --map-state:#C7D3DB; --map-border:#93A6B4;
+  --code-bg:#0E1B25; --code-ink:#D9E6EF; --code-dim:#7F97A8;
+  --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", Consolas, "Courier New", monospace;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0A141B; --surface:#111E28; --sunk:#0D1820; --ink:#E3ECF2; --muted:#93A7B6; --line:#24384A; --grid:#1B2B38;
+  --accent:#55B4EA; --accent-ink:#06121A; --accent-soft:#12324A; --gold:#F0A257; --gold-soft:#3A2814;
+  --s1:#55B4EA; --s2:#F0A257; --s3:#5CC48A; --s4:#D08ADB; --good:#5CC48A; --bad:#F07D72; --map-water:#0B1A24; --map-land:#1A2933; --map-state:#2F4250; --map-border:#4F6676;
+  --code-bg:#08121A; --code-ink:#D9E6EF; --code-dim:#7F97A8; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0A141B; --surface:#111E28; --sunk:#0D1820; --ink:#E3ECF2; --muted:#93A7B6; --line:#24384A; --grid:#1B2B38;
+  --accent:#55B4EA; --accent-ink:#06121A; --accent-soft:#12324A; --gold:#F0A257; --gold-soft:#3A2814;
+  --s1:#55B4EA; --s2:#F0A257; --s3:#5CC48A; --s4:#D08ADB; --good:#5CC48A; --bad:#F07D72; --map-water:#0B1A24; --map-land:#1A2933; --map-state:#2F4250; --map-border:#4F6676;
+  --code-bg:#08121A; --code-ink:#D9E6EF; --code-dim:#7F97A8; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prose{max-width:72ch}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h2{font-size:clamp(1.7rem,3.2vw,2.3rem);font-weight:700}
+h3{font-size:1.3rem;font-weight:600;margin-top:2.2rem}
+p{margin:.7rem 0}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+.num{font-variant-numeric:tabular-nums}
+
+/* side menu */
+.toc{position:fixed;top:0;left:0;bottom:0;width:264px;overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:calc(1.4rem + env(safe-area-inset-top,0px)) .9rem calc(1.5rem + env(safe-area-inset-bottom,0px)) max(.9rem,env(safe-area-inset-left,0px));z-index:20;scrollbar-width:thin}
+.toc-brand{padding:0 .5rem 1rem;margin-bottom:.8rem;border-bottom:1px solid var(--line)}
+.toc-brand b{display:block;font-family:var(--f-display);font-size:1.25rem}
+.toc-brand span{font-size:.78rem;color:var(--muted)}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc > nav > ol > li{margin-bottom:.15rem}
+.toc nav a{display:flex;gap:.55rem;align-items:baseline;text-decoration:none;color:var(--muted);font-size:.93rem;padding:.38rem .55rem;border-radius:7px;line-height:1.35}
+.toc nav a b{font-family:var(--f-mono);font-weight:500;font-size:.72rem;min-width:1rem;color:var(--muted)}
+.toc nav a:hover{color:var(--ink);background:var(--sunk)}
+.toc nav a.active{color:var(--ink);background:var(--accent-soft);font-weight:600}
+.toc nav a.active b{color:var(--accent)}
+.toc ol ol{display:none;margin:.15rem 0 .45rem 1.45rem;padding-left:.2rem;border-left:1px solid var(--line)}
+.toc li.current > ol{display:block}
+.toc ol ol a{font-size:.84rem;padding:.24rem .6rem}
+.toc ol ol a.active{background:none;color:var(--accent);font-weight:600}
+.toc-foot{margin-top:1.2rem;padding:.8rem .5rem 0;border-top:1px solid var(--line);font-size:.76rem;color:var(--muted);line-height:1.5}
+.toc-foot a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px}
+.toc-foot a:hover{text-decoration-color:var(--accent)}
+.theme-switch{display:flex;gap:2px;margin-top:.8rem;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:2px}
+.theme-switch button{flex:1;border:0;background:none;font-size:.76rem;font-weight:500;padding:.32rem .3rem;border-radius:6px;color:var(--muted)}
+.theme-switch button:hover{color:var(--ink)}
+.theme-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.main{margin-left:264px}
+@media (min-width:1280px){ .main .wrap{margin-left:0;padding-left:max(clamp(32px,3.5vw,56px),env(safe-area-inset-left,0px))} }
+.toc-toggle{display:none}
+.scrim{display:none}
+@media (max-width:1279px){
+  .main{margin-left:0}
+  .toc{width:min(300px,86vw);transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.25)}
+  .toc.open{transform:none}
+  .toc-toggle{display:inline-flex;align-items:center;gap:.45rem;position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:21;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:.65rem 1rem;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+  .scrim.show{display:block;position:fixed;inset:0;background:rgba(5,12,18,.45);z-index:19}
+}
+@media (prefers-reduced-motion:reduce){ .toc{transition:none} }
+section.chapter,h3[id],.bench[id],.two[id],.opgrid[id]{scroll-margin-top:16px}
+
+/* hero */
+header.hero{padding-block:3rem 2rem;border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:2.5rem;align-items:center}
+.hero h1{font-size:clamp(2.3rem,5.4vw,3.9rem);font-weight:700;letter-spacing:-.01em}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+.hero .lede{font-size:1.12rem;color:var(--muted);max-width:52ch}
+.cite{font-size:.86rem;color:var(--muted);border-left:3px solid var(--accent);padding-left:.8rem;margin-top:1.2rem}
+.hero-canvas{width:100%;aspect-ratio:5/4;max-width:100%;border-radius:var(--radius);background:var(--sunk);display:block}
+.variants{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.chip{display:inline-flex;gap:.35rem;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.2rem .7rem;font-size:.84rem;text-decoration:none;color:var(--ink)}
+.chip b{font-family:var(--f-mono);font-weight:500;color:var(--accent)}
+
+section.chapter{padding-block:3.2rem 1rem;border-bottom:1px solid var(--line)}
+section.chapter > .wrap > .eyebrow{display:block;margin-bottom:.4rem}
+
+/* bench (simulation panel) */
+.bench{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-block:1.4rem;overflow:hidden}
+.bench-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;padding:.9rem 1.1rem;border-bottom:1px solid var(--line);background:var(--sunk)}
+.bench-head h4{margin:0;font-family:var(--f-display);font-size:1.12rem}
+.bench-head .eyebrow{font-size:.68rem}
+.bench-body{display:grid;grid-template-columns:270px minmax(0,1fr);gap:0}
+.bench-body.wide-right{grid-template-columns:minmax(0,1fr) 300px}
+.side{padding:1rem 1.1rem;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:.75rem;min-width:0}
+.wide-right .side{border-right:0;border-left:1px solid var(--line)}
+.stage{padding:1rem 1.1rem;min-width:0;display:flex;flex-direction:column;gap:.9rem}
+.ctl{display:flex;flex-direction:column;gap:.15rem}
+.ctl label{display:flex;justify-content:space-between;gap:.5rem;font-size:.84rem;font-weight:500}
+.ctl output{font-family:var(--f-mono);font-size:.82rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.ctl small{font-size:.74rem;color:var(--muted);line-height:1.35}
+.ctl-check label{justify-content:flex-start;align-items:center;font-weight:400}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=text],input[type=number]{font:inherit;font-size:.88rem;padding:.35rem .45rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:100%}
+.btns{display:flex;gap:.45rem;flex-wrap:wrap}
+button{font:inherit;font-size:.86rem;font-weight:500;padding:.45rem .85rem;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.small{font-size:.78rem;padding:.3rem .6rem}
+.group-label{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line);padding-top:.6rem;margin-top:.2rem}
+canvas{display:block;width:100%;max-width:100%}
+.cv-land{aspect-ratio:1/1;border-radius:8px;background:var(--sunk);touch-action:none}
+.cv-chart{height:170px;border-radius:8px;background:var(--sunk)}
+.cv-map{aspect-ratio:16/9;border-radius:8px;background:var(--sunk)}
+.stage-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem}
+.stage-grid > div{min-width:0;display:flex;flex-direction:column;gap:.7rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem}
+.stat{background:var(--sunk);border-radius:8px;padding:.45rem .6rem}
+.stat span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat b{font-family:var(--f-mono);font-weight:500;font-size:.95rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.3rem;vertical-align:-1px}
+.legend i.sq{border-radius:2px}
+.cap{font-size:.8rem;color:var(--muted);margin:0}
+
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;padding:1rem 1.1rem;border-top:1px solid var(--line)}
+.preset{text-align:left;display:flex;flex-direction:column;gap:.2rem;padding:.6rem .75rem;background:var(--bg)}
+.preset b{font-size:.86rem}
+.preset span{font-size:.78rem;color:var(--muted);font-weight:400;line-height:1.4}
+
+/* math and tables */
+.eq{font-family:var(--f-display);font-size:1.15rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1.1rem;margin:1rem 0;overflow-x:auto;white-space:nowrap}
+.eq i{font-style:italic}
+.eq .tag{float:right;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);margin-left:1rem}
+.eq .t-in{color:var(--muted)} .eq .t-cog{color:var(--accent)} .eq .t-soc{color:var(--gold)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:.42rem .65rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;background:var(--sunk);font-size:.78rem}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.hl td{background:var(--gold-soft)}
+.pseudo{background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);padding:1rem 1.2rem;font-family:var(--f-mono);font-size:.86rem;line-height:1.65;overflow-x:auto;white-space:pre;margin:1rem 0}
+.pseudo .k{color:#7CC4F0} .pseudo .c{color:var(--code-dim)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:start}
+.two > *{min-width:0}
+.cards3{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.2rem 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
+.card h5{margin:0 0 .3rem;font-size:.95rem}
+.card p{margin:0;font-size:.88rem;color:var(--muted)}
+.steps{list-style:none;padding:0;margin:1rem 0;counter-reset:s;display:grid;gap:.4rem}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2rem 1fr;gap:.6rem;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.5rem .7rem;font-size:.92rem}
+.steps li::before{content:counter(s);font-family:var(--f-mono);font-size:.8rem;color:var(--accent-ink);background:var(--accent);border-radius:50%;width:1.6rem;height:1.6rem;display:grid;place-items:center}
+.steps li.loop{border-style:dashed}
+.note{background:var(--accent-soft);border-radius:8px;padding:.7rem .9rem;font-size:.88rem;margin:1rem 0}
+.note.warn{background:var(--gold-soft)}
+blockquote{font-family:var(--f-display);font-style:italic;font-size:1.2rem;border-left:3px solid var(--gold);margin:1.4rem 0;padding:.2rem 0 .2rem 1rem}
+blockquote footer{font-family:var(--f-body);font-style:normal;font-size:.85rem;color:var(--muted);margin-top:.4rem}
+
+/* binary + permutation widgets */
+.bits{display:flex;gap:4px;flex-wrap:wrap}
+.bit{width:2rem;height:2.3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface);font-size:1rem}
+.bit.on{background:var(--accent-soft)}
+.bit.sel{outline:2px solid var(--gold);outline-offset:1px}
+.bit.changed{background:var(--gold);color:#fff}
+.calc{font-family:var(--f-mono);font-size:.86rem;line-height:1.8;background:var(--sunk);border-radius:8px;padding:.7rem .9rem;overflow-x:auto;white-space:nowrap}
+.perm{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.perm .cell{min-width:2.1rem;height:2.1rem;padding:0 .3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+.perm .cell.a{background:var(--accent-soft);border-color:var(--accent)}
+.perm .cell.b{background:var(--gold-soft);border-color:var(--gold)}
+.swap{display:inline-block;font-family:var(--f-mono);font-size:.86rem;border:1px solid var(--line);border-radius:5px;padding:.15rem .45rem;margin:2px;background:var(--surface)}
+.swap.now{background:var(--gold);color:#fff;border-color:var(--gold)}
+.swap.dim{opacity:.45;text-decoration:line-through}
+.opgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.op{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.op h4{margin:0;font-family:var(--f-display);font-size:1.05rem}
+.portfolio{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.35rem}
+.proj{font-size:.76rem;border:1px solid var(--line);border-radius:6px;padding:.3rem .45rem;background:var(--surface);display:flex;justify-content:space-between;gap:.3rem}
+.proj.in{background:var(--accent-soft);border-color:var(--accent)}
+.proj span{font-family:var(--f-mono);color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.bar > div{height:100%;background:var(--accent)}
+.bar.over > div{background:var(--bad)}
+.tour{font-size:.8rem;color:var(--muted);line-height:1.5}
+
+/* code */
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:0 1.1rem;background:var(--sunk)}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;padding:.7rem .8rem;color:var(--muted)}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);font-family:var(--f-mono);font-size:.8rem;line-height:1.6;padding:1rem 1.2rem;overflow:auto;max-height:560px}
+pre.code .cm{color:var(--code-dim)} pre.code .kw{color:#7CC4F0} pre.code .st{color:#E8B572} pre.code .nm{color:#9ED7A8}
+.code-bar{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.7rem 1.1rem;border-bottom:1px solid var(--line)}
+.colab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.7rem;margin:1rem 0}
+.colab{display:flex;flex-direction:column;gap:.25rem;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.75rem .9rem}
+.colab:hover{border-color:var(--accent)}
+.colab b{font-size:.9rem}
+.colab span{font-size:.78rem;color:var(--muted)}
+.colab em{font-style:normal;font-family:var(--f-mono);font-size:.7rem;color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
+.runbox{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;background:var(--sunk);border-radius:var(--radius);padding:.8rem 1rem;margin:1.2rem 0;font-size:.88rem}
+.runbox b{margin-right:.3rem}
+.colab-btn{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:500;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:.25rem .7rem}
+.colab-btn::before{content:"";width:.7rem;height:.7rem;border-radius:50%;background:var(--gold)}
+.zoom{display:grid;gap:.7rem}
+.zoom .card h5{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline}
+.zoom .card h5 span{font-family:var(--f-mono);font-size:.74rem;font-weight:500;color:var(--muted)}
+.zoom .card.ex{border-left:4px solid var(--s2)}
+.zoom .card.it{border-left:4px solid var(--s1)}
+.dspace{position:relative;padding:1.7rem 0 1.6rem;margin-inline:.5rem}
+.dspace .track{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--s2),var(--s1))}
+.dspace .tick{position:absolute;top:0;transform:translateX(-50%);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.dspace .end{position:absolute;bottom:0;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dspace .mark{position:absolute;top:1.32rem;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transition:left .15s}
+@media (prefers-reduced-motion:reduce){ .dspace .mark{transition:none} }
+@media (max-width:600px){ .dspace .tick.mid{display:none} }
+footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
+
+@media (max-width:900px){
+  .hero-grid,.two,.stage-grid{grid-template-columns:1fr}
+  .bench-body,.bench-body.wide-right{grid-template-columns:1fr}
+  .side{border-right:0;border-bottom:1px solid var(--line)}
+  .wide-right .side{border-left:0;border-top:1px solid var(--line);border-bottom:0}
+  .cards3,.opgrid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto!important} }
+
+/* machine learning lab additions */
+.cv-sq{aspect-ratio:4/3;border-radius:8px;background:var(--sunk)}
+.mono{font-family:var(--f-mono)}
+.ttab td,.ttab th{padding:.3rem .5rem;font-size:.82rem}
+tr.best td{background:var(--accent-soft)}
+tr.dim td{color:var(--muted)}
+.legend-row{display:flex;gap:.9rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);align-items:center}
+.legend-row i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.3rem;vertical-align:-1px}
+.flow{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:1rem 0}
+.flow span{font-size:.82rem;padding:.35rem .6rem;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
+.flow i{color:var(--muted);font-style:normal}
+.matrix{font-family:var(--f-mono);font-size:.78rem;border-collapse:collapse}
+.matrix td{padding:.15rem .35rem;text-align:right;border:1px solid var(--line)}
+.matrix td.on{background:var(--accent-soft)}
+.kbd{font-family:var(--f-mono);font-size:.8rem;border:1px solid var(--line);border-radius:4px;padding:0 .3rem;background:var(--surface)}
+
+.mats{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start}
+.mats > div{min-width:0}
+.tokens{display:flex;gap:.35rem;flex-wrap:wrap}
+.tokens button{font-family:var(--f-mono)}
+.tokens button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+</style>
+</head>
+<body>
+<aside class="toc" id="toc" aria-label="Contents">
+  <div class="toc-brand"><b>Supervised Learning Lab</b><span>Interactive companion to Chapter 11</span>
+    <div class="theme-switch" role="group" aria-label="Color theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="system">System</button></div></div>
+  <nav><ol>
+    <li><a href="#top"><b>0</b>Overview</a></li>
+    <li><a href="#supervised"><b>1</b>Supervised learning</a></li>
+    <li><a href="#nn"><b>2</b>Neural networks</a></li>
+    <li><a href="#graphs"><b>3</b>Machine learning with graphs</a><ol>
+      <li><a href="#gcn">Message passing and GCN</a></li>
+      <li><a href="#karate">Node classification</a></li></ol></li>
+    <li><a href="#attention"><b>4</b>Attention</a></li>
+    <li><a href="#pointer"><b>5</b>Pointer networks</a></li>
+    <li><a href="#tsp"><b>6</b>TSP with graph ML</a></li>
+    <li><a href="#amortized"><b>7</b>Amortized optimization</a></li>
+    <li><a href="#python"><b>8</b>Python and Colab</a><ol>
+      <li><a href="#notebooks">Notebooks</a></li>
+      <li><a href="#code">From-scratch code</a></li></ol></li>
+    <li><a href="#summary"><b>9</b>Summary</a></li>
+  </ol></nav>
+  <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 11, Supervised and unsupervised learning.</div>
+</aside>
+<button class="toc-toggle" id="tocBtn" aria-controls="toc" aria-expanded="false">☰ Contents</button>
+<div class="scrim" id="scrim"></div>
+<div class="main">
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Interactive companion · Chapter 11 · Supervised learning</div>
+      <h1>Supervised Learning <em>Lab</em></h1>
+      <p class="lede">Supervised learning imitates labeled examples. With graphs, attention and pointers, the same idea can learn to classify nodes in a network, point to the corners of a convex hull, or score which roads belong in a traveling salesman’s tour.</p>
+      <div class="variants">
+        <a class="chip" href="#nn"><b>∇</b> Neural networks</a>
+        <a class="chip" href="#gcn"><b>Â H W</b> GCN</a>
+        <a class="chip" href="#attention"><b>α</b> Attention</a>
+        <a class="chip" href="#pointer"><b>→</b> Pointer networks</a>
+        <a class="chip" href="#tsp"><b>TSP</b> Graph ML</a>
+      </div>
+      <p class="cite">Based on Chapter 11, “Supervised and unsupervised learning,” Sections 11.2, 11.3, 11.6, 11.7 and 11.9, in Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning Publications, 2024 (ISBN 978-1633438835).</p>
+    </div>
+    <div>
+      <canvas id="heroCv" class="hero-canvas" aria-label="A graph convolutional network labeling the karate club"></canvas>
+      <p class="cap" style="margin-top:.4rem" id="heroCap">A graph convolutional network labeling the members of a karate club from 4 known labels.</p>
+    </div>
+  </div>
+</header>
+
+<section class="chapter" id="supervised">
+  <div class="wrap">
+    <span class="eyebrow">Part 1 · Section 11.2</span>
+    <h2>Supervised learning</h2>
+    <div class="two">
+      <div class="prose">
+        <p>Supervised learning approximates a mapping between data and known labels from N training examples (x<sub>1</sub>, …, x<sub>m</sub>, c). <b>Classification</b> predicts discrete classes with a scoring function f: X × C → ℝ and c(x) = argmax<sub>c</sub> f(x, c); <b>regression</b> predicts continuous values. A self-driving car learns to recognize traffic signs from labeled images. Common architectures: feedforward networks (MLPs), convolutional (CNN), recurrent (RNN, LSTM) and sequence-to-sequence models.</p>
+        <p><b>Deep learning</b> stacks many layers to learn features at several levels of abstraction directly from raw data, and <b>geometric deep learning</b> extends it to non-Euclidean data such as graphs, point clouds and manifolds.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Predictive maintenance</th><th>Task</th><th>Methods</th></tr></thead>
+        <tbody>
+          <tr><td>Will the machine fail within a week? (1 or 0)</td><td>Classification</td><td>Naive Bayes, kNN, logistic regression, random forest, neural networks</td></tr>
+          <tr><td>Remaining useful life</td><td>Regression</td><td>Linear regression, XGBoost, neural networks</td></tr>
+          <tr><td>Readings over the next 24 hours</td><td>Forecasting</td><td>ARIMA, Prophet, neural networks</td></tr>
+        </tbody></table><p class="cap" style="padding:.4rem .6rem">Inputs: vibration, temperature, pressure, RPM, voltage and current readings.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="nn">
+  <div class="wrap">
+    <span class="eyebrow">Part 2 · Neural networks</span>
+    <h2>Training a neural network</h2>
+    <p class="prose">A multilayer perceptron transforms its input through layers of weighted sums and nonlinear activations. <b>Training</b> is optimization: backpropagation computes the gradient of the loss (here, cross-entropy) with respect to every weight, and a gradient method (here, Adam) moves the weights downhill. ReLU, max(0, z), is the usual activation; LeakyReLU keeps a small slope for z &lt; 0 so neurons never “die,” and GAT uses it in its attention scores. Points are split 75/25 into training and test sets.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Neural network playground</h4></div>
+      <div class="bench-body">
+        <div class="side"><div id="nnCtl"></div><div class="btns"><button id="nnRun" class="primary">Train</button><button id="nnReset">Reset</button><button id="nnData" class="small">New data</button></div><div class="stats" id="nnStats"></div></div>
+        <div class="stage"><canvas id="nnCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Decision boundary"></canvas><div class="legend-row"><span><i style="background:var(--accent)"></i>class 0</span><span><i style="background:var(--gold)"></i>class 1</span><span>ringed: test points</span></div><canvas id="nnChart" class="cv-chart" style="height:150px" aria-label="Loss per epoch"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="graphs">
+  <div class="wrap">
+    <span class="eyebrow">Part 3 · Section 11.3</span>
+    <h2>Machine learning with graphs</h2>
+    <div class="two">
+      <div class="prose">
+        <p>Graphs capture relationships: social networks, road networks, the web, knowledge graphs, molecules. Tabular data can be turned into a graph by choosing what the nodes and edges are. Listing 11.1 links 10 soccer players to their clubs (“plays_for”) and nationalities (“belongs_to”), giving 30 nodes and 20 edges.</p>
+        <p>Graph data is <b>non-Euclidean</b>: closeness comes from connections, not coordinates; there is no fixed grid, no shift-invariance, and no node order (<b>permutation invariance</b>). <b>Graph embedding</b> maps each node to a low-dimensional vector so that nodes similar in the graph are close in the embedding space. <b>Transductive</b> methods (DeepWalk, node2vec, matrix factorization) embed only the nodes seen in training; <b>inductive</b> ones (GNN, GCN) learn a function that also embeds new nodes.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Listing 11.1 as a graph</h4></div><div class="stage"><canvas id="fiCv" class="cv-sq" aria-label="Players, clubs and nationalities"></canvas><div class="legend-row"><span><i style="background:var(--accent)"></i>player</span><span><i style="background:var(--bad)"></i>club</span><span><i style="background:var(--muted)"></i>nationality</span></div></div></div>
+    </div>
+
+    <h3 id="gcn">Message passing and graph convolution</h3>
+    <div class="two">
+      <div class="prose">
+        <p>In a <b>graph convolutional network</b>, each layer lets every node gather messages from its neighbors, aggregate them with a permutation-invariant function (sum or mean), and update its own state (Figures 11.6 and 11.7). In matrix form, H<sup>(t+1)</sup> = σ(Â H<sup>(t)</sup> W<sup>(t)</sup>), with Â = D<sup>−1/2</sup>(A + I)D<sup>−1/2</sup>: A is the adjacency matrix, I adds self-loops so a node keeps its own features, and the degree matrix D normalizes so features do not explode. After k layers, a node’s embedding encodes its <b>k-hop neighborhood</b>.</p>
+        <p>Google DeepMind used this idea to predict arrival times: road segments become nodes, so traffic on one segment informs its neighbors, improving real-time ETA accuracy by up to 50% in several cities.</p>
+        <p>Click a node of the road graph to put a signal there, then apply layers to watch it spread hop by hop.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Signal spreading through Â</h4></div>
+        <div class="stage"><canvas id="mpCv" class="cv-sq" style="aspect-ratio:16/10;cursor:pointer" aria-label="Six-node graph"></canvas><div class="btns"><button id="mpStep" class="primary small">Apply one layer</button><button id="mpReset" class="small">Reset</button></div><div class="mats" id="mpMats"></div><p class="cap" id="mpNote"></p></div></div>
+    </div>
+
+    <h3 id="karate">Node classification with a GCN</h3>
+    <p class="prose">Listing 11.2 trains a two-layer GCN (16 hidden units, dropout, Adam with a learning rate of 0.01, 200 epochs) on the Cora citation network: 2,708 papers in 7 classes, 5,429 links and a 1,433-word vocabulary. The same recipe, trained here from scratch in your browser, runs on Zachary’s karate club: 34 members and 78 friendships. The club split in two, and the GCN learns everyone’s side from just 4 labeled members, because friends tend to side together.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Semi-supervised node classification</h4><span class="eyebrow">Squares: the 4 labeled members</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="kcCtl"></div><div class="btns"><button id="kcRun" class="primary">Train</button><button id="kcReset">Reset</button></div><div class="stats" id="kcStats"></div></div>
+        <div class="stage"><div class="stage-grid"><div><canvas id="kcCv" class="cv-sq" aria-label="Karate club graph"></canvas></div><div><canvas id="kcEmb" class="cv-sq" aria-label="Output embedding"></canvas></div></div><p class="cap" id="kcNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="attention">
+  <div class="wrap">
+    <span class="eyebrow">Part 4 · Section 11.3.2</span>
+    <h2>Attention</h2>
+    <div class="two">
+      <div class="prose">
+        <p>A GCN gives every neighbor the same learned weight. <b>Attention</b> lets a model decide how much each input matters. A <b>graph attention network</b> (GAT) scores each neighbor u of node v, e<sub>vu</sub> = a(W h<sub>v</sub>, W h<sub>u</sub>) (equation 11.1), and normalizes the scores with a softmax, α<sub>vu</sub> = exp(e<sub>vu</sub>) / Σ<sub>k∈N(v)</sub> exp(e<sub>vk</sub>) (equation 11.2). With <b>multi-head</b> attention, several independent heads attend in different ways and their results are averaged (Figure 11.10).</p>
+        <p>The Transformer (“Attention is all you need”) applies the same idea to sequences: a query q is compared with every key kᵢ, the softmax of the scores weights the values vᵢ, and the output is Σ αᵢ vᵢ. This fixes the forgetting problem of reading long sequences word by word.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Node 5 attends to nodes 2, 4 and itself (Figure 11.9)</h4></div>
+        <div class="stage"><div id="atCtl"></div><canvas id="atCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Attention coefficients"></canvas><p class="cap" id="atNote"></p></div></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Which words does “bank” attend to?</h4><span class="eyebrow">Illustrative 2D word vectors, not a trained model</span></div>
+      <div class="stage"><div class="tokens" id="sqTok"></div><canvas id="sqCv" class="cv-chart" style="height:180px" aria-label="Attention weights over the sentence"></canvas><p class="cap" id="sqNote"></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="pointer">
+  <div class="wrap">
+    <span class="eyebrow">Part 5 · Sections 11.3.3 and 11.9</span>
+    <h2>Pointer networks and the convex hull</h2>
+    <div class="two">
+      <div class="prose">
+        <p>Sequence-to-sequence models map one sequence to another, but in problems like the TSP, sorting or the convex hull, the outputs are <b>positions in the input</b>, so the output dictionary changes with the input length. A <b>pointer network</b> (Ptr-Net) uses attention as a pointer: at each decoding step, a softmax over the encoder states, aᵢ = softmax(vᵀ tanh(W₁eⱼ + W₂dᵢ)) (equations 11.3 to 11.5), picks the input element to output next, until an end token.</p>
+        <p>The <b>convex hull</b> is the smallest convex polygon enclosing all the points: maximum area with minimum perimeter. Classic algorithms include the Graham scan, the Jarvis march (gift wrapping) and quickhull; they provide the training targets. The book’s transformer-based ConvexNet reaches about 96.5% validation accuracy; on test sets its accuracy and hull overlap vary with the number of points:</p>
+      </div>
+      <div class="tbl-wrap"><table class="ttab">
+        <thead><tr><th class="n">Points</th><th class="n">Accuracy</th><th class="n">Hull overlap</th></tr></thead>
+        <tbody><tr><td class="n">5</td><td class="n">54.8%</td><td class="n">43.7%</td></tr><tr><td class="n">10</td><td class="n">72.1%</td><td class="n">79.1%</td></tr><tr><td class="n">15</td><td class="n">79.0%</td><td class="n">90.1%</td></tr><tr><td class="n">20</td><td class="n">84.8%</td><td class="n">92.7%</td></tr><tr><td class="n">25</td><td class="n">80.6%</td><td class="n">92.3%</td></tr><tr><td class="n">30</td><td class="n">80.3%</td><td class="n">91.6%</td></tr><tr><td class="n">35</td><td class="n">77.8%</td><td class="n">91.9%</td></tr><tr><td class="n">40</td><td class="n">75.8%</td><td class="n">92.1%</td></tr><tr><td class="n">45</td><td class="n">72.4%</td><td class="n">90.4%</td></tr></tbody></table><p class="cap" style="padding:.4rem .6rem">Listing 11.6 test output (trained on 5 to 50 points).</p></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Decoding a hull, one pointer at a time</h4><span class="eyebrow">Pointer scores here come from geometry, not a trained network</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="phCtl"></div><div class="btns"><button id="phStep" class="primary">Next pointer</button><button id="phRun">Finish</button><button id="phNew">New points</button></div><div class="stats" id="phStats"></div></div>
+        <div class="stage"><canvas id="phCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Points and hull"></canvas><canvas id="phBar" class="cv-chart" style="height:150px" aria-label="Pointer distribution"></canvas><p class="cap" id="phNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="tsp">
+  <div class="wrap">
+    <span class="eyebrow">Part 6 · Section 11.7</span>
+    <h2>Solving the TSP with supervised graph ML</h2>
+    <p class="prose">Joshi, Laurent and Bresson’s pipeline (Figure 11.16) has five steps. <b>Data:</b> describe the problem as a graph. <b>Embed:</b> compute node and edge representations by message passing. <b>Predict:</b> an MLP gives each edge a probability of belonging to the optimal tour. <b>Search:</b> decode a feasible tour greedily or with beam search (Chapter 4). <b>Train:</b> learn by imitating optimal tours from the Concorde solver (supervised) or by reinforcement. Listing 11.4 runs a pretrained model on TSP20 to TSP50 instances. Here the “predict” step is a stand-in that scores each edge by a softmax over a city’s nearest neighbors, so the search step can be explored on its own.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Edge probabilities to a tour</h4><span class="eyebrow">Edge darkness: probability</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="tsCtl"></div><div class="btns"><button id="tsRun" class="primary">Decode</button><button id="tsNew">New cities</button></div><div class="stats" id="tsStats"></div></div>
+        <div class="stage"><canvas id="tsCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Edge probabilities and tours"></canvas><div class="legend-row"><span><i style="background:var(--muted)"></i>edge probabilities</span><span><i style="background:var(--gold)"></i>decoded tour</span><span><i style="background:var(--good)"></i>optimal tour (dashed)</span></div><div class="tbl-wrap"><table class="ttab" id="tsTbl"></table></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="amortized">
+  <div class="wrap">
+    <span class="eyebrow">Part 7 · Section 11.6</span>
+    <h2>Amortized optimization: learning to optimize</h2>
+    <div class="two">
+      <div class="prose">
+        <p>When the same kind of optimization problem is solved again and again, a model can learn to map a problem’s parameters directly to its solution. Training is costly, but each new problem then takes one quick forward pass: the cost is <b>amortized</b>. Listing 11.3 does this on the sphere: “c-convex” functions built from 4 components (soft-min of 0.5·d(y, yₖ)² + αₖ) are parameterized by their centers and offsets, and an MLP is trained to output the minimizer, using f(model(p)) itself as the loss.</p>
+        <p>This lab uses the circle instead of the sphere, so each function can be drawn. Train the model on 64 random problems, then test it on problems it has never seen.</p>
+      </div>
+      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Predicting minimizers on the circle</h4></div>
+        <div class="stage"><div id="amCtl"></div><div class="btns"><button id="amTrain" class="primary small">Train</button><button id="amReset" class="small">Reset</button></div><canvas id="amCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Function on the circle"></canvas><div class="stats" id="amStats"></div><p class="cap" id="amNote"></p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="python">
+  <div class="wrap">
+    <span class="eyebrow">Part 8 · Code</span>
+    <h2>Python in Google Colab</h2>
+    <p class="prose">Open the book’s Chapter 11 notebooks in Colab, or the Supervised Learning Lab companion notebook with the from-scratch implementations below (Python and NumPy only).</p>
+    <h3 id="notebooks">Notebooks</h3>
+    <div class="colab-grid">
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/SL_Lab_Companion.ipynb"><em>All examples</em><b>Supervised Learning Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.1_Tabular2Graph.ipynb"><em>Chapter 11</em><b>Listing 11.1</b><span>Tabular data to a graph</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.2_GCN.ipynb"><em>Chapter 11</em><b>Listing 11.2</b><span>Node embedding with a GCN (Cora)</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.3_Amortized_optimization.ipynb"><em>Chapter 11</em><b>Listing 11.3</b><span>Amortized optimization on the sphere</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.4_TSP_ML.ipynb"><em>Chapter 11</em><b>Listing 11.4</b><span>TSP with a pretrained GNN</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.6_ConexHull_PtrNet.ipynb"><em>Chapter 11</em><b>Listing 11.6</b><span>Convex hull with a pointer network</span></a>
+    </div>
+    <h3 id="code">From-scratch implementations</h3>
+    <div class="bench">
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-code="n">Neural network</button>
+        <button role="tab" aria-selected="false" data-code="g">GCN</button>
+        <button role="tab" aria-selected="false" data-code="a">Attention</button>
+        <button role="tab" aria-selected="false" data-code="h">Convex hull</button>
+        <button role="tab" aria-selected="false" data-code="t">TSP pipeline</button>
+        <button role="tab" aria-selected="false" data-code="m">Amortized</button>
+      </div>
+      <div class="code-bar">
+        <span class="cap" id="codeCap"></span>
+        <div class="btns"><button class="small primary" id="codeCopy">Copy code</button><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/SL_Lab_Companion.ipynb">Open all in Colab</a></div>
+      </div>
+      <pre class="code" id="code-n"><span class="cm"># A multilayer perceptron trained by backpropagation and gradient descent (supervised classification)</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+rng = np.random.default_rng(<span class="nm">0</span>)
+t = rng.uniform(<span class="nm">0</span>, np.pi, <span class="nm">200</span>)
+X = np.vstack([np.c_[np.cos(t), np.sin(t)], np.c_[<span class="nm">1</span> - np.cos(t), <span class="nm">0.5</span> - np.sin(t)]]) + <span class="nm">0.1</span> * rng.standard_normal((<span class="nm">400</span>, <span class="nm">2</span>))
+y = np.repeat([<span class="nm">0</span>, <span class="nm">1</span>], <span class="nm">200</span>)
+idx = rng.permutation(<span class="nm">400</span>); train, test = idx[:<span class="nm">300</span>], idx[<span class="nm">300</span>:]
+
+H = <span class="nm">16</span>
+W1, b1 = rng.normal(<span class="nm">0</span>, <span class="nm">1</span>, (<span class="nm">2</span>, H)), np.zeros(H)
+W2, b2 = rng.normal(<span class="nm">0</span>, <span class="nm">1</span> / np.sqrt(H), (H, <span class="nm">1</span>)), np.zeros(<span class="nm">1</span>)
+sigmoid = <span class="kw">lambda</span> z: <span class="nm">1</span> / (<span class="nm">1</span> + np.exp(-z))
+lr = <span class="nm">0.5</span>
+
+
+<span class="kw">def</span> forward(X):
+    h = np.tanh(X @ W1 + b1)
+    <span class="kw">return</span> h, sigmoid(h @ W2 + b2).ravel()
+
+
+<span class="kw">for</span> epoch <span class="kw">in</span> range(<span class="nm">2001</span>):
+    h, p = forward(X[train])
+    loss = -np.mean(y[train] * np.log(p + <span class="nm">1e-12</span>) + (<span class="nm">1</span> - y[train]) * np.log(<span class="nm">1</span> - p + <span class="nm">1e-12</span>))   <span class="cm"># cross-entropy</span>
+    dz = (p - y[train])[:, <span class="kw">None</span>] / len(train)          <span class="cm"># gradient of the loss at the output</span>
+    dW2, db2 = h.T @ dz, dz.sum(<span class="nm">0</span>)
+    dh = dz @ W2.T * (<span class="nm">1</span> - h ** <span class="nm">2</span>)                       <span class="cm"># backpropagate through tanh</span>
+    dW1, db1 = X[train].T @ dh, dh.sum(<span class="nm">0</span>)
+    W1 -= lr * dW1; b1 -= lr * db1; W2 -= lr * dW2; b2 -= lr * db2
+    <span class="kw">if</span> epoch % <span class="nm">500</span> == <span class="nm">0</span>:
+        acc = <span class="kw">lambda</span> s: np.mean((forward(X[s])[<span class="nm">1</span>] &gt; <span class="nm">0.5</span>) == y[s])
+        print(f<span class="st">"epoch {epoch:4d}: loss {loss:.3f}, train accuracy {acc(train):.1%}, test accuracy {acc(test):.1%}"</span>)
+
+relu = <span class="kw">lambda</span> z: np.maximum(<span class="nm">0</span>, z)
+leaky = <span class="kw">lambda</span> z, a=<span class="nm">0.2</span>: np.where(z &gt; <span class="nm">0</span>, z, a * z)
+print(<span class="st">"ReLU(-2), ReLU(3):"</span>, relu(-<span class="nm">2.0</span>), relu(<span class="nm">3.0</span>), <span class="st">"  LeakyReLU(-2), LeakyReLU(3):"</span>, leaky(-<span class="nm">2.0</span>), leaky(<span class="nm">3.0</span>))</pre>
+      <pre class="code" id="code-g" hidden><span class="cm"># Graph data and a graph convolutional network from scratch (Section 11.3, Listings 11.1 and 11.2)</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># 1. Tabular data to a graph (Listing 11.1): players linked to their clubs and nationalities</span>
+players = {<span class="st">"L. Messi"</span>: (<span class="st">"Inter Miami"</span>, <span class="st">"Argentina"</span>), <span class="st">"R. Lewandowski"</span>: (<span class="st">"Barcelona"</span>, <span class="st">"Poland"</span>),
+           <span class="st">"C. Ronaldo"</span>: (<span class="st">"Al-Nassr"</span>, <span class="st">"Portugal"</span>), <span class="st">"Neymar Jr"</span>: (<span class="st">"Al-Hilal"</span>, <span class="st">"Brazil"</span>), <span class="st">"K. Mbappé"</span>: (<span class="st">"PSG"</span>, <span class="st">"France"</span>),
+           <span class="st">"E. Haaland"</span>: (<span class="st">"Manchester City"</span>, <span class="st">"Norway"</span>), <span class="st">"H. Kane"</span>: (<span class="st">"Tottenham Hotspur"</span>, <span class="st">"England"</span>),
+           <span class="st">"Luka Modrić"</span>: (<span class="st">"Real Madrid"</span>, <span class="st">"Croatia"</span>), <span class="st">"L. Goretzka"</span>: (<span class="st">"Bayern Munich"</span>, <span class="st">"Germany"</span>), <span class="st">"M. Salah"</span>: (<span class="st">"Liverpool"</span>, <span class="st">"Egypt"</span>)}
+edges = [(p, c, <span class="st">"plays_for"</span>) <span class="kw">for</span> p, (c, _) <span class="kw">in</span> players.items()] + [(p, n, <span class="st">"belongs_to"</span>) <span class="kw">for</span> p, (_, n) <span class="kw">in</span> players.items()]
+print(f<span class="st">"{len(players)} players -&gt; graph with {len({e[1] for e in edges}) + len(players)} nodes and {len(edges)} edges"</span>)
+
+<span class="cm"># 2. A two-layer GCN on Zachary's karate club (34 members, 78 friendships), trained with only 4 labeled nodes</span>
+E = [(<span class="nm">0</span>, <span class="nm">1</span>), (<span class="nm">0</span>, <span class="nm">2</span>), (<span class="nm">0</span>, <span class="nm">3</span>), (<span class="nm">0</span>, <span class="nm">4</span>), (<span class="nm">0</span>, <span class="nm">5</span>), (<span class="nm">0</span>, <span class="nm">6</span>), (<span class="nm">0</span>, <span class="nm">7</span>), (<span class="nm">0</span>, <span class="nm">8</span>), (<span class="nm">0</span>, <span class="nm">10</span>), (<span class="nm">0</span>, <span class="nm">11</span>), (<span class="nm">0</span>, <span class="nm">12</span>), (<span class="nm">0</span>, <span class="nm">13</span>), (<span class="nm">0</span>, <span class="nm">17</span>), (<span class="nm">0</span>, <span class="nm">19</span>), (<span class="nm">0</span>, <span class="nm">21</span>), (<span class="nm">0</span>, <span class="nm">31</span>),
+     (<span class="nm">1</span>, <span class="nm">2</span>), (<span class="nm">1</span>, <span class="nm">3</span>), (<span class="nm">1</span>, <span class="nm">7</span>), (<span class="nm">1</span>, <span class="nm">13</span>), (<span class="nm">1</span>, <span class="nm">17</span>), (<span class="nm">1</span>, <span class="nm">19</span>), (<span class="nm">1</span>, <span class="nm">21</span>), (<span class="nm">1</span>, <span class="nm">30</span>), (<span class="nm">2</span>, <span class="nm">3</span>), (<span class="nm">2</span>, <span class="nm">7</span>), (<span class="nm">2</span>, <span class="nm">8</span>), (<span class="nm">2</span>, <span class="nm">9</span>), (<span class="nm">2</span>, <span class="nm">13</span>), (<span class="nm">2</span>, <span class="nm">27</span>), (<span class="nm">2</span>, <span class="nm">28</span>), (<span class="nm">2</span>, <span class="nm">32</span>),
+     (<span class="nm">3</span>, <span class="nm">7</span>), (<span class="nm">3</span>, <span class="nm">12</span>), (<span class="nm">3</span>, <span class="nm">13</span>), (<span class="nm">4</span>, <span class="nm">6</span>), (<span class="nm">4</span>, <span class="nm">10</span>), (<span class="nm">5</span>, <span class="nm">6</span>), (<span class="nm">5</span>, <span class="nm">10</span>), (<span class="nm">5</span>, <span class="nm">16</span>), (<span class="nm">6</span>, <span class="nm">16</span>), (<span class="nm">8</span>, <span class="nm">30</span>), (<span class="nm">8</span>, <span class="nm">32</span>), (<span class="nm">8</span>, <span class="nm">33</span>), (<span class="nm">9</span>, <span class="nm">33</span>), (<span class="nm">13</span>, <span class="nm">33</span>), (<span class="nm">14</span>, <span class="nm">32</span>),
+     (<span class="nm">14</span>, <span class="nm">33</span>), (<span class="nm">15</span>, <span class="nm">32</span>), (<span class="nm">15</span>, <span class="nm">33</span>), (<span class="nm">18</span>, <span class="nm">32</span>), (<span class="nm">18</span>, <span class="nm">33</span>), (<span class="nm">19</span>, <span class="nm">33</span>), (<span class="nm">20</span>, <span class="nm">32</span>), (<span class="nm">20</span>, <span class="nm">33</span>), (<span class="nm">22</span>, <span class="nm">32</span>), (<span class="nm">22</span>, <span class="nm">33</span>), (<span class="nm">23</span>, <span class="nm">25</span>), (<span class="nm">23</span>, <span class="nm">27</span>), (<span class="nm">23</span>, <span class="nm">29</span>),
+     (<span class="nm">23</span>, <span class="nm">32</span>), (<span class="nm">23</span>, <span class="nm">33</span>), (<span class="nm">24</span>, <span class="nm">25</span>), (<span class="nm">24</span>, <span class="nm">27</span>), (<span class="nm">24</span>, <span class="nm">31</span>), (<span class="nm">25</span>, <span class="nm">31</span>), (<span class="nm">26</span>, <span class="nm">29</span>), (<span class="nm">26</span>, <span class="nm">33</span>), (<span class="nm">27</span>, <span class="nm">33</span>), (<span class="nm">28</span>, <span class="nm">31</span>), (<span class="nm">28</span>, <span class="nm">33</span>), (<span class="nm">29</span>, <span class="nm">32</span>), (<span class="nm">29</span>, <span class="nm">33</span>),
+     (<span class="nm">30</span>, <span class="nm">32</span>), (<span class="nm">30</span>, <span class="nm">33</span>), (<span class="nm">31</span>, <span class="nm">32</span>), (<span class="nm">31</span>, <span class="nm">33</span>), (<span class="nm">32</span>, <span class="nm">33</span>)]
+club = np.array([<span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>])
+n = <span class="nm">34</span>
+A = np.zeros((n, n))
+<span class="kw">for</span> u, v <span class="kw">in</span> E:
+    A[u, v] = A[v, u] = <span class="nm">1</span>
+A_hat = A + np.eye(n)                                     <span class="cm"># add self-loops: a node keeps its own features</span>
+d = A_hat.sum(<span class="nm">1</span>)
+A_norm = A_hat / np.sqrt(np.outer(d, d))                  <span class="cm"># D^-1/2 (A + I) D^-1/2</span>
+X = np.eye(n)                                             <span class="cm"># no features: one-hot identity per node</span>
+
+rng = np.random.default_rng(<span class="nm">0</span>)
+W1 = rng.normal(<span class="nm">0</span>, <span class="nm">0.5</span>, (n, <span class="nm">16</span>)); W2 = rng.normal(<span class="nm">0</span>, <span class="nm">0.5</span>, (<span class="nm">16</span>, <span class="nm">2</span>))
+labeled = [<span class="nm">0</span>, <span class="nm">33</span>, <span class="nm">1</span>, <span class="nm">32</span>]                                  <span class="cm"># the instructor, the administrator and one friend of each</span>
+lr = <span class="nm">0.2</span>
+<span class="kw">for</span> epoch <span class="kw">in</span> range(<span class="nm">301</span>):
+    Z1 = A_norm @ X @ W1; H1 = np.maximum(<span class="nm">0</span>, Z1)          <span class="cm"># layer 1: aggregate neighbors, transform, ReLU</span>
+    Z2 = A_norm @ H1 @ W2                                 <span class="cm"># layer 2: aggregate again (2-hop information)</span>
+    P = np.exp(Z2 - Z2.max(<span class="nm">1</span>, keepdims=<span class="kw">True</span>)); P /= P.sum(<span class="nm">1</span>, keepdims=<span class="kw">True</span>)
+    G = np.zeros_like(P); G[labeled] = P[labeled]; G[labeled, club[labeled]] -= <span class="nm">1</span>; G /= len(labeled)   <span class="cm"># cross-entropy gradient</span>
+    dW2 = (A_norm @ H1).T @ G
+    dH1 = A_norm.T @ G @ W2.T * (Z1 &gt; <span class="nm">0</span>)
+    dW1 = (A_norm @ X).T @ dH1
+    W1 -= lr * dW1; W2 -= lr * dW2
+    <span class="kw">if</span> epoch % <span class="nm">100</span> == <span class="nm">0</span>:
+        acc = np.mean(P.argmax(<span class="nm">1</span>) == club)
+        print(f<span class="st">"epoch {epoch}: accuracy on all 34 members {acc:.0%} (trained on {len(labeled)} labels)"</span>)</pre>
+      <pre class="code" id="code-a" hidden><span class="cm"># GCN vs. graph attention for node 5 of the 5-node graph in Figure 11.9 (equations 11.1 and 11.2)</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+rng = np.random.default_rng(<span class="nm">3</span>)
+A = np.array([[<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>], [<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>], [<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>], [<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>], [<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>]])   <span class="cm"># Figure 11.9</span>
+X = rng.normal(size=(<span class="nm">5</span>, <span class="nm">4</span>))                     <span class="cm"># 4 features per node</span>
+W = rng.normal(size=(<span class="nm">4</span>, <span class="nm">8</span>)) / <span class="nm">2</span>                 <span class="cm"># learnable weight matrix, 4 x 8</span>
+v = <span class="nm">4</span>                                           <span class="cm"># node 5 (index 4)</span>
+nbrs = [u <span class="kw">for</span> u <span class="kw">in</span> range(<span class="nm">5</span>) <span class="kw">if</span> A[v, u]] + [v]   <span class="cm"># its neighbors 2 and 4, plus itself</span>
+Hm = X @ W                                      <span class="cm"># transformed features</span>
+
+gcn = Hm[nbrs].mean(<span class="nm">0</span>)                          <span class="cm"># GCN: every neighbor counts equally</span>
+print(<span class="st">"neighbors of node 5:"</span>, [u + <span class="nm">1</span> <span class="kw">for</span> u <span class="kw">in</span> nbrs])
+
+
+<span class="kw">def</span> softmax(z):
+    e = np.exp(z - z.max()); <span class="kw">return</span> e / e.sum()
+
+
+heads = []
+<span class="kw">for</span> h <span class="kw">in</span> range(<span class="nm">3</span>):                              <span class="cm"># multi-head attention, H = 3 (Figure 11.10)</span>
+    a = rng.normal(size=<span class="nm">16</span>)                     <span class="cm"># attention vector for this head</span>
+    e = np.array([np.maximum(<span class="nm">0.2</span> * s, s) <span class="kw">for</span> s <span class="kw">in</span> (np.concatenate([Hm[v], Hm[u]]) @ a <span class="kw">for</span> u <span class="kw">in</span> nbrs)])   <span class="cm"># LeakyReLU scores e_vu</span>
+    alpha = softmax(e)                          <span class="cm"># equation 11.2: normalized attention coefficients</span>
+    heads.append(alpha @ Hm[nbrs])
+    print(f<span class="st">"head {h + 1}: alpha_52 = {alpha[0]:.2f}, alpha_54 = {alpha[1]:.2f}, alpha_55 = {alpha[2]:.2f}"</span>)
+gat = np.mean(heads, <span class="nm">0</span>)                         <span class="cm"># average the heads</span>
+print(<span class="st">"GCN embedding of node 5:"</span>, np.round(gcn, <span class="nm">2</span>))
+print(<span class="st">"GAT embedding of node 5:"</span>, np.round(gat, <span class="nm">2</span>))
+
+<span class="cm"># Dot-product attention over a sequence (Q, K, V)</span>
+q, K = rng.normal(size=<span class="nm">4</span>), rng.normal(size=(<span class="nm">6</span>, <span class="nm">4</span>))
+w = softmax(K @ q / np.sqrt(<span class="nm">4</span>))
+print(<span class="st">"attention weights over 6 tokens:"</span>, np.round(w, <span class="nm">2</span>), <span class="st">"sum ="</span>, round(w.sum(), <span class="nm">6</span>))</pre>
+      <pre class="code" id="code-h" hidden><span class="cm"># The convex hull as a pointer sequence (Section 11.9, Figures 11.11 and 11.19)</span>
+<span class="kw">import</span> math
+<span class="kw">import</span> random
+
+rng = random.Random(<span class="nm">4</span>)
+P = [(rng.random(), rng.random()) <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">12</span>)]
+
+
+<span class="kw">def</span> cross(o, a, b):
+    <span class="kw">return</span> (a[<span class="nm">0</span>] - o[<span class="nm">0</span>]) * (b[<span class="nm">1</span>] - o[<span class="nm">1</span>]) - (a[<span class="nm">1</span>] - o[<span class="nm">1</span>]) * (b[<span class="nm">0</span>] - o[<span class="nm">0</span>])
+
+
+<span class="kw">def</span> jarvis(P):
+    <span class="st">"""Gift wrapping: start at the leftmost point and keep turning to the most clockwise point."""</span>
+    start = min(range(len(P)), key=<span class="kw">lambda</span> i: P[i])
+    hull, cur = [], start
+    <span class="kw">while</span> <span class="kw">True</span>:
+        hull.append(cur)
+        nxt = (cur + <span class="nm">1</span>) % len(P)
+        <span class="kw">for</span> j <span class="kw">in</span> range(len(P)):
+            <span class="kw">if</span> cross(P[cur], P[nxt], P[j]) &lt; <span class="nm">0</span>:
+                nxt = j
+        cur = nxt
+        <span class="kw">if</span> cur == start:
+            <span class="kw">return</span> hull
+
+
+<span class="kw">def</span> graham(P):
+    <span class="st">"""Graham scan: sort by angle around the lowest point, then keep only left turns."""</span>
+    o = min(range(len(P)), key=<span class="kw">lambda</span> i: (P[i][<span class="nm">1</span>], P[i][<span class="nm">0</span>]))
+    rest = sorted((i <span class="kw">for</span> i <span class="kw">in</span> range(len(P)) <span class="kw">if</span> i != o), key=<span class="kw">lambda</span> i: math.atan2(P[i][<span class="nm">1</span>] - P[o][<span class="nm">1</span>], P[i][<span class="nm">0</span>] - P[o][<span class="nm">0</span>]))
+    st = [o]
+    <span class="kw">for</span> i <span class="kw">in</span> rest:
+        <span class="kw">while</span> len(st) &gt; <span class="nm">1</span> <span class="kw">and</span> cross(P[st[-<span class="nm">2</span>]], P[st[-<span class="nm">1</span>]], P[i]) &lt;= <span class="nm">0</span>:
+            st.pop()
+        st.append(i)
+    <span class="kw">return</span> st
+
+
+<span class="kw">def</span> area(idx):
+    pts = [P[i] <span class="kw">for</span> i <span class="kw">in</span> idx]
+    <span class="kw">return</span> abs(sum(pts[i][<span class="nm">0</span>] * pts[i - <span class="nm">1</span>][<span class="nm">1</span>] - pts[i - <span class="nm">1</span>][<span class="nm">0</span>] * pts[i][<span class="nm">1</span>] <span class="kw">for</span> i <span class="kw">in</span> range(len(pts)))) / <span class="nm">2</span>
+
+
+h1, h2 = jarvis(P), graham(P)
+print(<span class="st">"Jarvis march hull:"</span>, [i + <span class="nm">1</span> <span class="kw">for</span> i <span class="kw">in</span> h1])
+print(<span class="st">"Graham scan hull: "</span>, [i + <span class="nm">1</span> <span class="kw">for</span> i <span class="kw">in</span> h2], f<span class="st">"(the same {len(h2)} points, area {area(h2):.3f})"</span>)
+<span class="cm"># A pointer network outputs this sequence one index at a time: at step i, a softmax over the inputs</span>
+<span class="cm"># (equations 11.3 to 11.5) "points" to the next hull vertex, and the sequence ends with an &lt;eos&gt; token.</span>
+print(<span class="st">"pointer targets:"</span>, <span class="st">" -&gt; "</span>.join(str(i + <span class="nm">1</span>) <span class="kw">for</span> i <span class="kw">in</span> h1), <span class="st">"-&gt; &lt;eos&gt;"</span>)
+print(<span class="st">"book's test results (accuracy, hull overlap) by points per sample: 5: 54.8%, 43.7% | 20: 84.8%, 92.7% | 45: 72.4%, 90.4%"</span>)</pre>
+      <pre class="code" id="code-t" hidden><span class="cm"># The end-to-end pipeline of Figure 11.16 on a small TSP: edge probabilities, then greedy or beam-search decoding</span>
+<span class="kw">import</span> math
+<span class="kw">import</span> random
+<span class="kw">from</span> itertools <span class="kw">import</span> combinations
+
+rng = random.Random(<span class="nm">2</span>)
+n = <span class="nm">10</span>
+P = [(rng.random(), rng.random()) <span class="kw">for</span> _ <span class="kw">in</span> range(n)]
+D = [[math.dist(a, b) <span class="kw">for</span> b <span class="kw">in</span> P] <span class="kw">for</span> a <span class="kw">in</span> P]
+tour_len = <span class="kw">lambda</span> t: sum(D[t[i]][t[(i + <span class="nm">1</span>) % n]] <span class="kw">for</span> i <span class="kw">in</span> range(n))
+
+<span class="cm"># Stand-in for the trained GNN's "predict" step: edge scores from distances (a k-nearest-neighbor softmax).</span>
+<span class="cm"># A real model learns these probabilities from Concorde's optimal tours.</span>
+prob = [[<span class="nm">0.0</span>] * n <span class="kw">for</span> _ <span class="kw">in</span> range(n)]
+<span class="kw">for</span> i <span class="kw">in</span> range(n):
+    near = sorted((j <span class="kw">for</span> j <span class="kw">in</span> range(n) <span class="kw">if</span> j != i), key=<span class="kw">lambda</span> j: D[i][j])[:<span class="nm">4</span>]
+    z = [math.exp(-D[i][j] / <span class="nm">0.1</span>) <span class="kw">for</span> j <span class="kw">in</span> near]
+    <span class="kw">for</span> j, w <span class="kw">in</span> zip(near, z):
+        prob[i][j] = w / sum(z)
+
+
+<span class="kw">def</span> beam_search(width):
+    beams = [([<span class="nm">0</span>], <span class="nm">0.0</span>)]
+    <span class="kw">for</span> _ <span class="kw">in</span> range(n - <span class="nm">1</span>):
+        cand = [(t + [j], s + math.log(prob[t[-<span class="nm">1</span>]][j] + <span class="nm">1e-9</span>)) <span class="kw">for</span> t, s <span class="kw">in</span> beams <span class="kw">for</span> j <span class="kw">in</span> range(n) <span class="kw">if</span> j <span class="kw">not</span> <span class="kw">in</span> t]
+        beams = sorted(cand, key=<span class="kw">lambda</span> c: -c[<span class="nm">1</span>])[:width]
+    <span class="kw">return</span> min((t <span class="kw">for</span> t, _ <span class="kw">in</span> beams), key=tour_len)            <span class="cm"># pick the shortest of the surviving tours</span>
+
+
+<span class="kw">def</span> held_karp():
+    <span class="st">"""Exact dynamic programming, O(2^n n^2): the ground truth (Concorde's role in the book)."""</span>
+    best = {(<span class="nm">1</span> &lt;&lt; j, j): (D[<span class="nm">0</span>][j], [<span class="nm">0</span>, j]) <span class="kw">for</span> j <span class="kw">in</span> range(<span class="nm">1</span>, n)}
+    <span class="kw">for</span> size <span class="kw">in</span> range(<span class="nm">2</span>, n):
+        <span class="kw">for</span> sub <span class="kw">in</span> combinations(range(<span class="nm">1</span>, n), size):
+            mask = sum(<span class="nm">1</span> &lt;&lt; j <span class="kw">for</span> j <span class="kw">in</span> sub)
+            <span class="kw">for</span> j <span class="kw">in</span> sub:
+                prev = mask ^ (<span class="nm">1</span> &lt;&lt; j)
+                best[(mask, j)] = min(((best[(prev, k)][<span class="nm">0</span>] + D[k][j], best[(prev, k)][<span class="nm">1</span>] + [j]) <span class="kw">for</span> k <span class="kw">in</span> sub <span class="kw">if</span> k != j), key=<span class="kw">lambda</span> x: x[<span class="nm">0</span>])
+    full = sum(<span class="nm">1</span> &lt;&lt; j <span class="kw">for</span> j <span class="kw">in</span> range(<span class="nm">1</span>, n))
+    <span class="kw">return</span> min((best[(full, j)][<span class="nm">0</span>] + D[j][<span class="nm">0</span>], best[(full, j)][<span class="nm">1</span>]) <span class="kw">for</span> j <span class="kw">in</span> range(<span class="nm">1</span>, n))
+
+
+opt, _ = held_karp()
+<span class="kw">for</span> w <span class="kw">in</span> (<span class="nm">1</span>, <span class="nm">3</span>, <span class="nm">10</span>):
+    print(f<span class="st">"beam width {w:2d} ({'greedy' if w == 1 else 'beam search'}): {tour_len(beam_search(w)):.4f}"</span>)
+print(f<span class="st">"optimal (Held-Karp): {opt:.4f}"</span>)</pre>
+      <pre class="code" id="code-m" hidden><span class="cm"># Amortized optimization (learning to optimize), a one-dimensional version of Listing 11.3 on the unit circle</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+rng = np.random.default_rng(<span class="nm">0</span>)
+K = <span class="nm">4</span>                                               <span class="cm"># components per function, as in c_convex(n_components=4)</span>
+
+
+<span class="kw">def</span> make_problem(rng):
+    ys = rng.uniform(-np.pi, np.pi, K)              <span class="cm"># component centers on the circle</span>
+    alphas = <span class="nm">0.7</span> * rng.random(K)                    <span class="cm"># offsets in [0, 0.7)</span>
+    <span class="kw">return</span> np.concatenate([np.cos(ys), np.sin(ys), alphas])     <span class="cm"># the parameter vector</span>
+
+
+<span class="kw">def</span> f(theta, p, gamma=<span class="nm">0.5</span>):
+    <span class="st">"""Soft-min of 0.5 d(theta, y_k)^2 + alpha_k, with d the arc (geodesic) distance."""</span>
+    ys = np.arctan2(p[K:<span class="nm">2</span> * K], p[:K]); al = p[<span class="nm">2</span> * K:]
+    d = np.abs((theta - ys + np.pi) % (<span class="nm">2</span> * np.pi) - np.pi)
+    c = <span class="nm">0.5</span> * d ** <span class="nm">2</span> + al
+    <span class="kw">return</span> -gamma * np.log(np.exp(-c / gamma).sum())
+
+
+train = [make_problem(rng) <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">64</span>)]
+test = [make_problem(rng) <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">16</span>)]
+grid = np.linspace(-np.pi, np.pi, <span class="nm">2000</span>)
+solve = <span class="kw">lambda</span> p: grid[np.argmin([f(t, p) <span class="kw">for</span> t <span class="kw">in</span> grid])]     <span class="cm"># the slow way: search every time</span>
+
+<span class="cm"># model: parameters -&gt; point on the circle, a small MLP whose 2 outputs are normalized like the sphere model</span>
+H = <span class="nm">64</span>
+W1 = rng.normal(<span class="nm">0</span>, <span class="nm">0.3</span>, (<span class="nm">3</span> * K, H)); W2 = rng.normal(<span class="nm">0</span>, <span class="nm">0.3</span>, (H, <span class="nm">2</span>)); lr = <span class="nm">0.01</span>
+<span class="kw">for</span> it <span class="kw">in</span> range(<span class="nm">3000</span>):
+    p = train[rng.integers(len(train))]
+    h = np.tanh(p @ W1); z = h @ W2; theta = np.arctan2(z[<span class="nm">1</span>], z[<span class="nm">0</span>])
+    eps = <span class="nm">1e-4</span>; g_theta = (f(theta + eps, p) - f(theta - eps, p)) / (<span class="nm">2</span> * eps)   <span class="cm"># loss = f(model(p)), as in the book</span>
+    r2 = z @ z; dz = g_theta * np.array([-z[<span class="nm">1</span>], z[<span class="nm">0</span>]]) / r2                      <span class="cm"># d theta / d z</span>
+    dh = (W2 @ dz) * (<span class="nm">1</span> - h ** <span class="nm">2</span>)
+    W2 -= lr * np.outer(h, dz); W1 -= lr * np.outer(p, dh)
+
+pred = <span class="kw">lambda</span> p: (<span class="kw">lambda</span> z: np.arctan2(z[<span class="nm">1</span>], z[<span class="nm">0</span>]))(np.tanh(p @ W1) @ W2)
+gap = <span class="kw">lambda</span> ps, guess: np.mean([f(guess(p), p) - f(solve(p), p) <span class="kw">for</span> p <span class="kw">in</span> ps])
+print(f<span class="st">"mean gap f(prediction) - f(optimum), 0 is perfect:"</span>)
+print(f<span class="st">"   trained problems {gap(train[:16], pred):.3f}, unseen problems {gap(test, pred):.3f}, random guess {gap(test, lambda p: rng.uniform(-np.pi, np.pi)):.3f}"</span>)</pre>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="summary">
+  <div class="wrap">
+    <span class="eyebrow">Part 9 · Summary</span>
+    <h2>What to remember</h2>
+    <div class="cards3">
+      <div class="card"><h5>Training is optimization</h5><p>Backpropagation gives the gradient of the loss; a gradient method adjusts the weights.</p></div>
+      <div class="card"><h5>Graphs</h5><p>GCNs pass messages between neighbors; k layers see k hops, and a few labels can classify a whole network.</p></div>
+      <div class="card"><h5>Attention and pointers</h5><p>Attention weighs inputs by relevance; pointer networks use it to output positions in the input, fitting combinatorial problems.</p></div>
+      <div class="card"><h5>Learned optimizers</h5><p>End-to-end pipelines and amortized models trade training time for fast solutions to new instances.</p></div>
+    </div>
+    <p class="muted prose">References: T. Kipf and M. Welling, “Semi-supervised classification with graph convolutional networks,” 2017. P. Veličković et al., “Graph attention networks,” 2018. A. Vaswani et al., “Attention is all you need,” 2017. O. Vinyals, M. Fortunato and N. Jaitly, “Pointer networks,” 2015. C. K. Joshi, T. Laurent and X. Bresson, “An efficient graph convolutional network technique for the travelling salesman problem,” 2019. B. Amos, “Tutorial on amortized optimization,” 2023. W. Zachary, “An information flow model for conflict and fission in small groups,” 1977. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 11.</p>
+  </div>
+</section>
+<footer class="end"><div class="wrap">Interactive companion to Chapter 11 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
+</div>
+<script>
+"use strict";
+/* ---------- light / dark / system theme ---------- */
+// runs first, so an error in any later widget cannot disable the theme switch
+(function themeSwitch() {
+  const root = document.documentElement, btns = [...document.querySelectorAll("[data-theme-set]")];
+  function apply(mode) {
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
+    btns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === mode)));
+  }
+  let saved = null; try { saved = localStorage.getItem("pso-lab-theme"); } catch (e) {}
+  const host = root.getAttribute("data-theme");
+  apply(["light", "dark", "system"].includes(saved) ? saved : host === "light" || host === "dark" ? host : "system");
+  btns.forEach(b => b.addEventListener("click", () => { apply(b.dataset.themeSet); try { localStorage.setItem("pso-lab-theme", b.dataset.themeSet); } catch (e) {} }));
+})();
+
+/* ---------- shared helpers ---------- */
+const $ = s => document.querySelector(s);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const MONO = '"IBM Plex Mono", Consolas, monospace';
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function colors() {
+  const k = ["bg","surface","sunk","ink","muted","line","grid","accent","gold","s1","s2","s3","s4","good","bad","map-water","map-land","map-state","map-border"];
+  const o = {}; k.forEach(n => o[n] = css("--" + n)); return o;
+}
+function setupCanvas(cv, fixedH) {
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  const w = Math.max(10, Math.round(r.width)), h = Math.max(10, Math.round(fixedH || r.height));
+  if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return { ctx, w, h };
+}
+function fmtNum(v, d) {
+  if (!isFinite(v)) return "n/a";
+  const a = Math.abs(v);
+  if (d != null) return v.toFixed(d);
+  if (a >= 1000) return Math.round(v).toLocaleString("en-US");
+  if (a >= 100) return v.toFixed(1);
+  if (a >= 1) return v.toFixed(3);
+  if (a === 0) return "0";
+  if (a < 1e-3) return v.toExponential(2);
+  return v.toFixed(4);
+}
+const redrawers = [];
+function onRedraw(fn) { redrawers.push(fn); }
+let rzT; const ro = new ResizeObserver(() => { clearTimeout(rzT); rzT = setTimeout(() => redrawers.forEach(f => f()), 60); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redrawers.forEach(f => f()));
+new MutationObserver(() => redrawers.forEach(f => f())).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+function makeControls(el, specs, onChange) {
+  const api = {};
+  for (const s of specs) {
+    if (s.type === "group") { el.insertAdjacentHTML("beforeend", `<div class="group-label">${s.label}</div>`); continue; }
+    const wrap = document.createElement("div"); wrap.className = "ctl";
+    if (s.type === "select") {
+      wrap.innerHTML = `<label for="${s.id}">${s.label}</label><select id="${s.id}">${s.options.map(o => `<option value="${o[0]}"${o[0] == s.value ? " selected" : ""}>${o[1]}</option>`).join("")}</select>`;
+    } else if (s.type === "check") {
+      wrap.className = "ctl ctl-check";
+      wrap.innerHTML = `<label><input type="checkbox" id="${s.id}"${s.value ? " checked" : ""}>&nbsp;${s.label}</label>`;
+    } else {
+      wrap.innerHTML = `<label for="${s.id}">${s.label}<output id="${s.id}-o"></output></label><input type="range" id="${s.id}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.value}">`;
+    }
+    if (s.hint) wrap.insertAdjacentHTML("beforeend", `<small>${s.hint}</small>`);
+    el.appendChild(wrap);
+    const inp = wrap.querySelector("input,select"), out = wrap.querySelector("output");
+    const fmt = s.fmt || (v => v);
+    const read = () => s.type === "select" ? inp.value : s.type === "check" ? inp.checked : parseFloat(inp.value);
+    const upd = () => { if (out) out.textContent = fmt(read()); };
+    upd();
+    inp.addEventListener(s.type === "select" || s.type === "check" ? "change" : "input", () => { upd(); onChange && onChange(s.key, read()); });
+    Object.defineProperty(api, s.key, { get: read, set(v) { if (s.type === "check") inp.checked = v; else inp.value = v; upd(); }, enumerable: true });
+  }
+  return api;
+}
+function runner(step, draw, speed, done, btn) {
+  let on = false, acc = 0, last = 0;
+  function frame(t) {
+    if (!on) return;
+    const dt = last ? Math.min(0.1, (t - last) / 1000) : 0; last = t; acc += dt * speed();
+    let n = 0;
+    while (acc >= 1 && n < 60) { acc -= 1; if (done()) { stop(); break; } step(); n++; }
+    if (n) draw();
+    if (on) requestAnimationFrame(frame);
+  }
+  function start() { if (on) return; if (done()) return; on = true; last = 0; acc = 1; btn.textContent = "Pause"; requestAnimationFrame(frame); }
+  function stop() { on = false; btn.textContent = "Run"; }
+  btn.addEventListener("click", () => on ? stop() : start());
+  return { start, stop, get on() { return on; } };
+}
+function lineChart(cv, series, o = {}) {
+  const { ctx, w, h } = setupCanvas(cv); const c = colors();
+  ctx.clearRect(0, 0, w, h);
+  const pad = { l: 58, r: 12, t: 10, b: 22 };
+  let xs = o.xmax || 1, ymin = Infinity, ymax = -Infinity;
+  for (const s of series) { xs = Math.max(xs, s.data.length - 1); for (const v of s.data) if (isFinite(v)) { ymin = Math.min(ymin, v); ymax = Math.max(ymax, v); } }
+  for (const r of (o.refs || [])) { ymin = Math.min(ymin, r.v); ymax = Math.max(ymax, r.v); }
+  if (!isFinite(ymin)) { ymin = 0; ymax = 1; }
+  if (ymax - ymin < 1e-9) { ymax += 1; ymin -= 1; }
+  const sp = ymax - ymin; ymin -= sp * .06; ymax += sp * .06;
+  const X = i => pad.l + (w - pad.l - pad.r) * i / xs, Y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - ymin) / (ymax - ymin));
+  ctx.font = "11px " + MONO; ctx.lineWidth = 1;
+  for (let k = 0; k <= 4; k++) {
+    const v = ymin + (ymax - ymin) * k / 4, y = Y(v);
+    ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(fmtNum(v), pad.l - 6, y);
+  }
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  for (let k = 0; k <= 4; k++) { const i = Math.round(xs * k / 4); ctx.fillText(i, X(i), h - pad.b + 6); }
+  for (const r of (o.refs || [])) {
+    ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = r.color || c.bad; ctx.beginPath(); ctx.moveTo(pad.l, Y(r.v)); ctx.lineTo(w - pad.r, Y(r.v)); ctx.stroke(); ctx.restore();
+    if (r.label) { ctx.fillStyle = r.color || c.bad; ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText(r.label, w - pad.r - 2, Y(r.v) - 2); }
+  }
+  if (o.vline != null) { ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = c.ink; ctx.globalAlpha = .55; ctx.beginPath(); ctx.moveTo(X(o.vline), pad.t); ctx.lineTo(X(o.vline), h - pad.b); ctx.stroke(); ctx.restore(); }
+  for (const s of series) {
+    if (!s.data.length) continue;
+    ctx.strokeStyle = s.color; ctx.globalAlpha = s.alpha || 1; ctx.lineWidth = s.width || 2; ctx.beginPath();
+    s.data.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v))); ctx.stroke();
+    if (!s.alpha) { const i = s.data.length - 1; ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(X(i), Y(s.data[i]), 3, 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  }
+  if (o.labels) { let x = pad.l + 6; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.font = "11px " + MONO;
+    for (const s of series) if (s.label) { ctx.fillStyle = s.color; ctx.fillText("■ " + s.label, x, pad.t + 2); x += ctx.measureText("■ " + s.label).width + 12; } }
+}
+function stats(el, items) { el.innerHTML = items.map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join(""); }
+function presets(el, list, apply) {
+  el.innerHTML = list.map((p, i) => `<button class="preset" data-i="${i}"><b>${p.t}</b><span>${p.d}</span></button>`).join("");
+  el.querySelectorAll("button").forEach(b => b.addEventListener("click", () => apply(list[+b.dataset.i])));
+}
+
+
+/* ================= Machine learning labs: shared helpers ================= */
+const newSeed = () => Math.floor(Math.random() * 1e9);
+const gauss = rnd => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
+const VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
+const ramp = t => { t = Math.max(0, Math.min(1, t)) * (VIR.length - 1); const i = Math.min(VIR.length - 2, Math.floor(t)), u = t - i; return VIR[i].map((v, k) => Math.round(v + (VIR[i + 1][k] - v) * u)); };
+const classCol = c => [c.accent, c.gold, c.s3, c.s2, c.s4, c.bad, c.good, c.muted];
+function stepper(btn, step, done, rate) {
+  let timer = null; const label = btn.textContent;
+  const stop = () => { clearInterval(timer); timer = null; btn.textContent = label; };
+  btn.addEventListener("click", () => { if (timer) return stop(); if (done()) return; btn.textContent = "Pause"; timer = setInterval(() => { if (done()) return stop(); step(); }, rate()); });
+  return { stop, get on() { return !!timer; } };
+}
+// axes for a 2D plot; returns the canvas context, size and the data-to-pixel maps (and their inverses)
+function axes(cv, o) {
+  const { ctx, w, h } = setupCanvas(cv), c = colors(), pad = Object.assign({ l: 46, r: 12, t: 12, b: 30 }, o.pad || {});
+  let { x0, x1, y0, y1 } = o;
+  if (o.equal) { const sx = (w - pad.l - pad.r) / (x1 - x0), sy = (h - pad.t - pad.b) / (y1 - y0), s = Math.min(sx, sy), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2; x0 = cx - (w - pad.l - pad.r) / s / 2; x1 = cx + (w - pad.l - pad.r) / s / 2; y0 = cy - (h - pad.t - pad.b) / s / 2; y1 = cy + (h - pad.t - pad.b) / s / 2; }
+  const X = x => pad.l + (x - x0) / (x1 - x0) * (w - pad.l - pad.r), Y = y => pad.t + (y1 - y) / (y1 - y0) * (h - pad.t - pad.b);
+  const iX = px => x0 + (px - pad.l) / (w - pad.l - pad.r) * (x1 - x0), iY = py => y1 - (py - pad.t) / (h - pad.t - pad.b) * (y1 - y0);
+  ctx.clearRect(0, 0, w, h);
+  if (!o.bare) {
+    ctx.font = `11px ${MONO}`; ctx.lineWidth = 1;
+    const nt = o.ticks || 5;
+    for (let k = 0; k <= nt; k++) { const v = y0 + (y1 - y0) * k / nt; ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(w - pad.r, Y(v)); ctx.stroke(); ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(fmtNum(v, o.yd), pad.l - 6, Y(v)); }
+    for (let k = 0; k <= nt; k++) { const v = x0 + (x1 - x0) * k / nt; ctx.fillStyle = c.muted; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText(fmtNum(v, o.xd), X(v), h - pad.b + 6); }
+    if (o.xlab) { ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText(o.xlab, w - pad.r, h - pad.b - 3); }
+    if (o.ylab) { ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(o.ylab, pad.l + 4, pad.t + 2); }
+  }
+  return { ctx, w, h, c, X, Y, iX, iY, pad, x0, x1, y0, y1 };
+}
+function dot(ctx, x, y, r, fill, stroke) { ctx.fillStyle = fill; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); } }
+// toy 2D datasets: arrays of [x, y, label]
+const DATA = {
+  blobs: (rnd, n = 180, k = 3, sd = .55) => { const C = [[-2, -1], [2, -1.5], [0, 2], [-2.5, 2.2], [2.6, 1.8], [0, -3]].slice(0, k); return Array.from({ length: n }, (_, i) => { const j = i % k; return [C[j][0] + sd * gauss(rnd), C[j][1] + sd * gauss(rnd), j]; }); },
+  moons: (rnd, n = 240, noise = .08) => Array.from({ length: n }, (_, i) => { const j = i % 2, t = Math.PI * rnd(); return j ? [1 - Math.cos(t) + noise * gauss(rnd), .5 - Math.sin(t) + noise * gauss(rnd), 1] : [Math.cos(t) + noise * gauss(rnd), Math.sin(t) + noise * gauss(rnd), 0]; }),
+  circles: (rnd, n = 240, noise = .06) => Array.from({ length: n }, (_, i) => { const j = i % 2, t = 2 * Math.PI * rnd(), r = j ? .45 : 1; return [r * Math.cos(t) + noise * gauss(rnd), r * Math.sin(t) + noise * gauss(rnd), j]; }),
+  xor: (rnd, n = 240) => Array.from({ length: n }, () => { const x = 2 * rnd() - 1, y = 2 * rnd() - 1; return [x + .05 * gauss(rnd), y + .05 * gauss(rnd), (x > 0) !== (y > 0) ? 1 : 0]; }),
+  spiral: (rnd, n = 300, noise = .05) => Array.from({ length: n }, (_, i) => { const j = i % 2, t = 1.2 * rnd() * Math.PI * 2 + .3, r = t / (2.6 * Math.PI); return [r * Math.cos(t + j * Math.PI) + noise * gauss(rnd), r * Math.sin(t + j * Math.PI) + noise * gauss(rnd), j]; })
+};
+const bounds = (P, m = .15) => { let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; P.forEach(p => { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }); const dx = (x1 - x0) * m || 1, dy = (y1 - y0) * m || 1; return { x0: x0 - dx, x1: x1 + dx, y0: y0 - dy, y1: y1 + dy }; };
+// a small fully connected network (tanh hidden layer) trained with plain or Adam gradient steps
+class MLP {
+  constructor(sizes, rnd, act = "tanh") {
+    this.act = act; this.L = sizes.length - 1; this.W = []; this.b = [];
+    for (let l = 0; l < this.L; l++) { const fi = sizes[l], fo = sizes[l + 1], s = 1 / Math.sqrt(fi); this.W.push(Array.from({ length: fi * fo }, () => gauss(rnd) * s)); this.b.push(new Float64Array(fo)); }
+    this.sizes = sizes; this.m = this.W.map(w => new Float64Array(w.length)); this.v = this.W.map(w => new Float64Array(w.length)); this.mb = this.b.map(b => new Float64Array(b.length)); this.vb = this.b.map(b => new Float64Array(b.length)); this.t = 0;
+  }
+  f(z) { return this.act === "relu" ? Math.max(0, z) : Math.tanh(z); }
+  df(a) { return this.act === "relu" ? (a > 0 ? 1 : 0) : 1 - a * a; }
+  forward(x) { const as = [x]; let a = x; for (let l = 0; l < this.L; l++) { const fi = this.sizes[l], fo = this.sizes[l + 1], W = this.W[l], out = new Float64Array(fo); for (let j = 0; j < fo; j++) { let s = this.b[l][j]; for (let i = 0; i < fi; i++) s += a[i] * W[i * fo + j]; out[j] = l < this.L - 1 ? this.f(s) : s; } as.push(out); a = out; } this.as = as; return a; }
+  // accumulate gradients for output gradient dout (after a forward pass)
+  backward(dout, G) { let d = dout; for (let l = this.L - 1; l >= 0; l--) { const fi = this.sizes[l], fo = this.sizes[l + 1], a = this.as[l], W = this.W[l], nd = new Float64Array(fi); for (let i = 0; i < fi; i++) { let s = 0; for (let j = 0; j < fo; j++) { G.W[l][i * fo + j] += a[i] * d[j]; s += W[i * fo + j] * d[j]; } nd[i] = l > 0 ? s * this.df(a[i]) : s; } for (let j = 0; j < fo; j++) G.b[l][j] += d[j]; d = nd; } }
+  grads() { return { W: this.W.map(w => new Float64Array(w.length)), b: this.b.map(b => new Float64Array(b.length)) }; }
+  adam(G, lr, scale = 1) { this.t++; const b1 = .9, b2 = .999, c1 = 1 - b1 ** this.t, c2 = 1 - b2 ** this.t; const up = (p, g, m, v) => { for (let i = 0; i < p.length; i++) { const gi = g[i] * scale; m[i] = b1 * m[i] + (1 - b1) * gi; v[i] = b2 * v[i] + (1 - b2) * gi * gi; p[i] -= lr * (m[i] / c1) / (Math.sqrt(v[i] / c2) + 1e-8); } }; for (let l = 0; l < this.L; l++) { up(this.W[l], G.W[l], this.m[l], this.v[l]); up(this.b[l], G.b[l], this.mb[l], this.vb[l]); } }
+}
+const softmax = z => { const m = Math.max(...z), e = z.map(v => Math.exp(v - m)), s = e.reduce((a, b) => a + b, 0); return e.map(v => v / s); };
+function codeTabs(caps, first) {
+  const keys = Object.keys(caps); let cur = first;
+  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").textContent = caps[k]; }
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.code)));
+  document.querySelectorAll("a[data-tab]").forEach(a => a.addEventListener("click", () => show(a.dataset.tab)));
+  $("#codeCopy").addEventListener("click", async () => {
+    const pre = $("#code-" + cur), btn = $("#codeCopy");
+    try { await navigator.clipboard.writeText(pre.textContent); btn.textContent = "Copied"; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected, press Ctrl+C"; }
+    setTimeout(() => btn.textContent = "Copy code", 2000);
+  });
+  show(first);
+}
+
+/* ================= Supervised Learning Lab ================= */
+const sig = z => 1 / (1 + Math.exp(-z));
+function forceLayout(n, E, rnd, iters = 400) {
+  const P = Array.from({ length: n }, () => [rnd(), rnd()]), k = Math.sqrt(1 / n);
+  for (let it = 0; it < iters; it++) {
+    const t = .1 * (1 - it / iters) + .002, D = P.map(() => [0, 0]);
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { const dx = P[i][0] - P[j][0], dy = P[i][1] - P[j][1], d = Math.hypot(dx, dy) + 1e-6, f = k * k / d; D[i][0] += dx / d * f; D[i][1] += dy / d * f; D[j][0] -= dx / d * f; D[j][1] -= dy / d * f; }
+    E.forEach(([u, v]) => { const dx = P[u][0] - P[v][0], dy = P[u][1] - P[v][1], d = Math.hypot(dx, dy) + 1e-6, f = d * d / k; D[u][0] -= dx / d * f; D[u][1] -= dy / d * f; D[v][0] += dx / d * f; D[v][1] += dy / d * f; });
+    P.forEach((p, i) => { D[i][0] -= 2 * k * (p[0] - .5); D[i][1] -= 2 * k * (p[1] - .5); const d = Math.hypot(...D[i]) + 1e-9, s = Math.min(d, t); p[0] += D[i][0] / d * s; p[1] += D[i][1] / d * s; });   // gentle pull to the center keeps separate pieces together
+  }
+  const x0 = Math.min(...P.map(p => p[0])), x1 = Math.max(...P.map(p => p[0])), y0 = Math.min(...P.map(p => p[1])), y1 = Math.max(...P.map(p => p[1])), sc = Math.max(x1 - x0, y1 - y0) || 1;
+  return P.map(([x, y]) => [(x - x0) / sc + (1 - (x1 - x0) / sc) / 2, (y - y0) / sc + (1 - (y1 - y0) / sc) / 2]);
+}
+
+/* ---------- Zachary's karate club and a two-layer GCN ---------- */
+const KE = [[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8], [0, 10], [0, 11], [0, 12], [0, 13], [0, 17], [0, 19], [0, 21], [0, 31], [1, 2], [1, 3], [1, 7], [1, 13], [1, 17], [1, 19], [1, 21], [1, 30], [2, 3], [2, 7], [2, 8], [2, 9], [2, 13], [2, 27], [2, 28], [2, 32], [3, 7], [3, 12], [3, 13], [4, 6], [4, 10], [5, 6], [5, 10], [5, 16], [6, 16], [8, 30], [8, 32], [8, 33], [9, 33], [13, 33], [14, 32], [14, 33], [15, 32], [15, 33], [18, 32], [18, 33], [19, 33], [20, 32], [20, 33], [22, 32], [22, 33], [23, 25], [23, 27], [23, 29], [23, 32], [23, 33], [24, 25], [24, 27], [24, 31], [25, 31], [26, 29], [26, 33], [27, 33], [28, 31], [28, 33], [29, 32], [29, 33], [30, 32], [30, 33], [31, 32], [31, 33], [32, 33]];
+const CLUB = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], KN = 34, LABELED = [0, 33, 1, 32];
+const KA = (() => { const A = Array.from({ length: KN }, () => new Float64Array(KN)); KE.forEach(([u, v]) => { A[u][v] = A[v][u] = 1; }); for (let i = 0; i < KN; i++) A[i][i] = 1; const d = A.map(r => r.reduce((s, v) => s + v, 0)); return A.map((r, i) => r.map((v, j) => v / Math.sqrt(d[i] * d[j]))); })();
+const KPOS = forceLayout(KN, KE, mulberry32(3));
+const mm = (A, B) => A.map(r => { const o = new Float64Array(B[0].length); r.forEach((a, k) => { if (a) for (let j = 0; j < o.length; j++) o[j] += a * B[k][j]; }); return o; });
+function gcnInit(hidden, rnd) { return { W1: Array.from({ length: KN }, () => Float64Array.from({ length: hidden }, () => .5 * gauss(rnd))), W2: Array.from({ length: hidden }, () => Float64Array.from({ length: 2 }, () => .5 * gauss(rnd))), epoch: 0, hist: [] }; }
+function gcnStep(M, lr, train = true) {
+  const AW1 = mm(KA, M.W1), H1 = AW1.map(r => r.map(v => Math.max(0, v))), AH1 = mm(KA, H1), Z2 = mm(AH1, M.W2);
+  const P = Z2.map(r => { const m = Math.max(r[0], r[1]), e0 = Math.exp(r[0] - m), e1 = Math.exp(r[1] - m); return [e0 / (e0 + e1), e1 / (e0 + e1)]; });
+  const loss = -LABELED.reduce((s, i) => s + Math.log(P[i][CLUB[i]] + 1e-12), 0) / LABELED.length;
+  if (train) {
+    const G = P.map(() => [0, 0]); LABELED.forEach(i => { G[i] = [P[i][0] - (CLUB[i] === 0), P[i][1] - (CLUB[i] === 1)].map(v => v / LABELED.length); });
+    const h = M.W2.length, dW2 = Array.from({ length: h }, () => [0, 0]); AH1.forEach((r, i) => r.forEach((v, k) => { dW2[k][0] += v * G[i][0]; dW2[k][1] += v * G[i][1]; }));
+    const AG = mm(KA, G), dH1 = AG.map((r, i) => Float64Array.from({ length: h }, (_, k) => (r[0] * M.W2[k][0] + r[1] * M.W2[k][1]) * (AW1[i][k] > 0)));
+    const dW1 = mm(KA, dH1);                                                   // X = I, so dW1 = (A X)^T dH1 = A dH1
+    M.W1.forEach((r, i) => r.forEach((_, k) => r[k] -= lr * dW1[i][k])); M.W2.forEach((r, k) => { r[0] -= lr * dW2[k][0]; r[1] -= lr * dW2[k][1]; });
+    M.epoch++;
+  }
+  const acc = P.filter((p, i) => (p[1] > .5 ? 1 : 0) === CLUB[i]).length / KN; M.hist.push(acc * 100);
+  return { P, Z2, loss, acc };
+}
+function drawKarate(cv, P, o = {}) {
+  const ax = axes(cv, { x0: -.05, x1: 1.05, y0: -.05, y1: 1.05, bare: true, equal: true, pad: { l: 6, r: 6, t: 6, b: 6 } }), { ctx, X, Y, c } = ax, cols = classCol(c);
+  ctx.strokeStyle = c.line; ctx.lineWidth = 1; KE.forEach(([u, v]) => { ctx.beginPath(); ctx.moveTo(X(KPOS[u][0]), Y(KPOS[u][1])); ctx.lineTo(X(KPOS[v][0]), Y(KPOS[v][1])); ctx.stroke(); });
+  KPOS.forEach((p, i) => { const q = P ? P[i][1] : null, col = q == null ? c.surface : q > .5 ? cols[1] : cols[0]; ctx.globalAlpha = q == null ? 1 : .35 + .65 * Math.abs(q - .5) * 2; if (LABELED.includes(i)) { ctx.fillStyle = col; ctx.fillRect(X(p[0]) - 8, Y(p[1]) - 8, 16, 16); ctx.globalAlpha = 1; ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.strokeRect(X(p[0]) - 8, Y(p[1]) - 8, 16, 16); } else { dot(ctx, X(p[0]), Y(p[1]), o.r || 7, col, c.ink); ctx.globalAlpha = 1; } if (P && (q > .5 ? 1 : 0) !== CLUB[i]) { ctx.strokeStyle = c.bad; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 11, 0, 7); ctx.stroke(); } });
+  ctx.globalAlpha = 1;
+}
+
+(function hero() {
+  const cv = $("#heroCv"); let rnd = mulberry32(9), M = gcnInit(16, rnd), R = gcnStep(M, .2, false), hold = 0;
+  const draw = () => { drawKarate(cv, M.epoch ? R.P : null, { r: 6 }); $("#heroCap").textContent = `A graph convolutional network labeling 34 karate club members from 4 known labels (squares): epoch ${M.epoch}, ${(R.acc * 100).toFixed(0)}% correct.`; };
+  ro.observe(cv); onRedraw(draw);
+  if (reduceMotion) { for (let e = 0; e < 150; e++) R = gcnStep(M, .2); draw(); return; }
+  draw(); let vis = true; new IntersectionObserver(e => { vis = e[0].isIntersecting; }).observe(cv);
+  setInterval(() => { if (!vis) return; if (M.epoch >= 150) { if (++hold > 25) { hold = 0; M = gcnInit(16, rnd); R = gcnStep(M, .2, false); } } else R = gcnStep(M, .2); draw(); }, 90);
+})();
+
+/* ---------- neural network playground ---------- */
+(function playground() {
+  const ctl = makeControls($("#nnCtl"), [
+    { key: "data", id: "nnD", type: "select", label: "Data", value: "moons", options: [["moons", "Two moons"], ["circles", "Two rings"], ["xor", "XOR"], ["spiral", "Two spirals"]] },
+    { key: "h", id: "nnH", label: "Hidden units per layer", min: 1, max: 32, step: 1, value: 8 },
+    { key: "L", id: "nnL", label: "Hidden layers", min: 1, max: 3, step: 1, value: 2 },
+    { key: "act", id: "nnA", type: "select", label: "Activation", value: "tanh", options: [["tanh", "tanh"], ["relu", "ReLU"]] },
+    { key: "lr", id: "nnLR", label: "Learning rate (Adam)", min: .002, max: .1, step: .002, value: .03, fmt: v => v.toFixed(3) }
+  ], k => { if (k === "data") make(); reset(); });
+  let rnd = mulberry32(13), P = [], tr = [], te = [], net, epoch = 0, hist = [], timer = null;
+  function make() { P = DATA[ctl.data](rnd, ctl.data === "spiral" ? 300 : 240); const idx = P.map((_, i) => i).sort(() => rnd() - .5); tr = idx.slice(0, Math.round(P.length * .75)); te = idx.slice(tr.length); }
+  function reset() { clearInterval(timer); timer = null; $("#nnRun").textContent = "Train"; net = new MLP([2].concat(Array(ctl.L).fill(ctl.h), [1]), rnd, ctl.act); epoch = 0; hist = []; draw(); }
+  function trainEpoch() { const G = net.grads(); let loss = 0; tr.forEach(i => { const [x, y, l] = P[i], p = sig(net.forward([x, y])[0]); loss -= l ? Math.log(p + 1e-12) : Math.log(1 - p + 1e-12); net.backward([p - l], G); }); net.adam(G, ctl.lr, 1 / tr.length); epoch++; hist.push(loss / tr.length); }
+  const acc = S => S.filter(i => (sig(net.forward([P[i][0], P[i][1]])[0]) > .5) === (P[i][2] === 1)).length / S.length;
+  function draw() {
+    const ax = axes($("#nnCv"), Object.assign({ bare: true, equal: true, pad: { l: 6, r: 6, t: 6, b: 6 } }, bounds(P, .1))), { ctx, X, Y, c } = ax, cols = classCol(c), n = 70, xs = (ax.x1 - ax.x0) / n, ny = Math.ceil((ax.y1 - ax.y0) / xs);
+    for (let i = 0; i < n; i++) for (let j = 0; j < ny; j++) { const x = ax.x0 + (i + .5) * xs, y = ax.y0 + (j + .5) * xs, p = sig(net.forward([x, y])[0]); ctx.fillStyle = cols[p > .5 ? 1 : 0]; ctx.globalAlpha = .08 + .25 * Math.abs(p - .5) * 2; ctx.fillRect(X(x - xs / 2), Y(y + xs / 2), X(x + xs / 2) - X(x - xs / 2) + 1, Y(y - xs / 2) - Y(y + xs / 2) + 1); }
+    ctx.globalAlpha = 1; tr.forEach(i => dot(ctx, X(P[i][0]), Y(P[i][1]), 3.4, cols[P[i][2]])); te.forEach(i => dot(ctx, X(P[i][0]), Y(P[i][1]), 3.6, cols[P[i][2]], c.ink));
+    const params = net.W.reduce((s, w) => s + w.length, 0) + net.b.reduce((s, b) => s + b.length, 0);
+    stats($("#nnStats"), [["Epoch", epoch], ["Parameters", params], ["Loss", hist.length ? hist[hist.length - 1].toFixed(4) : "–"], ["Training accuracy", (acc(tr) * 100).toFixed(1) + "%"], ["Test accuracy", (acc(te) * 100).toFixed(1) + "%"]]);
+    lineChart($("#nnChart"), [{ data: hist.length ? hist : [0], color: c.accent, label: "training loss (cross-entropy)" }], { labels: true });
+  }
+  $("#nnRun").addEventListener("click", () => { if (timer) { clearInterval(timer); timer = null; $("#nnRun").textContent = "Train"; return; } $("#nnRun").textContent = "Pause"; timer = setInterval(() => { for (let k = 0; k < 5; k++) trainEpoch(); draw(); if (epoch >= 1500) { clearInterval(timer); timer = null; $("#nnRun").textContent = "Train"; } }, 30); });
+  $("#nnReset").addEventListener("click", reset);
+  $("#nnData").addEventListener("click", () => { make(); reset(); });
+  ro.observe($("#nnCv")); onRedraw(draw); make(); reset();
+})();
+
+/* ---------- Listing 11.1 as a graph ---------- */
+(function fifa() {
+  const PL = [["L. Messi", "Inter Miami", "Argentina"], ["R. Lewandowski", "Barcelona", "Poland"], ["C. Ronaldo", "Al-Nassr", "Portugal"], ["Neymar Jr", "Al-Hilal", "Brazil"], ["K. Mbappé", "PSG", "France"], ["E. Haaland", "Manchester City", "Norway"], ["H. Kane", "Tottenham Hotspur", "England"], ["Luka Modrić", "Real Madrid", "Croatia"], ["L. Goretzka", "Bayern Munich", "Germany"], ["M. Salah", "Liverpool", "Egypt"]];
+  const names = [], type = [], E = [], id = (n, t) => { let i = names.indexOf(n); if (i < 0) { i = names.length; names.push(n); type.push(t); } return i; };
+  PL.forEach(([p, c, n]) => { const a = id(p, 0); E.push([a, id(c, 1), "plays_for"]); E.push([a, id(n, 2), "belongs_to"]); });
+  const pos = forceLayout(names.length, E, mulberry32(5), 500);
+  function draw() {
+    const ax = axes($("#fiCv"), { x0: -.08, x1: 1.08, y0: -.05, y1: 1.05, bare: true, equal: true, pad: { l: 4, r: 4, t: 4, b: 4 } }), { ctx, X, Y, c } = ax, col = [c.accent, c.bad, c.muted];
+    ctx.strokeStyle = c.line; ctx.lineWidth = 1.3; E.forEach(([u, v]) => { ctx.beginPath(); ctx.moveTo(X(pos[u][0]), Y(pos[u][1])); ctx.lineTo(X(pos[v][0]), Y(pos[v][1])); ctx.stroke(); });
+    ctx.font = `10px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    names.forEach((n, i) => { const x = X(pos[i][0]), y = Y(pos[i][1]); ctx.fillStyle = col[type[i]]; if (type[i] === 1) { ctx.beginPath(); ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 7); ctx.lineTo(x - 7, y); ctx.closePath(); ctx.fill(); } else if (type[i] === 2) { ctx.beginPath(); ctx.moveTo(x - 6, y - 5); ctx.lineTo(x + 6, y - 5); ctx.lineTo(x, y + 6); ctx.closePath(); ctx.fill(); } else dot(ctx, x, y, 5.5, col[0]); ctx.fillStyle = c.ink; ctx.fillText(n, x, y - 8); });
+  }
+  ro.observe($("#fiCv")); onRedraw(draw); draw();
+})();
+
+/* ---------- message passing on a 6-node graph ---------- */
+(function messagePassing() {
+  const E = [[0, 1], [0, 2], [0, 3], [1, 2], [1, 4], [2, 3], [2, 5], [3, 5], [4, 5]], n = 6, POS = [[.1, .55], [.38, .9], [.42, .5], [.3, .1], [.78, .85], [.82, .25]];
+  const A = Array.from({ length: n }, () => new Array(n).fill(0)); E.forEach(([u, v]) => { A[u][v] = A[v][u] = 1; });
+  const deg = A.map(r => r.reduce((s, v) => s + v, 0)), At = A.map((r, i) => r.map((v, j) => (v + (i === j)) / Math.sqrt((deg[i] + 1) * (deg[j] + 1))));
+  let src = 0, h, layer;
+  const reset = () => { h = Array.from({ length: n }, (_, i) => i === src ? 1 : 0); layer = 0; draw(); };
+  const hops = (() => { const D = Array.from({ length: n }, (_, s) => { const d = new Array(n).fill(Infinity); d[s] = 0; const q = [s]; while (q.length) { const u = q.shift(); for (let v = 0; v < n; v++) if (A[u][v] && d[v] === Infinity) { d[v] = d[u] + 1; q.push(v); } } return d; }); return D; })();
+  const mat = (M, title, f, hl) => `<div><div class="group-label">${title}</div><table class="matrix">${M.map((r, i) => `<tr>${r.map((v, j) => `<td class="${hl && hl(i, j) ? "on" : ""}">${f(v)}</td>`).join("")}</tr>`).join("")}</table></div>`;
+  $("#mpMats").innerHTML = mat(A, "A (adjacency)", v => v) + mat(A.map((r, i) => r.map((_, j) => i === j ? deg[i] : 0)), "D (degree)", v => v) + mat(At, "Â = D̃<sup>−1/2</sup>(A + I)D̃<sup>−1/2</sup>", v => v ? v.toFixed(2) : "0");
+  let map = null;
+  function draw() {
+    const ax = axes($("#mpCv"), { x0: 0, x1: 1, y0: 0, y1: 1, bare: true, equal: true, pad: { l: 20, r: 20, t: 20, b: 20 } }), { ctx, X, Y, c } = ax; map = ax;
+    ctx.strokeStyle = c.line; ctx.lineWidth = 2; E.forEach(([u, v]) => { ctx.beginPath(); ctx.moveTo(X(POS[u][0]), Y(POS[u][1])); ctx.lineTo(X(POS[v][0]), Y(POS[v][1])); ctx.stroke(); });
+    const mx = Math.max(...h);
+    POS.forEach((p, i) => { const t = h[i] / mx, [r, g, b] = ramp(t); dot(ctx, X(p[0]), Y(p[1]), 22, h[i] > 1e-12 ? `rgb(${r},${g},${b})` : c.surface, i === src ? c.bad : c.ink); ctx.fillStyle = h[i] / mx > .55 ? "#000" : (h[i] > 1e-12 ? "#fff" : c.ink); ctx.font = `600 11px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(h[i] > 1e-12 ? h[i].toFixed(2) : "0", X(p[0]), Y(p[1])); ctx.fillStyle = c.muted; ctx.font = `11px ${MONO}`; ctx.fillText("x" + (i + 1), X(p[0]), Y(p[1]) - 30); });
+    const reached = h.filter(v => v > 1e-12).length;
+    $("#mpNote").textContent = `Layer ${layer}: h = Â${layer ? "^" + layer : "⁰"} x. ${reached} of 6 nodes have received the signal from x${src + 1}, exactly those within ${layer} hop${layer === 1 ? "" : "s"}. ${layer >= Math.max(...hops[src]) ? "Every node now carries information about every other: more layers only smooth the values further (too many layers oversmooth)." : ""}`;
+  }
+  $("#mpCv").addEventListener("click", e => { if (!map) return; const r = $("#mpCv").getBoundingClientRect(), x = map.iX(e.clientX - r.left), y = map.iY(e.clientY - r.top); let b = 0; POS.forEach((p, i) => { if (Math.hypot(p[0] - x, p[1] - y) < Math.hypot(POS[b][0] - x, POS[b][1] - y)) b = i; }); src = b; reset(); });
+  $("#mpStep").addEventListener("click", () => { h = At.map(r => r.reduce((s, v, j) => s + v * h[j], 0)); layer++; draw(); });
+  $("#mpReset").addEventListener("click", reset);
+  ro.observe($("#mpCv")); onRedraw(draw); reset();
+})();
+
+/* ---------- node classification on the karate club ---------- */
+(function karate() {
+  const ctl = makeControls($("#kcCtl"), [{ key: "h", id: "kcH", label: "Hidden units", min: 2, max: 32, step: 1, value: 16 }, { key: "lr", id: "kcLR", label: "Learning rate", min: .02, max: .5, step: .02, value: .2, fmt: v => v.toFixed(2) }, { key: "ep", id: "kcE", label: "Epochs", min: 50, max: 500, step: 50, value: 300 }], () => reset());
+  let M, R, timer = null, rnd = mulberry32(17);
+  function reset() { clearInterval(timer); timer = null; $("#kcRun").textContent = "Train"; M = gcnInit(ctl.h, rnd); R = gcnStep(M, ctl.lr, false); M.hist = []; draw(); }
+  function draw() {
+    drawKarate($("#kcCv"), M.epoch ? R.P : null);
+    const Z = R.Z2, b = bounds(Z.map(z => [z[0], z[1]]), .15), ax = axes($("#kcEmb"), Object.assign({ xlab: "output 1", ylab: "output 2", xd: 1, yd: 1 }, b)), { ctx, X, Y, c } = ax, cols = classCol(c);
+    ctx.strokeStyle = c.muted; ctx.setLineDash([4, 4]); ctx.beginPath(); const lo = Math.max(b.x0, b.y0), hi = Math.min(b.x1, b.y1); ctx.moveTo(X(lo), Y(lo)); ctx.lineTo(X(hi), Y(hi)); ctx.stroke(); ctx.setLineDash([]);
+    Z.forEach((z, i) => { if (LABELED.includes(i)) { ctx.fillStyle = cols[CLUB[i]]; ctx.fillRect(X(z[0]) - 6, Y(z[1]) - 6, 12, 12); } else dot(ctx, X(z[0]), Y(z[1]), 5, cols[CLUB[i]], (R.P[i][1] > .5 ? 1 : 0) !== CLUB[i] ? c.bad : null); });
+    stats($("#kcStats"), [["Epoch", M.epoch], ["Loss on the 4 labels", R.loss.toFixed(4)], ["Accuracy on all 34", (R.acc * 100).toFixed(1) + "%"], ["Misclassified", KN - Math.round(R.acc * KN)]]);
+    $("#kcNote").textContent = M.epoch ? "Left: the club, colored by the predicted side (lighter = less sure); red rings mark mistakes. Right: each member’s two output scores, colored by the side they actually joined; the dashed line is the decision boundary. Squares: member 1 (the instructor), member 34 (the administrator) and one friend of each, the only labels used." : "Each member starts with only a one-hot identity vector as its feature. Press Train.";
+  }
+  $("#kcRun").addEventListener("click", () => { if (timer) { clearInterval(timer); timer = null; $("#kcRun").textContent = "Train"; return; } if (M.epoch >= ctl.ep) reset(); $("#kcRun").textContent = "Pause"; timer = setInterval(() => { for (let k = 0; k < 3; k++) R = gcnStep(M, ctl.lr); draw(); if (M.epoch >= ctl.ep) { clearInterval(timer); timer = null; $("#kcRun").textContent = "Train"; } }, 40); });
+  $("#kcReset").addEventListener("click", reset);
+  ["kcCv", "kcEmb"].forEach(i => ro.observe($("#" + i))); onRedraw(draw); reset();
+})();
+
+/* ---------- attention: GCN vs. GAT for node 5, and attention over a sentence ---------- */
+(function attention() {
+  const A = [[0, 1, 1, 0, 0], [1, 0, 0, 1, 1], [1, 0, 0, 1, 0], [0, 1, 1, 0, 1], [0, 1, 0, 1, 0]], POS = [[.1, .5], [.45, .85], [.4, .15], [.75, .45], [.9, .9]], NB = [1, 3, 4];
+  const ctl = makeControls($("#atCtl"), [{ key: "mode", id: "atM", type: "select", label: "Model", value: "gat", options: [["gat", "GAT: learned attention"], ["gcn", "GCN: equal weights"]] }, { key: "H", id: "atH", label: "Attention heads H", min: 1, max: 4, step: 1, value: 3 }, { key: "seed", id: "atS", label: "Random weights (seed)", min: 1, max: 30, step: 1, value: 3 }], () => draw());
+  function coeffs() {
+    const rnd = mulberry32(ctl.seed * 101), X = Array.from({ length: 5 }, () => Array.from({ length: 4 }, () => gauss(rnd))), W = Array.from({ length: 4 }, () => Array.from({ length: 8 }, () => gauss(rnd) / 2));
+    const Hm = X.map(x => W[0].map((_, j) => x.reduce((s, v, i) => s + v * W[i][j], 0)));
+    return Array.from({ length: ctl.H }, () => { const a = Array.from({ length: 16 }, () => gauss(rnd)), e = NB.map(u => { const s = Hm[4].concat(Hm[u]).reduce((t, v, i) => t + v * a[i], 0); return s > 0 ? s : .2 * s; }); return ctl.mode === "gcn" ? [1 / 3, 1 / 3, 1 / 3] : softmax(e); });
+  }
+  function draw() {
+    const H = coeffs(), avg = NB.map((_, k) => H.reduce((s, h) => s + h[k], 0) / H.length), { ctx, w, h } = setupCanvas($("#atCv")), c = colors(), cols = classCol(c), gw = w * .45, P = p => [20 + p[0] * (gw - 40), 20 + (1 - p[1]) * (h - 40)];
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++) if (A[i][j]) { const k = i === 4 ? NB.indexOf(j) : j === 4 ? NB.indexOf(i) : -1; ctx.strokeStyle = k >= 0 ? c.accent : c.line; ctx.lineWidth = k >= 0 ? 1 + 14 * avg[k] : 1.5; ctx.beginPath(); ctx.moveTo(...P(POS[i])); ctx.lineTo(...P(POS[j])); ctx.stroke(); }
+    POS.forEach((p, i) => { const [x, y] = P(p); dot(ctx, x, y, 15, i === 4 ? c.gold : c.surface, c.ink); ctx.fillStyle = c.ink; ctx.font = `600 12px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(i + 1, x, y); });
+    const [sx, sy] = P(POS[4]); ctx.strokeStyle = c.accent; ctx.lineWidth = 1 + 14 * avg[2]; ctx.beginPath(); ctx.arc(sx + 14, sy - 14, 12, Math.PI * .9, Math.PI * 2.6); ctx.stroke();
+    const bx = gw + 20, bw = w - bx - 10, gh = (h - 40) / H.length; ctx.font = `11px ${MONO}`;
+    H.forEach((al, hI) => { const y0 = 24 + hI * gh; ctx.fillStyle = c.muted; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(ctl.mode === "gcn" ? "GCN (no attention)" : `head ${hI + 1}`, bx, y0 - 14); al.forEach((a, k) => { const yy = y0 + k * (gh - 18) / 3; ctx.fillStyle = cols[k]; ctx.fillRect(bx + 40, yy, (bw - 90) * a, (gh - 18) / 3 - 4); ctx.fillStyle = c.ink; ctx.textBaseline = "top"; ctx.fillText(`α5${NB[k] + 1}`, bx, yy); ctx.fillText(a.toFixed(2), bx + 46 + (bw - 90) * a, yy); }); });
+    $("#atNote").textContent = ctl.mode === "gcn" ? "A GCN mixes node 5 with nodes 2 and 4 using the same normalized weight (here 1/3 each): no notion of which neighbor matters more." : `Each head scores the neighbors with its own attention vector and a LeakyReLU, then normalizes with a softmax, so the coefficients of each head sum to 1. Edge widths on the left show the average over ${H.length} head${H.length > 1 ? "s" : ""}: α52 = ${avg[0].toFixed(2)}, α54 = ${avg[1].toFixed(2)}, α55 = ${avg[2].toFixed(2)}. The weights here are random, not trained: training would tune them.`;
+  }
+  ro.observe($("#atCv")); onRedraw(draw); draw();
+  // sentence attention with hand-made 2D word vectors
+  const T = ["The", "bank", "of", "the", "river", "was", "flooded"], V = [[.1, 0], [.9, .8], [0, .1], [.1, 0], [1, .55], [.2, .15], [.65, 1]];
+  let q = 1;
+  $("#sqTok").innerHTML = T.map((t, i) => `<button class="small" data-i="${i}" aria-pressed="${i === q}">${t}</button>`).join("");
+  $("#sqTok").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { q = +b.dataset.i; $("#sqTok").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", +x.dataset.i === q)); sq(); }));
+  function sq() {
+    const s = V.map(k => (V[q][0] * k[0] + V[q][1] * k[1]) * 4 / Math.SQRT2), a = softmax(s), { ctx, w, h } = setupCanvas($("#sqCv")), c = colors(), bw = (w - 20) / T.length;
+    ctx.clearRect(0, 0, w, h); ctx.font = `12px ${MONO}`; ctx.textAlign = "center";
+    a.forEach((v, i) => { const bh = (h - 50) * v / Math.max(...a); ctx.fillStyle = i === q ? c.gold : c.accent; ctx.fillRect(10 + i * bw + 6, h - 24 - bh, bw - 12, bh); ctx.fillStyle = c.ink; ctx.textBaseline = "top"; ctx.fillText(T[i], 10 + i * bw + bw / 2, h - 20); ctx.textBaseline = "bottom"; ctx.fillText(v.toFixed(2), 10 + i * bw + bw / 2, h - 26 - bh); });
+    $("#sqNote").textContent = `Query “${T[q]}”: weights α = softmax(q·k / √d) over all 7 words; they sum to 1, and the output is the weighted sum of the value vectors. With these toy vectors, “bank” attends mostly to “river” and “flooded,” the words that tell which bank is meant.`;
+  }
+  ro.observe($("#sqCv")); onRedraw(sq); sq();
+})();
+
+/* ---------- pointer decoding of a convex hull ---------- */
+(function pointerHull() {
+  const ctl = makeControls($("#phCtl"), [{ key: "n", id: "phN", label: "Points", min: 5, max: 40, step: 1, value: 12 }, { key: "tau", id: "phT", label: "Softness of the pointer τ", min: .05, max: 1, step: .05, value: .3, fmt: v => v.toFixed(2) }], k => { if (k === "n") make(); reset(); });
+  let rnd = mulberry32(6), P = [], S;
+  const make = () => { P = Array.from({ length: ctl.n }, () => [.05 + .9 * rnd(), .05 + .9 * rnd()]); };
+  // gift wrapping, counterclockwise from the lowest point: the next vertex makes the smallest left turn from the current direction
+  const turn = (d, v) => { let a = Math.atan2(v[1], v[0]) - Math.atan2(d[1], d[0]); while (a < -1e-9) a += 2 * Math.PI; return a; };
+  function scores() { const cur = S.seq[S.seq.length - 1]; return P.map((p, j) => { if (j === cur || (S.seq.includes(j) && j !== S.seq[0])) return -Infinity; return -turn(S.dir, [p[0] - P[cur][0], p[1] - P[cur][1]]) / ctl.tau; }); }
+  function reset() { const s = P.reduce((b, p, i) => p[1] < P[b][1] || (p[1] === P[b][1] && p[0] < P[b][0]) ? i : b, 0); S = { seq: [s], dir: [1, 0], done: false, last: null }; draw(); }
+  function step() {
+    if (S.done) return; const sc = scores(), fin = sc.map(v => isFinite(v) ? v : -1e9), pr = softmax(fin), j = pr.indexOf(Math.max(...pr)); S.last = pr;
+    if (j === S.seq[0]) { S.done = true; S.eos = true; return draw(); }
+    const cur = S.seq[S.seq.length - 1]; S.dir = [P[j][0] - P[cur][0], P[j][1] - P[cur][1]]; S.seq.push(j); draw();
+  }
+  function draw() {
+    const ax = axes($("#phCv"), { x0: 0, x1: 1, y0: 0, y1: 1, bare: true, equal: true, pad: { l: 10, r: 10, t: 10, b: 10 } }), { ctx, X, Y, c } = ax;
+    if (S.seq.length > 1) { ctx.strokeStyle = c.accent; ctx.lineWidth = 2.5; ctx.beginPath(); S.seq.forEach((i, k) => k ? ctx.lineTo(X(P[i][0]), Y(P[i][1])) : ctx.moveTo(X(P[i][0]), Y(P[i][1]))); if (S.done) ctx.closePath(); ctx.stroke(); }
+    P.forEach((p, i) => { dot(ctx, X(p[0]), Y(p[1]), 9, S.seq.includes(i) ? c.gold : c.surface, c.ink); ctx.fillStyle = c.ink; ctx.font = `600 10px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(i + 1, X(p[0]), Y(p[1])); });
+    const b = setupCanvas($("#phBar")), bc = b.ctx; bc.clearRect(0, 0, b.w, b.h); bc.font = `10px ${MONO}`;
+    if (S.last) { const n = P.length, bw = (b.w - 20) / n, mx = Math.max(...S.last); S.last.forEach((v, i) => { const hh = (b.h - 40) * v / mx; bc.fillStyle = v === mx ? c.gold : c.accent; bc.fillRect(10 + i * bw + 1, b.h - 18 - hh, bw - 2, hh); bc.fillStyle = c.muted; bc.textAlign = "center"; bc.textBaseline = "top"; bc.fillText(i + 1, 10 + i * bw + bw / 2, b.h - 15); }); bc.fillStyle = c.ink; bc.textAlign = "left"; bc.textBaseline = "top"; bc.fillText(`pointer distribution at step ${S.seq.length - (S.done ? 0 : 1)}: probability of each input point`, 10, 2); }
+    stats($("#phStats"), [["Output so far", S.seq.map(i => i + 1).join(" → ") + (S.eos ? " → <eos>" : "")], ["Hull vertices", S.done ? S.seq.length : "…"], ["Points inside", S.done ? P.length - S.seq.length : "…"]]);
+    $("#phNote").textContent = S.done ? `The sequence returned to point ${S.seq[0] + 1}, so the decoder emits the end token. The ${S.seq.length} pointed-to points are the hull; the other ${P.length - S.seq.length} lie inside it.` : "Each step is a softmax over the input points, as in a pointer network. Here the scores favor the point with the smallest left turn (gift wrapping), so the argmax always traces the true hull; a trained network has to learn such scores from examples, which is why its accuracy in the table is below 100%. Lower τ makes the distribution sharper.";
+  }
+  $("#phStep").addEventListener("click", step);
+  $("#phRun").addEventListener("click", () => { let k = 0; while (!S.done && k++ < 200) step(); });
+  $("#phNew").addEventListener("click", () => { make(); reset(); });
+  ["phCv", "phBar"].forEach(i => ro.observe($("#" + i))); onRedraw(draw); make(); reset();
+})();
+
+/* ---------- edge probabilities, beam search and the exact optimum ---------- */
+(function tspPipeline() {
+  const ctl = makeControls($("#tsCtl"), [
+    { key: "n", id: "tsN", label: "Cities (exact optimum up to 12)", min: 6, max: 12, step: 1, value: 10 },
+    { key: "k", id: "tsK", label: "Neighbors scored per city", min: 2, max: 8, step: 1, value: 4 },
+    { key: "tau", id: "tsT", label: "Score temperature", min: .02, max: .4, step: .02, value: .1, fmt: v => v.toFixed(2) },
+    { key: "w", id: "tsW", label: "Beam width", min: 1, max: 30, step: 1, value: 5 }
+  ], k => { if (k === "n") make(); decode(); });
+  let rnd = mulberry32(2), P = [], prob, res = null, opt = null;
+  const D = (a, b) => Math.hypot(P[a][0] - P[b][0], P[a][1] - P[b][1]), L = t => t.reduce((s, v, i) => s + D(v, t[(i + 1) % t.length]), 0);
+  function make() { P = Array.from({ length: ctl.n }, () => [rnd(), rnd()]); opt = heldKarp(); }
+  function heldKarp() {
+    const n = P.length, FULL = 1 << n, dp = new Float64Array(FULL * n).fill(Infinity), par = new Int8Array(FULL * n).fill(-1); dp[1 * n + 0] = 0;
+    for (let m = 1; m < FULL; m += 2) for (let j = 0; j < n; j++) { const v = dp[m * n + j]; if (!isFinite(v)) continue; for (let k = 1; k < n; k++) if (!(m & (1 << k))) { const nm = m | (1 << k), nv = v + D(j, k); if (nv < dp[nm * n + k]) { dp[nm * n + k] = nv; par[nm * n + k] = j; } } }
+    let best = Infinity, last = -1; for (let j = 1; j < n; j++) { const v = dp[(FULL - 1) * n + j] + D(j, 0); if (v < best) { best = v; last = j; } }
+    const t = []; let m = FULL - 1, j = last; while (j >= 0) { t.push(j); const pj = par[m * n + j]; m ^= 1 << j; j = pj; } return t.reverse();
+  }
+  function decode() {
+    const n = P.length; prob = Array.from({ length: n }, () => new Float64Array(n));
+    for (let i = 0; i < n; i++) { const near = [...Array(n).keys()].filter(j => j !== i).sort((a, b) => D(i, a) - D(i, b)).slice(0, ctl.k), z = near.map(j => Math.exp(-D(i, j) / ctl.tau)), s = z.reduce((a, b) => a + b, 0); near.forEach((j, q) => prob[i][j] = z[q] / s); }
+    const search = W => { let beams = [[[0], 0]]; for (let s = 0; s < n - 1; s++) { const cand = []; beams.forEach(([t, sc]) => { for (let j = 0; j < n; j++) if (!t.includes(j)) cand.push([t.concat(j), sc + Math.log(prob[t[t.length - 1]][j] + 1e-9)]); }); beams = cand.sort((a, b) => b[1] - a[1]).slice(0, W); } return beams.reduce((b, x) => L(x[0]) < L(b[0]) ? x : b)[0]; };
+    res = { greedy: search(1), beam: search(ctl.w) }; draw();
+  }
+  function draw() {
+    const ax = axes($("#tsCv"), { x0: -.03, x1: 1.03, y0: -.03, y1: 1.03, bare: true, equal: true, pad: { l: 8, r: 8, t: 8, b: 8 } }), { ctx, X, Y, c } = ax, n = P.length;
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { const p = Math.max(prob[i][j], prob[j][i]); if (p < .02) continue; ctx.strokeStyle = c.ink; ctx.globalAlpha = .1 + .6 * p; ctx.lineWidth = 1 + 5 * p; ctx.beginPath(); ctx.moveTo(X(P[i][0]), Y(P[i][1])); ctx.lineTo(X(P[j][0]), Y(P[j][1])); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    const path = (t, col, lw, dash) => { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.setLineDash(dash); ctx.beginPath(); t.forEach((v, i) => i ? ctx.lineTo(X(P[v][0]), Y(P[v][1])) : ctx.moveTo(X(P[v][0]), Y(P[v][1]))); ctx.closePath(); ctx.stroke(); ctx.setLineDash([]); };
+    path(opt, c.good, 2.5, [7, 5]); path(res.beam, c.gold, 3, []);
+    P.forEach((p, i) => { dot(ctx, X(p[0]), Y(p[1]), 9, i === 0 ? c.accent : c.surface, c.ink); ctx.fillStyle = i === 0 ? "#fff" : c.ink; ctx.font = `600 10px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(i + 1, X(p[0]), Y(p[1])); });
+    const lo = L(opt), g = L(res.greedy), b = L(res.beam);
+    stats($("#tsStats"), [["Greedy decoding", g.toFixed(3)], [`Beam search (width ${ctl.w})`, b.toFixed(3)], ["Optimal (Held-Karp)", lo.toFixed(3)]]);
+    $("#tsTbl").innerHTML = `<thead><tr><th>Decoder</th><th class="n">Tour</th><th class="n">Gap to optimal</th></tr></thead><tbody>` + [["Greedy (beam width 1)", g], [`Beam search, width ${ctl.w}`, b], ["Held-Karp dynamic programming (exact)", lo]].map(([nm, v]) => `<tr class="${Math.abs(v - lo) < 1e-9 ? "best" : ""}"><td>${nm}</td><td class="n">${v.toFixed(4)}</td><td class="n">${((v / lo - 1) * 100).toFixed(1)}%</td></tr>`).join("") + "</tbody>";
+  }
+  $("#tsRun").addEventListener("click", decode);
+  $("#tsNew").addEventListener("click", () => { make(); decode(); });
+  ro.observe($("#tsCv")); onRedraw(draw); make(); decode();
+})();
+
+/* ---------- amortized optimization on the circle ---------- */
+(function amortized() {
+  const K = 4, wrap = a => Math.abs(((a + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI);
+  const ctl = makeControls($("#amCtl"), [{ key: "p", id: "amP", label: "Unseen test problem", min: 1, max: 16, step: 1, value: 1 }, { key: "it", id: "amI", label: "Training steps", min: 500, max: 10000, step: 500, value: 3000 }], k => { if (k === "p") draw(); });
+  const rnd = mulberry32(0), make = () => { const ys = Array.from({ length: K }, () => -Math.PI + 2 * Math.PI * rnd()); return ys.map(Math.cos).concat(ys.map(Math.sin), Array.from({ length: K }, () => .7 * rnd())); };
+  const TRAIN = Array.from({ length: 64 }, make), TEST = Array.from({ length: 16 }, make);
+  const f = (t, p) => { const c = [0, 1, 2, 3].map(k => .5 * wrap(t - Math.atan2(p[K + k], p[k])) ** 2 + p[2 * K + k]), m = Math.min(...c); return m - .5 * Math.log(c.reduce((s, v) => s + Math.exp(-(v - m) / .5), 0)); };
+  const solve = p => { let b = 0, bv = Infinity; for (let i = 0; i < 2000; i++) { const t = -Math.PI + 2 * Math.PI * i / 2000, v = f(t, p); if (v < bv) { bv = v; b = t; } } return b; };
+  const OPT_TR = TRAIN.slice(0, 16).map(solve), OPT_TE = TEST.map(solve);
+  let net, steps = 0;
+  const pred = p => { const z = net.forward(p); return Math.atan2(z[1], z[0]); };
+  function reset() { net = new MLP([3 * K, 64, 2], mulberry32(1)); steps = 0; draw(); }
+  function train(n) {
+    const r = mulberry32(steps + 7);
+    for (let s = 0; s < n; s++, steps++) { const p = TRAIN[Math.floor(r() * TRAIN.length)], z = net.forward(p), th = Math.atan2(z[1], z[0]), e = 1e-4, g = (f(th + e, p) - f(th - e, p)) / (2 * e), r2 = z[0] * z[0] + z[1] * z[1], G = net.grads(); net.forward(p); net.backward([g * -z[1] / r2, g * z[0] / r2], G); for (let l = 0; l < net.L; l++) { net.W[l].forEach((_, i) => net.W[l][i] -= .01 * G.W[l][i]); net.b[l].forEach((_, i) => net.b[l][i] -= .01 * G.b[l][i]); } }
+  }
+  const gap = (Ps, O, guess) => Ps.reduce((s, p, i) => s + f(guess(p, i), p) - f(O[i], p), 0) / Ps.length;
+  function draw() {
+    const p = TEST[ctl.p - 1], ax = axes($("#amCv"), { x0: -Math.PI, x1: Math.PI, y0: -.4, y1: 4, xlab: "θ (radians)", ylab: "f(θ)", xd: 1, yd: 1 }), { ctx, X, Y, c } = ax;
+    ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i <= 400; i++) { const t = -Math.PI + 2 * Math.PI * i / 400; i ? ctx.lineTo(X(t), Y(f(t, p))) : ctx.moveTo(X(t), Y(f(t, p))); } ctx.stroke();
+    const o = OPT_TE[ctl.p - 1], q = pred(p); dot(ctx, X(o), Y(f(o, p)), 7, c.good, c.bg); dot(ctx, X(q), Y(f(q, p)), 7, c.gold, c.bg);
+    const rr = mulberry32(42);
+    stats($("#amStats"), [["Training steps", steps], ["Gap on this problem", (f(q, p) - f(o, p)).toFixed(3)], ["Mean gap, trained problems", gap(TRAIN.slice(0, 16), OPT_TR, pred).toFixed(3)], ["Mean gap, unseen problems", gap(TEST, OPT_TE, pred).toFixed(3)], ["Mean gap, random guess", gap(TEST, OPT_TE, () => -Math.PI + 2 * Math.PI * rr()).toFixed(3)]]);
+    $("#amNote").textContent = steps ? "Green: the true minimizer (found by searching 2,000 angles); gold: the network’s one-shot prediction. Training uses f(model(p)) as the loss, as Listing 11.3 does, so no solved examples are needed." : "Before training, predictions are arbitrary. Press Train.";
+  }
+  $("#amTrain").addEventListener("click", () => { train(ctl.it); draw(); });
+  $("#amReset").addEventListener("click", reset);
+  ro.observe($("#amCv")); onRedraw(draw); reset();
+})();
+
+codeTabs({ n: "A multilayer perceptron trained by backpropagation on two moons, plus ReLU and LeakyReLU", g: "Listing 11.1’s players graph and a two-layer GCN trained on the karate club with 4 labels", a: "GCN vs. multi-head graph attention for node 5 of Figure 11.9, and dot-product attention", h: "Jarvis march and Graham scan: the pointer targets for the convex hull", t: "Edge probabilities, greedy and beam-search decoding, and the exact Held-Karp tour", m: "Amortized optimization: learning to predict minimizers on the circle" }, "n");
+
+/* ---------- side menu ---------- */
+(function sideMenu() {
+  const toc = $("#toc"), btn = $("#tocBtn"), scrim = $("#scrim");
+  // read each link's #hash, not its raw href: hosts such as htmlpreview rewrite in-page links to full URLs
+  const links = [...toc.querySelectorAll("nav a")].filter(a => a.hash);
+  const targets = links.map(a => document.getElementById(decodeURIComponent(a.hash.slice(1))));
+  function setOpen(o) { toc.classList.toggle("open", o); scrim.classList.toggle("show", o); btn.setAttribute("aria-expanded", String(o)); }
+  btn.addEventListener("click", () => setOpen(!toc.classList.contains("open")));
+  scrim.addEventListener("click", () => setOpen(false));
+  links.forEach(a => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setOpen(false); });
+  let ticking = false, lastCur = -1;
+  function spy() {
+    ticking = false; let cur = 0;
+    targets.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= 140) cur = i; });
+    if (cur === lastCur) return; lastCur = cur;
+    links.forEach(a => a.classList.remove("active")); toc.querySelectorAll("li.current").forEach(l => l.classList.remove("current"));
+    const a = links[cur], topLi = a && a.closest("nav > ol > li");
+    if (!topLi) return;
+    a.classList.add("active"); topLi.classList.add("current"); topLi.querySelector(":scope > a").classList.add("active");
+    const y = a.offsetTop; if (y < toc.scrollTop + 60 || y > toc.scrollTop + toc.clientHeight - 60) toc.scrollTop = y - toc.clientHeight / 3;
+  }
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+  spy();
+})();
+
+</script>
+</body>
+</html>

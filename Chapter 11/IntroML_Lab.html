@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive companion to Chapter 11 (Supervised and unsupervised learning): machine learning fundamentals of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
+<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<title>Intro to ML Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+
+/* Layout: a long-form lab notebook. Reading column for concepts, full-width "bench" panels for each simulation. */
+:root{
+  --bg:#F5F8FA; --surface:#FFFFFF; --sunk:#EAF0F4; --ink:#10212D; --muted:#53687A; --line:#D3DEE6; --grid:#E3EAF0;
+  --accent:#00629B; --accent-ink:#FFFFFF; --accent-soft:#DCEBF5; --gold:#C76E12; --gold-soft:#FBEBD9;
+  --s1:#00629B; --s2:#C76E12; --s3:#2E8B57; --s4:#9B3FA6;
+  --good:#2E8B57; --bad:#B4372E;
+  --map-water:#D3E3EC; --map-land:#FAFBFA; --map-state:#C7D3DB; --map-border:#93A6B4;
+  --code-bg:#0E1B25; --code-ink:#D9E6EF; --code-dim:#7F97A8;
+  --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", Consolas, "Courier New", monospace;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0A141B; --surface:#111E28; --sunk:#0D1820; --ink:#E3ECF2; --muted:#93A7B6; --line:#24384A; --grid:#1B2B38;
+  --accent:#55B4EA; --accent-ink:#06121A; --accent-soft:#12324A; --gold:#F0A257; --gold-soft:#3A2814;
+  --s1:#55B4EA; --s2:#F0A257; --s3:#5CC48A; --s4:#D08ADB; --good:#5CC48A; --bad:#F07D72; --map-water:#0B1A24; --map-land:#1A2933; --map-state:#2F4250; --map-border:#4F6676;
+  --code-bg:#08121A; --code-ink:#D9E6EF; --code-dim:#7F97A8; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0A141B; --surface:#111E28; --sunk:#0D1820; --ink:#E3ECF2; --muted:#93A7B6; --line:#24384A; --grid:#1B2B38;
+  --accent:#55B4EA; --accent-ink:#06121A; --accent-soft:#12324A; --gold:#F0A257; --gold-soft:#3A2814;
+  --s1:#55B4EA; --s2:#F0A257; --s3:#5CC48A; --s4:#D08ADB; --good:#5CC48A; --bad:#F07D72; --map-water:#0B1A24; --map-land:#1A2933; --map-state:#2F4250; --map-border:#4F6676;
+  --code-bg:#08121A; --code-ink:#D9E6EF; --code-dim:#7F97A8; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prose{max-width:72ch}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h2{font-size:clamp(1.7rem,3.2vw,2.3rem);font-weight:700}
+h3{font-size:1.3rem;font-weight:600;margin-top:2.2rem}
+p{margin:.7rem 0}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+.num{font-variant-numeric:tabular-nums}
+
+/* side menu */
+.toc{position:fixed;top:0;left:0;bottom:0;width:264px;overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:calc(1.4rem + env(safe-area-inset-top,0px)) .9rem calc(1.5rem + env(safe-area-inset-bottom,0px)) max(.9rem,env(safe-area-inset-left,0px));z-index:20;scrollbar-width:thin}
+.toc-brand{padding:0 .5rem 1rem;margin-bottom:.8rem;border-bottom:1px solid var(--line)}
+.toc-brand b{display:block;font-family:var(--f-display);font-size:1.25rem}
+.toc-brand span{font-size:.78rem;color:var(--muted)}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc > nav > ol > li{margin-bottom:.15rem}
+.toc nav a{display:flex;gap:.55rem;align-items:baseline;text-decoration:none;color:var(--muted);font-size:.93rem;padding:.38rem .55rem;border-radius:7px;line-height:1.35}
+.toc nav a b{font-family:var(--f-mono);font-weight:500;font-size:.72rem;min-width:1rem;color:var(--muted)}
+.toc nav a:hover{color:var(--ink);background:var(--sunk)}
+.toc nav a.active{color:var(--ink);background:var(--accent-soft);font-weight:600}
+.toc nav a.active b{color:var(--accent)}
+.toc ol ol{display:none;margin:.15rem 0 .45rem 1.45rem;padding-left:.2rem;border-left:1px solid var(--line)}
+.toc li.current > ol{display:block}
+.toc ol ol a{font-size:.84rem;padding:.24rem .6rem}
+.toc ol ol a.active{background:none;color:var(--accent);font-weight:600}
+.toc-foot{margin-top:1.2rem;padding:.8rem .5rem 0;border-top:1px solid var(--line);font-size:.76rem;color:var(--muted);line-height:1.5}
+.toc-foot a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px}
+.toc-foot a:hover{text-decoration-color:var(--accent)}
+.theme-switch{display:flex;gap:2px;margin-top:.8rem;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:2px}
+.theme-switch button{flex:1;border:0;background:none;font-size:.76rem;font-weight:500;padding:.32rem .3rem;border-radius:6px;color:var(--muted)}
+.theme-switch button:hover{color:var(--ink)}
+.theme-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.main{margin-left:264px}
+@media (min-width:1280px){ .main .wrap{margin-left:0;padding-left:max(clamp(32px,3.5vw,56px),env(safe-area-inset-left,0px))} }
+.toc-toggle{display:none}
+.scrim{display:none}
+@media (max-width:1279px){
+  .main{margin-left:0}
+  .toc{width:min(300px,86vw);transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.25)}
+  .toc.open{transform:none}
+  .toc-toggle{display:inline-flex;align-items:center;gap:.45rem;position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:21;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:.65rem 1rem;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+  .scrim.show{display:block;position:fixed;inset:0;background:rgba(5,12,18,.45);z-index:19}
+}
+@media (prefers-reduced-motion:reduce){ .toc{transition:none} }
+section.chapter,h3[id],.bench[id],.two[id],.opgrid[id]{scroll-margin-top:16px}
+
+/* hero */
+header.hero{padding-block:3rem 2rem;border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:2.5rem;align-items:center}
+.hero h1{font-size:clamp(2.3rem,5.4vw,3.9rem);font-weight:700;letter-spacing:-.01em}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+.hero .lede{font-size:1.12rem;color:var(--muted);max-width:52ch}
+.cite{font-size:.86rem;color:var(--muted);border-left:3px solid var(--accent);padding-left:.8rem;margin-top:1.2rem}
+.hero-canvas{width:100%;aspect-ratio:5/4;max-width:100%;border-radius:var(--radius);background:var(--sunk);display:block}
+.variants{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.chip{display:inline-flex;gap:.35rem;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.2rem .7rem;font-size:.84rem;text-decoration:none;color:var(--ink)}
+.chip b{font-family:var(--f-mono);font-weight:500;color:var(--accent)}
+
+section.chapter{padding-block:3.2rem 1rem;border-bottom:1px solid var(--line)}
+section.chapter > .wrap > .eyebrow{display:block;margin-bottom:.4rem}
+
+/* bench (simulation panel) */
+.bench{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-block:1.4rem;overflow:hidden}
+.bench-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;padding:.9rem 1.1rem;border-bottom:1px solid var(--line);background:var(--sunk)}
+.bench-head h4{margin:0;font-family:var(--f-display);font-size:1.12rem}
+.bench-head .eyebrow{font-size:.68rem}
+.bench-body{display:grid;grid-template-columns:270px minmax(0,1fr);gap:0}
+.bench-body.wide-right{grid-template-columns:minmax(0,1fr) 300px}
+.side{padding:1rem 1.1rem;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:.75rem;min-width:0}
+.wide-right .side{border-right:0;border-left:1px solid var(--line)}
+.stage{padding:1rem 1.1rem;min-width:0;display:flex;flex-direction:column;gap:.9rem}
+.ctl{display:flex;flex-direction:column;gap:.15rem}
+.ctl label{display:flex;justify-content:space-between;gap:.5rem;font-size:.84rem;font-weight:500}
+.ctl output{font-family:var(--f-mono);font-size:.82rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.ctl small{font-size:.74rem;color:var(--muted);line-height:1.35}
+.ctl-check label{justify-content:flex-start;align-items:center;font-weight:400}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=text],input[type=number]{font:inherit;font-size:.88rem;padding:.35rem .45rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:100%}
+.btns{display:flex;gap:.45rem;flex-wrap:wrap}
+button{font:inherit;font-size:.86rem;font-weight:500;padding:.45rem .85rem;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.small{font-size:.78rem;padding:.3rem .6rem}
+.group-label{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line);padding-top:.6rem;margin-top:.2rem}
+canvas{display:block;width:100%;max-width:100%}
+.cv-land{aspect-ratio:1/1;border-radius:8px;background:var(--sunk);touch-action:none}
+.cv-chart{height:170px;border-radius:8px;background:var(--sunk)}
+.cv-map{aspect-ratio:16/9;border-radius:8px;background:var(--sunk)}
+.stage-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem}
+.stage-grid > div{min-width:0;display:flex;flex-direction:column;gap:.7rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem}
+.stat{background:var(--sunk);border-radius:8px;padding:.45rem .6rem}
+.stat span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat b{font-family:var(--f-mono);font-weight:500;font-size:.95rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.3rem;vertical-align:-1px}
+.legend i.sq{border-radius:2px}
+.cap{font-size:.8rem;color:var(--muted);margin:0}
+
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;padding:1rem 1.1rem;border-top:1px solid var(--line)}
+.preset{text-align:left;display:flex;flex-direction:column;gap:.2rem;padding:.6rem .75rem;background:var(--bg)}
+.preset b{font-size:.86rem}
+.preset span{font-size:.78rem;color:var(--muted);font-weight:400;line-height:1.4}
+
+/* math and tables */
+.eq{font-family:var(--f-display);font-size:1.15rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1.1rem;margin:1rem 0;overflow-x:auto;white-space:nowrap}
+.eq i{font-style:italic}
+.eq .tag{float:right;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);margin-left:1rem}
+.eq .t-in{color:var(--muted)} .eq .t-cog{color:var(--accent)} .eq .t-soc{color:var(--gold)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:.42rem .65rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;background:var(--sunk);font-size:.78rem}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.hl td{background:var(--gold-soft)}
+.pseudo{background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);padding:1rem 1.2rem;font-family:var(--f-mono);font-size:.86rem;line-height:1.65;overflow-x:auto;white-space:pre;margin:1rem 0}
+.pseudo .k{color:#7CC4F0} .pseudo .c{color:var(--code-dim)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:start}
+.two > *{min-width:0}
+.cards3{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.2rem 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
+.card h5{margin:0 0 .3rem;font-size:.95rem}
+.card p{margin:0;font-size:.88rem;color:var(--muted)}
+.steps{list-style:none;padding:0;margin:1rem 0;counter-reset:s;display:grid;gap:.4rem}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2rem 1fr;gap:.6rem;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.5rem .7rem;font-size:.92rem}
+.steps li::before{content:counter(s);font-family:var(--f-mono);font-size:.8rem;color:var(--accent-ink);background:var(--accent);border-radius:50%;width:1.6rem;height:1.6rem;display:grid;place-items:center}
+.steps li.loop{border-style:dashed}
+.note{background:var(--accent-soft);border-radius:8px;padding:.7rem .9rem;font-size:.88rem;margin:1rem 0}
+.note.warn{background:var(--gold-soft)}
+blockquote{font-family:var(--f-display);font-style:italic;font-size:1.2rem;border-left:3px solid var(--gold);margin:1.4rem 0;padding:.2rem 0 .2rem 1rem}
+blockquote footer{font-family:var(--f-body);font-style:normal;font-size:.85rem;color:var(--muted);margin-top:.4rem}
+
+/* binary + permutation widgets */
+.bits{display:flex;gap:4px;flex-wrap:wrap}
+.bit{width:2rem;height:2.3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface);font-size:1rem}
+.bit.on{background:var(--accent-soft)}
+.bit.sel{outline:2px solid var(--gold);outline-offset:1px}
+.bit.changed{background:var(--gold);color:#fff}
+.calc{font-family:var(--f-mono);font-size:.86rem;line-height:1.8;background:var(--sunk);border-radius:8px;padding:.7rem .9rem;overflow-x:auto;white-space:nowrap}
+.perm{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.perm .cell{min-width:2.1rem;height:2.1rem;padding:0 .3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+.perm .cell.a{background:var(--accent-soft);border-color:var(--accent)}
+.perm .cell.b{background:var(--gold-soft);border-color:var(--gold)}
+.swap{display:inline-block;font-family:var(--f-mono);font-size:.86rem;border:1px solid var(--line);border-radius:5px;padding:.15rem .45rem;margin:2px;background:var(--surface)}
+.swap.now{background:var(--gold);color:#fff;border-color:var(--gold)}
+.swap.dim{opacity:.45;text-decoration:line-through}
+.opgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.op{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.op h4{margin:0;font-family:var(--f-display);font-size:1.05rem}
+.portfolio{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.35rem}
+.proj{font-size:.76rem;border:1px solid var(--line);border-radius:6px;padding:.3rem .45rem;background:var(--surface);display:flex;justify-content:space-between;gap:.3rem}
+.proj.in{background:var(--accent-soft);border-color:var(--accent)}
+.proj span{font-family:var(--f-mono);color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.bar > div{height:100%;background:var(--accent)}
+.bar.over > div{background:var(--bad)}
+.tour{font-size:.8rem;color:var(--muted);line-height:1.5}
+
+/* code */
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:0 1.1rem;background:var(--sunk)}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;padding:.7rem .8rem;color:var(--muted)}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);font-family:var(--f-mono);font-size:.8rem;line-height:1.6;padding:1rem 1.2rem;overflow:auto;max-height:560px}
+pre.code .cm{color:var(--code-dim)} pre.code .kw{color:#7CC4F0} pre.code .st{color:#E8B572} pre.code .nm{color:#9ED7A8}
+.code-bar{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.7rem 1.1rem;border-bottom:1px solid var(--line)}
+.colab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.7rem;margin:1rem 0}
+.colab{display:flex;flex-direction:column;gap:.25rem;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.75rem .9rem}
+.colab:hover{border-color:var(--accent)}
+.colab b{font-size:.9rem}
+.colab span{font-size:.78rem;color:var(--muted)}
+.colab em{font-style:normal;font-family:var(--f-mono);font-size:.7rem;color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
+.runbox{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;background:var(--sunk);border-radius:var(--radius);padding:.8rem 1rem;margin:1.2rem 0;font-size:.88rem}
+.runbox b{margin-right:.3rem}
+.colab-btn{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:500;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:.25rem .7rem}
+.colab-btn::before{content:"";width:.7rem;height:.7rem;border-radius:50%;background:var(--gold)}
+.zoom{display:grid;gap:.7rem}
+.zoom .card h5{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline}
+.zoom .card h5 span{font-family:var(--f-mono);font-size:.74rem;font-weight:500;color:var(--muted)}
+.zoom .card.ex{border-left:4px solid var(--s2)}
+.zoom .card.it{border-left:4px solid var(--s1)}
+.dspace{position:relative;padding:1.7rem 0 1.6rem;margin-inline:.5rem}
+.dspace .track{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--s2),var(--s1))}
+.dspace .tick{position:absolute;top:0;transform:translateX(-50%);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.dspace .end{position:absolute;bottom:0;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dspace .mark{position:absolute;top:1.32rem;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transition:left .15s}
+@media (prefers-reduced-motion:reduce){ .dspace .mark{transition:none} }
+@media (max-width:600px){ .dspace .tick.mid{display:none} }
+footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
+
+@media (max-width:900px){
+  .hero-grid,.two,.stage-grid{grid-template-columns:1fr}
+  .bench-body,.bench-body.wide-right{grid-template-columns:1fr}
+  .side{border-right:0;border-bottom:1px solid var(--line)}
+  .wide-right .side{border-left:0;border-top:1px solid var(--line);border-bottom:0}
+  .cards3,.opgrid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto!important} }
+
+/* machine learning lab additions */
+.cv-sq{aspect-ratio:4/3;border-radius:8px;background:var(--sunk)}
+.mono{font-family:var(--f-mono)}
+.ttab td,.ttab th{padding:.3rem .5rem;font-size:.82rem}
+tr.best td{background:var(--accent-soft)}
+tr.dim td{color:var(--muted)}
+.legend-row{display:flex;gap:.9rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);align-items:center}
+.legend-row i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.3rem;vertical-align:-1px}
+.flow{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:1rem 0}
+.flow span{font-size:.82rem;padding:.35rem .6rem;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
+.flow i{color:var(--muted);font-style:normal}
+.matrix{font-family:var(--f-mono);font-size:.78rem;border-collapse:collapse}
+.matrix td{padding:.15rem .35rem;text-align:right;border:1px solid var(--line)}
+.matrix td.on{background:var(--accent-soft)}
+.kbd{font-family:var(--f-mono);font-size:.8rem;border:1px solid var(--line);border-radius:4px;padding:0 .3rem;background:var(--surface)}
+
+</style>
+</head>
+<body>
+<aside class="toc" id="toc" aria-label="Contents">
+  <div class="toc-brand"><b>Intro to ML Lab</b><span>Interactive companion to Part V</span>
+    <div class="theme-switch" role="group" aria-label="Color theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="system">System</button></div></div>
+  <nav><ol>
+    <li><a href="#top"><b>0</b>Overview</a></li>
+    <li><a href="#ai"><b>1</b>AI in daily life</a></li>
+    <li><a href="#learning"><b>2</b>What is learning?</a></li>
+    <li><a href="#fitting"><b>3</b>Learning as optimization</a></li>
+    <li><a href="#paradigms"><b>4</b>Learning paradigms</a></li>
+    <li><a href="#procedure"><b>5</b>The ML procedure</a></li>
+    <li><a href="#ml4co"><b>6</b>ML for optimization</a><ol>
+      <li><a href="#configure">Learning to configure</a></li>
+      <li><a href="#construct">Construct or improve</a></li></ol></li>
+    <li><a href="#python"><b>7</b>Python and Colab</a><ol>
+      <li><a href="#notebooks">Notebooks</a></li>
+      <li><a href="#code">From-scratch code</a></li></ol></li>
+    <li><a href="#summary"><b>8</b>Summary</a></li>
+  </ol></nav>
+  <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Part V, Machine learning-based methods.</div>
+</aside>
+<button class="toc-toggle" id="tocBtn" aria-controls="toc" aria-expanded="false">☰ Contents</button>
+<div class="scrim" id="scrim"></div>
+<div class="main">
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Interactive companion · Part V · Machine learning-based methods</div>
+      <h1>Intro to ML <em>Lab</em></h1>
+      <p class="lede">Machine learning builds an internal model of the world from data instead of explicit rules. Under the hood, learning is itself an optimization problem: search a class of models for the one that minimizes a loss. Part V turns this around too, using learned models to solve optimization problems.</p>
+      <div class="variants">
+        <a class="chip" href="#fitting"><b>argmin</b> Learning as optimization</a>
+        <a class="chip" href="#paradigms"><b>?</b> Paradigms</a>
+        <a class="chip" href="#configure"><b>UCB</b> Learning to configure</a>
+        <a class="chip" href="#construct"><b>2-opt</b> Construct or improve</a>
+      </div>
+      <p class="cite">Based on Chapter 11, “Supervised and unsupervised learning,” Sections 11.1, 11.2 and 11.5, in Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning Publications, 2024 (ISBN 978-1633438835).</p>
+    </div>
+    <div>
+      <canvas id="heroCv" class="hero-canvas" aria-label="A neural network learning a decision boundary"></canvas>
+      <p class="cap" style="margin-top:.4rem" id="heroCap">A small neural network learning to separate two classes.</p>
+    </div>
+  </div>
+</header>
+
+<section class="chapter" id="ai">
+  <div class="wrap">
+    <span class="eyebrow">Part 1 · Section 11.1</span>
+    <h2>A day in the life of AI</h2>
+    <p class="prose">Artificial intelligence creates systems that behave intelligently, often inspired by biological intelligence. Its subfields include situation awareness, knowledge representation, reasoning, machine learning, data analytics, problem solving by search and optimization, and automation. Machine learning (ML) is the subfield that brought AI out of research labs and into everyday products.</p>
+    <div class="cards3">
+      <div class="card"><h5>At home</h5><p>Voice assistants, smart thermostats and smart meters that manage energy use.</p></div>
+      <div class="card"><h5>On the road</h5><p>Navigation with real-time traffic, shared mobility, driver assistance and, soon, self-driving vehicles.</p></div>
+      <div class="card"><h5>At work or school</h5><p>Personalized learning, summarization, translation, text and image generation, and optimization of resources and schedules.</p></div>
+      <div class="card"><h5>Shopping and health</h5><p>Visual and semantic search, recommendations, last-mile delivery, diagnosis support, lab automation and drug discovery.</p></div>
+    </div>
+    <div class="flow"><span>AI</span><i>⊃</i><span>Machine learning</span><i>⊃</i><span>Neural networks</span><i>⊃</i><span>Deep learning</span><i>⊃</i><span>Generative AI</span><i>⊃</i><span>Transformers</span><i>⊃</i><span>Large language models</span></div>
+  </div>
+</section>
+
+<section class="chapter" id="learning">
+  <div class="wrap">
+    <span class="eyebrow">Part 2 · Section 11.2</span>
+    <h2>What is learning?</h2>
+    <div class="two">
+      <div class="prose">
+        <p>“The goal of learning is to create an internal model or abstraction of the external world.” Stanislas Dehaene’s seven definitions of learning (<i>How We Learn</i>) are at the heart of today’s ML algorithms. Learning is:</p>
+        <ul><li>adjusting the parameters of a mental model;</li><li>exploring a combinatorial explosion;</li><li>minimizing errors;</li><li>exploring the space of possibilities;</li><li>optimizing a reward function;</li><li>restricting the search space;</li><li>projecting a priori hypotheses.</li></ul>
+        <p>Tom Mitchell’s definition: a program <b>learns</b> from experience <b>E</b> with respect to tasks <b>T</b> and performance measure <b>P</b> if its performance at T, measured by P, improves with E. For a spam filter, T is labeling email, P the fraction labeled correctly, and E a set of emails labeled by people.</p>
+        <p><b>The unreasonable effectiveness of data:</b> simple models trained on a lot of data often beat elaborate models trained on little data. Try it in Part 3.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tribe</th><th>Representation</th><th>Evaluation</th><th>Optimization</th></tr></thead>
+        <tbody>
+          <tr><td>Symbolists</td><td>Logic, rules, trees</td><td>Accuracy, information gain</td><td>Inverse deduction</td></tr>
+          <tr><td>Connectionists</td><td>Neural networks</td><td>Squared error</td><td>Gradient descent</td></tr>
+          <tr><td>Evolutionaries</td><td>Genetic programs</td><td>Fitness</td><td>Genetic search</td></tr>
+          <tr><td>Bayesians</td><td>Graphical models</td><td>Posterior probability</td><td>Probabilistic inference</td></tr>
+          <tr><td>Analogizers</td><td>Support vectors</td><td>Margin</td><td>Constrained optimization</td></tr>
+        </tbody></table><p class="cap" style="padding:.4rem .6rem">Figure 11.1: Domingos’ five ML schools of thought (<i>The Master Algorithm</i>). Every tribe needs an optimizer.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="fitting">
+  <div class="wrap">
+    <span class="eyebrow">Part 3 · Learning as optimization</span>
+    <h2>Fitting a model is minimizing a loss</h2>
+    <p class="prose">A supervised learner looks for a mapping f: X → y. Ideally it would minimize the expected loss over all data, f* = argmin E[L(y, f(X))]; in practice it minimizes the average loss on the training sample, S(f) = (1/n) Σ L(yᵢ, f(xᵢ)), over a <b>model class</b> F (here, polynomials of a given degree) with a <b>search strategy</b> (here, least squares). A model that is too simple underfits; one that is too flexible memorizes the noise and fails on new data. More data tames the flexible model.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Curve fitting playground</h4><span class="eyebrow">True function: sin(2πx) + noise</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="cfCtl"></div><div class="btns"><button id="cfNew">New sample</button></div><div class="stats" id="cfStats"></div></div>
+        <div class="stage"><canvas id="cfCv" class="cv-sq" style="aspect-ratio:16/9" aria-label="Polynomial fit"></canvas>
+          <div class="legend-row"><span><i style="background:var(--accent)"></i>training points</span><span><i style="background:var(--muted)"></i>true function</span><span><i style="background:var(--gold)"></i>fitted model</span></div>
+          <canvas id="cfChart" class="cv-chart" aria-label="Error vs degree"></canvas><p class="cap" id="cfNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="paradigms">
+  <div class="wrap">
+    <span class="eyebrow">Part 4 · Section 11.2, Figure 11.2</span>
+    <h2>Learning paradigms</h2>
+    <div class="two">
+      <div class="prose">
+        <p><b>Supervised learning</b> learns a mapping from labeled examples: <b>classification</b> (discrete classes, c(x) = argmax<sub>c</sub> f(x, c)) or <b>regression</b> (continuous values). <b>Unsupervised learning</b> finds structure in unlabeled data: <b>clustering</b> and <b>dimensionality reduction</b>. <b>Hybrid learning</b> mixes the two: <b>semi-supervised</b> learning labels a few examples and pseudo-labels the rest, while <b>self-supervised</b> learning creates its own tasks from the data. <b>Reinforcement learning</b> learns from rewards through trial and error.</p>
+        <p>The same two-class data, three ways: with all labels, with no labels, and with only a few labels.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Paradigm</th><th>Tasks</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td>Supervised</td><td>Classification, regression</td><td>Logistic regression, SVM, random forest, neural networks</td></tr>
+          <tr><td>Unsupervised</td><td>Clustering, dimensionality reduction</td><td>K-means, SOM, DBSCAN, CLARA, PCA, t-SNE, UMAP</td></tr>
+          <tr><td>Hybrid</td><td>Semi- and self-supervised</td><td>Co-training, label propagation, pseudo-labeling, contrastive learning</td></tr>
+          <tr><td>Reinforcement</td><td>Sequential decisions</td><td>Q-learning, SARSA, DQN, A2C, PPO, MCTS, world models</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>One dataset, three paradigms</h4><span class="eyebrow">Ringed points are labeled</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="pdCtl"></div><div class="btns"><button id="pdRun" class="primary">Learn</button><button id="pdNew">New data</button></div><div class="stats" id="pdStats"></div></div>
+        <div class="stage"><canvas id="pdCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Paradigm demo"></canvas><p class="cap" id="pdNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="procedure">
+  <div class="wrap">
+    <span class="eyebrow">Part 5 · The ML procedure</span>
+    <h2>When and how to use ML</h2>
+    <div class="flow"><span>1. Collect data</span><i>→</i><span>2. Prepare data</span><i>→</i><span>3. Choose a model</span><i>→</i><span>4. Train</span><i>→</i><span>5. Evaluate</span><i>→</i><span>6. Tune parameters</span><i>→</i><span>7. Predict</span></div>
+    <div class="cards3">
+      <div class="card"><h5>A pattern exists</h5><p>If the output is random with respect to the input, there is nothing to learn.</p></div>
+      <div class="card"><h5>No tractable model</h5><p>If an exact mathematical model is available and cheap, use it instead.</p></div>
+      <div class="card"><h5>Data is available</h5><p>With little data, consider augmentation, few-shot, active or transfer learning, or knowledge distillation.</p></div>
+      <div class="card"><h5>Deep learning</h5><p>Many-layered networks learn features from raw data, reducing hand-crafted feature engineering; geometric deep learning extends this to graphs.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="ml4co">
+  <div class="wrap">
+    <span class="eyebrow">Part 6 · Section 11.5</span>
+    <h2>Machine learning for optimization problems</h2>
+    <div class="two">
+      <div class="prose">
+        <p><b>Neural combinatorial optimization</b> applies ML (supervised sequence-to-sequence models, unsupervised models and reinforcement learning) to combinatorial optimization (CO). Bengio and co-authors describe three ways to combine them (Figure 11.14):</p>
+        <ul>
+          <li><b>End-to-end learning:</b> the model outputs solutions directly, as pointer networks do for the TSP (see the Supervised Learning Lab).</li>
+          <li><b>Learning to configure algorithms:</b> the model sets an algorithm’s parameters: a step size, SA’s temperature schedule, GA mutation rates, PSO coefficients, ACO evaporation.</li>
+          <li><b>ML alongside optimization:</b> the algorithm repeatedly asks the same model for decisions, as in deep-learning-assisted tree search.</li>
+        </ul>
+        <p>Surveys apply supervised and reinforcement learning to knapsack, maximal clique and independent set, maximum coverage, MaxCut, minimum vertex cover, SAT, the TSP and vehicle routing. Large language models can even act as optimizers (OPRO), and the NeurIPS ML4CO competition targets the control tasks inside solvers.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th></th><th>Heuristics</th><th>ML-based methods</th></tr></thead>
+        <tbody>
+          <tr><td>Knowledge</td><td>Hand-designed rules</td><td>Learned from data or experience</td></tr>
+          <tr><td>New instances</td><td>Solved from scratch</td><td>Training cost amortized over many instances</td></tr>
+          <tr><td>Speed at use time</td><td>Varies</td><td>Fast inference after training</td></tr>
+          <tr><td>Guarantees</td><td>Rarely</td><td>Rarely; quality depends on training data</td></tr>
+        </tbody></table><p class="cap" style="padding:.4rem .6rem">A 14-city TSP has (14 − 1)! = 6,227,020,800 directed tours: too many to enumerate quickly, which is why heuristics and learned policies matter.</p></div>
+    </div>
+    <h3 id="configure">Learning to configure: a bandit picks the step size</h3>
+    <p class="prose">A random search perturbs its current point with Gaussian noise of some step size and keeps the result if it is better. Which step size? Small steps refine but crawl; large steps jump between valleys but rarely refine. Here an upper-confidence-bound (UCB) bandit (Chapter 12) learns online which of four step sizes has been paying off, using each improvement as its reward, and the search runs on the Rastrigin function in 2D.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Configure a search while it runs</h4><span class="eyebrow">Minimize Rastrigin: brighter is lower</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="lcCtl"></div><div class="btns"><button id="lcRun" class="primary">Run</button><button id="lcAll">Compare 30 runs</button></div><div class="stats" id="lcStats"></div></div>
+        <div class="stage"><div class="stage-grid"><div><canvas id="lcCv" class="cv-sq" style="aspect-ratio:1/1" aria-label="Search path on Rastrigin"></canvas></div><div><canvas id="lcBar" class="cv-chart" aria-label="Pulls per step size"></canvas><div class="tbl-wrap"><table class="ttab" id="lcTbl"></table></div></div></div><p class="cap" id="lcNote"></p></div>
+      </div>
+    </div>
+    <h3 id="construct">Construct or improve: two ways to build a tour</h3>
+    <p class="prose">Learned routing methods either <b>construct</b> a solution step by step (learning to construct, like a pointer network choosing the next city) or <b>improve</b> a complete solution with local moves (learning to improve, like a learned 2-opt). Here are their classic, hand-designed counterparts: nearest-neighbor construction and 2-opt improvement.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Nearest neighbor, then 2-opt</h4></div>
+      <div class="bench-body">
+        <div class="side"><div id="ciCtl"></div><div class="btns"><button id="ciNN" class="primary">Construct</button><button id="ciOpt">Improve (2-opt)</button><button id="ciRand">Random tour</button><button id="ciNew">New cities</button></div><div class="stats" id="ciStats"></div></div>
+        <div class="stage"><canvas id="ciCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="TSP tour"></canvas><p class="cap" id="ciNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="python">
+  <div class="wrap">
+    <span class="eyebrow">Part 7 · Code</span>
+    <h2>Python in Google Colab</h2>
+    <p class="prose">Open the book’s Part V notebooks in Colab, or the Intro to ML Lab companion notebook with the from-scratch implementations below (Python and NumPy only).</p>
+    <h3 id="notebooks">Notebooks</h3>
+    <div class="colab-grid">
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/IntroML_Lab_Companion.ipynb"><em>All examples</em><b>Intro to ML Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.1_Tabular2Graph.ipynb"><em>Chapter 11</em><b>Listing 11.1</b><span>Tabular data to a graph</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.3_Amortized_optimization.ipynb"><em>Chapter 11</em><b>Listing 11.3</b><span>Amortized optimization</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.4_TSP_ML.ipynb"><em>Chapter 11</em><b>Listing 11.4</b><span>TSP with a pretrained GNN</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2012/Listing%2012.1_MAB.ipynb"><em>Chapter 12</em><b>Listing 12.1</b><span>Multi-armed bandits</span></a>
+    </div>
+    <h3 id="code">From-scratch implementations</h3>
+    <div class="bench">
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-code="f">Curve fitting</button>
+        <button role="tab" aria-selected="false" data-code="p">Paradigms</button>
+        <button role="tab" aria-selected="false" data-code="c">Learning to configure</button>
+        <button role="tab" aria-selected="false" data-code="t">Construct and improve</button>
+      </div>
+      <div class="code-bar">
+        <span class="cap" id="codeCap"></span>
+        <div class="btns"><button class="small primary" id="codeCopy">Copy code</button><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/IntroML_Lab_Companion.ipynb">Open all in Colab</a></div>
+      </div>
+      <pre class="code" id="code-f"><span class="cm"># Learning as optimization: choose f from a model class to minimize the sample loss (curve fitting)</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+rng = np.random.default_rng(<span class="nm">0</span>)
+truth = <span class="kw">lambda</span> x: np.sin(<span class="nm">2</span> * np.pi * x)
+x_test = np.linspace(<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">200</span>); y_test = truth(x_test)
+
+
+<span class="kw">def</span> sample(n):
+    x = rng.random(n)
+    <span class="kw">return</span> x, truth(x) + <span class="nm">0.25</span> * rng.standard_normal(n)
+
+
+<span class="kw">def</span> fit(x, y, degree):
+    <span class="st">"""Least squares: the f in the class of degree-d polynomials that minimizes the mean squared error."""</span>
+    V = np.vander(x, degree + <span class="nm">1</span>)
+    w, *_ = np.linalg.lstsq(V, y, rcond=<span class="kw">None</span>)
+    <span class="kw">return</span> <span class="kw">lambda</span> t: np.vander(t, degree + <span class="nm">1</span>) @ w
+
+
+mse = <span class="kw">lambda</span> f, x, y: np.mean((f(x) - y) ** <span class="nm">2</span>)
+x, y = sample(<span class="nm">15</span>)
+print(<span class="st">"15 training points"</span>)
+print(<span class="st">" degree  train MSE  test MSE"</span>)
+<span class="kw">for</span> d <span class="kw">in</span> (<span class="nm">1</span>, <span class="nm">3</span>, <span class="nm">5</span>, <span class="nm">9</span>, <span class="nm">12</span>):
+    f = fit(x, y, d)
+    print(f<span class="st">"  {d:2d}     {mse(f, x, y):.3f}     {mse(f, x_test, y_test):.3f}"</span>)      <span class="cm"># high degrees overfit</span>
+
+print(<span class="st">"degree 9 with more data (the unreasonable effectiveness of data)"</span>)
+<span class="kw">for</span> n <span class="kw">in</span> (<span class="nm">15</span>, <span class="nm">50</span>, <span class="nm">200</span>, <span class="nm">1000</span>):
+    xs, ys = sample(n)
+    print(f<span class="st">"  n = {n:4d}: test MSE {mse(fit(xs, ys, 9), x_test, y_test):.3f}"</span>)
+
+<span class="cm"># The same idea with gradient descent: a line y = a x + b fitted by minimizing the sample score S(f)</span>
+x, y = sample(<span class="nm">50</span>)
+a = b = <span class="nm">0.0</span>
+<span class="kw">for</span> step <span class="kw">in</span> range(<span class="nm">2000</span>):
+    err = a * x + b - y
+    a -= <span class="nm">0.5</span> * np.mean(err * x); b -= <span class="nm">0.5</span> * np.mean(err)
+print(f<span class="st">"gradient descent line: y = {a:.2f} x + {b:.2f}, MSE {np.mean((a * x + b - y) ** 2):.3f}"</span>)</pre>
+      <pre class="code" id="code-p" hidden><span class="cm"># One dataset, three learning paradigms: supervised, unsupervised and semi-supervised (Figure 11.2)</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+rng = np.random.default_rng(<span class="nm">1</span>)
+X = np.vstack([rng.normal([-<span class="nm">1.5</span>, <span class="nm">0</span>], <span class="nm">0.7</span>, (<span class="nm">100</span>, <span class="nm">2</span>)), rng.normal([<span class="nm">1.5</span>, <span class="nm">0.5</span>], <span class="nm">0.7</span>, (<span class="nm">100</span>, <span class="nm">2</span>))])
+y = np.repeat([<span class="nm">0</span>, <span class="nm">1</span>], <span class="nm">100</span>)
+
+<span class="cm"># Supervised: logistic regression learns from all the labels</span>
+w, b = np.zeros(<span class="nm">2</span>), <span class="nm">0.0</span>
+<span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">2000</span>):
+    p = <span class="nm">1</span> / (<span class="nm">1</span> + np.exp(-(X @ w + b)))
+    w -= <span class="nm">0.1</span> * X.T @ (p - y) / len(y); b -= <span class="nm">0.1</span> * np.mean(p - y)
+sup = (X @ w + b &gt; <span class="nm">0</span>).astype(int)
+print(f<span class="st">"supervised (all 200 labels):      accuracy {np.mean(sup == y):.1%}"</span>)
+
+<span class="cm"># Unsupervised: k-means sees no labels at all; it can only group the points</span>
+C = X[rng.choice(len(X), <span class="nm">2</span>, replace=<span class="kw">False</span>)]
+<span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">50</span>):
+    lab = ((X[:, <span class="kw">None</span>] - C) ** <span class="nm">2</span>).sum(-<span class="nm">1</span>).argmin(<span class="nm">1</span>)
+    C = np.array([X[lab == j].mean(<span class="nm">0</span>) <span class="kw">for</span> j <span class="kw">in</span> range(<span class="nm">2</span>)])
+acc = max(np.mean(lab == y), np.mean(lab != y))           <span class="cm"># cluster ids are arbitrary</span>
+print(f<span class="st">"unsupervised (no labels):         agreement with the classes {acc:.1%}"</span>)
+
+<span class="cm"># Semi-supervised: 4 labels, then self-training with pseudo-labels for the rest</span>
+known = np.array([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">100</span>, <span class="nm">101</span>])
+labels = np.full(len(y), -<span class="nm">1</span>); labels[known] = y[known]
+<span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">10</span>):
+    mask = labels &gt;= <span class="nm">0</span>
+    cent = np.array([X[mask &amp; (labels == k)].mean(<span class="nm">0</span>) <span class="kw">for</span> k <span class="kw">in</span> (<span class="nm">0</span>, <span class="nm">1</span>)])
+    d = ((X[:, <span class="kw">None</span>] - cent) ** <span class="nm">2</span>).sum(-<span class="nm">1</span>)
+    conf = np.abs(d[:, <span class="nm">0</span>] - d[:, <span class="nm">1</span>])
+    unl = np.flatnonzero(~mask)
+    <span class="kw">if</span> <span class="kw">not</span> len(unl):
+        <span class="kw">break</span>
+    pick = unl[np.argsort(-conf[unl])[:<span class="nm">20</span>]]             <span class="cm"># pseudo-label the 20 most confident points</span>
+    labels[pick] = d[pick].argmin(<span class="nm">1</span>)
+semi = ((X[:, <span class="kw">None</span>] - np.array([X[labels == k].mean(<span class="nm">0</span>) <span class="kw">for</span> k <span class="kw">in</span> (<span class="nm">0</span>, <span class="nm">1</span>)])) ** <span class="nm">2</span>).sum(-<span class="nm">1</span>).argmin(<span class="nm">1</span>)
+print(f<span class="st">"semi-supervised (4 labels):       accuracy {np.mean(semi == y):.1%}"</span>)</pre>
+      <pre class="code" id="code-c" hidden><span class="cm"># ML for optimization, "learning to configure algorithms" (Figure 11.14): a bandit picks the step size of a search</span>
+<span class="kw">import</span> math
+<span class="kw">import</span> random
+
+<span class="kw">def</span> rastrigin(x):
+    <span class="kw">return</span> <span class="nm">10</span> * len(x) + sum(v * v - <span class="nm">10</span> * math.cos(<span class="nm">2</span> * math.pi * v) <span class="kw">for</span> v <span class="kw">in</span> x)
+
+STEPS = [<span class="nm">0.02</span>, <span class="nm">0.1</span>, <span class="nm">0.5</span>, <span class="nm">2.0</span>]
+
+
+<span class="kw">def</span> search(choose, rng, iters=<span class="nm">3000</span>, dim=<span class="nm">5</span>):
+    <span class="st">"""A (1+1) random search: perturb the current point with Gaussian noise of a chosen size, keep it if better."""</span>
+    x = [rng.uniform(-<span class="nm">5.12</span>, <span class="nm">5.12</span>) <span class="kw">for</span> _ <span class="kw">in</span> range(dim)]; fx = rastrigin(x)
+    n, gain = [<span class="nm">0</span>] * len(STEPS), [<span class="nm">0.0</span>] * len(STEPS)
+    <span class="kw">for</span> t <span class="kw">in</span> range(iters):
+        k = choose(t, n, gain, rng)
+        y = [min(<span class="nm">5.12</span>, max(-<span class="nm">5.12</span>, v + rng.gauss(<span class="nm">0</span>, STEPS[k]))) <span class="kw">for</span> v <span class="kw">in</span> x]
+        fy = rastrigin(y)
+        reward = max(<span class="nm">0.0</span>, fx - fy)                       <span class="cm"># reward = improvement</span>
+        n[k] += <span class="nm">1</span>; gain[k] += reward
+        <span class="kw">if</span> fy &lt; fx:
+            x, fx = y, fy
+    <span class="kw">return</span> fx, n
+
+
+<span class="kw">def</span> ucb(t, n, gain, rng, c=<span class="nm">0.5</span>):
+    <span class="kw">for</span> k <span class="kw">in</span> range(len(STEPS)):
+        <span class="kw">if</span> n[k] == <span class="nm">0</span>:
+            <span class="kw">return</span> k
+    <span class="kw">return</span> max(range(len(STEPS)), key=<span class="kw">lambda</span> k: gain[k] / n[k] + c * math.sqrt(math.log(t + <span class="nm">1</span>) / n[k]))
+
+
+rng = random.Random(<span class="nm">0</span>)
+fixed = []
+<span class="kw">for</span> k, s <span class="kw">in</span> enumerate(STEPS):
+    res = [search(<span class="kw">lambda</span> t, n, g, r, k=k: k, rng)[<span class="nm">0</span>] <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">20</span>)]
+    fixed.append(sum(res) / <span class="nm">20</span>)
+    print(f<span class="st">"fixed step {s:4.2f}: mean best f = {fixed[-1]:6.2f}"</span>)
+print(f<span class="st">"a fixed step picked blindly averages {sum(fixed) / len(fixed):6.2f}"</span>)
+runs = [search(ucb, rng) <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">20</span>)]
+print(f<span class="st">"UCB-chosen step: mean best f = {sum(r[0] for r in runs) / 20:6.2f}; pulls per step size in one run {runs[0][1]}"</span>)</pre>
+      <pre class="code" id="code-t" hidden><span class="cm"># Combinatorial optimization: the TSP search space, then construction (L2C) vs. improvement (L2I) heuristics</span>
+<span class="kw">import</span> math
+<span class="kw">import</span> random
+
+<span class="kw">for</span> n <span class="kw">in</span> (<span class="nm">5</span>, <span class="nm">10</span>, <span class="nm">14</span>, <span class="nm">20</span>):
+    print(f<span class="st">"{n:2d} cities: (n - 1)! = {math.factorial(n - 1):.3e} tours, (n - 1)!/2 = {math.factorial(n - 1) // 2:.3e} undirected"</span>)
+<span class="cm"># 14 cities: (14 - 1)! = 13! = 6,227,020,800, not 622,702,080</span>
+
+rng = random.Random(<span class="nm">5</span>)
+P = [(rng.random(), rng.random()) <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="nm">60</span>)]
+L = <span class="kw">lambda</span> t: sum(math.dist(P[t[i]], P[t[i - <span class="nm">1</span>]]) <span class="kw">for</span> i <span class="kw">in</span> range(len(t)))
+
+
+<span class="kw">def</span> nearest_neighbor(start=<span class="nm">0</span>):
+    <span class="st">"""Construction: build a tour by always visiting the closest unvisited city."""</span>
+    tour, left = [start], set(range(len(P))) - {start}
+    <span class="kw">while</span> left:
+        nxt = min(left, key=<span class="kw">lambda</span> j: math.dist(P[tour[-<span class="nm">1</span>]], P[j]))
+        tour.append(nxt); left.remove(nxt)
+    <span class="kw">return</span> tour
+
+
+<span class="kw">def</span> two_opt(tour):
+    <span class="st">"""Improvement: reverse a segment whenever that shortens the tour, until no reversal helps."""</span>
+    improved = <span class="kw">True</span>
+    <span class="kw">while</span> improved:
+        improved = <span class="kw">False</span>
+        <span class="kw">for</span> i <span class="kw">in</span> range(<span class="nm">1</span>, len(tour) - <span class="nm">1</span>):
+            <span class="kw">for</span> j <span class="kw">in</span> range(i + <span class="nm">1</span>, len(tour)):
+                a, b, c, d = P[tour[i - <span class="nm">1</span>]], P[tour[i]], P[tour[j]], P[tour[(j + <span class="nm">1</span>) % len(tour)]]
+                <span class="kw">if</span> math.dist(a, c) + math.dist(b, d) &lt; math.dist(a, b) + math.dist(c, d) - <span class="nm">1e-12</span>:
+                    tour[i:j + <span class="nm">1</span>] = reversed(tour[i:j + <span class="nm">1</span>]); improved = <span class="kw">True</span>
+    <span class="kw">return</span> tour
+
+
+t = nearest_neighbor()
+print(f<span class="st">"nearest neighbor (construct): {L(t):.3f}"</span>)
+print(f<span class="st">"after 2-opt (improve):        {L(two_opt(t)):.3f}"</span>)
+rand = list(range(<span class="nm">60</span>)); rng.shuffle(rand)
+print(f<span class="st">"random tour {L(rand):.3f} -&gt; 2-opt {L(two_opt(rand)):.3f}"</span>)</pre>
+    </div>
+    <p class="cap">Continue with the Unsupervised Learning, Supervised Learning and Reinforcement Learning labs.</p>
+  </div>
+</section>
+
+<section class="chapter" id="summary">
+  <div class="wrap">
+    <span class="eyebrow">Part 8 · Summary</span>
+    <h2>What to remember</h2>
+    <div class="cards3">
+      <div class="card"><h5>Learning is optimization</h5><p>A model class, a loss and a search strategy: training finds the model that minimizes the loss on data.</p></div>
+      <div class="card"><h5>Generalization</h5><p>Too simple underfits, too flexible overfits; more data helps flexible models generalize.</p></div>
+      <div class="card"><h5>Paradigms</h5><p>Supervised, unsupervised, hybrid and reinforcement learning differ in the feedback they get.</p></div>
+      <div class="card"><h5>ML for optimization</h5><p>End-to-end solvers, learned algorithm configuration, and models consulted inside optimizers.</p></div>
+    </div>
+    <p class="muted prose">References: S. Dehaene, <i>How We Learn</i>, 2020. T. Mitchell, <i>Machine Learning</i>, 1997. P. Domingos, <i>The Master Algorithm</i>, 2015. A. Halevy, P. Norvig and F. Pereira, “The unreasonable effectiveness of data,” 2009. Y. Bengio, A. Lodi and A. Prouvost, “Machine learning for combinatorial optimization: a methodological tour d’horizon,” 2021. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 11.</p>
+  </div>
+</section>
+<footer class="end"><div class="wrap">Interactive companion to Part V of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
+</div>
+<script>
+"use strict";
+/* ---------- light / dark / system theme ---------- */
+// runs first, so an error in any later widget cannot disable the theme switch
+(function themeSwitch() {
+  const root = document.documentElement, btns = [...document.querySelectorAll("[data-theme-set]")];
+  function apply(mode) {
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
+    btns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === mode)));
+  }
+  let saved = null; try { saved = localStorage.getItem("pso-lab-theme"); } catch (e) {}
+  const host = root.getAttribute("data-theme");
+  apply(["light", "dark", "system"].includes(saved) ? saved : host === "light" || host === "dark" ? host : "system");
+  btns.forEach(b => b.addEventListener("click", () => { apply(b.dataset.themeSet); try { localStorage.setItem("pso-lab-theme", b.dataset.themeSet); } catch (e) {} }));
+})();
+
+/* ---------- shared helpers ---------- */
+const $ = s => document.querySelector(s);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const MONO = '"IBM Plex Mono", Consolas, monospace';
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function colors() {
+  const k = ["bg","surface","sunk","ink","muted","line","grid","accent","gold","s1","s2","s3","s4","good","bad","map-water","map-land","map-state","map-border"];
+  const o = {}; k.forEach(n => o[n] = css("--" + n)); return o;
+}
+function setupCanvas(cv, fixedH) {
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  const w = Math.max(10, Math.round(r.width)), h = Math.max(10, Math.round(fixedH || r.height));
+  if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return { ctx, w, h };
+}
+function fmtNum(v, d) {
+  if (!isFinite(v)) return "n/a";
+  const a = Math.abs(v);
+  if (d != null) return v.toFixed(d);
+  if (a >= 1000) return Math.round(v).toLocaleString("en-US");
+  if (a >= 100) return v.toFixed(1);
+  if (a >= 1) return v.toFixed(3);
+  if (a === 0) return "0";
+  if (a < 1e-3) return v.toExponential(2);
+  return v.toFixed(4);
+}
+const redrawers = [];
+function onRedraw(fn) { redrawers.push(fn); }
+let rzT; const ro = new ResizeObserver(() => { clearTimeout(rzT); rzT = setTimeout(() => redrawers.forEach(f => f()), 60); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redrawers.forEach(f => f()));
+new MutationObserver(() => redrawers.forEach(f => f())).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+function makeControls(el, specs, onChange) {
+  const api = {};
+  for (const s of specs) {
+    if (s.type === "group") { el.insertAdjacentHTML("beforeend", `<div class="group-label">${s.label}</div>`); continue; }
+    const wrap = document.createElement("div"); wrap.className = "ctl";
+    if (s.type === "select") {
+      wrap.innerHTML = `<label for="${s.id}">${s.label}</label><select id="${s.id}">${s.options.map(o => `<option value="${o[0]}"${o[0] == s.value ? " selected" : ""}>${o[1]}</option>`).join("")}</select>`;
+    } else if (s.type === "check") {
+      wrap.className = "ctl ctl-check";
+      wrap.innerHTML = `<label><input type="checkbox" id="${s.id}"${s.value ? " checked" : ""}>&nbsp;${s.label}</label>`;
+    } else {
+      wrap.innerHTML = `<label for="${s.id}">${s.label}<output id="${s.id}-o"></output></label><input type="range" id="${s.id}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.value}">`;
+    }
+    if (s.hint) wrap.insertAdjacentHTML("beforeend", `<small>${s.hint}</small>`);
+    el.appendChild(wrap);
+    const inp = wrap.querySelector("input,select"), out = wrap.querySelector("output");
+    const fmt = s.fmt || (v => v);
+    const read = () => s.type === "select" ? inp.value : s.type === "check" ? inp.checked : parseFloat(inp.value);
+    const upd = () => { if (out) out.textContent = fmt(read()); };
+    upd();
+    inp.addEventListener(s.type === "select" || s.type === "check" ? "change" : "input", () => { upd(); onChange && onChange(s.key, read()); });
+    Object.defineProperty(api, s.key, { get: read, set(v) { if (s.type === "check") inp.checked = v; else inp.value = v; upd(); }, enumerable: true });
+  }
+  return api;
+}
+function runner(step, draw, speed, done, btn) {
+  let on = false, acc = 0, last = 0;
+  function frame(t) {
+    if (!on) return;
+    const dt = last ? Math.min(0.1, (t - last) / 1000) : 0; last = t; acc += dt * speed();
+    let n = 0;
+    while (acc >= 1 && n < 60) { acc -= 1; if (done()) { stop(); break; } step(); n++; }
+    if (n) draw();
+    if (on) requestAnimationFrame(frame);
+  }
+  function start() { if (on) return; if (done()) return; on = true; last = 0; acc = 1; btn.textContent = "Pause"; requestAnimationFrame(frame); }
+  function stop() { on = false; btn.textContent = "Run"; }
+  btn.addEventListener("click", () => on ? stop() : start());
+  return { start, stop, get on() { return on; } };
+}
+function lineChart(cv, series, o = {}) {
+  const { ctx, w, h } = setupCanvas(cv); const c = colors();
+  ctx.clearRect(0, 0, w, h);
+  const pad = { l: 58, r: 12, t: 10, b: 22 };
+  let xs = o.xmax || 1, ymin = Infinity, ymax = -Infinity;
+  for (const s of series) { xs = Math.max(xs, s.data.length - 1); for (const v of s.data) if (isFinite(v)) { ymin = Math.min(ymin, v); ymax = Math.max(ymax, v); } }
+  for (const r of (o.refs || [])) { ymin = Math.min(ymin, r.v); ymax = Math.max(ymax, r.v); }
+  if (!isFinite(ymin)) { ymin = 0; ymax = 1; }
+  if (ymax - ymin < 1e-9) { ymax += 1; ymin -= 1; }
+  const sp = ymax - ymin; ymin -= sp * .06; ymax += sp * .06;
+  const X = i => pad.l + (w - pad.l - pad.r) * i / xs, Y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - ymin) / (ymax - ymin));
+  ctx.font = "11px " + MONO; ctx.lineWidth = 1;
+  for (let k = 0; k <= 4; k++) {
+    const v = ymin + (ymax - ymin) * k / 4, y = Y(v);
+    ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(fmtNum(v), pad.l - 6, y);
+  }
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  for (let k = 0; k <= 4; k++) { const i = Math.round(xs * k / 4); ctx.fillText(i, X(i), h - pad.b + 6); }
+  for (const r of (o.refs || [])) {
+    ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = r.color || c.bad; ctx.beginPath(); ctx.moveTo(pad.l, Y(r.v)); ctx.lineTo(w - pad.r, Y(r.v)); ctx.stroke(); ctx.restore();
+    if (r.label) { ctx.fillStyle = r.color || c.bad; ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText(r.label, w - pad.r - 2, Y(r.v) - 2); }
+  }
+  if (o.vline != null) { ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = c.ink; ctx.globalAlpha = .55; ctx.beginPath(); ctx.moveTo(X(o.vline), pad.t); ctx.lineTo(X(o.vline), h - pad.b); ctx.stroke(); ctx.restore(); }
+  for (const s of series) {
+    if (!s.data.length) continue;
+    ctx.strokeStyle = s.color; ctx.globalAlpha = s.alpha || 1; ctx.lineWidth = s.width || 2; ctx.beginPath();
+    s.data.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v))); ctx.stroke();
+    if (!s.alpha) { const i = s.data.length - 1; ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(X(i), Y(s.data[i]), 3, 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  }
+  if (o.labels) { let x = pad.l + 6; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.font = "11px " + MONO;
+    for (const s of series) if (s.label) { ctx.fillStyle = s.color; ctx.fillText("■ " + s.label, x, pad.t + 2); x += ctx.measureText("■ " + s.label).width + 12; } }
+}
+function stats(el, items) { el.innerHTML = items.map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join(""); }
+function presets(el, list, apply) {
+  el.innerHTML = list.map((p, i) => `<button class="preset" data-i="${i}"><b>${p.t}</b><span>${p.d}</span></button>`).join("");
+  el.querySelectorAll("button").forEach(b => b.addEventListener("click", () => apply(list[+b.dataset.i])));
+}
+
+
+/* ================= Machine learning labs: shared helpers ================= */
+const newSeed = () => Math.floor(Math.random() * 1e9);
+const gauss = rnd => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
+const VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
+const ramp = t => { t = Math.max(0, Math.min(1, t)) * (VIR.length - 1); const i = Math.min(VIR.length - 2, Math.floor(t)), u = t - i; return VIR[i].map((v, k) => Math.round(v + (VIR[i + 1][k] - v) * u)); };
+const classCol = c => [c.accent, c.gold, c.s3, c.s2, c.s4, c.bad, c.good, c.muted];
+function stepper(btn, step, done, rate) {
+  let timer = null; const label = btn.textContent;
+  const stop = () => { clearInterval(timer); timer = null; btn.textContent = label; };
+  btn.addEventListener("click", () => { if (timer) return stop(); if (done()) return; btn.textContent = "Pause"; timer = setInterval(() => { if (done()) return stop(); step(); }, rate()); });
+  return { stop, get on() { return !!timer; } };
+}
+// axes for a 2D plot; returns the canvas context, size and the data-to-pixel maps (and their inverses)
+function axes(cv, o) {
+  const { ctx, w, h } = setupCanvas(cv), c = colors(), pad = Object.assign({ l: 46, r: 12, t: 12, b: 30 }, o.pad || {});
+  let { x0, x1, y0, y1 } = o;
+  if (o.equal) { const sx = (w - pad.l - pad.r) / (x1 - x0), sy = (h - pad.t - pad.b) / (y1 - y0), s = Math.min(sx, sy), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2; x0 = cx - (w - pad.l - pad.r) / s / 2; x1 = cx + (w - pad.l - pad.r) / s / 2; y0 = cy - (h - pad.t - pad.b) / s / 2; y1 = cy + (h - pad.t - pad.b) / s / 2; }
+  const X = x => pad.l + (x - x0) / (x1 - x0) * (w - pad.l - pad.r), Y = y => pad.t + (y1 - y) / (y1 - y0) * (h - pad.t - pad.b);
+  const iX = px => x0 + (px - pad.l) / (w - pad.l - pad.r) * (x1 - x0), iY = py => y1 - (py - pad.t) / (h - pad.t - pad.b) * (y1 - y0);
+  ctx.clearRect(0, 0, w, h);
+  if (!o.bare) {
+    ctx.font = `11px ${MONO}`; ctx.lineWidth = 1;
+    const nt = o.ticks || 5;
+    for (let k = 0; k <= nt; k++) { const v = y0 + (y1 - y0) * k / nt; ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(w - pad.r, Y(v)); ctx.stroke(); ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(fmtNum(v, o.yd), pad.l - 6, Y(v)); }
+    for (let k = 0; k <= nt; k++) { const v = x0 + (x1 - x0) * k / nt; ctx.fillStyle = c.muted; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText(fmtNum(v, o.xd), X(v), h - pad.b + 6); }
+    if (o.xlab) { ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText(o.xlab, w - pad.r, h - pad.b - 3); }
+    if (o.ylab) { ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(o.ylab, pad.l + 4, pad.t + 2); }
+  }
+  return { ctx, w, h, c, X, Y, iX, iY, pad, x0, x1, y0, y1 };
+}
+function dot(ctx, x, y, r, fill, stroke) { ctx.fillStyle = fill; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); } }
+// toy 2D datasets: arrays of [x, y, label]
+const DATA = {
+  blobs: (rnd, n = 180, k = 3, sd = .55) => { const C = [[-2, -1], [2, -1.5], [0, 2], [-2.5, 2.2], [2.6, 1.8], [0, -3]].slice(0, k); return Array.from({ length: n }, (_, i) => { const j = i % k; return [C[j][0] + sd * gauss(rnd), C[j][1] + sd * gauss(rnd), j]; }); },
+  moons: (rnd, n = 240, noise = .08) => Array.from({ length: n }, (_, i) => { const j = i % 2, t = Math.PI * rnd(); return j ? [1 - Math.cos(t) + noise * gauss(rnd), .5 - Math.sin(t) + noise * gauss(rnd), 1] : [Math.cos(t) + noise * gauss(rnd), Math.sin(t) + noise * gauss(rnd), 0]; }),
+  circles: (rnd, n = 240, noise = .06) => Array.from({ length: n }, (_, i) => { const j = i % 2, t = 2 * Math.PI * rnd(), r = j ? .45 : 1; return [r * Math.cos(t) + noise * gauss(rnd), r * Math.sin(t) + noise * gauss(rnd), j]; }),
+  xor: (rnd, n = 240) => Array.from({ length: n }, () => { const x = 2 * rnd() - 1, y = 2 * rnd() - 1; return [x + .05 * gauss(rnd), y + .05 * gauss(rnd), (x > 0) !== (y > 0) ? 1 : 0]; }),
+  spiral: (rnd, n = 300, noise = .05) => Array.from({ length: n }, (_, i) => { const j = i % 2, t = 1.2 * rnd() * Math.PI * 2 + .3, r = t / (2.6 * Math.PI); return [r * Math.cos(t + j * Math.PI) + noise * gauss(rnd), r * Math.sin(t + j * Math.PI) + noise * gauss(rnd), j]; })
+};
+const bounds = (P, m = .15) => { let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; P.forEach(p => { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }); const dx = (x1 - x0) * m || 1, dy = (y1 - y0) * m || 1; return { x0: x0 - dx, x1: x1 + dx, y0: y0 - dy, y1: y1 + dy }; };
+// a small fully connected network (tanh hidden layer) trained with plain or Adam gradient steps
+class MLP {
+  constructor(sizes, rnd, act = "tanh") {
+    this.act = act; this.L = sizes.length - 1; this.W = []; this.b = [];
+    for (let l = 0; l < this.L; l++) { const fi = sizes[l], fo = sizes[l + 1], s = 1 / Math.sqrt(fi); this.W.push(Array.from({ length: fi * fo }, () => gauss(rnd) * s)); this.b.push(new Float64Array(fo)); }
+    this.sizes = sizes; this.m = this.W.map(w => new Float64Array(w.length)); this.v = this.W.map(w => new Float64Array(w.length)); this.mb = this.b.map(b => new Float64Array(b.length)); this.vb = this.b.map(b => new Float64Array(b.length)); this.t = 0;
+  }
+  f(z) { return this.act === "relu" ? Math.max(0, z) : Math.tanh(z); }
+  df(a) { return this.act === "relu" ? (a > 0 ? 1 : 0) : 1 - a * a; }
+  forward(x) { const as = [x]; let a = x; for (let l = 0; l < this.L; l++) { const fi = this.sizes[l], fo = this.sizes[l + 1], W = this.W[l], out = new Float64Array(fo); for (let j = 0; j < fo; j++) { let s = this.b[l][j]; for (let i = 0; i < fi; i++) s += a[i] * W[i * fo + j]; out[j] = l < this.L - 1 ? this.f(s) : s; } as.push(out); a = out; } this.as = as; return a; }
+  // accumulate gradients for output gradient dout (after a forward pass)
+  backward(dout, G) { let d = dout; for (let l = this.L - 1; l >= 0; l--) { const fi = this.sizes[l], fo = this.sizes[l + 1], a = this.as[l], W = this.W[l], nd = new Float64Array(fi); for (let i = 0; i < fi; i++) { let s = 0; for (let j = 0; j < fo; j++) { G.W[l][i * fo + j] += a[i] * d[j]; s += W[i * fo + j] * d[j]; } nd[i] = l > 0 ? s * this.df(a[i]) : s; } for (let j = 0; j < fo; j++) G.b[l][j] += d[j]; d = nd; } }
+  grads() { return { W: this.W.map(w => new Float64Array(w.length)), b: this.b.map(b => new Float64Array(b.length)) }; }
+  adam(G, lr, scale = 1) { this.t++; const b1 = .9, b2 = .999, c1 = 1 - b1 ** this.t, c2 = 1 - b2 ** this.t; const up = (p, g, m, v) => { for (let i = 0; i < p.length; i++) { const gi = g[i] * scale; m[i] = b1 * m[i] + (1 - b1) * gi; v[i] = b2 * v[i] + (1 - b2) * gi * gi; p[i] -= lr * (m[i] / c1) / (Math.sqrt(v[i] / c2) + 1e-8); } }; for (let l = 0; l < this.L; l++) { up(this.W[l], G.W[l], this.m[l], this.v[l]); up(this.b[l], G.b[l], this.mb[l], this.vb[l]); } }
+}
+const softmax = z => { const m = Math.max(...z), e = z.map(v => Math.exp(v - m)), s = e.reduce((a, b) => a + b, 0); return e.map(v => v / s); };
+function codeTabs(caps, first) {
+  const keys = Object.keys(caps); let cur = first;
+  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").textContent = caps[k]; }
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.code)));
+  document.querySelectorAll("a[data-tab]").forEach(a => a.addEventListener("click", () => show(a.dataset.tab)));
+  $("#codeCopy").addEventListener("click", async () => {
+    const pre = $("#code-" + cur), btn = $("#codeCopy");
+    try { await navigator.clipboard.writeText(pre.textContent); btn.textContent = "Copied"; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected, press Ctrl+C"; }
+    setTimeout(() => btn.textContent = "Copy code", 2000);
+  });
+  show(first);
+}
+
+/* ================= Intro to ML Lab ================= */
+// train a small classifier network on [x, y, label] points with Adam; returns a predict(x, y) function
+function trainClassifier(P, rnd, epochs = 300, hidden = 12) {
+  const net = new MLP([2, hidden, hidden, 1], rnd), sig = z => 1 / (1 + Math.exp(-z));
+  for (let e = 0; e < epochs; e++) { const G = net.grads(); P.forEach(([x, y, l]) => { const o = net.forward([x, y])[0]; net.backward([sig(o) - l], G); }); net.adam(G, .03, 1 / P.length); }
+  return (x, y) => sig(net.forward([x, y])[0]);
+}
+function shade(ax, f, n = 70) {
+  const { ctx, X, Y, c } = ax, cols = classCol(c), xs = (ax.x1 - ax.x0) / n, ny = Math.ceil((ax.y1 - ax.y0) / xs);
+  for (let i = 0; i < n; i++) for (let j = 0; j < ny; j++) { const x = ax.x0 + (i + .5) * xs, y = ax.y0 + (j + .5) * xs, p = f(x, y); ctx.fillStyle = cols[p > .5 ? 1 : 0]; ctx.globalAlpha = .1 + .22 * Math.abs(p - .5) * 2; ctx.fillRect(X(x - xs / 2), Y(y + xs / 2), X(x + xs / 2) - X(x - xs / 2) + 1, Y(y - xs / 2) - Y(y + xs / 2) + 1); }
+  ctx.globalAlpha = 1;
+}
+
+/* ---------- hero: a network learning two moons ---------- */
+(function hero() {
+  const cv = $("#heroCv"); let rnd = mulberry32(7), P = DATA.moons(rnd, 160, .12), net, ep = 0, hold = 0; const sig = z => 1 / (1 + Math.exp(-z));
+  const reset = () => { net = new MLP([2, 10, 10, 1], rnd); ep = 0; };
+  const train = k => { for (let s = 0; s < k; s++) { const G = net.grads(); P.forEach(([x, y, l]) => { const o = net.forward([x, y])[0]; net.backward([sig(o) - l], G); }); net.adam(G, .03, 1 / P.length); ep++; } };
+  const draw = () => { const ax = axes(cv, Object.assign({ bare: true, equal: true, pad: { l: 6, r: 6, t: 6, b: 6 } }, bounds(P, .1))); shade(ax, (x, y) => sig(net.forward([x, y])[0]), 56); const cols = classCol(ax.c); P.forEach(p => dot(ax.ctx, ax.X(p[0]), ax.Y(p[1]), 3.2, cols[p[2]])); const acc = P.filter(p => (sig(net.forward([p[0], p[1]])[0]) > .5) === (p[2] === 1)).length / P.length; $("#heroCap").textContent = `A small neural network learning to separate two classes: epoch ${ep}, training accuracy ${(acc * 100).toFixed(0)}%.`; };
+  reset(); ro.observe(cv); onRedraw(draw);
+  if (reduceMotion) { train(300); draw(); return; }
+  draw(); let vis = true; new IntersectionObserver(e => { vis = e[0].isIntersecting; }).observe(cv);
+  setInterval(() => { if (!vis) return; if (ep >= 300) { if (++hold > 25) { hold = 0; P = DATA.moons(rnd, 160, .12); reset(); } } else train(4); draw(); }, 80);
+})();
+
+/* ---------- curve fitting ---------- */
+(function curveFit() {
+  const truth = x => Math.sin(2 * Math.PI * x);
+  const ctl = makeControls($("#cfCtl"), [
+    { key: "n", id: "cfN", label: "Training points n", min: 5, max: 300, step: 1, value: 15 },
+    { key: "d", id: "cfD", label: "Polynomial degree", min: 0, max: 12, step: 1, value: 3 },
+    { key: "noise", id: "cfS", label: "Noise", min: 0, max: .6, step: .05, value: .25, fmt: v => v.toFixed(2) }
+  ], k => { if (k !== "d") sample(); draw(); });
+  let rnd = mulberry32(3), pts = [];
+  const sample = () => { pts = Array.from({ length: ctl.n }, () => { const x = rnd(); return [x, truth(x) + ctl.noise * gauss(rnd)]; }); };
+  // least squares on Legendre-like scaled powers of (2x - 1), solved by Gaussian elimination with a tiny ridge
+  function fit(d) {
+    const m = d + 1, A = Array.from({ length: m }, () => new Float64Array(m + 1));
+    pts.forEach(([x, y]) => { const t = 2 * x - 1, ph = Array.from({ length: m }, (_, k) => t ** k); for (let i = 0; i < m; i++) { for (let j = 0; j < m; j++) A[i][j] += ph[i] * ph[j]; A[i][m] += ph[i] * y; } });
+    for (let i = 0; i < m; i++) A[i][i] += 1e-10;
+    for (let i = 0; i < m; i++) { let p = i; for (let r = i + 1; r < m; r++) if (Math.abs(A[r][i]) > Math.abs(A[p][i])) p = r; [A[i], A[p]] = [A[p], A[i]]; for (let r = 0; r < m; r++) if (r !== i) { const f = A[r][i] / A[i][i]; for (let cc = i; cc <= m; cc++) A[r][cc] -= f * A[i][cc]; } }
+    const w = A.map((row, i) => row[m] / row[i]);
+    return x => { const t = 2 * x - 1; let s = 0; for (let k = w.length - 1; k >= 0; k--) s = s * t + w[k]; return s; };
+  }
+  const mse = (f, P) => P.reduce((s, [x, y]) => s + (f(x) - y) ** 2, 0) / P.length;
+  const TEST = Array.from({ length: 300 }, (_, i) => { const x = (i + .5) / 300; return [x, truth(x)]; });
+  function draw() {
+    const f = fit(ctl.d), ax = axes($("#cfCv"), { x0: 0, x1: 1, y0: -2, y1: 2, xlab: "x", ylab: "y" }), { ctx, X, Y, c } = ax;
+    ctx.save(); ctx.beginPath(); ctx.rect(ax.pad.l, ax.pad.t, ax.w - ax.pad.l - ax.pad.r, ax.h - ax.pad.t - ax.pad.b); ctx.clip();
+    [[truth, c.muted, 2, [5, 4]], [f, c.gold, 2.6, []]].forEach(([g, col, lw, dash]) => { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.setLineDash(dash); ctx.beginPath(); for (let i = 0; i <= 300; i++) { const x = i / 300; i ? ctx.lineTo(X(x), Y(g(x))) : ctx.moveTo(X(x), Y(g(x))); } ctx.stroke(); });
+    ctx.setLineDash([]); ctx.restore();
+    pts.forEach(([x, y]) => dot(ctx, X(x), Y(y), 3.5, c.accent));
+    const tr = mse(f, pts), te = mse(f, TEST);
+    stats($("#cfStats"), [["Parameters", ctl.d + 1], ["Training MSE", tr.toFixed(4)], ["Test MSE (vs. the true curve)", te > 1e3 ? te.toExponential(1) : te.toFixed(4)]]);
+    const D = Array.from({ length: 13 }, (_, d) => { const g = fit(d); return [Math.log10(mse(g, pts) + 1e-6), Math.log10(mse(g, TEST) + 1e-6)]; });
+    lineChart($("#cfChart"), [{ data: D.map(v => v[0]), color: c.accent, label: "log10 training MSE" }, { data: D.map(v => Math.min(v[1], 3)), color: c.gold, label: "log10 test MSE, by degree 0 to 12" }], { labels: true, vline: ctl.d });
+    const best = D.reduce((b, v, i) => v[1] < D[b][1] ? i : b, 0);
+    $("#cfNote").textContent = `Training error always falls as the degree grows, but the error on new data is lowest at degree ${best} here. ` + (ctl.d >= ctl.n - 1 ? "With as many parameters as points, the polynomial passes through every point and memorizes the noise. " : ctl.d > best + 2 ? "This model is overfitting. " : ctl.d < 3 ? "This model is too simple: it underfits. " : "") + "Raise n to see a flexible model behave once it has enough data.";
+  }
+  $("#cfNew").addEventListener("click", () => { sample(); draw(); });
+  sample(); ro.observe($("#cfCv")); onRedraw(draw); draw();
+})();
+
+/* ---------- learning paradigms ---------- */
+(function paradigms() {
+  const ctl = makeControls($("#pdCtl"), [
+    { key: "data", id: "pdData", type: "select", label: "Data", value: "moons", options: [["moons", "Two moons"], ["blobs", "Two blobs"], ["circles", "Two rings"]] },
+    { key: "mode", id: "pdMode", type: "select", label: "Paradigm", value: "semi", options: [["sup", "Supervised: neural network, all labels"], ["unsup", "Unsupervised: k-means, no labels"], ["semi", "Semi-supervised: label propagation"]] },
+    { key: "nl", id: "pdNL", label: "Labels given (semi-supervised)", min: 2, max: 30, step: 2, value: 4 }
+  ], k => { if (k === "data") make(); result = null; draw(); });
+  let rnd = mulberry32(11), P = [], labeled = [], result = null;
+  function make() { const n = 200; P = ctl.data === "blobs" ? DATA.blobs(rnd, n, 2, .7) : ctl.data === "circles" ? DATA.circles(rnd, n, .07) : DATA.moons(rnd, n, .09); }
+  function learn() {
+    labeled = []; const per = Math.max(1, ctl.nl / 2); [0, 1].forEach(cl => { const idx = P.map((p, i) => i).filter(i => P[i][2] === cl); for (let k = 0; k < per; k++) labeled.push(idx[Math.floor(rnd() * idx.length)]); });
+    if (ctl.mode === "sup") { const f = trainClassifier(P, rnd, 300); result = { f, pred: P.map(p => f(p[0], p[1]) > .5 ? 1 : 0) }; labeled = P.map((_, i) => i); }
+    else if (ctl.mode === "unsup") {
+      let C = [P[Math.floor(rnd() * P.length)], P[Math.floor(rnd() * P.length)]].map(p => [p[0], p[1]]), lab = [];
+      for (let it = 0; it < 50; it++) { lab = P.map(p => (p[0] - C[0][0]) ** 2 + (p[1] - C[0][1]) ** 2 < (p[0] - C[1][0]) ** 2 + (p[1] - C[1][1]) ** 2 ? 0 : 1); C = [0, 1].map(k => { const m = P.filter((_, i) => lab[i] === k); return m.length ? [m.reduce((s, p) => s + p[0], 0) / m.length, m.reduce((s, p) => s + p[1], 0) / m.length] : C[k]; }); }
+      const flip = lab.filter((l, i) => l === P[i][2]).length < P.length / 2; if (flip) { lab = lab.map(l => 1 - l); C.reverse(); }
+      result = { C, pred: lab, f: (x, y) => (x - C[0][0]) ** 2 + (y - C[0][1]) ** 2 < (x - C[1][0]) ** 2 + (y - C[1][1]) ** 2 ? 0 : 1 }; labeled = [];
+    } else {
+      // label propagation on a k-nearest-neighbor graph: F <- alpha S F + (1 - alpha) Y
+      const n = P.length, k = 8, Wt = Array.from({ length: n }, () => []);
+      for (let i = 0; i < n; i++) { const d = P.map((q, j) => [(q[0] - P[i][0]) ** 2 + (q[1] - P[i][1]) ** 2, j]).sort((a, b) => a[0] - b[0]).slice(1, k + 1); d.forEach(([dd, j]) => { const w = Math.exp(-dd / .05); Wt[i].push([j, w]); Wt[j].push([i, w]); }); }
+      const deg = Wt.map(l => l.reduce((s, e) => s + e[1], 0) || 1), Y = P.map((_, i) => labeled.includes(i) ? (P[i][2] ? [0, 1] : [1, 0]) : [0, 0]);
+      let F = Y.map(v => v.slice());
+      for (let it = 0; it < 200; it++) F = F.map((_, i) => { const s = [0, 0]; Wt[i].forEach(([j, w]) => { const nw = w / Math.sqrt(deg[i] * deg[j]); s[0] += nw * F[j][0]; s[1] += nw * F[j][1]; }); return [.99 * s[0] + .01 * Y[i][0], .99 * s[1] + .01 * Y[i][1]]; });
+      const pred = F.map(v => v[1] > v[0] ? 1 : 0);
+      result = { pred, f: (x, y) => { let b = 0, bd = Infinity; P.forEach((q, i) => { const d = (q[0] - x) ** 2 + (q[1] - y) ** 2; if (d < bd) { bd = d; b = i; } }); return pred[b]; } };
+    }
+    draw();
+  }
+  function draw() {
+    const ax = axes($("#pdCv"), Object.assign({ bare: true, equal: true, pad: { l: 8, r: 8, t: 8, b: 8 } }, bounds(P, .08))), { ctx, X, Y, c } = ax, cols = classCol(c);
+    if (result) shade(ax, result.f, 64);
+    P.forEach((p, i) => dot(ctx, X(p[0]), Y(p[1]), 3.4, result ? cols[result.pred[i]] : c.muted));
+    if (ctl.mode !== "unsup") labeled.forEach(i => { if (ctl.mode === "semi" || !result) { ctx.strokeStyle = cols[P[i][2]]; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(X(P[i][0]), Y(P[i][1]), 8, 0, 7); ctx.stroke(); } });
+    if (result && result.C) result.C.forEach((m, k) => { ctx.fillStyle = cols[k]; ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.rect(X(m[0]) - 7, Y(m[1]) - 7, 14, 14); ctx.fill(); ctx.stroke(); });
+    const acc = result ? result.pred.filter((l, i) => l === P[i][2]).length / P.length : null;
+    stats($("#pdStats"), [["Labels used", ctl.mode === "sup" ? P.length : ctl.mode === "unsup" ? 0 : labeled.length || ctl.nl], ["Agreement with the true classes", acc == null ? "press Learn" : (acc * 100).toFixed(1) + "%"]]);
+    $("#pdNote").textContent = !result ? "Gray points: the data. Press Learn." : ctl.mode === "sup" ? "With every point labeled, a small neural network learns a curved boundary." : ctl.mode === "unsup" ? "K-means sees no labels and splits the data into two compact groups (squares: centroids). That matches the classes for blobs but not for moons or rings, whose classes are not compact." : `With only ${labeled.length} labeled points (ringed), labels flow along the nearest-neighbor graph to the rest: the shape of the unlabeled data does the work.`;
+  }
+  $("#pdRun").addEventListener("click", learn);
+  $("#pdNew").addEventListener("click", () => { make(); result = null; draw(); });
+  make(); ro.observe($("#pdCv")); onRedraw(draw); learn();
+})();
+
+/* ---------- learning to configure: UCB chooses the step size ---------- */
+(function configure() {
+  const STEPS = [.02, .1, .5, 2], R = x => 20 + x.reduce((s, v) => s + v * v - 10 * Math.cos(2 * Math.PI * v), 0), LIM = 5.12;
+  const ctl = makeControls($("#lcCtl"), [
+    { key: "c", id: "lcC", label: "UCB exploration c", min: 0, max: 3, step: .1, value: .5, fmt: v => v.toFixed(1) },
+    { key: "it", id: "lcIt", label: "Evaluations", min: 300, max: 4000, step: 100, value: 1500 }
+  ], () => {});
+  function search(choose, rnd, iters) {
+    let x = [LIM * (2 * rnd() - 1), LIM * (2 * rnd() - 1)], fx = R(x); const n = [0, 0, 0, 0], g = [0, 0, 0, 0], path = [{ x, k: -1 }], best = [fx];
+    for (let t = 0; t < iters; t++) {
+      const k = choose(t, n, g, rnd), y = x.map(v => Math.max(-LIM, Math.min(LIM, v + STEPS[k] * gauss(rnd)))), fy = R(y);
+      n[k]++; g[k] += Math.max(0, fx - fy); if (fy < fx) { x = y; fx = fy; path.push({ x, k }); } best.push(fx);
+    }
+    return { fx, n, path, best };
+  }
+  const ucb = c => (t, n, g) => { for (let k = 0; k < 4; k++) if (!n[k]) return k; let b = 0, bv = -Infinity; for (let k = 0; k < 4; k++) { const v = g[k] / n[k] + c * Math.sqrt(Math.log(t + 1) / n[k]); if (v > bv) { bv = v; b = k; } } return b; };
+  let res = null, layer = null;
+  function draw() {
+    const ax = axes($("#lcCv"), { x0: -LIM, x1: LIM, y0: -LIM, y1: LIM, bare: true, equal: true, pad: { l: 4, r: 4, t: 4, b: 4 } }), { ctx, X, Y, c } = ax, s = X(LIM) - X(-LIM);
+    if (!layer) { const n = 160; layer = document.createElement("canvas"); layer.width = layer.height = n; const l = layer.getContext("2d"), img = l.createImageData(n, n); for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const v = R([-LIM + 2 * LIM * (i + .5) / n, LIM - 2 * LIM * (j + .5) / n]), [r, g, b] = ramp(1 - Math.sqrt(v / 81)); img.data.set([r, g, b, 255], 4 * (j * n + i)); } l.putImageData(img, 0, 0); }
+    ctx.drawImage(layer, X(-LIM), Y(LIM), s, s);
+    const cols = classCol(c);
+    if (res) { ctx.lineWidth = 1.5; for (let i = 1; i < res.path.length; i++) { const a = res.path[i - 1].x, b = res.path[i].x; ctx.strokeStyle = cols[res.path[i].k]; ctx.beginPath(); ctx.moveTo(X(a[0]), Y(a[1])); ctx.lineTo(X(b[0]), Y(b[1])); ctx.stroke(); } const e = res.path[res.path.length - 1].x; dot(ctx, X(e[0]), Y(e[1]), 6, "#fff", c.ink); }
+    dot(ctx, X(0), Y(0), 5, c.good);
+    const b = setupCanvas($("#lcBar")), bc = b.ctx; bc.clearRect(0, 0, b.w, b.h); bc.font = `11px ${MONO}`;
+    if (res) { const mx = Math.max(...res.n), bw = (b.w - 40) / 4; res.n.forEach((v, k) => { const hh = (b.h - 40) * v / mx; bc.fillStyle = cols[k]; bc.fillRect(20 + k * bw + 8, b.h - 22 - hh, bw - 16, hh); bc.fillStyle = c.ink; bc.textAlign = "center"; bc.textBaseline = "bottom"; bc.fillText(v, 20 + k * bw + bw / 2, b.h - 24 - hh); bc.fillStyle = c.muted; bc.textBaseline = "top"; bc.fillText("σ = " + STEPS[k], 20 + k * bw + bw / 2, b.h - 18); }); bc.fillStyle = c.muted; bc.textAlign = "left"; bc.textBaseline = "top"; bc.fillText("times each step size was chosen", 6, 4); }
+    stats($("#lcStats"), [["Best f", res ? res.fx.toFixed(3) : "–"], ["Global minimum", "f(0, 0) = 0"], ["Accepted moves", res ? res.path.length - 1 : "–"]]);
+  }
+  $("#lcRun").addEventListener("click", () => { res = search(ucb(ctl.c), mulberry32(newSeed()), ctl.it); draw(); $("#lcNote").textContent = "Path colors show which step size produced each accepted move. Early on, large steps pay off by jumping between valleys; later, small steps refine. The bandit shifts its choices as the rewards change."; });
+  $("#lcAll").addEventListener("click", () => {
+    const rnd = mulberry32(newSeed()), runs = 30, rows = STEPS.map((s, k) => ["fixed σ = " + s, Array.from({ length: runs }, () => search(() => k, rnd, ctl.it).fx)]).concat([["UCB-chosen σ", Array.from({ length: runs }, () => search(ucb(ctl.c), rnd, ctl.it).fx)]]);
+    const mean = a => a.reduce((s, v) => s + v, 0) / a.length, best = Math.min(...rows.map(r => mean(r[1])));
+    $("#lcTbl").innerHTML = `<thead><tr><th>Step size</th><th class="n">Mean best f (${runs} runs)</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r[0].startsWith("UCB") ? "best" : ""}"><td>${r[0]}</td><td class="n">${mean(r[1]).toFixed(3)}</td></tr>`).join("") + `<tr class="dim"><td>a fixed σ picked blindly</td><td class="n">${mean(rows.slice(0, 4).map(r => mean(r[1]))).toFixed(3)}</td></tr></tbody>`;
+    const u = mean(rows[4][1]), blind = mean(rows.slice(0, 4).map(r => mean(r[1])));
+    $("#lcNote").textContent = `UCB reached ${u.toFixed(2)} on average, against ${best.toFixed(2)} for the best fixed step size (which it did not know in advance) and ${blind.toFixed(2)} for a blind pick: the algorithm configures itself while it runs. The best fixed step depends on the problem and the budget, so it would normally have to be found by trial runs.`;
+  });
+  ro.observe($("#lcCv")); onRedraw(draw); res = search(ucb(.5), mulberry32(5), 1500); draw(); $("#lcAll").click();
+})();
+
+/* ---------- construct vs. improve ---------- */
+(function constructImprove() {
+  const ctl = makeControls($("#ciCtl"), [{ key: "n", id: "ciN", label: "Cities", min: 10, max: 120, step: 5, value: 50 }], () => { make(); draw(); });
+  let rnd = mulberry32(5), P = [], tour = [], timer = null, phase = "", log = [];
+  const dist = (a, b) => Math.hypot(P[a][0] - P[b][0], P[a][1] - P[b][1]), len = t => t.reduce((s, v, i) => s + dist(v, t[(i + 1) % t.length]), 0);
+  const make = () => { clearInterval(timer); P = Array.from({ length: ctl.n }, () => [rnd(), rnd()]); tour = []; log = []; phase = ""; };
+  function draw() {
+    const ax = axes($("#ciCv"), { x0: -.03, x1: 1.03, y0: -.03, y1: 1.03, bare: true, equal: true, pad: { l: 6, r: 6, t: 6, b: 6 } }), { ctx, X, Y, c } = ax;
+    if (tour.length > 1) { ctx.strokeStyle = phase === "2-opt" ? c.gold : c.accent; ctx.lineWidth = 2.2; ctx.beginPath(); tour.forEach((v, i) => i ? ctx.lineTo(X(P[v][0]), Y(P[v][1])) : ctx.moveTo(X(P[v][0]), Y(P[v][1]))); if (tour.length === P.length) ctx.closePath(); ctx.stroke(); }
+    P.forEach((p, i) => dot(ctx, X(p[0]), Y(p[1]), 3.6, i === tour[0] ? c.good : c.ink));
+    stats($("#ciStats"), [["Phase", phase || "–"], ["Tour length", tour.length === P.length ? len(tour).toFixed(3) : "…"], ["History", log.join(" → ") || "–"]]);
+  }
+  $("#ciNN").addEventListener("click", () => { clearInterval(timer); tour = [0]; phase = "construct"; const left = new Set(P.map((_, i) => i)); left.delete(0); timer = setInterval(() => { if (!left.size) { clearInterval(timer); log.push("NN " + len(tour).toFixed(2)); $("#ciNote").textContent = "Nearest neighbor builds the tour one city at a time, always going to the closest unvisited city. It is fast, but the last legs are often long detours."; return draw(); } let b = -1; left.forEach(j => { if (b < 0 || dist(tour[tour.length - 1], j) < dist(tour[tour.length - 1], b)) b = j; }); tour.push(b); left.delete(b); draw(); }, 40); });
+  $("#ciRand").addEventListener("click", () => { clearInterval(timer); tour = P.map((_, i) => i); for (let i = tour.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [tour[i], tour[j]] = [tour[j], tour[i]]; } phase = "random"; log.push("random " + len(tour).toFixed(2)); draw(); });
+  $("#ciOpt").addEventListener("click", () => {
+    clearInterval(timer); if (tour.length !== P.length) $("#ciRand").click(); phase = "2-opt"; let moves = 0;
+    timer = setInterval(() => {
+      const n = tour.length; let found = false;
+      outer: for (let i = 1; i < n - 1; i++) for (let j = i + 1; j < n; j++) { const a = tour[i - 1], b = tour[i], cc = tour[j], d = tour[(j + 1) % n]; if (dist(a, cc) + dist(b, d) < dist(a, b) + dist(cc, d) - 1e-12) { tour.splice(i, j - i + 1, ...tour.slice(i, j + 1).reverse()); found = true; moves++; break outer; } }
+      if (!found) { clearInterval(timer); log.push("2-opt " + len(tour).toFixed(2)); $("#ciNote").textContent = `2-opt reversed ${moves} segments, each removing two crossing or wasteful edges, until no reversal shortens the tour: a local optimum. Starting from a constructed tour usually needs far fewer moves than starting from a random one.`; }
+      draw();
+    }, 30);
+  });
+  $("#ciNew").addEventListener("click", () => { make(); draw(); $("#ciNote").textContent = ""; });
+  make(); ro.observe($("#ciCv")); onRedraw(draw); draw(); $("#ciNote").textContent = "Press Construct, then Improve.";
+})();
+
+codeTabs({ f: "Least-squares polynomial fits, overfitting, more data, and a line fitted by gradient descent", p: "Logistic regression, k-means and self-training on the same two-class data", c: "A UCB bandit choosing the step size of a random search on Rastrigin, against fixed step sizes", t: "TSP search-space size, nearest-neighbor construction and 2-opt improvement" }, "f");
+
+/* ---------- side menu ---------- */
+(function sideMenu() {
+  const toc = $("#toc"), btn = $("#tocBtn"), scrim = $("#scrim");
+  // read each link's #hash, not its raw href: hosts such as htmlpreview rewrite in-page links to full URLs
+  const links = [...toc.querySelectorAll("nav a")].filter(a => a.hash);
+  const targets = links.map(a => document.getElementById(decodeURIComponent(a.hash.slice(1))));
+  function setOpen(o) { toc.classList.toggle("open", o); scrim.classList.toggle("show", o); btn.setAttribute("aria-expanded", String(o)); }
+  btn.addEventListener("click", () => setOpen(!toc.classList.contains("open")));
+  scrim.addEventListener("click", () => setOpen(false));
+  links.forEach(a => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setOpen(false); });
+  let ticking = false, lastCur = -1;
+  function spy() {
+    ticking = false; let cur = 0;
+    targets.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= 140) cur = i; });
+    if (cur === lastCur) return; lastCur = cur;
+    links.forEach(a => a.classList.remove("active")); toc.querySelectorAll("li.current").forEach(l => l.classList.remove("current"));
+    const a = links[cur], topLi = a && a.closest("nav > ol > li");
+    if (!topLi) return;
+    a.classList.add("active"); topLi.classList.add("current"); topLi.querySelector(":scope > a").classList.add("active");
+    const y = a.offsetTop; if (y < toc.scrollTop + 60 || y > toc.scrollTop + toc.clientHeight - 60) toc.scrollTop = y - toc.clientHeight / 3;
+  }
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+  spy();
+})();
+
+</script>
+</body>
+</html>

@@ -3,6 +3,9 @@
 
 | Example  | Notebook  |
 |---|---|
+| Interactive companion to Chapter 11 | [Mahcine Learning Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%2011/ML_Lab.html) |
+| Interactive companion to Chapter 11 | [Unsupervised Learning Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%2011/UL_Lab.html) |
+| Interactive companion to Chapter 11 | [Supervised Learning Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%2011/SL_Lab.html) |
 | Converting tabular data to a graph-strucutred data | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.1_Tabular2Graph.ipynb)  |
 | Node embedding using Graph Convolutional Network (GCN) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.2_GCN.ipynb)  |
 | Amortized optimization | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.3_Amortized_optimization.ipynb)  |
