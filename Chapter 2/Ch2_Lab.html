@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 2 (A deeper look at search and optimization) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
 <style>[hidden]{display:none!important} img{max-width:100%}</style>
-<title>Problems and Heuristics Lab</title>
+<title>Problems and Algorithms Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -238,7 +238,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
 }
 @media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto!important} }
 
-/* Problems and heuristics additions */
+/* Problems and Algorithms additions */
 .cv-sq{aspect-ratio:4/3;border-radius:8px;background:var(--sunk)}
 .mono{font-family:var(--f-mono)}
 .ttab td,.ttab th{padding:.3rem .5rem;font-size:.82rem}
@@ -302,7 +302,7 @@ tr.bad td{color:var(--bad)}
   <div class="wrap hero-grid">
     <div>
       <div class="eyebrow">Interactive companion · Chapter 2 · A deeper look at search and optimization</div>
-      <h1>Problems and Heuristics <em>Lab</em></h1>
+      <h1>Problems and Algorithms <em>Lab</em></h1>
       <p class="lede">Before choosing an algorithm, classify the problem: how many variables, of what type, how many objectives, what kind of landscape, which constraints, and how much time you have. Then pick a search strategy, often a heuristic: a rule of thumb that finds good answers fast without promising the best.</p>
       <div class="variants">
         <a class="chip" href="#combinatorics"><b>n!</b> Search spaces</a>
@@ -507,10 +507,10 @@ tr.bad td{color:var(--bad)}
   <div class="wrap">
     <span class="eyebrow">Part 5 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s Chapter 2 notebooks directly in Colab, or the Problems and Heuristics Lab companion notebook with the from-scratch implementations below. The companion needs only the Python standard library; the book’s notebooks use SciPy, SymPy, PuLP and OR-Tools.</p>
+    <p class="prose">Open the book’s Chapter 2 notebooks directly in Colab, or the Problems and Algorithms Lab companion notebook with the from-scratch implementations below. The companion needs only the Python standard library; the book’s notebooks use SciPy, SymPy, PuLP and OR-Tools.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
-      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Ch2_Lab_Companion.ipynb"><em>All examples</em><b>Problems and Heuristics Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Ch2_Lab_Companion.ipynb"><em>All examples</em><b>Problems and Algorithms Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.1_ObjFcn.ipynb"><em>Chapter 2</em><b>Listing 2.1</b><span>Unimodal, multimodal and deceptive functions</span></a>
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.2_NQueen.ipynb"><em>Chapter 2</em><b>Listing 2.2</b><span>n-queen by sliding placement</span></a>
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.3_NQueen_OR.ipynb"><em>Chapter 2</em><b>Listing 2.3</b><span>n-queen with OR-Tools CP-SAT</span></a>
@@ -921,7 +921,7 @@ function presets(el, list, apply) {
 }
 
 
-/* ================= Problems and Heuristics Lab ================= */
+/* ================= Problems and Algorithms Lab ================= */
 // Everything below is written for this page; the shared plumbing comes from the PSO Lab build.
 const newSeed = () => Math.floor(Math.random() * 1e9);
 const gauss = rnd => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
