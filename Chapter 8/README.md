@@ -3,6 +3,7 @@
 
 | Example  | Notebook  |
 |---|---|
+| Interactive companion to Chapter 8 | [GA Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%208/GA_Lab.html) |
 | Curve fitting using real-valued GA | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.1_Curve_fitting.ipynb)  |
 | Generatic operators in permutation-based GA | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.2_Genetic_operators.ipynb)  |
 | Solving manufacturing problem  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.3_Manufacturing.ipynb)  |
