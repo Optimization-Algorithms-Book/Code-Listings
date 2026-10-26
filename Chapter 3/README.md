@@ -3,6 +3,7 @@
 
 | Example  | Notebook  |
 |---|---|
+| Interactive companion to Chapter 3 | [Blind Search Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%203/BS_Lab.html) |
 | Undirected graph | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%203/Listing%203.1_undirected.ipynb)  |
 | Directed graph | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%203/Listing%203.2_directed.ipynb)  |
 |Multi-graph | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%203/Listing%203.3_multigraph.ipynb)  |
