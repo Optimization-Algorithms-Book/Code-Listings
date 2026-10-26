@@ -242,7 +242,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
 .cv-graph{aspect-ratio:16/10;border-radius:8px;background:var(--sunk)}
 @media (max-width:600px){ .cv-graph{aspect-ratio:4/3} }
 .cv-bridge{aspect-ratio:16/9;border-radius:8px;background:var(--sunk)}
-.cv-forage{aspect-ratio:16/10;border-radius:8px;background:var(--sunk)}
+.cv-forage{aspect-ratio:1/1;width:100%;max-width:620px;margin:0 auto;border-radius:8px;background:#000}
 .decision{font-family:var(--f-mono);font-size:.8rem}
 .decision td.pick{color:var(--good);font-weight:600}
 .facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem;margin:1rem 0}
@@ -306,7 +306,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
     <div>
       <canvas id="heroCv" class="hero-canvas" aria-label="Ants foraging between a nest and three food sources"></canvas>
-      <p class="cap" style="margin-top:.4rem">A live colony: ants leave the nest (center), find food, and lay pheromone (gold) on the way home. Other ants follow the strongest trails.</p>
+      <p class="cap" style="margin-top:.4rem">A live colony: ants leave the nest (purple), carry food home from three piles, and lay chemical (green to white) on the way. Other ants follow the strongest trails.</p>
     </div>
   </div>
 </header>
@@ -361,15 +361,18 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
 
     <h3 id="evaporation">Why evaporation matters</h3>
-    <p class="prose">Figure 10.4 of the book compares evaporation rates in a foraging simulation. With <b>ρ = 0</b> trails never fade, so the ants keep following the first trails they made, even after better ones exist. With <b>ρ = 1</b> trails vanish immediately and the ants wander at random. A moderate rate keeps useful trails while forgetting stale ones. Try it.</p>
+    <p class="prose">Figure 10.4 of the book compares evaporation rates in a foraging simulation. With <b>ρ = 0</b> trails never fade, so the ants keep following the first trails they made, even after better ones exist. With <b>ρ = 1</b> trails vanish immediately and the ants wander at random. A moderate rate keeps useful trails while forgetting stale ones. The simulation follows the NetLogo Ants model the book uses: ants leave the purple nest, pick up one unit of food from a pile, and carry it home while dropping chemical. Food is finite, so each pile shrinks as the ants carry it away. Try it.</p>
     <div class="bench">
-      <div class="bench-head"><h4>Foraging colony</h4><span class="eyebrow">Nest in the center, three food sources</span></div>
+      <div class="bench-head"><h4>Foraging colony</h4><span class="eyebrow">After the NetLogo Ants model</span></div>
       <div class="bench-body">
         <div class="side" id="fgCtl"></div>
         <div class="stage">
           <div class="btns"><button id="fgRun" class="primary">Pause</button><button id="fgReset">New colony</button></div>
           <canvas id="fgCv" class="cv-forage" aria-label="Foraging simulation"></canvas>
+          <div class="legend"><span><i style="background:#8E5BB8"></i>nest</span><span><i style="background:#54C4C9"></i>near pile</span><span><i style="background:#2E93C4"></i>middle pile</span><span><i style="background:#345DB8"></i>far pile</span><span><i style="background:#E23A2E"></i>searching ant</span><span><i style="background:#F7943D"></i>ant carrying food</span><span><i style="background:linear-gradient(90deg,#000,#148C1E,#fff)"></i>chemical (pheromone)</span></div>
           <div class="stats" id="fgStats"></div>
+          <canvas id="fgChart" class="cv-chart" style="height:150px" aria-label="Food left in each pile"></canvas>
+          <p class="cap">Food left in each pile over time (one point every 10 ticks). The colony usually empties the nearest pile first.</p>
         </div>
       </div>
       <div class="presets" id="fgPresets"></div>
@@ -964,84 +967,135 @@ function basemapLayer(w, h, c, proj) {
 
 const pick = (rnd, w) => { let s = 0; for (const v of w) s += v; let r = rnd() * s; for (let i = 0; i < w.length; i++) { r -= w[i]; if (r <= 0) return i; } return w.length - 1; };
 
-/* ---------- foraging colony (hero and evaporation demo) ---------- */
-function makeForager(cv, opts) {
-  const GW = 160, GH = 100, NEST = [80, 50], FR = 6, STOCK = 250;
-  let ph, ants, rnd, delivered, t, FOOD;
-  // food is finite: an exhausted source disappears and a new one appears elsewhere, so stale trails can mislead
-  const newFood = () => { for (;;) { const x = 12 + rnd() * (GW - 24), y = 10 + rnd() * (GH - 20); if (Math.hypot(x - NEST[0], y - NEST[1]) > 35) return [x, y, STOCK]; } };
+/* ---------- foraging colony, after NetLogo's Ants model (hero and evaporation demo) ---------- */
+// A 71 x 71 patch world centered on the nest. Ants leave the nest one per tick, wander, pick up one
+// unit of food, and carry it home while dropping chemical. Searching ants climb the chemical gradient.
+// Chemical diffuses to neighboring patches and evaporates every tick. Food is finite and never replenished.
+const FG = { R: 35, N: 71 };
+const FG_COL = { bg: "#000000", nest: "#8E5BB8", piles: ["#54C4C9", "#2E93C4", "#345DB8"], ant: "#E23A2E", carry: "#F7943D" };
+function makeForager(opts) {
+  const { R, N } = FG, idx = (x, y) => (y + R) * N + (x + R);
+  let rnd, chem, nestScent, food, pile, isNest, ants, t, delivered, start, hist;
   function reset(seed) {
-    rnd = mulberry32(seed); ph = new Float32Array(GW * GH); delivered = 0; t = 0;
-    FOOD = [[22, 18, STOCK], [138, 24, STOCK], [118, 86, STOCK]];
-    ants = []; for (let i = 0; i < opts.n(); i++) ants.push({ x: NEST[0], y: NEST[1], a: rnd() * 2 * PI, carry: false, steps: 0 });
+    rnd = mulberry32(seed); t = 0; delivered = 0;
+    chem = new Float32Array(N * N); nestScent = new Float32Array(N * N); food = new Uint8Array(N * N); pile = new Int8Array(N * N).fill(-1); isNest = new Uint8Array(N * N);
+    const src = [[.6 * R, 0], [-.6 * R, -.6 * R], [-.8 * R, .8 * R]];        // near, middle and far food piles
+    for (let y = -R; y <= R; y++) for (let x = -R; x <= R; x++) {
+      const k = idx(x, y), d = Math.hypot(x, y);
+      isNest[k] = d < 5 ? 1 : 0; nestScent[k] = 200 - d;
+      src.forEach(([sx, sy], s) => { if (Math.hypot(x - sx, y - sy) < 5) { pile[k] = s; food[k] = 1 + (rnd() < .5 ? 1 : 0); } });
+    }
+    start = [0, 1, 2].map(s => pileFood(s)); hist = [start.slice()];
+    ants = []; for (let i = 0; i < opts.n(); i++) ants.push({ x: 0, y: 0, h: rnd() * 360, carry: false });
   }
-  const at = (x, y) => { const i = Math.round(x), j = Math.round(y); return i < 0 || j < 0 || i >= GW || j >= GH ? -1 : ph[j * GW + i]; };
+  function pileFood(s) { let c = 0; for (let k = 0; k < N * N; k++) if (pile[k] === s) c += food[k]; return c; }
+  const patch = (x, y) => { const px = Math.round(x), py = Math.round(y); return px < -R || px > R || py < -R || py > R ? -1 : idx(px, py); };
+  const ahead = (a, ang, field) => { const h = (a.h + ang) * PI / 180, k = patch(a.x + Math.sin(h), a.y + Math.cos(h)); return k < 0 ? -1 : field[k]; };
+  function uphill(a, field) {                       // sniff 45 degrees left, ahead and right; turn toward the strongest
+    const f = ahead(a, 0, field), r = ahead(a, 45, field), l = ahead(a, -45, field);
+    if (r > f || l > f) a.h += r > l ? 45 : -45;
+  }
   function tick() {
     t++;
-    const rho = opts.rho(), keep = 1 - .06 * rho;
-    if (rho > 0) for (let k = 0; k < ph.length; k++) ph[k] *= keep;
-    for (const a of ants) {
-      if (a.carry) {   // head home, laying pheromone that is stronger close to the food
-        const dx = NEST[0] - a.x, dy = NEST[1] - a.y; a.a = Math.atan2(dy, dx) + (rnd() - .5) * .6;
-        const i = Math.round(a.x), j = Math.round(a.y); if (i >= 0 && j >= 0 && i < GW && j < GH) ph[j * GW + i] = Math.min(4, ph[j * GW + i] + 1.2 * Math.max(.15, 1 - a.steps / 150));
-        a.steps++;
-        if (Math.hypot(dx, dy) < 3) { a.carry = false; delivered++; a.a += PI; a.steps = 0; }
-      } else {         // search: sense left, ahead and right, and turn toward stronger pheromone
-        const s = [-.6, 0, .6].map(d => at(a.x + 4 * Math.cos(a.a + d), a.y + 4 * Math.sin(a.a + d)));
-        const w = s.map(v => v < 0 ? 0 : Math.pow(v + .02, opts.alpha()));
-        if (w[0] + w[1] + w[2] > .1 && rnd() < .85) a.a += [-.6, 0, .6][pick(rnd, w)] * .5;
-        a.a += (rnd() - .5) * .7;
-        for (let q = 0; q < FOOD.length; q++) { const f = FOOD[q]; if (f[2] > 0 && Math.hypot(f[0] - a.x, f[1] - a.y) < FR) { a.carry = true; a.steps = 0; a.a += PI; if (--f[2] <= 0) FOOD[q] = newFood(); break; } }
+    for (let i = 0; i < ants.length; i++) {
+      const a = ants[i]; if (i >= t) break;       // ants leave the nest one per tick
+      const k = patch(a.x, a.y);
+      if (!a.carry) {                             // look for food
+        if (k >= 0 && food[k] > 0) { a.carry = true; food[k]--; a.h += 180; }
+        else if (k >= 0 && chem[k] >= .05 && chem[k] < 2) uphill(a, chem);
+      } else {                                    // return to the nest, dropping chemical
+        if (k >= 0 && isNest[k]) { a.carry = false; delivered++; a.h += 180; }
+        else { if (k >= 0) chem[k] += 60; uphill(a, nestScent); }
       }
-      let nx = a.x + Math.cos(a.a), ny = a.y + Math.sin(a.a);
-      if (nx < 1 || nx > GW - 2) { a.a = PI - a.a; nx = a.x; } if (ny < 1 || ny > GH - 2) { a.a = -a.a; ny = a.y; }
-      a.x = nx; a.y = ny;
+      a.h += rnd() * 40 - rnd() * 40;             // wiggle
+      const h = a.h * PI / 180, nx = a.x + Math.sin(h), ny = a.y + Math.cos(h);
+      if (nx < -R || nx > R || ny < -R || ny > R) a.h += 180; else { a.x = nx; a.y = ny; }
     }
+    // diffusion: each patch shares a fraction of its chemical equally with its 8 neighbors
+    const df = opts.diffusion(), next = new Float32Array(N * N);
+    for (let y = -R; y <= R; y++) for (let x = -R; x <= R; x++) {
+      const k = idx(x, y), c = chem[k]; if (!c) continue;
+      const share = c * df / 8; let given = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { if (!dx && !dy) continue; const X = x + dx, Y = y + dy; if (X < -R || X > R || Y < -R || Y > R) continue; next[idx(X, Y)] += share; given += share; }
+      next[k] += c - given;
+    }
+    const keep = 1 - opts.rho();                  // evaporation (equation 10.2)
+    for (let k = 0; k < N * N; k++) chem[k] = next[k] * keep;
+    if (t % 10 === 0) hist.push([0, 1, 2].map(s => pileFood(s)));
   }
-  const img = document.createElement("canvas"); img.width = GW; img.height = GH; const ictx = img.getContext("2d"), idata = ictx.createImageData(GW, GH);
-  function draw() {
-    const { ctx, w, h } = setupCanvas(cv), c = colors(), gold = hex(c.gold), bg = hex(c.sunk);
-    for (let k = 0; k < ph.length; k++) { const v = Math.min(1, ph[k] / 1.5); idata.data[k * 4] = bg[0] + (gold[0] - bg[0]) * v; idata.data[k * 4 + 1] = bg[1] + (gold[1] - bg[1]) * v; idata.data[k * 4 + 2] = bg[2] + (gold[2] - bg[2]) * v; idata.data[k * 4 + 3] = 255; }
-    ictx.putImageData(idata, 0, 0); ctx.imageSmoothingEnabled = true; ctx.drawImage(img, 0, 0, w, h);
-    const sx = w / GW, sy = h / GH;
-    ctx.fillStyle = c.good; FOOD.forEach(f => { ctx.globalAlpha = .35 + .65 * f[2] / STOCK; ctx.beginPath(); ctx.arc(f[0] * sx, f[1] * sy, FR * sx * (.5 + .5 * f[2] / STOCK), 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
-    ctx.fillStyle = c.ink; ctx.beginPath(); ctx.arc(NEST[0] * sx, NEST[1] * sy, 4 * sx, 0, 7); ctx.fill();
-    ants.forEach(a => { ctx.fillStyle = a.carry ? c.good : c.ink; ctx.fillRect(a.x * sx - 1.5, a.y * sy - 1.5, 3, 3); });
+  const img = document.createElement("canvas"); img.width = N; img.height = N; const ictx = img.getContext("2d"), id = ictx.createImageData(N, N);
+  const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const nestC = rgb(FG_COL.nest), pileC = FG_COL.piles.map(rgb);
+  function chemColor(c) {                         // black -> green -> white, like scale-color green chemical 0.1 5
+    const v = Math.max(0, Math.min(1, (c - .1) / 4.9));
+    if (v < .5) { const u = v / .5; return [20 * u, 140 * u, 30 * u]; }
+    const u = (v - .5) / .5; return [20 + 235 * u, 140 + 115 * u, 30 + 225 * u];
   }
-  return { reset, tick, draw, get delivered() { return delivered; }, get t() { return t; } };
+  function draw(cv) {
+    const { ctx, w, h } = setupCanvas(cv), S = Math.min(w, h), ox = (w - S) / 2, oy = (h - S) / 2, ps = S / N;
+    for (let y = -R; y <= R; y++) for (let x = -R; x <= R; x++) {
+      const k = idx(x, y), o = ((R - y) * N + (x + R)) * 4;   // flip y: NetLogo's y axis points up
+      const c = isNest[k] ? nestC : food[k] > 0 ? pileC[pile[k]] : chemColor(chem[k]);
+      id.data[o] = c[0]; id.data[o + 1] = c[1]; id.data[o + 2] = c[2]; id.data[o + 3] = 255;
+    }
+    ictx.putImageData(id, 0, 0);
+    ctx.fillStyle = FG_COL.bg; ctx.fillRect(0, 0, w, h);
+    ctx.imageSmoothingEnabled = false; ctx.drawImage(img, ox, oy, S, S); ctx.imageSmoothingEnabled = true;
+    const nx = ox + R * ps + ps / 2, ny = oy + R * ps + ps / 2;   // nest entrance
+    ctx.fillStyle = "#3C2452"; ctx.beginPath(); ctx.ellipse(nx, ny + ps * .6, ps * 1.6, ps * .9, 0, 0, 7); ctx.fill();
+    for (let i = 0; i < ants.length && i < t; i++) antSprite(ctx, ox + (ants[i].x + R) * ps + ps / 2, oy + (R - ants[i].y) * ps + ps / 2, ants[i].h, ps, ants[i].carry);
+  }
+  function antSprite(ctx, x, y, hdg, ps, carry) {
+    const s = Math.max(.8, ps / 7.5), a = hdg * PI / 180;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.scale(s, s);
+    ctx.strokeStyle = carry ? FG_COL.carry : FG_COL.ant; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = .9;
+    for (const ly of [-1.6, 0, 1.6]) { ctx.beginPath(); ctx.moveTo(-3.4, ly * 1.2 - .4); ctx.lineTo(3.4, -ly * 1.2 - .4); ctx.stroke(); }   // legs
+    ctx.beginPath(); ctx.ellipse(0, 3.2, 1.6, 2.3, 0, 0, 7); ctx.fill();       // abdomen
+    ctx.beginPath(); ctx.ellipse(0, 0, 1.1, 1.4, 0, 0, 7); ctx.fill();         // thorax
+    ctx.beginPath(); ctx.arc(0, -2.4, 1.3, 0, 7); ctx.fill();                  // head
+    ctx.beginPath(); ctx.moveTo(-.6, -3.4); ctx.lineTo(-1.8, -5); ctx.moveTo(.6, -3.4); ctx.lineTo(1.8, -5); ctx.stroke();   // antennae
+    ctx.restore();
+  }
+  return { reset, tick, draw, pileFood, get t() { return t; }, get delivered() { return delivered; }, get hist() { return hist; }, get start() { return start; } };
 }
-const hex = s => { s = s.trim(); if (s.startsWith("#")) return [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16)]; const m = s.match(/\d+/g); return m ? m.slice(0, 3).map(Number) : [0, 0, 0]; };
 
 (function hero() {
-  const cv = $("#heroCv"), F = makeForager(cv, { n: () => 120, rho: () => .1, alpha: () => 2 });
-  F.reset(7); for (let i = 0; i < 260; i++) F.tick();
+  const cv = $("#heroCv"), F = makeForager({ n: () => 125, rho: () => .1, diffusion: () => .5 });
+  let seed = 7; F.reset(seed); for (let i = 0; i < 220; i++) F.tick();
   let vis = true; new IntersectionObserver(es => { vis = es[0].isIntersecting; }).observe(cv);
-  ro.observe(cv); onRedraw(() => F.draw()); F.draw();
-  if (!reduceMotion) (function loop() { if (vis) { F.tick(); F.tick(); F.draw(); } requestAnimationFrame(loop); })();
+  ro.observe(cv); onRedraw(() => F.draw(cv)); F.draw(cv);
+  // when every pile is empty the colony starts over; food is never added during a run
+  if (!reduceMotion) (function loop() { if (vis) { F.tick(); if ([0, 1, 2].every(s => F.pileFood(s) === 0) && F.t > 50) { F.reset(++seed); } F.draw(cv); } requestAnimationFrame(loop); })();
 })();
 
 (function forage() {
   const cv = $("#fgCv");
   const ctl = makeControls($("#fgCtl"), [
-    { key: "rho", id: "fgRho", label: "Evaporation rate ρ", min: 0, max: 1, step: .05, value: .1 },
-    { key: "alpha", id: "fgAl", label: "Trail following α", min: 0, max: 4, step: .25, value: 2, hint: "0 ignores the pheromone completely." },
-    { key: "n", id: "fgN", label: "Ants", min: 20, max: 250, step: 10, value: 120 }
-  ], k => { if (k === "n") F.reset(3); });
-  const F = makeForager(cv, { n: () => ctl.n, rho: () => ctl.rho, alpha: () => ctl.alpha });
+    { key: "rho", id: "fgRho", label: "Evaporation rate ρ", min: 0, max: 1, step: .01, value: .1, hint: "Fraction of the chemical that evaporates each tick (equation 10.2)." },
+    { key: "diffusion", id: "fgDf", label: "Diffusion rate", min: 0, max: .99, step: .01, value: .5, hint: "Fraction shared with the 8 neighboring patches each tick." },
+    { key: "n", id: "fgN", label: "Population", min: 10, max: 200, step: 5, value: 125 },
+    { key: "speed", id: "fgSp", label: "Speed (ticks per frame)", min: 1, max: 10, step: 1, value: 2 }
+  ], k => { if (k === "n") { F.reset(3); draw(); } });
+  const F = makeForager({ n: () => ctl.n, rho: () => ctl.rho, diffusion: () => ctl.diffusion });
   F.reset(3);
   presets($("#fgPresets"), [
-    { t: "ρ = 0: never forget", d: "Every trail stays forever. The colony keeps following its first discoveries.", s: { rho: 0 } },
-    { t: "ρ = 0.1: balanced", d: "Useful trails are kept, stale ones fade.", s: { rho: .1 } },
-    { t: "ρ = 1: forget at once", d: "No trail survives long enough to be followed: a random search.", s: { rho: 1 } },
-    { t: "α = 0: ignore pheromone", d: "Ants still lay trails but nobody follows them.", s: { alpha: 0, rho: .1 } }
-  ], p => { for (const k in p.s) ctl[k] = p.s[k]; F.reset(3); });
+    { t: "ρ = 0: never forget", d: "Trails to exhausted piles never fade, so ants keep visiting empty ground.", s: { rho: 0 } },
+    { t: "ρ = 0.1: balanced", d: "Useful trails are kept and stale ones fade. The piles empty nearest first.", s: { rho: .1 } },
+    { t: "ρ = 1: forget at once", d: "Chemical vanishes immediately, so foraging is a random search.", s: { rho: 1 } },
+    { t: "No diffusion", d: "Trails stay one patch wide and are harder for searching ants to find.", s: { diffusion: 0, rho: .1 } }
+  ], p => { for (const k in p.s) ctl[k] = p.s[k]; F.reset(3); draw(); });
   let on = !reduceMotion, vis = false; const btn = $("#fgRun"); btn.textContent = on ? "Pause" : "Play";
   btn.addEventListener("click", () => { on = !on; btn.textContent = on ? "Pause" : "Play"; });
   $("#fgReset").addEventListener("click", () => { F.reset((Math.random() * 1e9) | 0); draw(); });
   new IntersectionObserver(es => { vis = es[0].isIntersecting; }).observe(cv);
-  function draw() { F.draw(); stats($("#fgStats"), [["Time steps", F.t], ["Food delivered", F.delivered], ["Rate (per 100 steps)", F.t ? (100 * F.delivered / F.t).toFixed(1) : "0"]]); }
+  function draw() {
+    F.draw(cv);
+    const left = [0, 1, 2].map(s => F.pileFood(s)), names = ["near pile", "middle pile", "far pile"];
+    stats($("#fgStats"), [["Ticks", F.t], ["Food delivered", F.delivered], ...left.map((v, s) => [`Food left, ${names[s]}`, `${v} / ${F.start[s]}`])]);
+    lineChart($("#fgChart"), [0, 1, 2].map(s => ({ data: F.hist.map(r => r[s]), color: FG_COL.piles[s], width: 2.5 })), { xmax: Math.max(10, F.hist.length - 1) });
+  }
   ro.observe(cv); onRedraw(draw); draw();
-  (function loop() { if (on && vis) { for (let i = 0; i < 3; i++) F.tick(); draw(); } requestAnimationFrame(loop); })();
+  (function loop() { if (on && vis) { for (let i = 0; i < ctl.speed; i++) F.tick(); draw(); } requestAnimationFrame(loop); })();
 })();
 
 /* ---------- double bridge ---------- */
@@ -1052,7 +1106,6 @@ const hex = s => { s = s.trim(); if (s.startsWith("#")) return [parseInt(s.slice
     { key: "L2", id: "brL2", label: "Length of branch 2 (branch 1 = 1)", min: 1, max: 4, step: .1, value: 2 },
     { key: "m", id: "brM", label: "Ants per iteration m", min: 2, max: 60, step: 1, value: 10 },
     { key: "rho", id: "brRho", label: "Evaporation rate ρ", min: 0, max: 1, step: .05, value: .2 },
-    { key: "alpha", id: "brAl", label: "Pheromone exponent α", min: .5, max: 3, step: .25, value: 1, hint: "Equation 10.1 uses α = 1. Larger α amplifies small early differences." },
     { key: "speed", id: "brSp", label: "Speed (iterations/s)", min: 1, max: 20, step: 1, value: 4 },
     { key: "seed", id: "brSeed", label: "Random seed", min: 1, max: 99, step: 1, value: 1 }
   ], k => { if (["mode", "L2", "m", "seed"].includes(k)) reset(); else draw(); });
@@ -1060,12 +1113,12 @@ const hex = s => { s = s.trim(); if (s.startsWith("#")) return [parseInt(s.slice
   const L = () => [1, ctl.mode === "equal" ? 1 : ctl.L2];
   function reset() { S = { rnd: mulberry32(ctl.seed), tau: [1, 1], it: 0, p1: [.5], last: [] }; draw(); }
   function step() {
-    const [L1, L2] = L(), p1 = S.tau[0] ** ctl.alpha / (S.tau[0] ** ctl.alpha + S.tau[1] ** ctl.alpha);
+    const [L1, L2] = L(), p1 = S.tau[0] / (S.tau[0] + S.tau[1]);   // equation 10.1
     const choice = []; for (let k = 0; k < ctl.m; k++) choice.push(S.rnd() < p1 ? 0 : 1);
     S.tau = S.tau.map(v => (1 - ctl.rho) * v);                                  // evaporation (eq. 10.2)
     choice.forEach(b => S.tau[b] += 1 / (b ? L2 : L1));                          // deposit Q / L with Q = 1
     S.tau = S.tau.map(v => Math.max(v, 1e-6));
-    S.it++; S.last = choice; S.p1.push(S.tau[0] ** ctl.alpha / (S.tau[0] ** ctl.alpha + S.tau[1] ** ctl.alpha));
+    S.it++; S.last = choice; S.p1.push(S.tau[0] / (S.tau[0] + S.tau[1]));
   }
   const run = runner(step, () => draw(), () => ctl.speed, () => S.it >= 200, $("#brRun"));
   $("#brStep").addEventListener("click", () => { step(); draw(); });
