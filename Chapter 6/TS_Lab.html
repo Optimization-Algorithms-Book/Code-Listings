@@ -1,0 +1,1845 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive companion to Chapter 6 (Tabu search) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
+<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<title>Tabu Search Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+
+/* Layout: a long-form lab notebook. Reading column for concepts, full-width "bench" panels for each simulation. */
+:root{
+  --bg:#F5F8FA; --surface:#FFFFFF; --sunk:#EAF0F4; --ink:#10212D; --muted:#53687A; --line:#D3DEE6; --grid:#E3EAF0;
+  --accent:#00629B; --accent-ink:#FFFFFF; --accent-soft:#DCEBF5; --gold:#C76E12; --gold-soft:#FBEBD9;
+  --s1:#00629B; --s2:#C76E12; --s3:#2E8B57; --s4:#9B3FA6;
+  --good:#2E8B57; --bad:#B4372E;
+  --map-water:#D3E3EC; --map-land:#FAFBFA; --map-state:#C7D3DB; --map-border:#93A6B4;
+  --code-bg:#0E1B25; --code-ink:#D9E6EF; --code-dim:#7F97A8;
+  --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", Consolas, "Courier New", monospace;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0A141B; --surface:#111E28; --sunk:#0D1820; --ink:#E3ECF2; --muted:#93A7B6; --line:#24384A; --grid:#1B2B38;
+  --accent:#55B4EA; --accent-ink:#06121A; --accent-soft:#12324A; --gold:#F0A257; --gold-soft:#3A2814;
+  --s1:#55B4EA; --s2:#F0A257; --s3:#5CC48A; --s4:#D08ADB; --good:#5CC48A; --bad:#F07D72; --map-water:#0B1A24; --map-land:#1A2933; --map-state:#2F4250; --map-border:#4F6676;
+  --code-bg:#08121A; --code-ink:#D9E6EF; --code-dim:#7F97A8; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0A141B; --surface:#111E28; --sunk:#0D1820; --ink:#E3ECF2; --muted:#93A7B6; --line:#24384A; --grid:#1B2B38;
+  --accent:#55B4EA; --accent-ink:#06121A; --accent-soft:#12324A; --gold:#F0A257; --gold-soft:#3A2814;
+  --s1:#55B4EA; --s2:#F0A257; --s3:#5CC48A; --s4:#D08ADB; --good:#5CC48A; --bad:#F07D72; --map-water:#0B1A24; --map-land:#1A2933; --map-state:#2F4250; --map-border:#4F6676;
+  --code-bg:#08121A; --code-ink:#D9E6EF; --code-dim:#7F97A8; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.prose{max-width:72ch}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h2{font-size:clamp(1.7rem,3.2vw,2.3rem);font-weight:700}
+h3{font-size:1.3rem;font-weight:600;margin-top:2.2rem}
+p{margin:.7rem 0}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+.num{font-variant-numeric:tabular-nums}
+
+/* side menu */
+.toc{position:fixed;top:0;left:0;bottom:0;width:264px;overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:calc(1.4rem + env(safe-area-inset-top,0px)) .9rem calc(1.5rem + env(safe-area-inset-bottom,0px)) max(.9rem,env(safe-area-inset-left,0px));z-index:20;scrollbar-width:thin}
+.toc-brand{padding:0 .5rem 1rem;margin-bottom:.8rem;border-bottom:1px solid var(--line)}
+.toc-brand b{display:block;font-family:var(--f-display);font-size:1.25rem}
+.toc-brand span{font-size:.78rem;color:var(--muted)}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc > nav > ol > li{margin-bottom:.15rem}
+.toc nav a{display:flex;gap:.55rem;align-items:baseline;text-decoration:none;color:var(--muted);font-size:.93rem;padding:.38rem .55rem;border-radius:7px;line-height:1.35}
+.toc nav a b{font-family:var(--f-mono);font-weight:500;font-size:.72rem;min-width:1rem;color:var(--muted)}
+.toc nav a:hover{color:var(--ink);background:var(--sunk)}
+.toc nav a.active{color:var(--ink);background:var(--accent-soft);font-weight:600}
+.toc nav a.active b{color:var(--accent)}
+.toc ol ol{display:none;margin:.15rem 0 .45rem 1.45rem;padding-left:.2rem;border-left:1px solid var(--line)}
+.toc li.current > ol{display:block}
+.toc ol ol a{font-size:.84rem;padding:.24rem .6rem}
+.toc ol ol a.active{background:none;color:var(--accent);font-weight:600}
+.toc-foot{margin-top:1.2rem;padding:.8rem .5rem 0;border-top:1px solid var(--line);font-size:.76rem;color:var(--muted);line-height:1.5}
+.toc-foot a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px}
+.toc-foot a:hover{text-decoration-color:var(--accent)}
+.theme-switch{display:flex;gap:2px;margin-top:.8rem;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:2px}
+.theme-switch button{flex:1;border:0;background:none;font-size:.76rem;font-weight:500;padding:.32rem .3rem;border-radius:6px;color:var(--muted)}
+.theme-switch button:hover{color:var(--ink)}
+.theme-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.main{margin-left:264px}
+@media (min-width:1280px){ .main .wrap{margin-left:0;padding-left:max(clamp(32px,3.5vw,56px),env(safe-area-inset-left,0px))} }
+.toc-toggle{display:none}
+.scrim{display:none}
+@media (max-width:1279px){
+  .main{margin-left:0}
+  .toc{width:min(300px,86vw);transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.25)}
+  .toc.open{transform:none}
+  .toc-toggle{display:inline-flex;align-items:center;gap:.45rem;position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:21;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:.65rem 1rem;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+  .scrim.show{display:block;position:fixed;inset:0;background:rgba(5,12,18,.45);z-index:19}
+}
+@media (prefers-reduced-motion:reduce){ .toc{transition:none} }
+section.chapter,h3[id],.bench[id],.two[id],.opgrid[id]{scroll-margin-top:16px}
+
+/* hero */
+header.hero{padding-block:3rem 2rem;border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:2.5rem;align-items:center}
+.hero h1{font-size:clamp(2.3rem,5.4vw,3.9rem);font-weight:700;letter-spacing:-.01em}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+.hero .lede{font-size:1.12rem;color:var(--muted);max-width:52ch}
+.cite{font-size:.86rem;color:var(--muted);border-left:3px solid var(--accent);padding-left:.8rem;margin-top:1.2rem}
+.hero-canvas{width:100%;aspect-ratio:5/4;max-width:100%;border-radius:var(--radius);background:var(--sunk);display:block}
+.variants{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.chip{display:inline-flex;gap:.35rem;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.2rem .7rem;font-size:.84rem;text-decoration:none;color:var(--ink)}
+.chip b{font-family:var(--f-mono);font-weight:500;color:var(--accent)}
+
+section.chapter{padding-block:3.2rem 1rem;border-bottom:1px solid var(--line)}
+section.chapter > .wrap > .eyebrow{display:block;margin-bottom:.4rem}
+
+/* bench (simulation panel) */
+.bench{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-block:1.4rem;overflow:hidden}
+.bench-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;padding:.9rem 1.1rem;border-bottom:1px solid var(--line);background:var(--sunk)}
+.bench-head h4{margin:0;font-family:var(--f-display);font-size:1.12rem}
+.bench-head .eyebrow{font-size:.68rem}
+.bench-body{display:grid;grid-template-columns:270px minmax(0,1fr);gap:0}
+.bench-body.wide-right{grid-template-columns:minmax(0,1fr) 300px}
+.side{padding:1rem 1.1rem;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:.75rem;min-width:0}
+.wide-right .side{border-right:0;border-left:1px solid var(--line)}
+.stage{padding:1rem 1.1rem;min-width:0;display:flex;flex-direction:column;gap:.9rem}
+.ctl{display:flex;flex-direction:column;gap:.15rem}
+.ctl label{display:flex;justify-content:space-between;gap:.5rem;font-size:.84rem;font-weight:500}
+.ctl output{font-family:var(--f-mono);font-size:.82rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.ctl small{font-size:.74rem;color:var(--muted);line-height:1.35}
+.ctl-check label{justify-content:flex-start;align-items:center;font-weight:400}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=text],input[type=number]{font:inherit;font-size:.88rem;padding:.35rem .45rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:100%}
+.btns{display:flex;gap:.45rem;flex-wrap:wrap}
+button{font:inherit;font-size:.86rem;font-weight:500;padding:.45rem .85rem;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.small{font-size:.78rem;padding:.3rem .6rem}
+.group-label{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line);padding-top:.6rem;margin-top:.2rem}
+canvas{display:block;width:100%;max-width:100%}
+.cv-land{aspect-ratio:1/1;border-radius:8px;background:var(--sunk);touch-action:none}
+.cv-chart{height:170px;border-radius:8px;background:var(--sunk)}
+.cv-map{aspect-ratio:16/9;border-radius:8px;background:var(--sunk)}
+.stage-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem}
+.stage-grid > div{min-width:0;display:flex;flex-direction:column;gap:.7rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem}
+.stat{background:var(--sunk);border-radius:8px;padding:.45rem .6rem}
+.stat span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat b{font-family:var(--f-mono);font-weight:500;font-size:.95rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.3rem;vertical-align:-1px}
+.legend i.sq{border-radius:2px}
+.cap{font-size:.8rem;color:var(--muted);margin:0}
+
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.6rem;padding:1rem 1.1rem;border-top:1px solid var(--line)}
+.preset{text-align:left;display:flex;flex-direction:column;gap:.2rem;padding:.6rem .75rem;background:var(--bg)}
+.preset b{font-size:.86rem}
+.preset span{font-size:.78rem;color:var(--muted);font-weight:400;line-height:1.4}
+
+/* math and tables */
+.eq{font-family:var(--f-display);font-size:1.15rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1.1rem;margin:1rem 0;overflow-x:auto;white-space:nowrap}
+.eq i{font-style:italic}
+.eq .tag{float:right;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);margin-left:1rem}
+.eq .t-in{color:var(--muted)} .eq .t-cog{color:var(--accent)} .eq .t-soc{color:var(--gold)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:.42rem .65rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;background:var(--sunk);font-size:.78rem}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.hl td{background:var(--gold-soft)}
+.pseudo{background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);padding:1rem 1.2rem;font-family:var(--f-mono);font-size:.86rem;line-height:1.65;overflow-x:auto;white-space:pre;margin:1rem 0}
+.pseudo .k{color:#7CC4F0} .pseudo .c{color:var(--code-dim)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:start}
+.two > *{min-width:0}
+.cards3{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.2rem 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
+.card h5{margin:0 0 .3rem;font-size:.95rem}
+.card p{margin:0;font-size:.88rem;color:var(--muted)}
+.steps{list-style:none;padding:0;margin:1rem 0;counter-reset:s;display:grid;gap:.4rem}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2rem 1fr;gap:.6rem;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.5rem .7rem;font-size:.92rem}
+.steps li::before{content:counter(s);font-family:var(--f-mono);font-size:.8rem;color:var(--accent-ink);background:var(--accent);border-radius:50%;width:1.6rem;height:1.6rem;display:grid;place-items:center}
+.steps li.loop{border-style:dashed}
+.note{background:var(--accent-soft);border-radius:8px;padding:.7rem .9rem;font-size:.88rem;margin:1rem 0}
+.note.warn{background:var(--gold-soft)}
+blockquote{font-family:var(--f-display);font-style:italic;font-size:1.2rem;border-left:3px solid var(--gold);margin:1.4rem 0;padding:.2rem 0 .2rem 1rem}
+blockquote footer{font-family:var(--f-body);font-style:normal;font-size:.85rem;color:var(--muted);margin-top:.4rem}
+
+/* binary + permutation widgets */
+.bits{display:flex;gap:4px;flex-wrap:wrap}
+.bit{width:2rem;height:2.3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface);font-size:1rem}
+.bit.on{background:var(--accent-soft)}
+.bit.sel{outline:2px solid var(--gold);outline-offset:1px}
+.bit.changed{background:var(--gold);color:#fff}
+.calc{font-family:var(--f-mono);font-size:.86rem;line-height:1.8;background:var(--sunk);border-radius:8px;padding:.7rem .9rem;overflow-x:auto;white-space:nowrap}
+.perm{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.perm .cell{min-width:2.1rem;height:2.1rem;padding:0 .3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+.perm .cell.a{background:var(--accent-soft);border-color:var(--accent)}
+.perm .cell.b{background:var(--gold-soft);border-color:var(--gold)}
+.swap{display:inline-block;font-family:var(--f-mono);font-size:.86rem;border:1px solid var(--line);border-radius:5px;padding:.15rem .45rem;margin:2px;background:var(--surface)}
+.swap.now{background:var(--gold);color:#fff;border-color:var(--gold)}
+.swap.dim{opacity:.45;text-decoration:line-through}
+.opgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.op{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.op h4{margin:0;font-family:var(--f-display);font-size:1.05rem}
+.portfolio{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.35rem}
+.proj{font-size:.76rem;border:1px solid var(--line);border-radius:6px;padding:.3rem .45rem;background:var(--surface);display:flex;justify-content:space-between;gap:.3rem}
+.proj.in{background:var(--accent-soft);border-color:var(--accent)}
+.proj span{font-family:var(--f-mono);color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.bar > div{height:100%;background:var(--accent)}
+.bar.over > div{background:var(--bad)}
+.tour{font-size:.8rem;color:var(--muted);line-height:1.5}
+
+/* code */
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:0 1.1rem;background:var(--sunk)}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;padding:.7rem .8rem;color:var(--muted)}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);font-family:var(--f-mono);font-size:.8rem;line-height:1.6;padding:1rem 1.2rem;overflow:auto;max-height:560px}
+pre.code .cm{color:var(--code-dim)} pre.code .kw{color:#7CC4F0} pre.code .st{color:#E8B572} pre.code .nm{color:#9ED7A8}
+.code-bar{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.7rem 1.1rem;border-bottom:1px solid var(--line)}
+.colab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.7rem;margin:1rem 0}
+.colab{display:flex;flex-direction:column;gap:.25rem;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.75rem .9rem}
+.colab:hover{border-color:var(--accent)}
+.colab b{font-size:.9rem}
+.colab span{font-size:.78rem;color:var(--muted)}
+.colab em{font-style:normal;font-family:var(--f-mono);font-size:.7rem;color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
+.runbox{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;background:var(--sunk);border-radius:var(--radius);padding:.8rem 1rem;margin:1.2rem 0;font-size:.88rem}
+.runbox b{margin-right:.3rem}
+.colab-btn{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:500;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:.25rem .7rem}
+.colab-btn::before{content:"";width:.7rem;height:.7rem;border-radius:50%;background:var(--gold)}
+.zoom{display:grid;gap:.7rem}
+.zoom .card h5{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline}
+.zoom .card h5 span{font-family:var(--f-mono);font-size:.74rem;font-weight:500;color:var(--muted)}
+.zoom .card.ex{border-left:4px solid var(--s2)}
+.zoom .card.it{border-left:4px solid var(--s1)}
+.dspace{position:relative;padding:1.7rem 0 1.6rem;margin-inline:.5rem}
+.dspace .track{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--s2),var(--s1))}
+.dspace .tick{position:absolute;top:0;transform:translateX(-50%);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.dspace .end{position:absolute;bottom:0;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dspace .mark{position:absolute;top:1.32rem;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transition:left .15s}
+@media (prefers-reduced-motion:reduce){ .dspace .mark{transition:none} }
+@media (max-width:600px){ .dspace .tick.mid{display:none} }
+footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
+
+@media (max-width:900px){
+  .hero-grid,.two,.stage-grid{grid-template-columns:1fr}
+  .bench-body,.bench-body.wide-right{grid-template-columns:1fr}
+  .side{border-right:0;border-bottom:1px solid var(--line)}
+  .wide-right .side{border-left:0;border-top:1px solid var(--line);border-bottom:0}
+  .cards3,.opgrid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto!important} }
+
+/* TS additions */
+.cv-sq{aspect-ratio:4/3;border-radius:8px;background:var(--sunk)}
+.cv-board{aspect-ratio:1/1;max-width:440px;width:100%;margin:0 auto;border-radius:8px}
+.cv-land{aspect-ratio:16/7;border-radius:8px;background:var(--sunk)}
+.opgrid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin:1.2rem 0}
+.mono{font-family:var(--f-mono)}
+.ttab td,.ttab th{padding:.3rem .5rem;font-size:.82rem}
+tr.pick td{background:var(--accent-soft);font-weight:600}
+tr.tabu td{color:var(--muted)}
+.tag-t{display:inline-block;font-family:var(--f-mono);font-size:.72rem;padding:0 .35rem;border-radius:4px;background:var(--bad);color:#fff}
+.tag-a{display:inline-block;font-family:var(--f-mono);font-size:.72rem;padding:0 .35rem;border-radius:4px;background:var(--gold);color:#fff}
+.tri{display:grid;gap:2px;font-family:var(--f-mono);font-size:.8rem;width:max-content;max-width:100%}
+.tri span{width:2rem;height:2rem;display:grid;place-items:center;border-radius:4px;background:var(--surface);border:1px solid var(--line)}
+.tri span.h{background:none;border:0;color:var(--muted);font-weight:600}
+.tri span.x{background:none;border:0}
+.tri span.rec{background:var(--bad);color:#fff;border-color:var(--bad)}
+.tri span.frq{background:var(--accent-soft)}
+.tri span.dg{background:var(--sunk)}
+.tri-wrap{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start}
+.tri-leg{font-size:.78rem;color:var(--muted);line-height:1.5;max-width:16rem}
+.seq{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.seq span{min-width:2rem;height:2.1rem;padding:0 .3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+.seq span.hi{background:var(--gold-soft);border-color:var(--gold)}
+.items{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.4rem}
+.item{border:1px solid var(--line);border-radius:8px;padding:.35rem .2rem;text-align:center;font-size:.76rem;background:var(--surface);line-height:1.35}
+.item b{display:block;font-size:.9rem}
+.item.in{background:var(--accent-soft);border-color:var(--accent)}
+.item.tb{box-shadow:inset 0 0 0 2px var(--bad)}
+.capbar{height:14px;border-radius:7px;background:var(--sunk);position:relative;overflow:hidden;margin:.6rem 0 .2rem}
+.capbar i{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:7px}
+.capbar i.over{background:var(--bad)}
+.capbar u{position:absolute;top:0;bottom:0;width:2px;background:var(--ink)}
+.qmat td,.qmat th{padding:.2rem .45rem;font-size:.8rem;text-align:center}
+.qmat td.on{background:var(--bad);color:#fff}
+.assign{display:flex;gap:.4rem;flex-wrap:wrap}
+.assign span{border:1px solid var(--line);border-radius:8px;padding:.3rem .55rem;font-size:.82rem;background:var(--surface)}
+.assign span b{font-family:var(--f-mono)}
+@media (max-width:900px){ .opgrid2{grid-template-columns:1fr} .items{grid-template-columns:repeat(4,minmax(0,1fr))} }
+</style>
+</head>
+<body>
+<aside class="toc" id="toc" aria-label="Contents">
+  <div class="toc-brand"><b>TS Lab</b><span>Interactive companion to Chapter 6</span>
+    <div class="theme-switch" role="group" aria-label="Color theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="system">System</button></div></div>
+  <nav><ol>
+    <li><a href="#top"><b>0</b>Overview</a></li>
+    <li><a href="#inspiration"><b>1</b>Local search and tabu</a><ol>
+      <li><a href="#ls-vs-ts">Escaping local optima</a></li></ol></li>
+    <li><a href="#algorithm"><b>2</b>The algorithm</a></li>
+    <li><a href="#memory"><b>3</b>Memory structures</a><ol>
+      <li><a href="#tabu-structure">Tabu structure</a></li>
+      <li><a href="#aspiration">Aspiration and tenure</a></li></ol></li>
+    <li><a href="#queens"><b>4</b>n-queens</a></li>
+    <li><a href="#knapsack"><b>5</b>Knapsack</a></li>
+    <li><a href="#cable"><b>6</b>Cable network</a></li>
+    <li><a href="#qap"><b>7</b>Quadratic assignment</a></li>
+    <li><a href="#continuous"><b>8</b>Continuous functions</a></li>
+    <li><a href="#tsp"><b>9</b>Berlin52 TSP</a><ol>
+      <li><a href="#tenure-exp">Effect of tenure</a></li></ol></li>
+    <li><a href="#albp"><b>10</b>Assembly line</a><ol>
+      <li><a href="#albp-lab">Benchmark lab</a></li></ol></li>
+    <li><a href="#more"><b>11</b>More applications</a></li>
+    <li><a href="#python"><b>12</b>Python and Colab</a><ol>
+      <li><a href="#notebooks">Notebooks</a></li>
+      <li><a href="#code">From-scratch code</a></li></ol></li>
+    <li><a href="#summary"><b>13</b>Summary</a></li>
+  </ol></nav>
+  <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 6, Tabu search.</div>
+</aside>
+<button class="toc-toggle" id="tocBtn" aria-controls="toc" aria-expanded="false">☰ Contents</button>
+<div class="scrim" id="scrim"></div>
+<div class="main">
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Interactive companion · Chapter 6 · Tabu search</div>
+      <h1>Tabu Search <em>Lab</em></h1>
+      <p class="lede">Local search with a memory. Tabu search always moves to the best neighbor it is allowed to visit, even uphill, and keeps a short list of recent moves that are forbidden for a while. That memory is what lets it walk out of local optima instead of circling back into them.</p>
+      <div class="variants">
+        <a class="chip" href="#queens"><b>♛</b> Constraint satisfaction</a>
+        <a class="chip" href="#knapsack"><b>0110</b> Binary</a>
+        <a class="chip" href="#continuous"><b>x, y</b> Continuous</a>
+        <a class="chip" href="#tsp"><b>3 1 5 2 4</b> Routing</a>
+        <a class="chip" href="#albp"><b>WS</b> Assembly lines</a>
+      </div>
+      <p class="cite">Based on Chapter 6, “Tabu search,” in Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning Publications, 2024 (ISBN 978-1633438835).</p>
+    </div>
+    <div>
+      <canvas id="heroCv" class="hero-canvas" aria-label="Tabu search exploring Himmelblau's function"></canvas>
+      <p class="cap" style="margin-top:.4rem" id="heroCap">Tabu search on Himmelblau’s function. Dashed circles mark recently visited points, which are tabu.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== INSPIRATION ===================== -->
+<section class="chapter" id="inspiration">
+  <div class="wrap">
+    <span class="eyebrow">Part 1 · Sections 6.1 and 6.2</span>
+    <h2>From local search to tabu search</h2>
+    <div class="two">
+      <div class="prose">
+        <p>Imagine a vacation at a resort with several restaurants. Eating only where you ate yesterday, unless a neighbor looks better, is <b>local search</b>: it explores the neighborhood N(s) of the current solution s and moves only when it finds an improvement. Hill climbing is an example. It is fast, but it stops at the first local optimum it reaches.</p>
+        <p>Now suppose you promise yourself not to return to the same restaurant for a few days, and you remember how much you liked each meal. That is <b>tabu search</b> (TS): local search plus <b>adaptive memory</b> and <b>responsive exploration</b>. Fred Glover introduced it in 1986. “Tabu” comes from the Polynesian languages of the South Pacific and means something forbidden.</p>
+        <p>TS accepts non-improving moves deterministically when every neighbor is worse, and forbids, for a while, the moves that would take it back to solutions it just visited. Local search + memory = tabu search.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Pros</th><th>Cons</th></tr></thead>
+        <tbody>
+          <tr><td>Accepts non-improving solutions to escape local optima</td><td>Many parameters to set: tenure, neighborhood, aspiration, stopping rule</td></tr>
+          <tr><td>Works in discrete and continuous solution spaces</td><td>The number of iterations can be very large</td></tr>
+          <tr><td>On scheduling, quadratic assignment and vehicle routing, often surpasses the best solutions found by other methods</td><td>The global optimum may not be found, depending on the parameter settings</td></tr>
+        </tbody></table>
+        <p class="cap" style="padding:.4rem .6rem">Applications include scheduling, design, location and allocation, routing, production, inventory and investment, telecommunications and graph optimization.</p></div>
+    </div>
+    <h3 id="ls-vs-ts">Escaping local optima</h3>
+    <p class="prose">Both searches start at the same point on a rugged landscape and look at the same neighbors (up to k steps left or right). Local search stops at the first valley. Tabu search moves to the best neighbor that is not tabu, even uphill, and marks each position it visits as tabu for the next T iterations (red bars). Click the landscape to choose a new start.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Local search vs. tabu search</h4><span class="eyebrow">Minimize f(x)</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="lvCtl"></div><div class="btns"><button id="lvStep" class="primary">Step</button><button id="lvRun">Run</button><button id="lvReset">Reset</button></div></div>
+        <div class="stage"><canvas id="lvCv" class="cv-land" aria-label="Landscape with local search and tabu search positions"></canvas><div class="stats" id="lvStats"></div><p class="cap" id="lvNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ALGORITHM ===================== -->
+<section class="chapter" id="algorithm">
+  <div class="wrap">
+    <span class="eyebrow">Part 2 · Section 6.2</span>
+    <h2>The tabu search algorithm</h2>
+    <div class="two">
+      <div>
+        <div class="pseudo"><span class="k">Algorithm 6.1</span>: Local search
+<span class="k">Input</span>: an initial feasible solution s
+<span class="k">while</span> termination criteria not met
+    generate a neighbor s′ by local moves
+    <span class="k">if</span> s′ is better than s <span class="k">then</span> s ← s′</div>
+        <div class="pseudo"><span class="k">Algorithm 6.2</span>: Tabu search
+<span class="k">Input</span>: an initial feasible solution s
+<span class="k">while</span> termination criteria not met
+    choose the best s′ ∈ N(s) − T(s) + A(s)
+        <span class="c"># neighbors, minus tabu moves, plus moves
+        # allowed by the aspiration criterion</span>
+    memorize s′ if it improves the best known solution
+    s ← s′                <span class="c"># even if s′ is worse</span>
+    update the tabu list T(s) and aspiration A(s)</div>
+      </div>
+      <div class="prose">
+        <p>Each iteration (Figure 6.1):</p>
+        <ol>
+          <li><b>Create a candidate list</b> of moves from the current solution: swap, insert, delete, and so on.</li>
+          <li><b>Evaluate</b> each candidate.</li>
+          <li><b>Check tabu status.</b> A tabu candidate is admissible only if it satisfies the <b>aspiration criterion</b>, usually “better than the best solution so far.”</li>
+          <li><b>Make the best admissible move</b>, record a new best if it improves on it, and update the tabu restrictions.</li>
+        </ol>
+        <p>Stop when the neighborhood is empty, after a number of iterations without improvement, or when there is evidence that an optimal or near-optimal solution has been reached.</p>
+        <p>For a 4-city TSP with city 1 fixed as home, swapping any two of the other three cities gives C(3, 2) = 3 neighbors: from {1, 2, 4, 3}, the neighbors are {1, 2, 3, 4}, {1, 3, 4, 2} and {1, 4, 2, 3}.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MEMORY ===================== -->
+<section class="chapter" id="memory">
+  <div class="wrap">
+    <span class="eyebrow">Part 3 · Section 6.2.1</span>
+    <h2>Memory structures</h2>
+    <div class="two">
+      <div class="prose">
+        <p>Human memory, in the Atkinson–Shiffrin model, has a sensory store, a short-term or working memory with limited capacity and duration, and a long-term memory. Tabu search borrows the last two:</p>
+        <ul>
+          <li><b>Recency-based (short-term) memory</b> remembers recently made moves and forbids them for a number of iterations called the <b>tabu tenure</b>. Each iteration, every remaining tenure drops by 1.</li>
+          <li><b>Frequency-based (long-term) memory</b> counts how often each move has been made and penalizes frequent moves, which pushes the search toward unexplored regions (diversification).</li>
+        </ul>
+        <p>For swap moves, both fit in one triangular <b>tabu structure</b> (Figure 6.5): the upper triangle holds the remaining tenure of each swap and the lower triangle holds how many times it has been used.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Tenure T</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td>Static</td><td>A constant that may depend on the problem size N, such as √N or N/10. A static tenure cannot always prevent cycling.</td></tr>
+          <tr><td>Dynamic</td><td>Varies randomly between T<sub>min</sub> and T<sub>max</sub>, which can follow how the search is improving.</td></tr>
+          <tr><td>Adaptive</td><td>Decrease T by 1 after an improvement to intensify, increase it by 1 after a deterioration to diversify (Figure 6.7).</td></tr>
+          <tr><td>Reactive</td><td>Increase T when solutions repeat, and force an escape move when too many repeat (Battiti and Tecchiolli).</td></tr>
+        </tbody></table></div>
+    </div>
+    <h3 id="tabu-structure">The tabu structure in action</h3>
+    <p class="prose">Seven sheets of a composite laminate are stacked in some order, and each pair of touching sheets adds or removes strength (the data of Listing C.5). The goal is the order with maximum strength. Each move swaps two sheets. Step through the search and watch both memories fill up. With a frequency penalty, frequently used swaps lose value whenever no improving move is available.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Recency and frequency memory</h4><span class="eyebrow">Maximize strength · 21 swap neighbors</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="lmCtl"></div><div class="btns"><button id="lmStep" class="primary">Step</button><button id="lmRun">Run</button><button id="lmReset">New start</button></div></div>
+        <div class="stage">
+          <div class="chromo-row"><span class="row-lbl">Order</span><div class="seq" id="lmSeq"></div></div>
+          <div class="stats" id="lmStats"></div>
+          <div class="tri-wrap"><div class="tri" id="lmTri"></div><div class="tri-leg">Upper triangle (red): iterations a swap stays tabu. Lower triangle: how many times the swap has been made. Read swap (i, j) at row i, column j above the diagonal and at row j, column i below it.</div></div>
+          <div class="tbl-wrap"><table class="ttab" id="lmTbl"></table></div>
+          <p class="cap" id="lmNote"></p>
+        </div>
+      </div>
+    </div>
+    <h3 id="aspiration">Aspiration criteria and the tabu tenure</h3>
+    <div class="two">
+      <div class="prose">
+        <p>Tabu restrictions can also block very good moves. When every non-tabu move is worse and the promising ones are tabu, the search <b>stagnates</b>. An <b>aspiration criterion</b> lifts the restriction for a tabu move when it leads to a solution better than the best found so far (the incumbent). The book’s generic solver can also require that only a few iterations of tenure remain (<span class="mono">aspiration_limit</span>).</p>
+        <p>The tenure is the most important parameter (Figure 6.6). Too short a tenure risks <b>cycling</b> and overlooking promising solutions; too long a tenure risks <b>stagnation</b> and a larger memory footprint. The experiment in Part 9 measures this on the Berlin52 TSP.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Too short a tenure</th><th>Too long a tenure</th></tr></thead>
+        <tbody><tr><td>Cycling risk</td><td>Stagnation risk</td></tr><tr><td>Overlooking promising solutions</td><td>Memory overload</td></tr></tbody></table>
+        <p class="cap" style="padding:.4rem .6rem">TS parameters: the initial solution method, tabu tenure, neighborhood structure, aspiration criteria, stopping criteria, and the penalty on frequency counts. They can be tuned before the run or adapted during it (deterministic, adaptive or self-adaptive).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUEENS ===================== -->
+<section class="chapter" id="queens">
+  <div class="wrap">
+    <span class="eyebrow">Part 4 · Section 6.3</span>
+    <h2>Constraint satisfaction: n-queens</h2>
+    <p class="prose">Place n queens on an n × n board so that no two share a row, column or diagonal. Writing the board as a permutation (queen i sits in row i, column C<sub>i</sub>) removes row and column conflicts, leaving only diagonal <b>collisions</b> to minimize. A move swaps the columns of two queens, so there are C(n, 2) neighbors, and the swap just made becomes tabu. The book’s board (Figure 6.8) has 4 collisions: Q1–Q2, Q2–Q6, Q4–Q5 and Q6–Q7.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>n-queens with tabu search</h4><span class="eyebrow">Minimize collisions</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="nqCtl"></div><div class="btns"><button id="nqStep" class="primary">Step</button><button id="nqRun">Run</button><button id="nqBook">Book board</button><button id="nqRand">Random board</button></div></div>
+        <div class="stage">
+          <div class="stage-grid">
+            <div><canvas id="nqCv" class="cv-board" aria-label="Chess board with queens"></canvas><div class="chromo-row"><span class="row-lbl">Columns C</span><div class="seq" id="nqSeq"></div></div></div>
+            <div><div class="stats" id="nqStats"></div><div class="tbl-wrap"><table class="ttab" id="nqTbl"></table></div><div class="tri" id="nqTri"></div><p class="cap" id="nqNote"></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note warn">In Figure 6.8c, swap (Q2, Q3) is listed with Δ = −2. Swapping the columns of Q2 and Q3 on that board gives 5 collisions, so Δ = +1. The other four values in the table are correct.</div>
+    <div class="runbox"><b>Run it in Python:</b>
+      <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.1_n-queen_TS.ipynb">Listing 6.1 n-queens</a>
+      <a href="#python" data-tab="q">From-scratch code ↓</a>
+    </div>
+    <p class="cap">Listing 6.1 uses a different neighborhood: it moves one queen to another column and stores whole boards in the tabu list. The lab above uses the swap moves of the hand iterations.</p>
+  </div>
+</section>
+
+<!-- ===================== KNAPSACK ===================== -->
+<section class="chapter" id="knapsack">
+  <div class="wrap">
+    <span class="eyebrow">Part 5 · Binary problems</span>
+    <h2>A 0/1 knapsack problem</h2>
+    <div class="two">
+      <div class="prose">
+        <p>Seven items with weights and utilities, and a knapsack of capacity 50 kg. A solution is a bit string: bit i is 1 if item i is packed. Two criteria conflict: fill the knapsack exactly, and pack as much utility as possible. They are combined into one function to <b>minimize</b>:</p>
+        <p class="eq" style="white-space:normal;font-size:1rem">f = f₁ − f₂, &nbsp; f₁ = |Σw<sub>i</sub> − 50| (+ 50 if overloaded), &nbsp; f₂ = Σu<sub>i</sub></p>
+        <p>Starting from items 1, 3, 6 and 7 (52 kg, utility 9), f = 52 − 9 = 43. A move adds or deletes one item; the changed item is then tabu. Allowing two-item moves (add one and delete another) reaches the optimum much faster.</p>
+      </div>
+      <div><div class="items" id="ksItems"></div><div class="capbar" id="ksBar"><i></i><u></u></div><p class="cap" id="ksBarCap"></p></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Knapsack with tabu search</h4><span class="eyebrow">Minimize f</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="ksCtl"></div><div class="btns"><button id="ksStep" class="primary">Step</button><button id="ksRun">Run 10</button><button id="ksReset">Reset</button></div></div>
+        <div class="stage"><div class="stats" id="ksStats"></div><div class="tbl-wrap"><table class="ttab" id="ksTbl"></table></div><p class="cap" id="ksNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CABLE ===================== -->
+<section class="chapter" id="cable">
+  <div class="wrap">
+    <span class="eyebrow">Part 6 · Graph problems</span>
+    <h2>Connecting factory units with cables</h2>
+    <p class="prose">Five factory units must all be connected by buried cables along the possible paths shown, at minimum total cost: a minimum spanning tree. A solution is a set of 4 edges that connects every unit. A move removes one edge of the tree and adds another so the result is still a spanning tree. The edge just <b>added</b> becomes tabu: it cannot be removed for the next T = 2 iterations.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Edge-swap tabu search</h4><span class="eyebrow">Minimize cable cost</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="cbCtl"></div><div class="btns"><button id="cbStep" class="primary">Step</button><button id="cbReset">Reset</button></div></div>
+        <div class="stage"><div class="stage-grid"><div><canvas id="cbCv" class="cv-sq" aria-label="Factory units and cable paths"></canvas></div><div><div class="stats" id="cbStats"></div><div class="tbl-wrap"><table class="ttab" id="cbTbl"></table></div></div></div><p class="cap" id="cbNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QAP ===================== -->
+<section class="chapter" id="qap">
+  <div class="wrap">
+    <span class="eyebrow">Part 7 · Assignment problems</span>
+    <h2>The quadratic assignment problem</h2>
+    <div class="two">
+      <div class="prose">
+        <p>Place n objects (facilities) on n sites. Objects i and j exchange a flow f<sub>ij</sub>, and sites r and s are a distance d<sub>rs</sub> apart. With p<sub>i</sub> the object on site i, minimize</p>
+        <p class="eq" style="white-space:normal;font-size:1rem">cost(p) = Σ<sub>i</sub> Σ<sub>j</sub> f<sub>p<sub>i</sub>p<sub>j</sub></sub> d<sub>ij</sub></p>
+        <p>The instance is NUG5 from the literature. Starting from p = (2, 4, 1, 5, 3), meaning object 2 on site 1, object 4 on site 2, and so on, the cost is 72. A move exchanges the objects on two sites. After a move, putting either object back on the site it just left is tabu for t = 6 iterations; the move is forbidden only if it would put <b>both</b> objects back.</p>
+      </div>
+      <div class="opgrid2" style="gap:.6rem"><div class="tbl-wrap"><table class="qmat" id="qpF"></table></div><div class="tbl-wrap"><table class="qmat" id="qpD"></table></div></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>QAP with tabu search</h4><span class="eyebrow">Minimize flow × distance</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="qpCtl"></div><div class="btns"><button id="qpStep" class="primary">Step</button><button id="qpReset">Reset</button></div></div>
+        <div class="stage"><div class="assign" id="qpAssign"></div><div class="stats" id="qpStats"></div>
+          <div class="stage-grid"><div><div class="tbl-wrap"><table class="ttab" id="qpTbl"></table></div></div><div><div class="tbl-wrap"><table class="qmat" id="qpT"></table></div><p class="cap">Tabu matrix: rows are objects, columns are sites. A red cell shows how many more iterations the object may not return to that site.</p></div></div>
+          <p class="cap" id="qpNote"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTINUOUS ===================== -->
+<section class="chapter" id="continuous">
+  <div class="wrap">
+    <span class="eyebrow">Part 8 · Section 6.4</span>
+    <h2>Continuous functions</h2>
+    <div class="two">
+      <div class="prose">
+        <p>Himmelblau’s function f(x, y) = (x² + y − 11)² + (x + y² − 7)² has four minima of value 0, at (3, 2), (−2.805, 3.131), (−3.779, −3.283) and (3.584, −1.848). Listing 6.2 solves it with the generic solver of the book’s <span class="mono">optalgotools</span> package (100 iterations, tenure 5, 50 neighbors) and reports f = 0.0056 at (3.007, 1.980).</p>
+        <p>In a continuous space the search almost never revisits a point exactly, so here the tabu list stores the last T points and a candidate is tabu if it falls within a <b>tabu radius</b> of any of them. Neighbors are Gaussian steps around the current point. Try Schwefel’s function from appendix C, where local search stalls in the first basin, and Mishra’s Bird function, whose feasible region is a disk.</p>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Function</th><th>Domain</th><th>Global minimum</th></tr></thead>
+        <tbody>
+          <tr><td>Himmelblau (Listing 6.2)</td><td>[−6, 6]²</td><td>0 at four points</td></tr>
+          <tr><td>Mishra’s Bird (Listing 6.2)</td><td>[−10, 0] × [−6.5, 0], (x + 5)² + (y + 5)² &lt; 25</td><td>−106.76 at (−3.130, −1.582)</td></tr>
+          <tr><td>Schwefel (Listing C.4)</td><td>[−500, 500]²</td><td>0 at (420.97, 420.97)</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Continuous tabu search lab</h4><span class="eyebrow">Minimize f(x, y)</span></div>
+      <div class="bench-body">
+        <div class="side" id="ctCtl"></div>
+        <div class="stage">
+          <div class="btns"><button id="ctRun" class="primary">Run</button><button id="ctStep">Step</button><button id="ctReset">New start</button></div>
+          <div class="stage-grid">
+            <div><canvas id="ctCv" class="cv-sq" style="aspect-ratio:1/1" aria-label="Search path on the function contours"></canvas></div>
+            <div><div class="stats" id="ctStats"></div><canvas id="ctChart" class="cv-chart" aria-label="Best and current value"></canvas><p class="cap">Current value (faint) and best value per iteration.</p></div>
+          </div>
+          <p class="cap" id="ctNote"></p>
+        </div>
+      </div>
+      <div class="presets" id="ctPresets"></div>
+    </div>
+    <div class="runbox"><b>Run it in Python:</b>
+      <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.2_FcnOpt_TS.ipynb">Listing 6.2 Function optimization</a>
+      <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.4_Schwefel_TS.ipynb">Listing C.4 Schwefel</a>
+      <a href="#python" data-tab="c">From-scratch code ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TSP ===================== -->
+<section class="chapter" id="tsp">
+  <div class="wrap">
+    <span class="eyebrow">Part 9 · Section 6.5</span>
+    <h2>Routing: the Berlin52 TSP</h2>
+    <p class="prose">Berlin52 has 52 locations in Berlin; the shortest round trip is 7,542. In the book, the tabu search of Google OR-Tools (Listing 6.3, 30 seconds) finds 7,884, and the generic <span class="mono">optalgotools</span> solver finds 7,982.79. Here each move is a 2-opt exchange that reverses a segment of the tour; the two edges it removes become tabu to add back. Compare the swap neighborhood, which exchanges two cities and breaks four edges.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Berlin52 tabu search lab</h4><span class="eyebrow">Minimize tour length</span></div>
+      <div class="bench-body">
+        <div class="side" id="tsCtl"></div>
+        <div class="stage">
+          <div class="btns"><button id="tsRun" class="primary">Run</button><button id="tsStep">Step</button><button id="tsReset">New start</button></div>
+          <canvas id="tsCv" class="cv-map" style="aspect-ratio:16/10" aria-label="Berlin52 tour"></canvas>
+          <div class="stage-grid"><div><div class="stats" id="tsStats"></div></div><div><canvas id="tsChart" class="cv-chart" aria-label="Tour length per iteration"></canvas><p class="cap">Current tour (faint) and best tour per iteration. Dashed lines: the optimum, OR-Tools and optalgotools results.</p></div></div>
+        </div>
+      </div>
+      <div class="presets" id="tsPresets"></div>
+    </div>
+    <h3 id="tenure-exp">Effect of the tabu tenure</h3>
+    <p class="prose">Run 300 iterations of 2-opt tabu search from four random tours for each tenure and compare the best tours found. Short tenures let the search slip back into the same local optimum (cycling); very long ones forbid so many edges that it cannot move toward better tours (stagnation).</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Tenure experiment</h4><span class="eyebrow">Berlin52 · 4 runs per tenure</span></div>
+      <div class="stage"><div class="btns"><button id="teRun" class="primary">Run the experiment</button><span class="cap" id="teProg"></span></div>
+        <canvas id="teCv" class="cv-chart" style="height:220px" aria-label="Mean best tour length by tenure"></canvas>
+        <p class="cap" id="teNote">Mean best tour length (line) and each run (dots) against the tabu tenure. The dashed line is the optimum, 7,542.</p></div>
+    </div>
+    <div class="runbox"><b>Run it in Python:</b>
+      <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.3_Berlin52_TSP.ipynb">Listing 6.3 Berlin52</a>
+      <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.4_Walmart.ipynb">Listing 6.4 Delivery semi-truck</a>
+      <a href="#python" data-tab="t">From-scratch code ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ALBP ===================== -->
+<section class="chapter" id="albp">
+  <div class="wrap">
+    <span class="eyebrow">Part 10 · Section 6.6</span>
+    <h2>Assembly line balancing</h2>
+    <div class="two">
+      <div class="prose">
+        <p>An assembly line moves a product through a sequence of workstations. The <b>simple assembly line balancing problem</b> (SALBP) assigns tasks with given times to stations so that no station’s workload exceeds the <b>cycle time</b> CT and every task follows its predecessors. SALBP-1 minimizes the number of stations NS for a given CT; SALBP-2 minimizes CT for a given NS. Adding space constraints gives the TSALBP family (Table 6.1).</p>
+        <p>The balance between stations is measured by the <b>smoothing index</b> (equation 6.1):</p>
+        <p class="eq" style="white-space:normal;font-size:1rem">SI = √( Σ<sub>i=1..NS</sub> (WL<sub>max</sub> − WL<sub>i</sub>)² / NS )</p>
+        <p>A solution is a task sequence; tasks fill stations in order, and a new station opens when the next task would exceed CT. A move swaps two tasks, keeping only precedence-feasible sequences. The book’s example has 6 tasks and CT = 4 minutes.</p>
+      </div>
+      <div><canvas id="abPrec" class="cv-chart" style="height:180px" aria-label="Precedence diagram"></canvas><p class="cap">Precedence diagram (Figure 6.22). Task 4 must finish before tasks 5 and 6; task 5 also needs task 3.</p></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Hand iterations, automated</h4><span class="eyebrow">6 tasks · CT = 4 · tenure 3</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="abCtl"></div><div class="btns"><button id="abStep" class="primary">Step</button><button id="abReset">Reset</button></div></div>
+        <div class="stage"><div class="chromo-row"><span class="row-lbl">Sequence</span><div class="seq" id="abSeq"></div></div><div class="stage-grid"><div><canvas id="abBars" class="cv-chart" style="height:200px" aria-label="Station workloads"></canvas></div><div><div class="stats" id="abStats"></div></div></div><div class="tbl-wrap"><table class="ttab" id="abTbl"></table></div><p class="cap" id="abNote"></p></div>
+      </div>
+    </div>
+    <h3 id="albp-lab">Benchmark lab</h3>
+    <p class="prose">The SALBP benchmark sets in appendix B of the book’s repository. Tabu search here minimizes the number of stations first and the smoothing index second. Listing 6.6 runs the generic solver on MANSOOR (cycle time 48) and reports 5 stations with SI = 12.30; the best known is 4 stations.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>SALBP-1 benchmarks</h4><span class="eyebrow">Minimize stations, then SI</span></div>
+      <div class="bench-body">
+        <div class="side" id="alCtl"></div>
+        <div class="stage">
+          <div class="btns"><button id="alRun" class="primary">Run</button><button id="alStep">Step</button><button id="alReset">New start</button></div>
+          <canvas id="alBars" class="cv-chart" style="height:230px" aria-label="Station workloads"></canvas>
+          <div class="stage-grid"><div><div class="stats" id="alStats"></div></div><div><canvas id="alChart" class="cv-chart" aria-label="Stations and SI per iteration"></canvas><p class="cap">Best number of stations + SI/CT per iteration (lower is better).</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="runbox"><b>Run it in Python:</b>
+      <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.5_SALBP_TS.ipynb">Listing 6.5 SALBP</a>
+      <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.6_ALBP_Benchmarks.ipynb">Listing 6.6 Benchmarks</a>
+      <a href="#python" data-tab="a">From-scratch code ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MORE ===================== -->
+<section class="chapter" id="more">
+  <div class="wrap">
+    <span class="eyebrow">Part 11 · Section 6.5 and appendix C</span>
+    <h2>More applications</h2>
+    <div class="apps">
+      <div class="card"><h5>Delivery semi-truck routing</h5><p>Visit 18 Walmart Supercenters in the Greater Toronto Area, starting from Ajax, Ontario. Tabu search finds a 223.53 km route, slightly shorter than simulated annealing’s 227.17 km.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.4_Walmart.ipynb">Listing 6.4</a></p></div>
+      <div class="card"><h5>Schwefel function</h5><p>A deceptive multimodal function whose global minimum lies far from the next-best basins.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.4_Schwefel_TS.ipynb">Listing C.4</a></p></div>
+      <div class="card"><h5>Composite laminate design</h5><p>Order seven sheets of a laminate for maximum strength, the problem behind the tabu structure demo in Part 3.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.5_Laminate_TS.ipynb">Listing C.5</a></p></div>
+      <div class="card"><h5>Assembly line balancing</h5><p>Another SALBP solved with tabu search.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.6_SALBP_TS.ipynb">Listing C.6</a></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PYTHON ===================== -->
+<section class="chapter" id="python">
+  <div class="wrap">
+    <span class="eyebrow">Part 12 · Code</span>
+    <h2>Python in Google Colab</h2>
+    <p class="prose">Open the book’s notebooks directly in Colab, or the TS Lab companion notebook, which holds the from-scratch implementations below (NumPy and Matplotlib only, both preinstalled in Colab).</p>
+    <h3 id="notebooks">Notebooks</h3>
+    <div class="colab-grid">
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/TS_Lab_Companion.ipynb"><em>All examples</em><b>TS Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.1_n-queen_TS.ipynb"><em>Chapter 6</em><b>Listing 6.1</b><span>n-queens problem</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.2_FcnOpt_TS.ipynb"><em>Chapter 6</em><b>Listing 6.2</b><span>Function optimization</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.3_Berlin52_TSP.ipynb"><em>Chapter 6</em><b>Listing 6.3</b><span>Berlin52 TSP</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.4_Walmart.ipynb"><em>Chapter 6</em><b>Listing 6.4</b><span>Delivery semi-truck routing</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.5_SALBP_TS.ipynb"><em>Chapter 6</em><b>Listing 6.5</b><span>Assembly line balancing</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.6_ALBP_Benchmarks.ipynb"><em>Chapter 6</em><b>Listing 6.6</b><span>SALBP benchmarks</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.4_Schwefel_TS.ipynb"><em>Appendix C</em><b>Listing C.4</b><span>Schwefel function</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.5_Laminate_TS.ipynb"><em>Appendix C</em><b>Listing C.5</b><span>Composite laminate design</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.6_SALBP_TS.ipynb"><em>Appendix C</em><b>Listing C.6</b><span>Assembly line balancing</span></a>
+    </div>
+    <h3 id="code">From-scratch implementations</h3>
+    <div class="bench">
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-code="q">n-queens</button>
+        <button role="tab" aria-selected="false" data-code="k">Knapsack</button>
+        <button role="tab" aria-selected="false" data-code="p">QAP</button>
+        <button role="tab" aria-selected="false" data-code="c">Continuous</button>
+        <button role="tab" aria-selected="false" data-code="t">Berlin52 TSP</button>
+        <button role="tab" aria-selected="false" data-code="a">SALBP</button>
+      </div>
+      <div class="code-bar">
+        <span class="cap" id="codeCap"></span>
+        <div class="btns"><button class="small primary" id="codeCopy">Copy code</button><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/TS_Lab_Companion.ipynb">Open all six in Colab</a></div>
+      </div>
+      <pre class="code" id="code-q"><span class="cm"># Tabu search for the n-queens problem (Chapter 6, Section 6.3)</span>
+<span class="cm"># A solution is a permutation: queens[i] is the column of the queen in row i, so rows and columns never clash</span>
+<span class="cm"># and only diagonal collisions remain. The neighborhood swaps the columns of two queens.</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+
+<span class="kw">def</span> collisions(q):
+    n = len(q)
+    <span class="kw">return</span> sum(abs(q[i] - q[j]) == j - i <span class="kw">for</span> i <span class="kw">in</span> range(n) <span class="kw">for</span> j <span class="kw">in</span> range(i + <span class="nm">1</span>, n))
+
+
+<span class="kw">def</span> swap(q, i, j):
+    q = list(q)
+    q[i], q[j] = q[j], q[i]
+    <span class="kw">return</span> q
+
+
+<span class="cm"># The book's starting board (Figure 6.8): Q1..Q7 in columns 4, 5, 3, 6, 7, 1, 2</span>
+book = [<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">3</span>, <span class="nm">6</span>, <span class="nm">7</span>, <span class="nm">1</span>, <span class="nm">2</span>]
+print(<span class="st">"initial collisions:"</span>, collisions(book))                       <span class="cm"># 4</span>
+<span class="kw">for</span> i, j <span class="kw">in</span> [(<span class="nm">1</span>, <span class="nm">7</span>), (<span class="nm">2</span>, <span class="nm">3</span>), (<span class="nm">2</span>, <span class="nm">6</span>), (<span class="nm">5</span>, <span class="nm">6</span>), (<span class="nm">1</span>, <span class="nm">5</span>)]:
+    print(f<span class="st">"swap Q{i}, Q{j}: delta = {collisions(swap(book, i - 1, j - 1)) - collisions(book)}"</span>)
+
+
+<span class="kw">def</span> tabu_search(n=<span class="nm">7</span>, tenure=<span class="nm">3</span>, max_iter=<span class="nm">500</span>, aspiration=<span class="kw">True</span>, init=<span class="kw">None</span>, seed=<span class="nm">0</span>):
+    rng = np.random.default_rng(seed)
+    q = list(init) <span class="kw">if</span> init is <span class="kw">not</span> <span class="kw">None</span> <span class="kw">else</span> list(rng.permutation(n))
+    tabu = np.zeros((n, n), int)            <span class="cm"># tabu[i, j]: last iteration at which the swap (i, j) is tabu-active</span>
+    best, best_val = q, collisions(q)
+    <span class="kw">for</span> it <span class="kw">in</span> range(<span class="nm">1</span>, max_iter + <span class="nm">1</span>):
+        <span class="kw">if</span> best_val == <span class="nm">0</span>:
+            <span class="kw">break</span>
+        cands = []
+        <span class="kw">for</span> i <span class="kw">in</span> range(n):
+            <span class="kw">for</span> j <span class="kw">in</span> range(i + <span class="nm">1</span>, n):
+                v = collisions(swap(q, i, j))
+                is_tabu = tabu[i, j] &gt;= it
+                <span class="kw">if</span> <span class="kw">not</span> is_tabu <span class="kw">or</span> (aspiration <span class="kw">and</span> v &lt; best_val):       <span class="cm"># aspiration: better than the best so far</span>
+                    cands.append((v, rng.random(), i, j))
+        <span class="kw">if</span> <span class="kw">not</span> cands:
+            <span class="kw">continue</span>
+        v, _, i, j = min(cands)                 <span class="cm"># best admissible move, ties broken at random</span>
+        q = swap(q, i, j)
+        tabu[i, j] = it + tenure
+        <span class="kw">if</span> v &lt; best_val:
+            best, best_val = q, v
+    <span class="kw">return</span> best, best_val, it
+
+
+sol, val, it = tabu_search(init=[c - <span class="nm">1</span> <span class="kw">for</span> c <span class="kw">in</span> book])
+print(<span class="st">"7-queens from the book's board:"</span>, [c + <span class="nm">1</span> <span class="kw">for</span> c <span class="kw">in</span> sol], <span class="st">"collisions:"</span>, val, <span class="st">"iterations:"</span>, it)
+sol, val, it = tabu_search(n=<span class="nm">20</span>, tenure=<span class="nm">5</span>, seed=<span class="nm">1</span>)
+print(<span class="st">"20-queens:"</span>, [c + <span class="nm">1</span> <span class="kw">for</span> c <span class="kw">in</span> sol], <span class="st">"collisions:"</span>, val, <span class="st">"iterations:"</span>, it)</pre>
+      <pre class="code" id="code-k" hidden><span class="cm"># Tabu search for a 0/1 knapsack problem: capacity 50 kg, 7 items</span>
+<span class="cm"># Minimize f = f1 - f2, where f1 = |total weight - capacity| (+50 if overloaded) and f2 = total utility.</span>
+<span class="kw">import</span> itertools
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+W = np.array([<span class="nm">10</span>, <span class="nm">12</span>, <span class="nm">15</span>, <span class="nm">27</span>, <span class="nm">30</span>, <span class="nm">20</span>, <span class="nm">7</span>])
+U = np.array([<span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">1</span>, <span class="nm">3</span>, <span class="nm">1</span>])
+C, PENALTY = <span class="nm">50</span>, <span class="nm">50</span>
+
+
+<span class="kw">def</span> f(x):
+    w = W @ x
+    <span class="kw">return</span> abs(w - C) + (PENALTY <span class="kw">if</span> w &gt; C <span class="kw">else</span> <span class="nm">0</span>) - U @ x
+
+
+<span class="kw">def</span> neighbors(x, two_moves):
+    <span class="st">"""Add or delete one item; optionally also add one item and delete another in the same move."""</span>
+    out = []
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(x)):
+        y = x.copy(); y[i] ^= <span class="nm">1</span>
+        out.append((y, ((<span class="st">"Add"</span> <span class="kw">if</span> y[i] <span class="kw">else</span> <span class="st">"Delete"</span>), i + <span class="nm">1</span>), (i,)))
+    <span class="kw">if</span> two_moves:
+        <span class="kw">for</span> a <span class="kw">in</span> np.flatnonzero(x == <span class="nm">0</span>):
+            <span class="kw">for</span> d <span class="kw">in</span> np.flatnonzero(x == <span class="nm">1</span>):
+                y = x.copy(); y[a], y[d] = <span class="nm">1</span>, <span class="nm">0</span>
+                out.append((y, (<span class="st">"Add"</span>, a + <span class="nm">1</span>, <span class="st">"Delete"</span>, d + <span class="nm">1</span>), (a, d)))
+    <span class="kw">return</span> out
+
+
+<span class="kw">def</span> tabu_search(x0, tenure=<span class="nm">3</span>, max_iter=<span class="nm">30</span>, two_moves=<span class="kw">False</span>, verbose=<span class="kw">True</span>):
+    x, best = x0.copy(), x0.copy()
+    tabu = {}                                    <span class="cm"># item -&gt; last iteration at which changing it is tabu</span>
+    <span class="kw">for</span> it <span class="kw">in</span> range(<span class="nm">1</span>, max_iter + <span class="nm">1</span>):
+        cands = [(f(y), m, items, y) <span class="kw">for</span> y, m, items <span class="kw">in</span> neighbors(x, two_moves)]
+        admissible = [c <span class="kw">for</span> c <span class="kw">in</span> cands <span class="kw">if</span> all(tabu.get(i, <span class="nm">0</span>) &lt; it <span class="kw">for</span> i <span class="kw">in</span> c[<span class="nm">2</span>]) <span class="kw">or</span> c[<span class="nm">0</span>] &lt; f(best)]
+        val, move, items, x = min(admissible, key=<span class="kw">lambda</span> c: c[<span class="nm">0</span>])
+        <span class="kw">for</span> i <span class="kw">in</span> items:
+            tabu[i] = it + tenure
+        <span class="kw">if</span> val &lt; f(best):
+            best = x.copy()
+        <span class="kw">if</span> verbose:
+            print(f<span class="st">"iter {it:2d}: {''.join(map(str, x))}  f = {val:3d}  move = {move}"</span>)
+    <span class="kw">return</span> best, f(best)
+
+
+x0 = np.array([<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>])          <span class="cm"># items 1, 3, 6 and 7</span>
+print(<span class="st">"initial f ="</span>, f(x0))                   <span class="cm"># 52 - 9 = 43</span>
+<span class="kw">for</span> y, m, _ <span class="kw">in</span> neighbors(x0, <span class="kw">False</span>):
+    print(<span class="st">" "</span>, <span class="st">""</span>.join(map(str, y)), m, f(y))
+best, val = tabu_search(x0, max_iter=<span class="nm">10</span>)
+print(<span class="st">"single moves:"</span>, <span class="st">""</span>.join(map(str, best)), <span class="st">"f ="</span>, val)
+best, val = tabu_search(x0, max_iter=<span class="nm">6</span>, two_moves=<span class="kw">True</span>)
+print(<span class="st">"one- and two-item moves:"</span>, <span class="st">""</span>.join(map(str, best)), <span class="st">"f ="</span>, val)
+
+opt = min((np.array(b) <span class="kw">for</span> b <span class="kw">in</span> itertools.product([<span class="nm">0</span>, <span class="nm">1</span>], repeat=<span class="nm">7</span>)), key=f)
+print(<span class="st">"optimum by enumeration:"</span>, <span class="st">""</span>.join(map(str, opt)), <span class="st">"f ="</span>, f(opt))   <span class="cm"># items 3, 4 and 7, f = -7</span></pre>
+      <pre class="code" id="code-p" hidden><span class="cm"># Tabu search for the quadratic assignment problem NUG5</span>
+<span class="cm"># p[i] is the object placed on site i; cost = sum over all ordered pairs i, j of flow(p[i], p[j]) * distance(i, j).</span>
+<span class="kw">import</span> itertools
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+F = np.array([[<span class="nm">0</span>, <span class="nm">5</span>, <span class="nm">2</span>, <span class="nm">4</span>, <span class="nm">1</span>], [<span class="nm">5</span>, <span class="nm">0</span>, <span class="nm">3</span>, <span class="nm">0</span>, <span class="nm">2</span>], [<span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>], [<span class="nm">4</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">5</span>], [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">0</span>, <span class="nm">5</span>, <span class="nm">0</span>]])
+D = np.array([[<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>], [<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">2</span>], [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>], [<span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>], [<span class="nm">3</span>, <span class="nm">2</span>, <span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">0</span>]])
+n = len(F)
+cost = <span class="kw">lambda</span> p: int((F[np.ix_(p, p)] * D).sum())
+
+
+<span class="kw">def</span> swapped(p, r, s):
+    q = p.copy(); q[r], q[s] = q[s], q[r]
+    <span class="kw">return</span> q
+
+
+p = np.array([<span class="nm">2</span>, <span class="nm">4</span>, <span class="nm">1</span>, <span class="nm">5</span>, <span class="nm">3</span>]) - <span class="nm">1</span>                            <span class="cm"># object 2 on site 1, object 4 on site 2, ...</span>
+print(<span class="st">"initial cost:"</span>, cost(p))                              <span class="cm"># 72</span>
+print(<span class="st">"deltas:"</span>, {(r + <span class="nm">1</span>, s + <span class="nm">1</span>): cost(swapped(p, r, s)) - cost(p) <span class="kw">for</span> r, s <span class="kw">in</span> itertools.combinations(range(n), <span class="nm">2</span>)})
+
+
+<span class="kw">def</span> tabu_search(p, tenure=<span class="nm">6</span>, max_iter=<span class="nm">30</span>):
+    best, best_cost = p.copy(), cost(p)
+    T = np.zeros((n, n), int)            <span class="cm"># T[object, site]: placing the object back on the site is tabu until then</span>
+    <span class="kw">for</span> it <span class="kw">in</span> range(<span class="nm">1</span>, max_iter + <span class="nm">1</span>):
+        moves = []
+        <span class="kw">for</span> r, s <span class="kw">in</span> itertools.combinations(range(n), <span class="nm">2</span>):
+            q = swapped(p, r, s)
+            tabu = T[p[r], s] &gt;= it <span class="kw">and</span> T[p[s], r] &gt;= it   <span class="cm"># both objects would return to sites they recently left</span>
+            <span class="kw">if</span> <span class="kw">not</span> tabu <span class="kw">or</span> cost(q) &lt; best_cost:              <span class="cm"># aspiration by objective</span>
+                moves.append((cost(q), r, s))
+        c, r, s = min(moves)
+        T[p[r], r] = T[p[s], s] = it + tenure                <span class="cm"># forbid moving them back for `tenure` iterations</span>
+        p = swapped(p, r, s)
+        <span class="kw">if</span> c &lt; best_cost:
+            best, best_cost = p.copy(), c
+        print(f<span class="st">"iter {it:2d}: swap sites ({r + 1}, {s + 1}) -&gt; p = {p + 1}, cost = {c}"</span>)
+    <span class="kw">return</span> best, best_cost
+
+
+best, c = tabu_search(p, max_iter=<span class="nm">8</span>)
+print(<span class="st">"best:"</span>, best + <span class="nm">1</span>, <span class="st">"cost:"</span>, c)
+print(<span class="st">"optimum by enumeration:"</span>, min(cost(np.array(q)) <span class="kw">for</span> q <span class="kw">in</span> itertools.permutations(range(n))))</pre>
+      <pre class="code" id="code-c" hidden><span class="cm"># Tabu search for continuous functions (Chapter 6, Section 6.4)</span>
+<span class="cm"># Neighbors are Gaussian steps around the current point. Recently visited points are tabu: a candidate</span>
+<span class="cm"># within the tabu radius of any of them is rejected, unless it beats the best so far (aspiration).</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+
+<span class="kw">def</span> himmelblau(x, y):
+    <span class="kw">return</span> (x**<span class="nm">2</span> + y - <span class="nm">11</span>)**<span class="nm">2</span> + (x + y**<span class="nm">2</span> - <span class="nm">7</span>)**<span class="nm">2</span>
+
+
+<span class="kw">def</span> schwefel(x, y):                      <span class="cm"># global minimum 0 at (420.9687, 420.9687)</span>
+    <span class="kw">return</span> <span class="nm">418.9829</span> * <span class="nm">2</span> - x * np.sin(np.sqrt(abs(x))) - y * np.sin(np.sqrt(abs(y)))
+
+
+<span class="kw">def</span> tabu_search(f, bounds, x0=<span class="kw">None</span>, max_iter=<span class="nm">100</span>, neighbor_size=<span class="nm">50</span>, step=<span class="nm">1.0</span>, tenure=<span class="nm">5</span>, radius=<span class="nm">0.5</span>,
+                aspiration=<span class="kw">True</span>, seed=<span class="nm">0</span>):
+    rng = np.random.default_rng(seed)
+    lo, hi = np.array(bounds, float).T
+    x = rng.uniform(lo, hi) <span class="kw">if</span> x0 is <span class="kw">None</span> <span class="kw">else</span> np.array(x0, float)
+    best, best_val = x.copy(), f(*x)
+    tabu, path = [x.copy()], [x.copy()]
+    <span class="kw">for</span> it <span class="kw">in</span> range(max_iter):
+        cands = np.clip(x + rng.normal(<span class="nm">0</span>, step, (neighbor_size, <span class="nm">2</span>)), lo, hi)
+        vals = np.array([f(*c) <span class="kw">for</span> c <span class="kw">in</span> cands])
+        ok = [k <span class="kw">for</span> k <span class="kw">in</span> range(neighbor_size)
+              <span class="kw">if</span> min(np.linalg.norm(cands[k] - t) <span class="kw">for</span> t <span class="kw">in</span> tabu) &gt; radius <span class="kw">or</span> (aspiration <span class="kw">and</span> vals[k] &lt; best_val)]
+        <span class="kw">if</span> <span class="kw">not</span> ok:
+            <span class="kw">continue</span>
+        k = min(ok, key=<span class="kw">lambda</span> k: vals[k])          <span class="cm"># best admissible neighbor, even if it is worse</span>
+        x = cands[k]
+        tabu = (tabu + [x.copy()])[-tenure:]        <span class="cm"># recency-based memory of the last `tenure` points</span>
+        path.append(x.copy())
+        <span class="kw">if</span> vals[k] &lt; best_val:
+            best, best_val = x.copy(), vals[k]
+    <span class="kw">return</span> best, best_val, np.array(path)
+
+
+<span class="kw">def</span> local_search(f, bounds, x0, max_iter=<span class="nm">100</span>, neighbor_size=<span class="nm">50</span>, step=<span class="nm">1.0</span>, seed=<span class="nm">0</span>):
+    rng = np.random.default_rng(seed)
+    lo, hi = np.array(bounds, float).T
+    x, val = np.array(x0, float), f(*x0)
+    <span class="kw">for</span> it <span class="kw">in</span> range(max_iter):
+        cands = np.clip(x + rng.normal(<span class="nm">0</span>, step, (neighbor_size, <span class="nm">2</span>)), lo, hi)
+        vals = np.array([f(*c) <span class="kw">for</span> c <span class="kw">in</span> cands])
+        <span class="kw">if</span> vals.min() &lt; val:                         <span class="cm"># accept improving moves only</span>
+            x, val = cands[vals.argmin()], vals.min()
+    <span class="kw">return</span> x, val
+
+
+best, val, path = tabu_search(himmelblau, [[-<span class="nm">6</span>, <span class="nm">6</span>], [-<span class="nm">6</span>, <span class="nm">6</span>]], seed=<span class="nm">1</span>)
+print(<span class="st">"Himmelblau:"</span>, np.round(best, <span class="nm">4</span>), <span class="st">"f ="</span>, round(val, <span class="nm">6</span>))
+
+<span class="cm"># On Schwefel's function, local search stalls in the first basin it finds; tabu search keeps moving</span>
+b = [[-<span class="nm">500</span>, <span class="nm">500</span>], [-<span class="nm">500</span>, <span class="nm">500</span>]]
+x0 = [-<span class="nm">300</span>, -<span class="nm">300</span>]
+print(<span class="st">"Schwefel, local search:"</span>, np.round(local_search(schwefel, b, x0, max_iter=<span class="nm">300</span>, step=<span class="nm">30</span>)[<span class="nm">1</span>], <span class="nm">2</span>))
+bt, vt, pt = tabu_search(schwefel, b, x0=x0, max_iter=<span class="nm">300</span>, step=<span class="nm">30</span>, tenure=<span class="nm">30</span>, radius=<span class="nm">60</span>, seed=<span class="nm">0</span>)
+print(<span class="st">"Schwefel, tabu search:"</span>, np.round(bt, <span class="nm">2</span>), <span class="st">"f ="</span>, round(vt, <span class="nm">2</span>))
+
+X, Y = np.meshgrid(np.linspace(-<span class="nm">6</span>, <span class="nm">6</span>, <span class="nm">200</span>), np.linspace(-<span class="nm">6</span>, <span class="nm">6</span>, <span class="nm">200</span>))
+plt.contour(X, Y, np.log1p(himmelblau(X, Y)), <span class="nm">30</span>, cmap=<span class="st">"viridis"</span>)
+plt.plot(path[:, <span class="nm">0</span>], path[:, <span class="nm">1</span>], <span class="st">".-"</span>, c=<span class="st">"tab:red"</span>, lw=<span class="nm">1</span>); plt.plot(*best, <span class="st">"k*"</span>, ms=<span class="nm">14</span>)
+plt.title(<span class="st">"Tabu search on Himmelblau's function"</span>); plt.axis(<span class="st">"equal"</span>); plt.show()</pre>
+      <pre class="code" id="code-t" hidden><span class="cm"># Tabu search for the Berlin52 TSP (Chapter 6, Section 6.5); the optimal tour length is 7,542</span>
+<span class="cm"># Moves are 2-opt exchanges. The two edges a move removes become tabu: adding either of them back is</span>
+<span class="cm"># forbidden for `tenure` iterations unless the move gives a new best tour (aspiration).</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+XY = np.array([[<span class="nm">565</span>, <span class="nm">575</span>], [<span class="nm">25</span>, <span class="nm">185</span>], [<span class="nm">345</span>, <span class="nm">750</span>], [<span class="nm">945</span>, <span class="nm">685</span>], [<span class="nm">845</span>, <span class="nm">655</span>], [<span class="nm">880</span>, <span class="nm">660</span>], [<span class="nm">25</span>, <span class="nm">230</span>], [<span class="nm">525</span>, <span class="nm">1000</span>],
+    [<span class="nm">580</span>, <span class="nm">1175</span>], [<span class="nm">650</span>, <span class="nm">1130</span>], [<span class="nm">1605</span>, <span class="nm">620</span>], [<span class="nm">1220</span>, <span class="nm">580</span>], [<span class="nm">1465</span>, <span class="nm">200</span>], [<span class="nm">1530</span>, <span class="nm">5</span>], [<span class="nm">845</span>, <span class="nm">680</span>], [<span class="nm">725</span>, <span class="nm">370</span>], [<span class="nm">145</span>, <span class="nm">665</span>],
+    [<span class="nm">415</span>, <span class="nm">635</span>], [<span class="nm">510</span>, <span class="nm">875</span>], [<span class="nm">560</span>, <span class="nm">365</span>], [<span class="nm">300</span>, <span class="nm">465</span>], [<span class="nm">520</span>, <span class="nm">585</span>], [<span class="nm">480</span>, <span class="nm">415</span>], [<span class="nm">835</span>, <span class="nm">625</span>], [<span class="nm">975</span>, <span class="nm">580</span>], [<span class="nm">1215</span>, <span class="nm">245</span>],
+    [<span class="nm">1320</span>, <span class="nm">315</span>], [<span class="nm">1250</span>, <span class="nm">400</span>], [<span class="nm">660</span>, <span class="nm">180</span>], [<span class="nm">410</span>, <span class="nm">250</span>], [<span class="nm">420</span>, <span class="nm">555</span>], [<span class="nm">575</span>, <span class="nm">665</span>], [<span class="nm">1150</span>, <span class="nm">1160</span>], [<span class="nm">700</span>, <span class="nm">580</span>], [<span class="nm">685</span>, <span class="nm">595</span>],
+    [<span class="nm">685</span>, <span class="nm">610</span>], [<span class="nm">770</span>, <span class="nm">610</span>], [<span class="nm">795</span>, <span class="nm">645</span>], [<span class="nm">720</span>, <span class="nm">635</span>], [<span class="nm">760</span>, <span class="nm">650</span>], [<span class="nm">475</span>, <span class="nm">960</span>], [<span class="nm">95</span>, <span class="nm">260</span>], [<span class="nm">875</span>, <span class="nm">920</span>], [<span class="nm">700</span>, <span class="nm">500</span>],
+    [<span class="nm">555</span>, <span class="nm">815</span>], [<span class="nm">830</span>, <span class="nm">485</span>], [<span class="nm">1170</span>, <span class="nm">65</span>], [<span class="nm">830</span>, <span class="nm">610</span>], [<span class="nm">605</span>, <span class="nm">625</span>], [<span class="nm">595</span>, <span class="nm">360</span>], [<span class="nm">1340</span>, <span class="nm">725</span>], [<span class="nm">1740</span>, <span class="nm">245</span>]], float)
+n = len(XY)
+D = np.rint(np.hypot(*(XY[:, <span class="kw">None</span>, :] - XY[<span class="kw">None</span>, :, :]).transpose(<span class="nm">2</span>, <span class="nm">0</span>, <span class="nm">1</span>)))   <span class="cm"># TSPLIB EUC_2D rounding</span>
+length = <span class="kw">lambda</span> t: D[t, np.roll(t, -<span class="nm">1</span>)].sum()
+
+
+<span class="kw">def</span> tabu_search(max_iter=<span class="nm">1500</span>, tenure=<span class="nm">15</span>, sample=<span class="kw">None</span>, seed=<span class="nm">0</span>):
+    rng = np.random.default_rng(seed)
+    t = rng.permutation(n)
+    L = length(t)
+    best, best_L = t.copy(), L
+    tabu = {}                                        <span class="cm"># edge (i, j) -&gt; last iteration at which adding it is tabu</span>
+    pairs = [(i, j) <span class="kw">for</span> i <span class="kw">in</span> range(n - <span class="nm">1</span>) <span class="kw">for</span> j <span class="kw">in</span> range(i + <span class="nm">2</span>, n) <span class="kw">if</span> <span class="kw">not</span> (i == <span class="nm">0</span> <span class="kw">and</span> j == n - <span class="nm">1</span>)]
+    history = []
+    <span class="kw">for</span> it <span class="kw">in</span> range(<span class="nm">1</span>, max_iter + <span class="nm">1</span>):
+        cand = pairs <span class="kw">if</span> sample is <span class="kw">None</span> <span class="kw">else</span> [pairs[k] <span class="kw">for</span> k <span class="kw">in</span> rng.choice(len(pairs), sample, replace=<span class="kw">False</span>)]
+        best_move, best_delta = <span class="kw">None</span>, np.inf
+        <span class="kw">for</span> i, j <span class="kw">in</span> cand:
+            a, b, c, d = t[i], t[i + <span class="nm">1</span>], t[j], t[(j + <span class="nm">1</span>) % n]
+            delta = D[a, c] + D[b, d] - D[a, b] - D[c, d]
+            is_tabu = tabu.get((min(a, c), max(a, c)), <span class="nm">0</span>) &gt;= it <span class="kw">or</span> tabu.get((min(b, d), max(b, d)), <span class="nm">0</span>) &gt;= it
+            <span class="kw">if</span> (<span class="kw">not</span> is_tabu <span class="kw">or</span> L + delta &lt; best_L) <span class="kw">and</span> delta &lt; best_delta:
+                best_move, best_delta = (i, j), delta
+        i, j = best_move
+        a, b, c, d = t[i], t[i + <span class="nm">1</span>], t[j], t[(j + <span class="nm">1</span>) % n]
+        tabu[(min(a, b), max(a, b))] = tabu[(min(c, d), max(c, d))] = it + tenure
+        t[i + <span class="nm">1</span>:j + <span class="nm">1</span>] = t[i + <span class="nm">1</span>:j + <span class="nm">1</span>][::-<span class="nm">1</span>]       <span class="cm"># apply the 2-opt move, even if it makes the tour longer</span>
+        L += best_delta
+        <span class="kw">if</span> L &lt; best_L:
+            best, best_L = t.copy(), L
+        history.append(best_L)
+    <span class="kw">return</span> best, best_L, history
+
+
+best, L, hist = tabu_search()
+print(f<span class="st">"best tour length: {L:.0f} (optimum 7,542)"</span>)
+fig, ax = plt.subplots(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">12</span>, <span class="nm">4.5</span>))
+ax[<span class="nm">0</span>].plot(*XY[np.append(best, best[<span class="nm">0</span>])].T, <span class="st">"o-"</span>, ms=<span class="nm">3</span>); ax[<span class="nm">0</span>].set_title(f<span class="st">"Berlin52 tour, length {L:.0f}"</span>)
+ax[<span class="nm">1</span>].plot(hist); ax[<span class="nm">1</span>].axhline(<span class="nm">7542</span>, ls=<span class="st">"--"</span>, c=<span class="st">"r"</span>); ax[<span class="nm">1</span>].set_xlabel(<span class="st">"iteration"</span>); ax[<span class="nm">1</span>].set_title(<span class="st">"best length"</span>)
+plt.show()</pre>
+      <pre class="code" id="code-a" hidden><span class="cm"># Tabu search for the simple assembly line balancing problem, SALBP-1 (Chapter 6, Section 6.6)</span>
+<span class="cm"># A solution is a task sequence that respects the precedence constraints. Tasks fill stations in order;</span>
+<span class="cm"># a new station opens when the next task would exceed the cycle time.</span>
+<span class="kw">import</span> itertools
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># The book's example (Figure 6.22): six tasks, cycle time 4 minutes</span>
+TIMES = {<span class="nm">1</span>: <span class="nm">2</span>, <span class="nm">2</span>: <span class="nm">3</span>, <span class="nm">3</span>: <span class="nm">3</span>, <span class="nm">4</span>: <span class="nm">1</span>, <span class="nm">5</span>: <span class="nm">3</span>, <span class="nm">6</span>: <span class="nm">3</span>}
+PRED = {<span class="nm">3</span>: [<span class="nm">1</span>], <span class="nm">4</span>: [<span class="nm">2</span>], <span class="nm">5</span>: [<span class="nm">3</span>, <span class="nm">4</span>], <span class="nm">6</span>: [<span class="nm">4</span>]}           <span class="cm"># task: its immediate predecessors</span>
+CT = <span class="nm">4</span>
+
+
+<span class="kw">def</span> stations(seq, times=TIMES, ct=CT):
+    loads = [<span class="nm">0</span>]
+    <span class="kw">for</span> task <span class="kw">in</span> seq:
+        <span class="kw">if</span> loads[-<span class="nm">1</span>] + times[task] &gt; ct:
+            loads.append(<span class="nm">0</span>)
+        loads[-<span class="nm">1</span>] += times[task]
+    <span class="kw">return</span> loads
+
+
+<span class="kw">def</span> smoothing_index(loads):                          <span class="cm"># equation 6.1</span>
+    loads = np.array(loads, float)
+    <span class="kw">return</span> np.sqrt(((loads.max() - loads) ** <span class="nm">2</span>).sum() / len(loads))
+
+
+<span class="kw">def</span> feasible(seq, pred=PRED):
+    pos = {t: k <span class="kw">for</span> k, t <span class="kw">in</span> enumerate(seq)}
+    <span class="kw">return</span> all(pos[p] &lt; pos[t] <span class="kw">for</span> t, ps <span class="kw">in</span> pred.items() <span class="kw">for</span> p <span class="kw">in</span> ps)
+
+
+<span class="kw">def</span> tabu_search(seq, tenure=<span class="nm">3</span>, max_iter=<span class="nm">20</span>, times=TIMES, pred=PRED, ct=CT, verbose=<span class="kw">True</span>):
+    <span class="st">"""Minimize the number of stations first, then the smoothing index; moves swap two tasks."""</span>
+    key = <span class="kw">lambda</span> s: (len(stations(s, times, ct)), smoothing_index(stations(s, times, ct)))
+    cur, best = list(seq), list(seq)
+    tabu = {}
+    <span class="kw">for</span> it <span class="kw">in</span> range(<span class="nm">1</span>, max_iter + <span class="nm">1</span>):
+        cands = []
+        <span class="kw">for</span> i, j <span class="kw">in</span> itertools.combinations(range(len(cur)), <span class="nm">2</span>):
+            s = cur.copy(); s[i], s[j] = s[j], s[i]
+            move = tuple(sorted((cur[i], cur[j])))
+            <span class="kw">if</span> feasible(s, pred) <span class="kw">and</span> (tabu.get(move, <span class="nm">0</span>) &lt; it <span class="kw">or</span> key(s) &lt; key(best)):
+                cands.append((key(s), move, s))
+        <span class="kw">if</span> <span class="kw">not</span> cands:
+            <span class="kw">break</span>
+        k, move, cur = min(cands, key=<span class="kw">lambda</span> c: c[<span class="nm">0</span>])
+        tabu[move] = it + tenure
+        <span class="kw">if</span> k &lt; key(best):
+            best = cur
+        <span class="kw">if</span> verbose:
+            print(f<span class="st">"iter {it}: swap {move} -&gt; {cur}, loads {stations(cur, times, ct)}, SI = {k[1]:.4f}"</span>)
+    <span class="kw">return</span> best
+
+
+init = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>]
+print(<span class="st">"initial loads:"</span>, stations(init), <span class="st">"SI ="</span>, round(smoothing_index(stations(init)), <span class="nm">4</span>))   <span class="cm"># 2-3-4-3-3, 1.1832</span>
+best = tabu_search(init, max_iter=<span class="nm">3</span>)
+print(<span class="st">"best:"</span>, best, <span class="st">"loads:"</span>, stations(best), <span class="st">"SI ="</span>, round(smoothing_index(stations(best)), <span class="nm">4</span>))
+
+<span class="cm"># MANSOOR benchmark from appendix B: 11 tasks, cycle time 48 (best known: 4 stations)</span>
+T = dict(enumerate([<span class="nm">4</span>, <span class="nm">38</span>, <span class="nm">45</span>, <span class="nm">12</span>, <span class="nm">10</span>, <span class="nm">8</span>, <span class="nm">12</span>, <span class="nm">10</span>, <span class="nm">2</span>, <span class="nm">10</span>, <span class="nm">34</span>], start=<span class="nm">1</span>))
+P = {}
+<span class="kw">for</span> a, b <span class="kw">in</span> [(<span class="nm">1</span>, <span class="nm">4</span>), (<span class="nm">2</span>, <span class="nm">4</span>), (<span class="nm">2</span>, <span class="nm">5</span>), (<span class="nm">3</span>, <span class="nm">11</span>), (<span class="nm">4</span>, <span class="nm">6</span>), (<span class="nm">5</span>, <span class="nm">7</span>), (<span class="nm">6</span>, <span class="nm">8</span>), (<span class="nm">7</span>, <span class="nm">9</span>), (<span class="nm">8</span>, <span class="nm">10</span>), (<span class="nm">9</span>, <span class="nm">10</span>), (<span class="nm">10</span>, <span class="nm">11</span>)]:
+    P.setdefault(b, []).append(a)
+seq = list(range(<span class="nm">1</span>, <span class="nm">12</span>))
+best = tabu_search(seq, tenure=<span class="nm">4</span>, max_iter=<span class="nm">60</span>, times=T, pred=P, ct=<span class="nm">48</span>, verbose=<span class="kw">False</span>)
+print(<span class="st">"MANSOOR:"</span>, best, <span class="st">"loads:"</span>, stations(best, T, <span class="nm">48</span>), <span class="st">"SI ="</span>, round(smoothing_index(stations(best, T, <span class="nm">48</span>)), <span class="nm">3</span>))</pre>
+    </div>
+    <p class="cap">To run: open the companion notebook in Colab and press Shift+Enter in each cell, or paste a tab’s code into any notebook.</p>
+  </div>
+</section>
+
+<!-- ===================== SUMMARY ===================== -->
+<section class="chapter" id="summary">
+  <div class="wrap">
+    <span class="eyebrow">Part 13 · Summary</span>
+    <h2>What to remember</h2>
+    <div class="cards3">
+      <div class="card"><h5>Local search + memory</h5><p>Local search improves a solution by local changes and stops at local optima. Tabu search keeps moving to the best admissible neighbor, even uphill.</p></div>
+      <div class="card"><h5>Tabu list and tenure</h5><p>The tabu list holds tabu-active moves for a number of iterations, the tenure. Too short risks cycling; too long risks stagnation.</p></div>
+      <div class="card"><h5>Aspiration</h5><p>Aspiration criteria lift the tabu status of a move that would beat the best solution found so far.</p></div>
+      <div class="card"><h5>Balance</h5><p>Recency memory intensifies around good solutions; frequency memory diversifies toward unexplored regions.</p></div>
+    </div>
+    <div class="prose">
+      <p class="muted">References: F. Glover, “Tabu search and adaptive memory programming: advances, applications and challenges,” 1997. F. Glover, M. Laguna and R. Martí, “Principles of tabu search.” R. Battiti and G. Tecchiolli, “The reactive tabu search,” 1994. E. Taillard, “Robust taboo search for the quadratic assignment problem,” 1991. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 6.</p>
+    </div>
+  </div>
+</section>
+<footer class="end"><div class="wrap">Interactive companion to Chapter 6 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024). Berlin52 from TSPLIB; SALBP data sets from the book’s repository.</div></footer>
+</div>
+<script>
+"use strict";
+/* ---------- light / dark / system theme ---------- */
+// runs first, so an error in any later widget cannot disable the theme switch
+(function themeSwitch() {
+  const root = document.documentElement, btns = [...document.querySelectorAll("[data-theme-set]")];
+  function apply(mode) {
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
+    btns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === mode)));
+  }
+  let saved = null; try { saved = localStorage.getItem("pso-lab-theme"); } catch (e) {}
+  const host = root.getAttribute("data-theme");
+  apply(["light", "dark", "system"].includes(saved) ? saved : host === "light" || host === "dark" ? host : "system");
+  btns.forEach(b => b.addEventListener("click", () => { apply(b.dataset.themeSet); try { localStorage.setItem("pso-lab-theme", b.dataset.themeSet); } catch (e) {} }));
+})();
+
+/* ---------- shared helpers ---------- */
+const $ = s => document.querySelector(s);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const MONO = '"IBM Plex Mono", Consolas, monospace';
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function colors() {
+  const k = ["bg","surface","sunk","ink","muted","line","grid","accent","gold","s1","s2","s3","s4","good","bad","map-water","map-land","map-state","map-border"];
+  const o = {}; k.forEach(n => o[n] = css("--" + n)); return o;
+}
+function setupCanvas(cv, fixedH) {
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  const w = Math.max(10, Math.round(r.width)), h = Math.max(10, Math.round(fixedH || r.height));
+  if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return { ctx, w, h };
+}
+function fmtNum(v, d) {
+  if (!isFinite(v)) return "n/a";
+  const a = Math.abs(v);
+  if (d != null) return v.toFixed(d);
+  if (a >= 1000) return Math.round(v).toLocaleString("en-US");
+  if (a >= 100) return v.toFixed(1);
+  if (a >= 1) return v.toFixed(3);
+  if (a === 0) return "0";
+  if (a < 1e-3) return v.toExponential(2);
+  return v.toFixed(4);
+}
+const redrawers = [];
+function onRedraw(fn) { redrawers.push(fn); }
+let rzT; const ro = new ResizeObserver(() => { clearTimeout(rzT); rzT = setTimeout(() => redrawers.forEach(f => f()), 60); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => redrawers.forEach(f => f()));
+new MutationObserver(() => redrawers.forEach(f => f())).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+function makeControls(el, specs, onChange) {
+  const api = {};
+  for (const s of specs) {
+    if (s.type === "group") { el.insertAdjacentHTML("beforeend", `<div class="group-label">${s.label}</div>`); continue; }
+    const wrap = document.createElement("div"); wrap.className = "ctl";
+    if (s.type === "select") {
+      wrap.innerHTML = `<label for="${s.id}">${s.label}</label><select id="${s.id}">${s.options.map(o => `<option value="${o[0]}"${o[0] == s.value ? " selected" : ""}>${o[1]}</option>`).join("")}</select>`;
+    } else if (s.type === "check") {
+      wrap.className = "ctl ctl-check";
+      wrap.innerHTML = `<label><input type="checkbox" id="${s.id}"${s.value ? " checked" : ""}>&nbsp;${s.label}</label>`;
+    } else {
+      wrap.innerHTML = `<label for="${s.id}">${s.label}<output id="${s.id}-o"></output></label><input type="range" id="${s.id}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.value}">`;
+    }
+    if (s.hint) wrap.insertAdjacentHTML("beforeend", `<small>${s.hint}</small>`);
+    el.appendChild(wrap);
+    const inp = wrap.querySelector("input,select"), out = wrap.querySelector("output");
+    const fmt = s.fmt || (v => v);
+    const read = () => s.type === "select" ? inp.value : s.type === "check" ? inp.checked : parseFloat(inp.value);
+    const upd = () => { if (out) out.textContent = fmt(read()); };
+    upd();
+    inp.addEventListener(s.type === "select" || s.type === "check" ? "change" : "input", () => { upd(); onChange && onChange(s.key, read()); });
+    Object.defineProperty(api, s.key, { get: read, set(v) { if (s.type === "check") inp.checked = v; else inp.value = v; upd(); }, enumerable: true });
+  }
+  return api;
+}
+function runner(step, draw, speed, done, btn) {
+  let on = false, acc = 0, last = 0;
+  function frame(t) {
+    if (!on) return;
+    const dt = last ? Math.min(0.1, (t - last) / 1000) : 0; last = t; acc += dt * speed();
+    let n = 0;
+    while (acc >= 1 && n < 60) { acc -= 1; if (done()) { stop(); break; } step(); n++; }
+    if (n) draw();
+    if (on) requestAnimationFrame(frame);
+  }
+  function start() { if (on) return; if (done()) return; on = true; last = 0; acc = 1; btn.textContent = "Pause"; requestAnimationFrame(frame); }
+  function stop() { on = false; btn.textContent = "Run"; }
+  btn.addEventListener("click", () => on ? stop() : start());
+  return { start, stop, get on() { return on; } };
+}
+function lineChart(cv, series, o = {}) {
+  const { ctx, w, h } = setupCanvas(cv); const c = colors();
+  ctx.clearRect(0, 0, w, h);
+  const pad = { l: 58, r: 12, t: 10, b: 22 };
+  let xs = o.xmax || 1, ymin = Infinity, ymax = -Infinity;
+  for (const s of series) { xs = Math.max(xs, s.data.length - 1); for (const v of s.data) if (isFinite(v)) { ymin = Math.min(ymin, v); ymax = Math.max(ymax, v); } }
+  for (const r of (o.refs || [])) { ymin = Math.min(ymin, r.v); ymax = Math.max(ymax, r.v); }
+  if (!isFinite(ymin)) { ymin = 0; ymax = 1; }
+  if (ymax - ymin < 1e-9) { ymax += 1; ymin -= 1; }
+  const sp = ymax - ymin; ymin -= sp * .06; ymax += sp * .06;
+  const X = i => pad.l + (w - pad.l - pad.r) * i / xs, Y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - ymin) / (ymax - ymin));
+  ctx.font = "11px " + MONO; ctx.lineWidth = 1;
+  for (let k = 0; k <= 4; k++) {
+    const v = ymin + (ymax - ymin) * k / 4, y = Y(v);
+    ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(fmtNum(v), pad.l - 6, y);
+  }
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  for (let k = 0; k <= 4; k++) { const i = Math.round(xs * k / 4); ctx.fillText(i, X(i), h - pad.b + 6); }
+  for (const r of (o.refs || [])) {
+    ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = r.color || c.bad; ctx.beginPath(); ctx.moveTo(pad.l, Y(r.v)); ctx.lineTo(w - pad.r, Y(r.v)); ctx.stroke(); ctx.restore();
+    if (r.label) { ctx.fillStyle = r.color || c.bad; ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText(r.label, w - pad.r - 2, Y(r.v) - 2); }
+  }
+  if (o.vline != null) { ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = c.ink; ctx.globalAlpha = .55; ctx.beginPath(); ctx.moveTo(X(o.vline), pad.t); ctx.lineTo(X(o.vline), h - pad.b); ctx.stroke(); ctx.restore(); }
+  for (const s of series) {
+    if (!s.data.length) continue;
+    ctx.strokeStyle = s.color; ctx.globalAlpha = s.alpha || 1; ctx.lineWidth = s.width || 2; ctx.beginPath();
+    s.data.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v))); ctx.stroke();
+    if (!s.alpha) { const i = s.data.length - 1; ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(X(i), Y(s.data[i]), 3, 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  }
+  if (o.labels) { let x = pad.l + 6; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.font = "11px " + MONO;
+    for (const s of series) if (s.label) { ctx.fillStyle = s.color; ctx.fillText("■ " + s.label, x, pad.t + 2); x += ctx.measureText("■ " + s.label).width + 12; } }
+}
+function stats(el, items) { el.innerHTML = items.map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join(""); }
+function presets(el, list, apply) {
+  el.innerHTML = list.map((p, i) => `<button class="preset" data-i="${i}"><b>${p.t}</b><span>${p.d}</span></button>`).join("");
+  el.querySelectorAll("button").forEach(b => b.addEventListener("click", () => apply(list[+b.dataset.i])));
+}
+
+
+const ALB_DATA = {"MANSOOR":{"ct":48,"best":4,"t":[4,38,45,12,10,8,12,10,2,10,34],"p":[[1,4],[2,4],[2,5],[3,11],[4,6],[5,7],[6,8],[7,9],[8,10],[9,10],[10,11]]},"MITCHELL":{"ct":26,"best":5,"t":[4,3,9,5,9,4,8,7,5,1,3,1,5,3,5,3,13,5,2,3,7],"p":[[1,2],[1,3],[2,21],[3,4],[4,5],[4,21],[5,6],[5,7],[6,8],[7,8],[7,14],[8,9],[9,10],[9,11],[9,12],[9,13],[10,15],[11,15],[12,15],[13,17],[13,18],[14,19],[15,16],[15,18],[16,17],[17,20],[18,19]]},"JACKSON":{"ct":9,"best":6,"t":[6,2,5,7,1,2,3,6,5,5,4],"p":[[1,2],[1,3],[1,4],[1,5],[2,6],[3,7],[4,7],[5,7],[6,8],[7,9],[8,10],[9,11],[10,11]]},"SAWYER30":{"ct":36,"best":10,"t":[8,7,19,10,2,6,14,10,1,4,14,15,5,12,9,10,2,10,18,16,21,14,16,7,17,9,25,7,14,2],"p":[[1,4],[1,5],[2,11],[2,12],[3,16],[3,17],[4,7],[5,6],[6,7],[7,8],[8,9],[9,26],[10,24],[12,13],[13,14],[14,15],[14,20],[15,22],[16,20],[17,18],[18,19],[20,21],[20,24],[21,22],[22,23],[23,27],[24,25],[25,26],[26,27],[27,28],[27,29],[29,30]]},"BUXEY":{"ct":47,"best":7,"t":[7,19,15,5,12,10,8,16,2,6,21,10,9,4,14,7,14,17,10,16,1,9,25,14,14,2,10,7,20],"p":[[1,3],[1,25],[2,6],[2,26],[3,4],[4,5],[5,8],[5,13],[6,8],[7,9],[7,12],[7,25],[8,11],[8,16],[9,10],[10,14],[10,15],[11,17],[12,15],[13,17],[14,16],[15,19],[16,18],[17,20],[18,22],[19,21],[20,23],[21,22],[22,23],[23,24],[23,28],[24,29],[25,29],[26,27],[27,29],[28,29]]},"GUNTHER":{"ct":44,"best":12,"t":[29,3,5,22,6,14,2,5,22,30,23,30,23,2,19,29,2,2,19,29,6,10,16,23,5,5,5,40,2,5,5,1,40,2,2],"p":[[1,2],[1,5],[1,7],[1,10],[1,12],[2,3],[3,4],[4,11],[5,6],[6,7],[6,8],[7,14],[7,18],[8,9],[9,13],[10,14],[11,28],[11,33],[12,18],[13,28],[13,33],[14,15],[15,16],[16,21],[17,20],[18,19],[19,20],[20,21],[21,22],[21,25],[21,30],[21,32],[22,23],[23,24],[24,27],[25,26],[26,27],[27,28],[27,33],[27,34],[28,29],[30,31],[31,32],[32,33],[33,35]]}};
+/* ================= Tabu Search Lab ================= */
+// Everything below is written for this page; the shared plumbing comes from the PSO Lab build.
+const PI = Math.PI;
+const gauss = rnd => { let u = 0; while (!u) u = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * PI * rnd()); };
+const shuffle = (rnd, a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pairKey = (a, b) => a < b ? a + "," + b : b + "," + a;
+const TAG_T = `<span class="tag-t">T</span>`, TAG_A = `<span class="tag-a">aspiration</span>`;
+const fmt1 = v => (Math.round(v * 10) / 10).toLocaleString("en-US", { maximumFractionDigits: 1 });
+const newSeed = () => Math.floor(Math.random() * 1e9);
+
+/* plot frame with axes */
+function plotFrame(cv, xr, yr, o = {}) {
+  const { ctx, w, h } = setupCanvas(cv), c = colors();
+  ctx.clearRect(0, 0, w, h);
+  const pad = { l: o.padL || 52, r: 12, t: 12, b: o.xl ? 36 : 24 };
+  const X = v => pad.l + (w - pad.l - pad.r) * (v - xr[0]) / (xr[1] - xr[0]), Y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - yr[0]) / (yr[1] - yr[0]));
+  ctx.font = "11px " + MONO; ctx.lineWidth = 1;
+  for (let k = 0; k <= 4; k++) {
+    const v = yr[0] + (yr[1] - yr[0]) * k / 4; ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(w - pad.r, Y(v)); ctx.stroke();
+    ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText((o.fy || fmtNum)(v), pad.l - 6, Y(v));
+    const u = xr[0] + (xr[1] - xr[0]) * k / 4; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText((o.fx || fmtNum)(u), X(u), h - pad.b + 5);
+  }
+  if (o.xl) { ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.fillText(o.xl, pad.l + (w - pad.l - pad.r) / 2, h - 2); }
+  return { ctx, w, h, X, Y, c, pad };
+}
+function star(ctx, x, y, r) { ctx.beginPath(); for (let k = 0; k < 10; k++) { const a = -PI / 2 + k * PI / 5, rr = k % 2 ? r * .45 : r; ctx.lineTo(x + rr * Math.cos(a), y + rr * Math.sin(a)); } ctx.closePath(); }
+// a "Run" button that repeats a step function until done(), at a given rate
+function stepper(btn, step, done, rate) {
+  let timer = null; const label = btn.textContent;
+  const stop = () => { clearInterval(timer); timer = null; btn.textContent = label; };
+  btn.addEventListener("click", () => { if (timer) return stop(); if (done()) return; btn.textContent = "Pause"; timer = setInterval(() => { if (done()) return stop(); step(); }, rate()); });
+  return { stop, get on() { return !!timer; } };
+}
+
+/* ---------- continuous functions (hero and lab) ---------- */
+const FUNCS = {
+  himmelblau: { name: "Himmelblau", f: (x, y) => (x * x + y - 11) ** 2 + (x + y * y - 7) ** 2, b: [[-6, 6], [-6, 6]], step: 1, radius: .5, mins: [[3, 2], [-2.805118, 3.131312], [-3.77931, -3.283186], [3.584428, -1.848126]], fmin: 0 },
+  bird: { name: "Mishra’s Bird", f: (x, y) => Math.sin(x) * Math.exp((1 - Math.cos(y)) ** 2) + Math.cos(y) * Math.exp((1 - Math.sin(x)) ** 2) + (x - y) ** 2, b: [[-10, 0], [-6.5, 0]], step: .8, radius: .4, feasible: (x, y) => (x + 5) ** 2 + (y + 5) ** 2 < 25, mins: [[-3.1302, -1.5821]], fmin: -106.7645 },
+  schwefel: { name: "Schwefel", f: (x, y) => 837.9658 - x * Math.sin(Math.sqrt(Math.abs(x))) - y * Math.sin(Math.sqrt(Math.abs(y))), b: [[-500, 500], [-500, 500]], step: 30, radius: 60, mins: [[420.9687, 420.9687]], fmin: 0 }
+};
+function contTS(F, o) {
+  const rnd = mulberry32(o.seed * 7919 + 1), [bx, by] = F.b, ok = (x, y) => !F.feasible || F.feasible(x, y);
+  let x; do x = [bx[0] + rnd() * (bx[1] - bx[0]), by[0] + rnd() * (by[1] - by[0])]; while (!ok(...x));
+  if (o.x0) x = o.x0.slice();
+  const v = F.f(...x);
+  return { rnd, x, v, best: x.slice(), bestV: v, tabu: [x.slice()], path: [x.slice()], cands: [], it: 0, hist: [v], cur: [v], stuck: false };
+}
+function contStep(S, F, o) {
+  const rnd = S.rnd, [bx, by] = F.b, sx = o.step * (bx[1] - bx[0]) / 12, sy = o.step * (by[1] - by[0]) / 12, r = o.radius * (bx[1] - bx[0]) / 12;
+  const cands = [];
+  for (let k = 0; k < o.nb; k++) {
+    const p = [Math.min(bx[1], Math.max(bx[0], S.x[0] + sx * gauss(rnd))), Math.min(by[1], Math.max(by[0], S.x[1] + sy * gauss(rnd)))];
+    if (F.feasible && !F.feasible(...p)) continue;                  // infeasible neighbors are discarded
+    const v = F.f(...p), tabu = o.ls ? false : S.tabu.some(t => Math.hypot((t[0] - p[0]) / (bx[1] - bx[0]), (t[1] - p[1]) / (by[1] - by[0])) * (bx[1] - bx[0]) < r);
+    cands.push({ p, v, tabu, ok: !tabu || (o.asp && v < S.bestV) });
+  }
+  S.cands = cands; S.it++;
+  const adm = cands.filter(c => c.ok);
+  if (adm.length) {
+    const b = adm.reduce((a, c) => c.v < a.v ? c : a);
+    if (o.ls && b.v >= S.v) S.stuck = true;                       // local search accepts improvements only
+    else { S.x = b.p; S.v = b.v; S.path.push(b.p); if (!o.ls) { S.tabu.push(b.p); while (S.tabu.length > o.tenure) S.tabu.shift(); } }
+  }
+  if (S.v < S.bestV) { S.bestV = S.v; S.best = S.x.slice(); }
+  S.hist.push(S.bestV); S.cur.push(S.v);
+}
+const heatCache = new Map();
+function heatLayer(F, w, h, c) {
+  const dpr = window.devicePixelRatio || 1, key = [F.name, w, h, dpr, c.accent, c.sunk, c.bad].join("|");
+  if (heatCache.has(key)) return heatCache.get(key);
+  const cv = document.createElement("canvas"), N = 120; cv.width = N; cv.height = N;
+  const ctx = cv.getContext("2d"), img = ctx.createImageData(N, N), [bx, by] = F.b, vals = [];
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) vals.push(F.f(bx[0] + (i + .5) / N * (bx[1] - bx[0]), by[1] - (j + .5) / N * (by[1] - by[0])));
+  const lo = Math.min(...vals), hi = Math.max(...vals), hex = s => { const m = s.replace("#", ""); return [0, 2, 4].map(k => parseInt(m.slice(k, k + 2), 16)); };
+  const A = hex(c.accent.length === 7 ? c.accent : "#00629B"), B = hex(c.sunk.length === 7 ? c.sunk : "#EEF2F5");
+  vals.forEach((v, k) => {
+    let t = Math.log1p(v - lo) / Math.log1p(hi - lo); t = Math.floor(t * 14) / 14;                 // banded, like filled contours
+    let s = (1 - t) * .75; const i = k % N, j = Math.floor(k / N), x = bx[0] + (i + .5) / N * (bx[1] - bx[0]), y = by[1] - (j + .5) / N * (by[1] - by[0]);
+    if (F.feasible && !F.feasible(x, y)) s *= .25;
+    for (let q = 0; q < 3; q++) img.data[k * 4 + q] = Math.round(B[q] * (1 - s) + A[q] * s); img.data[k * 4 + 3] = 255;
+  });
+  ctx.putImageData(img, 0, 0); heatCache.set(key, cv); return cv;
+}
+function drawCont(cv, F, S, o = {}) {
+  const { ctx, w, h } = setupCanvas(cv), c = colors(), [bx, by] = F.b;
+  const X = v => (v - bx[0]) / (bx[1] - bx[0]) * w, Y = v => (by[1] - v) / (by[1] - by[0]) * h;
+  ctx.imageSmoothingEnabled = true; ctx.drawImage(heatLayer(F, w, h, c), 0, 0, w, h);
+  if (F.feasible) { ctx.strokeStyle = c.ink; ctx.setLineDash([4, 4]); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(X(-5), Y(-5), X(0) - X(-5), Y(-5) - Y(0), 0, 0, 7); ctx.stroke(); ctx.setLineDash([]); }
+  ctx.strokeStyle = c.ink; ctx.lineWidth = 1.5; F.mins.forEach(([a, b]) => { const x = X(a), y = Y(b); ctx.beginPath(); ctx.moveTo(x - 5, y - 5); ctx.lineTo(x + 5, y + 5); ctx.moveTo(x + 5, y - 5); ctx.lineTo(x - 5, y + 5); ctx.stroke(); });
+  if (o.cands && S.cands) S.cands.forEach(k => { ctx.fillStyle = k.tabu && !k.ok ? c.bad : c.ink; ctx.globalAlpha = .35; ctx.beginPath(); ctx.arc(X(k.p[0]), Y(k.p[1]), 2, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
+  if (!o.ls) { const r = o.radius * (bx[1] - bx[0]) / 12; ctx.strokeStyle = c.bad; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.2; S.tabu.forEach(t => { ctx.beginPath(); ctx.arc(X(t[0]), Y(t[1]), r / (bx[1] - bx[0]) * w, 0, 7); ctx.stroke(); }); ctx.setLineDash([]); }
+  const P = S.path.slice(-(o.trail || 400)); ctx.strokeStyle = c.gold; ctx.lineWidth = 1.6; ctx.beginPath(); P.forEach((p, i) => i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.stroke();
+  ctx.fillStyle = c.gold; star(ctx, X(S.best[0]), Y(S.best[1]), 9); ctx.fill(); ctx.strokeStyle = c.ink; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = c.accent; ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(S.x[0]), Y(S.x[1]), 6, 0, 7); ctx.fill(); ctx.stroke();
+}
+
+(function hero() {
+  const cv = $("#heroCv"), F = FUNCS.himmelblau, O = { nb: 30, step: .8, radius: .9, tenure: 12, asp: true };
+  let seed = 3, S = contTS(F, { seed }), wait = 0;
+  const draw = () => { drawCont(cv, F, S, { radius: O.radius, trail: 60 }); $("#heroCap").textContent = `Iteration ${S.it}: f = ${fmtNum(S.v)} at (${S.x[0].toFixed(2)}, ${S.x[1].toFixed(2)}); best ${fmtNum(S.bestV)}. Dashed circles are tabu regions around the last ${O.tenure} points; × marks the four minima.`; };
+  if (reduceMotion) for (let k = 0; k < 80; k++) contStep(S, F, O);
+  ro.observe(cv); onRedraw(draw); draw();
+  if (reduceMotion) return;
+  let vis = true; new IntersectionObserver(e => { vis = e[0].isIntersecting; }).observe(cv);
+  setInterval(() => { if (!vis) return; if (S.it >= 160) { if (++wait > 12) { seed++; S = contTS(F, { seed }); wait = 0; } else return; } else contStep(S, F, O); draw(); }, 140);
+})();
+
+/* ---------- local search vs tabu search on a 1D landscape ---------- */
+(function lsVsTs() {
+  const N = 90, Fv = i => 4 + 1.3 * Math.sin(i * .33) + .9 * Math.sin(i * .121 + 1.7) + .6 * Math.sin(i * .71 + .4) + .0011 * (i - 62) ** 2;
+  const fx = [...Array(N).keys()].map(Fv), gmin = Math.min(...fx), gi = fx.indexOf(gmin);
+  const ctl = makeControls($("#lvCtl"), [
+    { key: "k", id: "lvK", label: "Neighborhood: up to k steps", min: 1, max: 4, step: 1, value: 2 },
+    { key: "T", id: "lvT", label: "Tabu tenure T", min: 0, max: 20, step: 1, value: 8 },
+    { key: "asp", id: "lvAsp", type: "check", label: "Aspiration (better than best)", value: true }
+  ], () => draw());
+  let start = 8, L, T, it;
+  function reset() { L = { x: start, stuck: false, trail: [start] }; T = { x: start, best: start, tabu: [{ x: start, until: ctl.T }], trail: [start] }; it = 0; draw(); }
+  function step() {
+    it++;
+    const nb = x => { const o = []; for (let d = -ctl.k; d <= ctl.k; d++) if (d && x + d >= 0 && x + d < N) o.push(x + d); return o; };
+    if (!L.stuck) { const b = nb(L.x).reduce((a, y) => fx[y] < fx[a] ? y : a); if (fx[b] < fx[L.x]) { L.x = b; L.trail.push(b); } else L.stuck = true; }
+    T.tabu = T.tabu.filter(t => t.until >= it);
+    const adm = nb(T.x).filter(y => !T.tabu.some(t => t.x === y) || (ctl.asp && fx[y] < fx[T.best]));
+    if (adm.length) { const b = adm.reduce((a, y) => fx[y] < fx[a] ? y : a); T.x = b; T.trail.push(b); if (ctl.T > 0) T.tabu.push({ x: b, until: it + ctl.T }); if (fx[b] < fx[T.best]) T.best = b; }
+    draw();
+  }
+  function draw() {
+    const yr = [Math.min(...fx) - .4, Math.max(...fx) + .4], { ctx, X, Y, c, h } = plotFrame($("#lvCv"), [0, N - 1], yr, { xl: "x", fx: v => v.toFixed(0), fy: v => v.toFixed(1), padL: 40 });
+    T.tabu.forEach(t => { ctx.fillStyle = c.bad; ctx.globalAlpha = .18 + .5 * (t.until - it) / Math.max(1, ctl.T); ctx.fillRect(X(t.x) - 3, Y(yr[1]), 6, Y(yr[0]) - Y(yr[1])); }); ctx.globalAlpha = 1;
+    ctx.strokeStyle = c.muted; ctx.lineWidth = 2; ctx.beginPath(); fx.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v))); ctx.stroke();
+    ctx.strokeStyle = c.good; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(X(gi), Y(gmin), 8, 0, 7); ctx.stroke();
+    ctx.fillStyle = c.accent; ctx.beginPath(); ctx.moveTo(X(L.x), Y(fx[L.x]) - 4); ctx.lineTo(X(L.x) - 8, Y(fx[L.x]) - 18); ctx.lineTo(X(L.x) + 8, Y(fx[L.x]) - 18); ctx.fill();
+    ctx.fillStyle = c.gold; ctx.strokeStyle = c.ink; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(X(T.x), Y(fx[T.x]), 7, 0, 7); ctx.fill(); ctx.stroke();
+    star(ctx, X(T.best), Y(fx[T.best]) + 16, 6); ctx.fill();
+    stats($("#lvStats"), [["Iteration", it], ["Local search f", fx[L.x].toFixed(3) + (L.stuck ? " (stuck)" : "")], ["Tabu search f", fx[T.x].toFixed(3)], ["Tabu search best", fx[T.best].toFixed(3)], ["Global minimum", gmin.toFixed(3)], ["Tabu positions", T.tabu.length]]);
+    $("#lvNote").innerHTML = `<b style="color:var(--accent)">▼ Local search</b> ${L.stuck ? "has stopped: no neighbor is better." : "is still improving."} <b style="color:var(--gold)">● Tabu search</b> ${T.best === gi ? "has found the global minimum (green circle)." : "keeps moving; the star marks its best point."}${ctl.T === 0 ? " With T = 0 nothing is ever tabu, so tabu search bounces back and forth between two points: cycling." : ""}`;
+  }
+  $("#lvStep").addEventListener("click", step);
+  const run = stepper($("#lvRun"), step, () => it >= 300, () => 120);
+  $("#lvReset").addEventListener("click", () => { run.stop(); reset(); });
+  $("#lvCv").addEventListener("click", e => { const r = $("#lvCv").getBoundingClientRect(), u = (e.clientX - r.left - 40) / (r.width - 52); start = Math.max(0, Math.min(N - 1, Math.round(u * (N - 1)))); run.stop(); reset(); });
+  ro.observe($("#lvCv")); onRedraw(draw); reset();
+})();
+
+/* ---------- tabu structure on the composite laminate (appendix C, Listing C.5 data) ---------- */
+const LAM = [[0, 3, -1, 4, -2, 0, 1], [3, 0, 2, 3, 2, -1, 0], [-1, 2, 0, 0, -1, 1, 2], [4, 3, 0, 0, 2, 0, -1], [-2, 2, -1, 2, 0, -3, 4], [0, -1, 1, 0, -3, 0, 3], [1, 0, 2, -1, 4, 3, 0]];
+const lamStrength = s => { let v = 0; for (let i = 0; i < s.length - 1; i++) v += LAM[s[i] - 1][s[i + 1] - 1]; return v; };
+const LAM_BEST = (() => { let b = -Infinity; const rec = (s, rest) => { if (!rest.length) { b = Math.max(b, lamStrength(s)); return; } rest.forEach((x, i) => rec(s.concat(x), rest.slice(0, i).concat(rest.slice(i + 1)))); }; rec([], [1, 2, 3, 4, 5, 6, 7]); return b; })();
+(function laminate() {
+  const ctl = makeControls($("#lmCtl"), [
+    { key: "T", id: "lmT", label: "Tabu tenure", min: 0, max: 8, step: 1, value: 3 },
+    { key: "asp", id: "lmAsp", type: "check", label: "Aspiration (better than best)", value: true },
+    { key: "pen", id: "lmPen", label: "Frequency penalty per use", min: 0, max: 3, step: .5, value: 1, fmt: v => v.toFixed(1), hint: "Applied to non-improving moves only, to diversify when no improving move is admissible." }
+  ], () => draw());
+  let rnd = mulberry32(newSeed()), S;
+  function reset(seq) { S = { s: seq || [2, 5, 7, 3, 4, 6, 1], it: 0, rec: {}, frq: {}, last: null }; S.v = lamStrength(S.s); S.best = S.v; S.bestS = S.s.slice(); draw(); }
+  function cands() {
+    const out = [];
+    for (let a = 1; a <= 7; a++) for (let b = a + 1; b <= 7; b++) {
+      const s = S.s.map(x => x === a ? b : x === b ? a : x), v = lamStrength(s), gain = v - S.v, k = pairKey(a, b);
+      const pen = gain <= 0 ? ctl.pen * (S.frq[k] || 0) : 0, tabu = (S.rec[k] || 0) > 0, asp = tabu && ctl.asp && v > S.best;
+      out.push({ a, b, s, v, gain, pen, total: gain - pen, tabu, asp, ok: !tabu || asp });
+    }
+    return out.sort((x, y) => y.total - x.total || y.gain - x.gain);
+  }
+  function step() {
+    const C = cands(), m = C.find(c => c.ok); if (!m) return;
+    S.it++; Object.keys(S.rec).forEach(k => { if (--S.rec[k] <= 0) delete S.rec[k]; });
+    const k = pairKey(m.a, m.b); if (ctl.T > 0) S.rec[k] = ctl.T; S.frq[k] = (S.frq[k] || 0) + 1;
+    S.prev = S.s; S.s = m.s; S.v = m.v; S.last = m; if (m.v > S.best) { S.best = m.v; S.bestS = m.s.slice(); }
+    draw();
+  }
+  function draw() {
+    $("#lmSeq").innerHTML = S.s.map(x => `<span class="${S.last && (x === S.last.a || x === S.last.b) ? "hi" : ""}">${x}</span>`).join("");
+    stats($("#lmStats"), [["Iteration", S.it], ["Strength", S.v], ["Best so far", S.best], ["Best possible", LAM_BEST], ["Tabu-active swaps", Object.keys(S.rec).length]]);
+    let t = `<span class="h"></span>` + [1, 2, 3, 4, 5, 6, 7].map(j => `<span class="h">${j}</span>`).join("");
+    for (let i = 1; i <= 7; i++) { t += `<span class="h">${i}</span>`; for (let j = 1; j <= 7; j++) { if (i === j) { t += `<span class="dg"></span>`; continue; } const k = pairKey(i, j); if (i < j) { const r = S.rec[k] || 0; t += `<span class="${r ? "rec" : ""}">${r || ""}</span>`; } else { const f = S.frq[k] || 0; t += `<span class="${f ? "frq" : ""}">${f || ""}</span>`; } } }
+    $("#lmTri").style.gridTemplateColumns = "repeat(8, 2rem)"; $("#lmTri").innerHTML = t;
+    const C = cands(), pick = C.find(c => c.ok);
+    $("#lmTbl").innerHTML = `<thead><tr><th>Swap</th><th class="n">Gain</th><th class="n">Penalty</th><th class="n">Total</th><th>Status</th></tr></thead><tbody>` + C.slice(0, 6).map(c => `<tr class="${c === pick ? "pick" : c.ok ? "" : "tabu"}"><td class="mono">(${c.a}, ${c.b})</td><td class="n">${c.gain > 0 ? "+" : ""}${c.gain}</td><td class="n">${c.pen ? "−" + c.pen.toFixed(1) : ""}</td><td class="n">${(c.total > 0 ? "+" : "") + (Math.round(c.total * 10) / 10)}</td><td>${c.tabu ? TAG_T : ""} ${c.asp ? TAG_A : ""} ${c === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#lmNote").innerHTML = `Top 6 of 21 candidate swaps for the next iteration, ranked by total value. ${pick && pick.gain < 0 ? "No admissible move improves the strength, so the search takes the least bad one: a non-improving move." : ""}${S.best === LAM_BEST ? ` The best order found, ${S.bestS.join(" ")}, reaches the maximum strength of ${LAM_BEST}.` : ""}`;
+  }
+  $("#lmStep").addEventListener("click", step);
+  const run = stepper($("#lmRun"), step, () => S.it >= 200, () => 350);
+  $("#lmReset").addEventListener("click", () => { run.stop(); reset(shuffle(rnd, [1, 2, 3, 4, 5, 6, 7])); });
+  reset();
+})();
+
+/* ---------- n-queens ---------- */
+function nqColl(q) { let c = 0; for (let i = 0; i < q.length; i++) for (let j = i + 1; j < q.length; j++) if (Math.abs(q[i] - q[j]) === j - i) c++; return c; }
+const NQ_BOOK = [4, 5, 3, 6, 7, 1, 2];
+(function queens() {
+  const ctl = makeControls($("#nqCtl"), [
+    { key: "n", id: "nqN", label: "Board size n", min: 4, max: 20, step: 1, value: 7 },
+    { key: "T", id: "nqT", label: "Tabu tenure", min: 0, max: 10, step: 1, value: 3 },
+    { key: "asp", id: "nqAsp", type: "check", label: "Aspiration (better than best)", value: true }
+  ], k => { if (k === "n") random(); else draw(); });
+  let rnd = mulberry32(newSeed()), S;
+  function init(q) { S = { q, it: 0, tabu: {}, last: null }; S.v = nqColl(q); S.best = S.v; draw(); }
+  function random() { init(shuffle(rnd, [...Array(ctl.n).keys()].map(k => k + 1))); }
+  function cands() {
+    const n = S.q.length, out = [];
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const q = S.q.slice(); [q[i], q[j]] = [q[j], q[i]];
+      const v = nqColl(q), tabu = (S.tabu[i + "," + j] || 0) > 0, asp = tabu && ctl.asp && v < S.best;
+      out.push({ i, j, q, v, d: v - S.v, tabu, asp, ok: !tabu || asp, r: rnd() });
+    }
+    return out.sort((a, b) => a.v - b.v || a.r - b.r);
+  }
+  let C;
+  function step() {
+    if (S.v === 0) return;
+    const m = C.find(c => c.ok); if (!m) return;
+    S.it++; Object.keys(S.tabu).forEach(k => { if (--S.tabu[k] <= 0) delete S.tabu[k]; });
+    if (ctl.T > 0) S.tabu[m.i + "," + m.j] = ctl.T;
+    S.q = m.q; S.v = m.v; S.last = m; S.best = Math.min(S.best, m.v); draw();
+  }
+  function draw() {
+    const n = S.q.length, cv = $("#nqCv"), { ctx, w } = setupCanvas(cv), c = colors(), s = w / n;
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) { ctx.fillStyle = (r + k) % 2 ? c.sunk : c.surface; ctx.fillRect(k * s, r * s, s, s); }
+    const pos = S.q.map((col, r) => [(col - .5) * s, (r + .5) * s]);
+    ctx.strokeStyle = c.bad; ctx.setLineDash([4, 3]); ctx.lineWidth = 2;
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) if (Math.abs(S.q[i] - S.q[j]) === j - i) { ctx.beginPath(); ctx.moveTo(...pos[i]); ctx.lineTo(...pos[j]); ctx.stroke(); }
+    ctx.setLineDash([]); ctx.font = `${Math.round(s * .7)}px serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    pos.forEach((p, r) => { const hit = S.last && (r === S.last.i || r === S.last.j); ctx.fillStyle = hit ? c.gold : c.ink; ctx.fillText("♛", p[0], p[1] + s * .04); });
+    $("#nqSeq").innerHTML = S.q.map((x, r) => `<span class="${S.last && (r === S.last.i || r === S.last.j) ? "hi" : ""}" title="Q${r + 1}">${x}</span>`).join("");
+    C = cands(); const pick = C.find(x => x.ok);
+    stats($("#nqStats"), [["Iteration", S.it], ["Collisions", S.v], ["Best so far", S.best], ["Neighbors", C.length], ["Tabu-active swaps", Object.keys(S.tabu).length]]);
+    $("#nqTbl").innerHTML = `<thead><tr><th>Queen swap</th><th class="n">Δ collisions</th><th>Status</th></tr></thead><tbody>` + C.slice(0, 6).map(x => `<tr class="${S.v && x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">(Q${x.i + 1}, Q${x.j + 1})</td><td class="n">${x.d > 0 ? "+" : ""}${x.d}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${S.v && x === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
+    const tl = Object.entries(S.tabu);
+    $("#nqTri").innerHTML = tl.length ? tl.map(([k, v]) => { const [i, j] = k.split(",").map(Number); return `<span style="width:auto;padding:0 .4rem" class="rec">Q${i + 1},Q${j + 1}: ${v}</span>`; }).join("") : `<span class="x" style="width:auto;color:var(--muted)">Tabu list empty</span>`;
+    $("#nqTri").style.gridTemplateColumns = "repeat(auto-fill, minmax(5.5rem, max-content))";
+    $("#nqNote").innerHTML = S.v === 0 ? `<b>Solved</b> in ${S.it} iterations: no two queens attack each other.` : `Top 6 of ${C.length} neighbors (ties broken at random). Red chips show tabu-active swaps and their remaining tenure.`;
+  }
+  $("#nqStep").addEventListener("click", step);
+  const run = stepper($("#nqRun"), step, () => S.v === 0 || S.it >= 500, () => 250);
+  $("#nqBook").addEventListener("click", () => { run.stop(); ctl.n = 7; init(NQ_BOOK.slice()); });
+  $("#nqRand").addEventListener("click", () => { run.stop(); random(); });
+  ro.observe($("#nqCv")); onRedraw(draw); init(NQ_BOOK.slice());
+
+})();
+
+/* ---------- knapsack ---------- */
+const KS_W = [10, 12, 15, 27, 30, 20, 7], KS_U = [2, 1, 3, 4, 1, 3, 1], KS_C = 50;
+(function knapsack() {
+  const ctl = makeControls($("#ksCtl"), [
+    { key: "nb", id: "ksNb", type: "select", label: "Moves", value: "one", options: [["one", "Add or delete one item"], ["two", "Also add one and delete another"]] },
+    { key: "T", id: "ksT", label: "Tabu tenure", min: 0, max: 5, step: 1, value: 3 },
+    { key: "pen", id: "ksPen", label: "Overload penalty", min: 0, max: 100, step: 10, value: 50 },
+    { key: "asp", id: "ksAsp", type: "check", label: "Aspiration (better than best)", value: true }
+  ], () => { S.f = f(S.x); S.best = Math.min(S.best, S.f); draw(); });
+  const f = x => { const w = x.reduce((s, b, i) => s + b * KS_W[i], 0), u = x.reduce((s, b, i) => s + b * KS_U[i], 0); return Math.abs(w - KS_C) + (w > KS_C ? ctl.pen : 0) - u; };
+  const OPT = (() => { let b = Infinity; for (let m = 0; m < 128; m++) b = Math.min(b, f([...Array(7)].map((_, i) => (m >> (6 - i)) & 1))); return b; })();
+  let S;
+  function reset() { S = { x: [1, 0, 1, 0, 0, 1, 1], it: 0, tabu: {}, log: [] }; S.f = f(S.x); S.best = S.f; S.bestX = S.x.slice(); draw(); }
+  function cands() {
+    const out = [], x = S.x;
+    for (let i = 0; i < 7; i++) { const y = x.slice(); y[i] ^= 1; out.push({ y, items: [i], label: (y[i] ? "Add-" : "Delete-") + (i + 1) }); }
+    if (ctl.nb === "two") for (let a = 0; a < 7; a++) if (!x[a]) for (let d = 0; d < 7; d++) if (x[d]) { const y = x.slice(); y[a] = 1; y[d] = 0; out.push({ y, items: [a, d], label: `Add-${a + 1} & Delete-${d + 1}` }); }
+    out.forEach(c => { c.v = f(c.y); c.tabu = c.items.some(i => (S.tabu[i] || 0) > 0); c.asp = c.tabu && ctl.asp && c.v < S.best; c.ok = !c.tabu || c.asp; });
+    return out.sort((a, b) => a.v - b.v);
+  }
+  function step() {
+    const m = cands().find(c => c.ok); if (!m) return;
+    S.it++; Object.keys(S.tabu).forEach(k => { if (--S.tabu[k] <= 0) delete S.tabu[k]; });
+    if (ctl.T > 0) m.items.forEach(i => S.tabu[i] = ctl.T);
+    S.x = m.y; S.f = m.v; S.last = m; if (m.v < S.best) { S.best = m.v; S.bestX = m.y.slice(); } draw();
+  }
+  function draw() {
+    const w = S.x.reduce((s, b, i) => s + b * KS_W[i], 0), u = S.x.reduce((s, b, i) => s + b * KS_U[i], 0);
+    $("#ksItems").innerHTML = KS_W.map((wi, i) => `<div class="item${S.x[i] ? " in" : ""}${S.tabu[i] ? " tb" : ""}"><b>${i + 1}</b>${wi} kg<br>$${KS_U[i]}${S.tabu[i] ? `<br><span class="tag-t">T ${S.tabu[i]}</span>` : ""}</div>`).join("");
+    const bar = $("#ksBar"), mx = 80; bar.querySelector("i").style.width = Math.min(100, w / mx * 100) + "%"; bar.querySelector("i").className = w > KS_C ? "over" : ""; bar.querySelector("u").style.left = (KS_C / mx * 100) + "%";
+    $("#ksBarCap").textContent = `Packed: ${w} kg of 50 kg${w > KS_C ? " (overloaded)" : ""}, utility ${u}. Blue items are in the knapsack; a red outline marks a tabu item.`;
+    const C = cands(), pick = C.find(c => c.ok);
+    stats($("#ksStats"), [["Iteration", S.it], ["Solution", S.x.join("")], ["f now", S.f], ["Best f", S.best + " (" + S.bestX.join("") + ")"], ["Optimum", OPT], ["Tabu items", Object.keys(S.tabu).map(k => +k + 1).join(", ") || "none"]]);
+    $("#ksTbl").innerHTML = `<thead><tr><th>Neighbor</th><th>Move</th><th class="n">f</th><th>Status</th></tr></thead><tbody>` + C.slice(0, ctl.nb === "two" ? 10 : 7).map(c => `<tr class="${c === pick ? "pick" : c.ok ? "" : "tabu"}"><td class="mono">${c.y.join("")}</td><td>${c.label}</td><td class="n">${c.v}</td><td>${c.tabu ? TAG_T : ""} ${c.asp ? TAG_A : ""} ${c === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#ksNote").innerHTML = `${ctl.nb === "two" ? `Best 10 of ${C.length} neighbors.` : "All 7 neighbors."} ${pick && pick.v > S.f ? "Every admissible neighbor is worse, so tabu search accepts a worse solution to move on." : ""} ${S.best === OPT ? `<b>Optimum reached:</b> items ${S.bestX.map((b, i) => b ? i + 1 : 0).filter(Boolean).join(", ")}, f = ${OPT}.` : ""}`;
+  }
+  $("#ksStep").addEventListener("click", step);
+  $("#ksRun").addEventListener("click", () => { for (let k = 0; k < 10; k++) step(); });
+  $("#ksReset").addEventListener("click", reset);
+  reset();
+})();
+
+/* ---------- cable network (minimum spanning tree) ---------- */
+(function cable() {
+  const E = { "12": 7, "13": 4, "14": 4, "23": 5, "35": 8, "45": 5 }, POS = { 1: [.45, .5], 2: [.1, .14], 3: [.1, .86], 4: [.9, .18], 5: [.9, .82] };
+  const ctl = makeControls($("#cbCtl"), [
+    { key: "T", id: "cbT", label: "Tabu tenure", min: 0, max: 4, step: 1, value: 2 },
+    { key: "asp", id: "cbAsp", type: "check", label: "Aspiration (better than best)", value: true }
+  ], () => draw());
+  const cost = T => [...T].reduce((s, e) => s + E[e], 0);
+  const connected = T => { const par = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 }, f = x => par[x] === +x ? +x : f(par[x]); T.forEach(e => { par[f(+e[0])] = f(+e[1]); }); return new Set([1, 2, 3, 4, 5].map(f)).size === 1; };
+  let S;
+  function reset() { S = { T: new Set(["12", "13", "14", "35"]), it: 0, tabu: {} }; S.c = cost(S.T); S.best = S.c; draw(); }
+  function cands() {
+    const out = [];
+    [...S.T].sort().forEach(r => Object.keys(E).filter(e => !S.T.has(e)).forEach(a => { const N = new Set(S.T); N.delete(r); N.add(a); if (!connected(N)) return; const v = cost(N), tabu = (S.tabu[r] || 0) > 0, asp = tabu && ctl.asp && v < S.best; out.push({ r, a, N, v, tabu, asp, ok: !tabu || asp }); }));
+    return out;
+  }
+  function step() {
+    const C = cands(), adm = C.filter(c => c.ok); if (!adm.length) return;
+    const m = adm.reduce((x, y) => y.v < x.v ? y : x);
+    S.it++; Object.keys(S.tabu).forEach(k => { if (--S.tabu[k] <= 0) delete S.tabu[k]; });
+    if (ctl.T > 0) S.tabu[m.a] = ctl.T;
+    S.T = m.N; S.c = m.v; S.last = m; S.best = Math.min(S.best, m.v); draw();
+  }
+  function draw() {
+    const { ctx, w, h } = setupCanvas($("#cbCv")), c = colors(), P = k => [POS[k][0] * (w - 60) + 30, POS[k][1] * (h - 50) + 25];
+    ctx.clearRect(0, 0, w, h); ctx.font = `12px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    Object.entries(E).forEach(([e, wt]) => {
+      const a = P(e[0]), b = P(e[1]), inT = S.T.has(e), tb = S.tabu[e];
+      ctx.strokeStyle = inT ? (tb ? c.bad : c.accent) : c.muted; ctx.lineWidth = inT ? 4 : 1.5; ctx.setLineDash(inT ? [] : [5, 4]);
+      ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke(); ctx.setLineDash([]);
+      const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; ctx.fillStyle = c.surface; ctx.beginPath(); ctx.arc(mx, my, 11, 0, 7); ctx.fill(); ctx.fillStyle = c.ink; ctx.fillText(wt, mx, my);
+      if (tb) { ctx.fillStyle = c.bad; ctx.fillText("T" + tb, mx, my - 20); }
+    });
+    [1, 2, 3, 4, 5].forEach(k => { const p = P(k); ctx.fillStyle = c.gold; ctx.beginPath(); ctx.arc(p[0], p[1], 16, 0, 7); ctx.fill(); ctx.fillStyle = "#fff"; ctx.font = `600 12px ${MONO}`; ctx.fillText("U" + k, p[0], p[1]); ctx.font = `12px ${MONO}`; });
+    const C = cands(), adm = C.filter(x => x.ok), pick = adm.length ? adm.reduce((x, y) => y.v < x.v ? y : x) : null;
+    stats($("#cbStats"), [["Iteration", S.it], ["Tree", [...S.T].sort().map(e => "E" + e).join(" ")], ["Cost", S.c], ["Best", S.best], ["Optimum", 18]]);
+    $("#cbTbl").innerHTML = `<thead><tr><th>Remove</th><th>Add</th><th class="n">Cost</th><th>Status</th></tr></thead><tbody>` + C.map(x => `<tr class="${x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">E${x.r}</td><td class="mono">E${x.a}</td><td class="n">${x.v}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${x === pick ? "← next" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#cbNote").innerHTML = `Thick lines form the current tree; red ones were just added and are tabu to remove (T and iterations left). The swap list holds every exchange that keeps the network connected. ${S.it === 2 ? "Cost 18 is the minimum, but the search does not know that and keeps going: at iteration 3 every improving move is tabu, so it accepts a worse tree." : ""}`;
+  }
+  $("#cbStep").addEventListener("click", step); $("#cbReset").addEventListener("click", reset);
+  ro.observe($("#cbCv")); onRedraw(draw); reset();
+})();
+
+/* ---------- quadratic assignment (NUG5) ---------- */
+(function qap() {
+  const F = [[0, 5, 2, 4, 1], [5, 0, 3, 0, 2], [2, 3, 0, 0, 0], [4, 0, 0, 0, 5], [1, 2, 0, 5, 0]], D = [[0, 1, 1, 2, 3], [1, 0, 2, 1, 2], [1, 2, 0, 1, 2], [2, 1, 1, 0, 1], [3, 2, 2, 1, 0]];
+  const mat = (M, rl, cl) => `<thead><tr><th>${rl}</th>${M.map((_, j) => `<th>${cl}${j + 1}</th>`).join("")}</tr></thead><tbody>` + M.map((r, i) => `<tr><th>${i + 1}</th>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("") + "</tbody>";
+  $("#qpF").innerHTML = mat(F, "Flow", "O"); $("#qpD").innerHTML = mat(D, "Dist.", "S");
+  const cost = p => { let s = 0; for (let i = 0; i < 5; i++) for (let j = 0; j < 5; j++) s += F[p[i] - 1][p[j] - 1] * D[i][j]; return s; };
+  const ctl = makeControls($("#qpCtl"), [
+    { key: "T", id: "qpTen", label: "Tabu tenure t", min: 0, max: 8, step: 1, value: 6 },
+    { key: "asp", id: "qpAsp", type: "check", label: "Aspiration (better than best)", value: true }
+  ], () => draw());
+  let S;
+  function reset() { S = { p: [2, 4, 1, 5, 3], it: 0, T: [...Array(6)].map(() => new Array(6).fill(0)) }; S.c = cost(S.p); S.best = S.c; S.bestP = S.p.slice(); draw(); }
+  function cands() {
+    const out = [];
+    for (let r = 0; r < 5; r++) for (let s = r + 1; s < 5; s++) {
+      const q = S.p.slice(); [q[r], q[s]] = [q[s], q[r]]; const v = cost(q);
+      const tabu = S.T[S.p[r]][s + 1] > S.it && S.T[S.p[s]][r + 1] > S.it, asp = tabu && ctl.asp && v < S.best;
+      out.push({ r, s, q, v, d: v - S.c, tabu, asp, ok: !tabu || asp });
+    }
+    return out;
+  }
+  function step() {
+    const adm = cands().filter(c => c.ok); if (!adm.length) return;
+    const m = adm.reduce((x, y) => y.v < x.v ? y : x);
+    S.it++; S.T[S.p[m.r]][m.r + 1] = S.it + ctl.T; S.T[S.p[m.s]][m.s + 1] = S.it + ctl.T;   // forbid returning to the sites just left
+    S.p = m.q; S.c = m.v; S.last = m; if (m.v < S.best) { S.best = m.v; S.bestP = m.q.slice(); } draw();
+  }
+  function draw() {
+    $("#qpAssign").innerHTML = S.p.map((o, i) => `<span>Site ${i + 1}: <b>object ${o}</b></span>`).join("");
+    const C = cands(), adm = C.filter(x => x.ok), pick = adm.length ? adm.reduce((x, y) => y.v < x.v ? y : x) : null;
+    stats($("#qpStats"), [["Iteration", S.it], ["p", "(" + S.p.join(", ") + ")"], ["Cost", S.c], ["Best", S.best], ["Optimum", 50]]);
+    $("#qpTbl").innerHTML = `<thead><tr><th>Swap sites</th><th class="n">Δ cost</th><th>Status</th></tr></thead><tbody>` + C.map(x => `<tr class="${x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">(${x.r + 1}, ${x.s + 1})</td><td class="n">${x.d > 0 ? "+" : ""}${x.d}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${x === pick ? "← next" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#qpT").innerHTML = `<thead><tr><th>Object</th>${[1, 2, 3, 4, 5].map(j => `<th>S${j}</th>`).join("")}</tr></thead><tbody>` + [1, 2, 3, 4, 5].map(o => `<tr><th>${o}</th>${[1, 2, 3, 4, 5].map(s => { const left = S.T[o][s] - S.it; return left > 0 ? `<td class="on">${left}</td>` : `<td></td>`; }).join("")}</tr>`).join("") + "</tbody>";
+    $("#qpNote").innerHTML = `${S.it === 0 ? "Three moves reduce the cost by 12: (1, 3), (1, 4) and (2, 5). The first one, which exchanges objects 2 and 1, is retained." : ""}${S.it === 1 ? "Swapping sites (1, 3) again would undo the last move, so it is tabu. The best admissible move is (1, 4), for a gain of 8." : ""} ${S.best === 50 ? `<b>Optimum reached:</b> p = (${S.bestP.join(", ")}), cost 50.` : ""}`;
+  }
+  $("#qpStep").addEventListener("click", step); $("#qpReset").addEventListener("click", reset);
+  reset();
+})();
+
+/* ---------- continuous lab ---------- */
+(function contLab() {
+  const ctl = makeControls($("#ctCtl"), [
+    { key: "fn", id: "ctFn", type: "select", label: "Function", value: "himmelblau", options: [["himmelblau", "Himmelblau (Listing 6.2)"], ["bird", "Mishra’s Bird, constrained (Listing 6.2)"], ["schwefel", "Schwefel (Listing C.4)"]] },
+    { key: "method", id: "ctM", type: "select", label: "Method", value: "ts", options: [["ts", "Tabu search"], ["ls", "Local search (improving moves only)"]] },
+    { type: "group", label: "Neighborhood" },
+    { key: "nb", id: "ctNb", label: "Neighbors per iteration", min: 5, max: 100, step: 5, value: 50 },
+    { key: "step", id: "ctSt", label: "Step size (× range / 12)", min: .1, max: 2, step: .1, value: .5, fmt: v => v.toFixed(1) },
+    { type: "group", label: "Memory" },
+    { key: "tenure", id: "ctTen", label: "Tabu tenure (points)", min: 1, max: 40, step: 1, value: 5 },
+    { key: "radius", id: "ctRad", label: "Tabu radius (× range / 12)", min: .1, max: 2, step: .1, value: .5, fmt: v => v.toFixed(1) },
+    { key: "asp", id: "ctAsp", type: "check", label: "Aspiration (better than best)", value: true },
+    { type: "group", label: "Run" },
+    { key: "iters", id: "ctIt", label: "Iterations", min: 20, max: 500, step: 20, value: 100 },
+    { key: "speed", id: "ctSpd", label: "Speed (iterations/s)", min: 1, max: 40, step: 1, value: 10 },
+    { key: "seed", id: "ctSeed", label: "Random seed", min: 1, max: 99, step: 1, value: 1 }
+  ], k => { if (["fn", "seed", "method"].includes(k)) reset(); else draw(); });
+  let S; const F = () => FUNCS[ctl.fn], O = () => ({ nb: ctl.nb, step: ctl.step, radius: ctl.radius, tenure: ctl.tenure, asp: ctl.asp, ls: ctl.method === "ls" });
+  function reset() { S = contTS(F(), { seed: ctl.seed }); draw(); }
+  const run = runner(() => contStep(S, F(), O()), () => draw(), () => ctl.speed, () => S.it >= ctl.iters || S.stuck, $("#ctRun"));
+  $("#ctStep").addEventListener("click", () => { if (S.it < ctl.iters && !S.stuck) { contStep(S, F(), O()); draw(); } });
+  $("#ctReset").addEventListener("click", () => { run.stop(); ctl.seed = 1 + (ctl.seed % 99); reset(); });
+  presets($("#ctPresets"), [
+    { t: "Listing 6.2 settings", d: "Himmelblau, 100 iterations, tenure 5, 50 neighbors.", s: { fn: "himmelblau", method: "ts", nb: 50, step: .5, tenure: 5, radius: .5, iters: 100, seed: 1 } },
+    { t: "Schwefel: local search", d: "Improving moves only: it stalls in the first basin.", s: { fn: "schwefel", method: "ls", nb: 50, step: .4, iters: 300, seed: 6 } },
+    { t: "Schwefel: tabu search", d: "Same start and steps, with tabu regions: it keeps exploring.", s: { fn: "schwefel", method: "ts", nb: 50, step: .4, tenure: 30, radius: .7, iters: 300, seed: 6 } },
+    { t: "Mishra’s Bird", d: "Constrained: neighbors outside the dashed disk are discarded.", s: { fn: "bird", method: "ts", nb: 50, step: .8, tenure: 20, radius: .6, iters: 200, seed: 1 } },
+    { t: "Tenure too short", d: "Tenure 1 on Schwefel: little memory, so the search circles.", s: { fn: "schwefel", method: "ts", nb: 50, tenure: 1, radius: .7, step: .4, iters: 300, seed: 6 } }
+  ], p => { run.stop(); for (const k in p.s) ctl[k] = p.s[k]; reset(); });
+  function draw() {
+    const f = F(); drawCont($("#ctCv"), f, S, { radius: ctl.radius, ls: ctl.method === "ls", cands: true });
+    const g = Math.min(...f.mins.map(m => Math.hypot(m[0] - S.best[0], m[1] - S.best[1]))) / (f.b[0][1] - f.b[0][0]);
+    stats($("#ctStats"), [["Iteration", S.it + " / " + ctl.iters], ["Current f", fmtNum(S.v)], ["Best f", fmtNum(S.bestV)], ["Best (x, y)", `${S.best[0].toFixed(3)}, ${S.best[1].toFixed(3)}`], ["Global minimum", fmtNum(f.fmin)], ["Status", S.stuck ? "stuck" : g < .02 ? "near a global minimum" : "searching"]]);
+    const c = colors(); lineChart($("#ctChart"), [{ data: S.cur, color: c.muted, alpha: .5, width: 1.5 }, { data: S.hist, color: c.accent }], { refs: [{ v: f.fmin, color: c.bad, label: "global min" }], xmax: ctl.iters });
+    $("#ctNote").innerHTML = ctl.method === "ls" ? "Local search moves only when a sampled neighbor improves the current value; once none does, it stops." : "Dots are this iteration’s neighbors (red ones are tabu). Dashed circles are the tabu regions; the gold line is the path, the star the best point, × the global minima.";
+    ["ctTen", "ctRad", "ctAsp"].forEach(id => $("#" + id).closest(".ctl").style.display = ctl.method === "ls" ? "none" : "");
+  }
+  ro.observe($("#ctCv")); onRedraw(draw); reset();
+})();
+
+/* ---------- Berlin52 TSP ---------- */
+const B52 = [[565, 575], [25, 185], [345, 750], [945, 685], [845, 655], [880, 660], [25, 230], [525, 1000], [580, 1175], [650, 1130], [1605, 620], [1220, 580], [1465, 200], [1530, 5], [845, 680], [725, 370], [145, 665], [415, 635], [510, 875], [560, 365], [300, 465], [520, 585], [480, 415], [835, 625], [975, 580], [1215, 245], [1320, 315], [1250, 400], [660, 180], [410, 250], [420, 555], [575, 665], [1150, 1160], [700, 580], [685, 595], [685, 610], [770, 610], [795, 645], [720, 635], [760, 650], [475, 960], [95, 260], [875, 920], [700, 500], [555, 815], [830, 485], [1170, 65], [830, 610], [605, 625], [595, 360], [1340, 725], [1740, 245]];
+const BN = B52.length, BD = B52.map(a => B52.map(b => Math.round(Math.hypot(a[0] - b[0], a[1] - b[1]))));
+const bLen = t => { let s = 0; for (let k = 0; k < BN; k++) s += BD[t[k]][t[(k + 1) % BN]]; return s; };
+function b52Init(o) {
+  const rnd = mulberry32(o.seed * 104729 + 11);
+  let t;
+  if (o.init === "nn") { t = [0]; const left = new Set([...Array(BN).keys()].slice(1)); while (left.size) { const a = t[t.length - 1]; let b = -1; left.forEach(x => { if (b < 0 || BD[a][x] < BD[a][b]) b = x; }); t.push(b); left.delete(b); } }
+  else t = shuffle(rnd, [...Array(BN).keys()]);
+  const L = bLen(t);
+  return { rnd, t, L, best: t.slice(), bestL: L, it: 0, tabu: new Map(), hist: [L], cur: [L] };
+}
+function b52Step(S, o) {
+  const t = S.t, rnd = S.rnd, it = ++S.it, ek = (a, b) => a < b ? a * 64 + b : b * 64 + a, isT = k => (S.tabu.get(k) || 0) >= it;
+  let bm = null, bd = Infinity;
+  const sample = o.cand === "all" ? null : +o.cand;
+  const consider = (i, j) => {
+    let d, add;
+    if (o.move === "2opt") { const a = t[i], b = t[i + 1], c = t[j], e = t[(j + 1) % BN]; d = BD[a][c] + BD[b][e] - BD[a][b] - BD[c][e]; add = [ek(a, c), ek(b, e)]; }
+    else { const q = t.slice(); [q[i], q[j]] = [q[j], q[i]]; d = bLen(q) - S.L; add = [ek(q[(i - 1 + BN) % BN], q[i]), ek(q[i], q[(i + 1) % BN]), ek(q[(j - 1 + BN) % BN], q[j]), ek(q[j], q[(j + 1) % BN])]; }
+    const tabu = add.some(isT);
+    if ((!tabu || (o.asp && S.L + d < S.bestL)) && (d < bd || (d === bd && rnd() < .5))) { bd = d; bm = [i, j]; }
+  };
+  if (sample) for (let k = 0; k < sample; k++) { let i = Math.floor(rnd() * BN), j = Math.floor(rnd() * BN); if (i > j) [i, j] = [j, i]; if (o.move === "2opt" ? (j - i < 2 || (i === 0 && j === BN - 1)) : i === j) continue; consider(i, j); }
+  else for (let i = 0; i < BN - 1; i++) for (let j = i + (o.move === "2opt" ? 2 : 1); j < BN; j++) { if (o.move === "2opt" && i === 0 && j === BN - 1) continue; consider(i, j); }
+  if (bm) {
+    const [i, j] = bm;
+    if (o.move === "2opt") { const a = t[i], b = t[i + 1], c = t[j], e = t[(j + 1) % BN]; S.tabu.set(ek(a, b), it + o.T); S.tabu.set(ek(c, e), it + o.T); for (let l = i + 1, r = j; l < r; l++, r--) [t[l], t[r]] = [t[r], t[l]]; }
+    else { [i, j].forEach(k => { S.tabu.set(ek(t[(k - 1 + BN) % BN], t[k]), it + o.T); S.tabu.set(ek(t[k], t[(k + 1) % BN]), it + o.T); }); [t[i], t[j]] = [t[j], t[i]]; }
+    S.L += bd; S.last = bm;
+    if (S.L < S.bestL) { S.bestL = S.L; S.best = t.slice(); }
+  }
+  if (it % 200 === 0) S.tabu.forEach((v, k) => { if (v < it) S.tabu.delete(k); });
+  S.hist.push(S.bestL); S.cur.push(S.L);
+}
+(function berlin() {
+  const ctl = makeControls($("#tsCtl"), [
+    { key: "init", id: "tsInit", type: "select", label: "Initial tour", value: "random", options: [["random", "Random"], ["nn", "Nearest neighbor (greedy)"]] },
+    { key: "move", id: "tsMove", type: "select", label: "Neighborhood", value: "2opt", options: [["2opt", "2-opt (reverse a segment)"], ["swap", "Swap two cities"]] },
+    { key: "cand", id: "tsCand", type: "select", label: "Candidate list", value: "all", options: [["all", "Whole neighborhood"], ["300", "300 random neighbors"], ["50", "50 random neighbors"]] },
+    { key: "T", id: "tsT", label: "Tabu tenure", min: 0, max: 60, step: 1, value: 15 },
+    { key: "asp", id: "tsAsp", type: "check", label: "Aspiration (better than best)", value: true },
+    { type: "group", label: "Run" },
+    { key: "iters", id: "tsIt", label: "Iterations", min: 100, max: 3000, step: 100, value: 1500 },
+    { key: "speed", id: "tsSpd", label: "Speed (iterations/s)", min: 1, max: 120, step: 1, value: 40 },
+    { key: "seed", id: "tsSeed", label: "Random seed", min: 1, max: 99, step: 1, value: 2, hint: "Seed 2 with the default settings reaches the optimal 7,542." }
+  ], k => { if (["init", "seed"].includes(k)) reset(); else draw(); });
+  let S;
+  function reset() { S = b52Init(ctl); draw(); }
+  const run = runner(() => b52Step(S, ctl), () => draw(), () => ctl.speed, () => S.it >= ctl.iters, $("#tsRun"));
+  $("#tsStep").addEventListener("click", () => { if (S.it < ctl.iters) { b52Step(S, ctl); draw(); } });
+  $("#tsReset").addEventListener("click", () => { run.stop(); ctl.seed = 1 + (ctl.seed % 99); reset(); });
+  presets($("#tsPresets"), [
+    { t: "2-opt, tenure 15", d: "The whole 2-opt neighborhood (1,274 moves) each iteration.", s: { move: "2opt", cand: "all", T: 15, asp: true, init: "random" } },
+    { t: "Tenure 0: local search", d: "Nothing is tabu: the search falls into a 2-opt local optimum and cycles.", s: { move: "2opt", cand: "all", T: 0 } },
+    { t: "Swap neighborhood", d: "Exchanging two cities breaks four edges: much slower progress.", s: { move: "swap", cand: "all", T: 15 } },
+    { t: "Sampled candidates", d: "Only 50 random 2-opt moves per iteration, like a generic solver’s neighbor_size.", s: { move: "2opt", cand: "50", T: 15, iters: 3000 } },
+    { t: "Greedy start", d: "Begin from the nearest-neighbor tour instead of a random one.", s: { move: "2opt", cand: "all", T: 15, init: "nn" } }
+  ], p => { run.stop(); for (const k in p.s) ctl[k] = p.s[k]; reset(); });
+  function draw() {
+    const { ctx, w, h } = setupCanvas($("#tsCv")), c = colors(), pad = 18, sx = (w - 2 * pad) / 1740, sy = (h - 2 * pad) / 1175, s = Math.min(sx, sy);
+    const P = k => [pad + B52[k][0] * s + (w - 2 * pad - 1740 * s) / 2, h - pad - B52[k][1] * s - (h - 2 * pad - 1175 * s) / 2];
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = c.muted; ctx.globalAlpha = .45; ctx.lineWidth = 1; ctx.beginPath(); S.t.forEach((k, i) => i ? ctx.lineTo(...P(k)) : ctx.moveTo(...P(k))); ctx.closePath(); ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.strokeStyle = c.accent; ctx.lineWidth = 2.2; ctx.lineJoin = "round"; ctx.beginPath(); S.best.forEach((k, i) => i ? ctx.lineTo(...P(k)) : ctx.moveTo(...P(k))); ctx.closePath(); ctx.stroke();
+    B52.forEach((_, k) => { ctx.fillStyle = k === 0 ? c.gold : c.ink; ctx.beginPath(); ctx.arc(...P(k), k === 0 ? 5 : 3, 0, 7); ctx.fill(); });
+    let nT = 0; S.tabu.forEach(v => { if (v >= S.it) nT++; });
+    stats($("#tsStats"), [["Iteration", S.it + " / " + ctl.iters], ["Current tour", S.L.toLocaleString("en-US")], ["Best tour", S.bestL.toLocaleString("en-US")], ["Gap to 7,542", ((S.bestL - 7542) / 7542 * 100).toFixed(2) + "%"], ["Tabu edges", nT]]);
+    lineChart($("#tsChart"), [{ data: S.cur, color: c.muted, alpha: .5, width: 1.2 }, { data: S.hist, color: c.accent }], { refs: [{ v: 7542, color: c.bad, label: "optimum 7,542" }, { v: 7884, color: c.gold, label: "OR-Tools 7,884" }, { v: 7982.79, color: c.muted, label: "" }], xmax: ctl.iters });
+  }
+  ro.observe($("#tsCv")); onRedraw(draw); reset();
+})();
+
+/* ---------- tenure experiment on Berlin52 ---------- */
+(function tenureExp() {
+  const TEN = [0, 2, 5, 10, 20, 30, 40, 60, 80, 120, 200], RUNS = 4, IT = 300;
+  let res = [];
+  function draw() {
+    const c = colors(), all = res.flatMap(r => r.v), yr = all.length ? [Math.min(7542, ...all) - 60, Math.max(...all) + 60] : [7400, 8400];
+    const { ctx, X, Y } = plotFrame($("#teCv"), [0, 200], yr, { xl: "tabu tenure (iterations)", fx: v => v.toFixed(0), fy: v => Math.round(v).toLocaleString("en-US") });
+    ctx.strokeStyle = c.bad; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(X(0), Y(7542)); ctx.lineTo(X(200), Y(7542)); ctx.stroke(); ctx.setLineDash([]);
+    res.forEach(r => r.v.forEach(v => { ctx.fillStyle = c.muted; ctx.globalAlpha = .6; ctx.beginPath(); ctx.arc(X(r.T), Y(v), 3, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }));
+    ctx.strokeStyle = c.accent; ctx.lineWidth = 2.5; ctx.beginPath(); res.forEach((r, k) => k ? ctx.lineTo(X(r.T), Y(r.m)) : ctx.moveTo(X(r.T), Y(r.m))); ctx.stroke();
+    res.forEach(r => { ctx.fillStyle = c.accent; ctx.beginPath(); ctx.arc(X(r.T), Y(r.m), 4.5, 0, 7); ctx.fill(); });
+  }
+  $("#teRun").addEventListener("click", () => {
+    if ($("#teRun").disabled) return; $("#teRun").disabled = true; res = []; let k = 0;
+    const next = () => {
+      const T = TEN[k], v = [];
+      for (let s = 1; s <= RUNS; s++) { const o = { seed: s, init: "random", move: "2opt", cand: "all", T, asp: true }, S = b52Init(o); for (let q = 0; q < IT; q++) b52Step(S, o); v.push(S.bestL); }
+      res.push({ T, v, m: v.reduce((a, b) => a + b, 0) / RUNS }); draw();
+      $("#teProg").textContent = `tenure ${T} done (${k + 1} of ${TEN.length})`;
+      if (++k < TEN.length) setTimeout(next, 20);
+      else {
+        $("#teRun").disabled = false; $("#teProg").textContent = "";
+        const b = res.reduce((x, y) => y.m < x.m ? y : x);
+        $("#teNote").innerHTML = `Mean best tour: ${Math.round(res[0].m).toLocaleString("en-US")} with tenure 0, ${Math.round(b.m).toLocaleString("en-US")} with tenure ${b.T}, and ${Math.round(res[res.length - 1].m).toLocaleString("en-US")} with tenure 200. Dots are single runs; the dashed line is the optimum, 7,542.`;
+      }
+    };
+    setTimeout(next, 20);
+  });
+  ro.observe($("#teCv")); onRedraw(draw); draw();
+})();
+
+/* ---------- assembly line balancing ---------- */
+function albLoads(seq, times, ct) { const L = [0], A = [[]]; seq.forEach(t => { if (L[L.length - 1] + times[t] > ct && A[A.length - 1].length) { L.push(0); A.push([]); } L[L.length - 1] += times[t]; A[A.length - 1].push(t); }); return { L, A }; }
+const albSI = L => { const m = Math.max(...L); return Math.sqrt(L.reduce((s, x) => s + (m - x) ** 2, 0) / L.length); };
+const albFeasible = (seq, pred) => { const pos = {}; seq.forEach((t, k) => pos[t] = k); return Object.entries(pred).every(([t, ps]) => ps.every(p => pos[p] < pos[t])); };
+function albCands(S, P) {
+  const out = [], s = S.seq;
+  for (let i = 0; i < s.length; i++) for (let j = i + 1; j < s.length; j++) {
+    const q = s.slice(); [q[i], q[j]] = [q[j], q[i]]; if (!albFeasible(q, P.pred)) continue;
+    const { L } = albLoads(q, P.times, P.ct), si = albSI(L), key = L.length + si / P.ct, mv = pairKey(s[i], s[j]);
+    const tabu = (S.tabu[mv] || 0) > 0, asp = tabu && P.asp && key < S.bestKey - 1e-12;
+    out.push({ q, L, si, key, mv, a: Math.min(s[i], s[j]), b: Math.max(s[i], s[j]), tabu, asp, ok: !tabu || asp, ix: out.length });
+  }
+  return out;
+}
+function albStep(S, P) {
+  const C = albCands(S, P), adm = C.filter(c => c.ok); if (!adm.length) return null;
+  const m = adm.reduce((x, y) => y.key < x.key - 1e-12 ? y : x);
+  S.it++; Object.keys(S.tabu).forEach(k => { if (--S.tabu[k] <= 0) delete S.tabu[k]; });
+  if (P.T > 0) S.tabu[m.mv] = P.T;
+  S.seq = m.q; S.L = m.L; S.si = m.si; S.key = m.key; S.last = m;
+  if (m.key < S.bestKey - 1e-12) { S.bestKey = m.key; S.best = m.q.slice(); }
+  S.hist.push(S.bestKey); return m;
+}
+function albInit(seq, P) { const { L } = albLoads(seq, P.times, P.ct), si = albSI(L); return { seq, L, si, key: L.length + si / P.ct, bestKey: L.length + si / P.ct, best: seq.slice(), it: 0, tabu: {}, hist: [L.length + si / P.ct] }; }
+function drawLoads(cv, seq, P, o = {}) {
+  const { A, L } = albLoads(seq, P.times, P.ct), c = colors(), n = L.length;
+  const { ctx, X, Y, w } = plotFrame(cv, [0, n], [0, P.ct * 1.12], { padL: 40, fy: v => v.toFixed(v < 10 ? 1 : 0), fx: () => "" });
+  const bw = (X(1) - X(0)) * .7, pal = ["s1", "s2", "s3", "s4", "gold"];
+  A.forEach((tasks, k) => { let y0 = 0; tasks.forEach((t, q) => { const t1 = P.times[t]; ctx.fillStyle = c[pal[t % 5]]; ctx.globalAlpha = .85; ctx.fillRect(X(k + .15), Y(y0 + t1), bw, Y(y0) - Y(y0 + t1)); ctx.globalAlpha = 1; ctx.strokeStyle = c.surface; ctx.strokeRect(X(k + .15), Y(y0 + t1), bw, Y(y0) - Y(y0 + t1)); if (Y(y0) - Y(y0 + t1) > 13 && bw > 18) { ctx.fillStyle = "#fff"; ctx.font = `11px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("T" + t, X(k + .15) + bw / 2, (Y(y0) + Y(y0 + t1)) / 2); } y0 += t1; });
+    ctx.fillStyle = c.muted; ctx.font = `11px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "top"; if (n <= 24 || k % 2 === 0) ctx.fillText((n > 12 ? "" : "WS") + (k + 1), X(k + .5), Y(0) + 5); });
+  ctx.strokeStyle = c.bad; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X(0), Y(P.ct)); ctx.lineTo(X(n), Y(P.ct)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = c.bad; ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText("CT = " + P.ct, X(n) - 2, Y(P.ct) - 2);
+}
+(function albBook() {
+  const P0 = { times: { 1: 2, 2: 3, 3: 3, 4: 1, 5: 3, 6: 3 }, pred: { 3: [1], 4: [2], 5: [3, 4], 6: [4] }, ct: 4 };
+  const ctl = makeControls($("#abCtl"), [{ key: "T", id: "abT", label: "Tabu tenure", min: 0, max: 5, step: 1, value: 3 }, { key: "asp", id: "abAsp", type: "check", label: "Aspiration", value: true }], () => draw());
+  const P = () => Object.assign({}, P0, { T: ctl.T, asp: ctl.asp });
+  let S;
+  function reset() { S = albInit([1, 2, 3, 4, 5, 6], P()); draw(); }
+  function drawPrec() {
+    const { ctx, w, h } = setupCanvas($("#abPrec")), c = colors(), pos = { 1: [.12, .28], 3: [.45, .28], 5: [.85, .5], 2: [.12, .75], 4: [.45, .75], 6: [.85, .9] }, R = 17;
+    const p = k => [pos[k][0] * w, pos[k][1] * h * .9 + 4];
+    ctx.clearRect(0, 0, w, h); ctx.strokeStyle = c.muted; ctx.fillStyle = c.muted; ctx.lineWidth = 1.5;
+    Object.entries(P0.pred).forEach(([t, ps]) => ps.forEach(q => { const a = p(q), b = p(+t), d = Math.hypot(b[0] - a[0], b[1] - a[1]), ux = (b[0] - a[0]) / d, uy = (b[1] - a[1]) / d, ex = b[0] - ux * R, ey = b[1] - uy * R;
+      ctx.beginPath(); ctx.moveTo(a[0] + ux * R, a[1] + uy * R); ctx.lineTo(ex, ey); ctx.stroke(); ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ex - 9 * ux + 5 * uy, ey - 9 * uy - 5 * ux); ctx.lineTo(ex - 9 * ux - 5 * uy, ey - 9 * uy + 5 * ux); ctx.fill(); }));
+    Object.keys(pos).forEach(k => { const q = p(+k); ctx.fillStyle = c.accent; ctx.beginPath(); ctx.arc(q[0], q[1], R, 0, 7); ctx.fill(); ctx.fillStyle = "#fff"; ctx.font = `600 13px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(k, q[0], q[1]); ctx.fillStyle = c.muted; ctx.font = `11px ${MONO}`; ctx.fillText(P0.times[k] + " min", q[0], q[1] - R - 8); });
+  }
+  function draw() {
+    drawPrec();
+    $("#abSeq").innerHTML = S.seq.map(t => `<span class="${S.last && (t === S.last.a || t === S.last.b) ? "hi" : ""}">${t}</span>`).join("");
+    drawLoads($("#abBars"), S.seq, P());
+    stats($("#abStats"), [["Iteration", S.it], ["Stations NS", S.L.length], ["Workloads", S.L.join("-")], ["SI", S.si.toFixed(4)], ["Tabu moves", Object.entries(S.tabu).map(([k, v]) => `(${k.replace(",", "-")}): ${v}`).join(", ") || "none"]]);
+    const C = albCands(S, P()), adm = C.filter(c => c.ok), pick = adm.length ? adm.reduce((x, y) => y.key < x.key - 1e-12 ? y : x) : null;
+    $("#abTbl").innerHTML = `<thead><tr><th>Move</th><th>Workloads</th><th class="n">NS</th><th class="n">SI</th><th>Status</th></tr></thead><tbody>` + C.map(x => `<tr class="${x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">${x.a}-${x.b}</td><td class="mono">${x.L.join("-")}</td><td class="n">${x.L.length}</td><td class="n">${x.si.toFixed(4)}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${x === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#abNote").innerHTML = `Only precedence-feasible swaps are neighbors: ${C.length} of the 15 possible pairs. ${S.it === 0 ? "All four give SI = 1.1832, so the first, (1-2), is taken (Figure 6.24)." : ""}${S.it === 1 ? "The reverse swap (2-1) is tabu. Swap (3-4) balances every station at 3 minutes: SI = 0 (Figure 6.25)." : ""}`;
+  }
+  $("#abStep").addEventListener("click", () => { albStep(S, P()); draw(); }); $("#abReset").addEventListener("click", reset);
+  ro.observe($("#abBars")); ro.observe($("#abPrec")); onRedraw(draw); reset();
+})();
+(function albLab() {
+  const ds = Object.keys(ALB_DATA);
+  const ctl = makeControls($("#alCtl"), [
+    { key: "ds", id: "alDs", type: "select", label: "Data set", value: "MANSOOR", options: ds.map(k => [k, `${k} (${ALB_DATA[k].t.length} tasks)`]) },
+    { key: "ct", id: "alCt", label: "Cycle time CT", min: 5, max: 120, step: 1, value: 48 },
+    { key: "T", id: "alT", label: "Tabu tenure", min: 0, max: 20, step: 1, value: 4 },
+    { key: "asp", id: "alAsp", type: "check", label: "Aspiration (better than best)", value: true },
+    { key: "iters", id: "alIt", label: "Iterations", min: 10, max: 500, step: 10, value: 100 },
+    { key: "speed", id: "alSpd", label: "Speed (iterations/s)", min: 1, max: 60, step: 1, value: 15 }
+  ], k => { if (k === "ds") { ctl.ct = ALB_DATA[ctl.ds].ct; reset(); } else if (k === "ct") reset(); else draw(); });
+  let S, rnd = mulberry32(newSeed());
+  const P = () => { const d = ALB_DATA[ctl.ds], times = {}, pred = {}; d.t.forEach((v, i) => times[i + 1] = v); d.p.forEach(([a, b]) => (pred[b] = pred[b] || []).push(a)); return { times, pred, ct: Math.max(ctl.ct, Math.max(...d.t)), T: ctl.T, asp: ctl.asp }; };
+  function topo(P0, random) { const n = Object.keys(P0.times).length, indeg = {}, succ = {}; for (let i = 1; i <= n; i++) { indeg[i] = 0; succ[i] = []; } Object.entries(P0.pred).forEach(([t, ps]) => ps.forEach(p => { indeg[t]++; succ[p].push(+t); })); const out = [], ready = Object.keys(indeg).filter(k => !indeg[k]).map(Number); while (ready.length) { const k = random ? Math.floor(rnd() * ready.length) : ready.indexOf(Math.min(...ready)), t = ready.splice(k, 1)[0]; out.push(t); succ[t].forEach(s => { if (!--indeg[s]) ready.push(s); }); } return out; }
+  function reset(random) { const p = P(); S = albInit(topo(p, random), p); draw(); }
+  const run = runner(() => albStep(S, P()), () => draw(), () => ctl.speed, () => S.it >= ctl.iters, $("#alRun"));
+  $("#alStep").addEventListener("click", () => { if (S.it < ctl.iters) { albStep(S, P()); draw(); } });
+  $("#alReset").addEventListener("click", () => { run.stop(); reset(true); });
+  function draw() {
+    const p = P(), d = ALB_DATA[ctl.ds], { L } = albLoads(S.best, p.times, p.ct), lb = Math.ceil(d.t.reduce((a, b) => a + b, 0) / p.ct);
+    drawLoads($("#alBars"), S.best, p);
+    stats($("#alStats"), [["Iteration", S.it + " / " + ctl.iters], ["Best NS", L.length], ["Lower bound ⌈Σt/CT⌉", lb], ["Best known", ctl.ct === d.ct ? d.best + " (CT = " + d.ct + ")" : "n/a for this CT"], ["SI", albSI(L).toFixed(3)], ["Current NS", S.L.length]]);
+    const c = colors(); lineChart($("#alChart"), [{ data: S.hist, color: c.accent }], { xmax: ctl.iters, refs: ctl.ct === d.ct ? [{ v: d.best, color: c.bad, label: "best known" }] : [] });
+  }
+  ro.observe($("#alBars")); onRedraw(draw); reset();
+})();
+
+/* ---------- code tabs ---------- */
+(function codeTabs() {
+  const caps = { q: "n-queens with swap moves, a tabu matrix and aspiration; checks the book’s first iteration", k: "Knapsack with one- and two-item moves; finds the optimum f = −7", p: "Quadratic assignment (NUG5) with an object-site tabu matrix; reaches the optimum 50", c: "Continuous tabu search with tabu regions, on Himmelblau and Schwefel", t: "Berlin52 with 2-opt moves and tabu edges; reaches the optimal 7,542", a: "Assembly line balancing (SALBP-1): the book’s example and the MANSOOR benchmark" };
+  const keys = Object.keys(caps); let cur = "q";
+  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").textContent = caps[k]; }
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.code)));
+  document.querySelectorAll("a[data-tab]").forEach(a => a.addEventListener("click", () => show(a.dataset.tab)));
+  $("#codeCopy").addEventListener("click", async () => {
+    const pre = $("#code-" + cur), btn = $("#codeCopy");
+    try { await navigator.clipboard.writeText(pre.textContent); btn.textContent = "Copied"; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected, press Ctrl+C"; }
+    setTimeout(() => btn.textContent = "Copy code", 2000);
+  });
+  show("q");
+})();
+
+/* ---------- side menu ---------- */
+(function sideMenu() {
+  const toc = $("#toc"), btn = $("#tocBtn"), scrim = $("#scrim");
+  // read each link's #hash, not its raw href: hosts such as htmlpreview rewrite in-page links to full URLs
+  const links = [...toc.querySelectorAll("nav a")].filter(a => a.hash);
+  const targets = links.map(a => document.getElementById(decodeURIComponent(a.hash.slice(1))));
+  function setOpen(o) { toc.classList.toggle("open", o); scrim.classList.toggle("show", o); btn.setAttribute("aria-expanded", String(o)); }
+  btn.addEventListener("click", () => setOpen(!toc.classList.contains("open")));
+  scrim.addEventListener("click", () => setOpen(false));
+  links.forEach(a => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setOpen(false); });
+  let ticking = false, lastCur = -1;
+  function spy() {
+    ticking = false; let cur = 0;
+    targets.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= 140) cur = i; });
+    if (cur === lastCur) return; lastCur = cur;
+    links.forEach(a => a.classList.remove("active")); toc.querySelectorAll("li.current").forEach(l => l.classList.remove("current"));
+    const a = links[cur], topLi = a && a.closest("nav > ol > li");
+    if (!topLi) return;
+    a.classList.add("active"); topLi.classList.add("current"); topLi.querySelector(":scope > a").classList.add("active");
+    const y = a.offsetTop; if (y < toc.scrollTop + 60 || y > toc.scrollTop + toc.clientHeight - 60) toc.scrollTop = y - toc.clientHeight / 3;
+  }
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+  spy();
+})();
+
+</script>
+</body>
+</html>
