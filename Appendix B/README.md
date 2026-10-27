@@ -10,7 +10,7 @@
 | Neural combinatorial optimization datasets  | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Listing%20B.5_ML_datasets.ipynb)  |
 
 > [!NOTE]
-> To learn more about scraping geospatial data, fetching datasets from Hugging Face, and performing exploratory data analysis, see this [Tutorial](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Geospatial_data/README.md) for details.
+> To learn more about scraping geospatial data, fetching datasets from Hugging Face, and performing exploratory data analysis, see this [Tutorial](https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20B/Geospatial_data_tutorial/README.md) for details.
 
 
 > [!IMPORTANT]
