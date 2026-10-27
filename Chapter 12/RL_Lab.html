@@ -260,6 +260,22 @@ tr.dim td{color:var(--muted)}
 .chain div{border:2px solid var(--line);border-radius:8px;padding:.5rem;text-align:center;background:var(--surface);font-size:.85rem}
 .chain div b{display:block;font-size:1rem}
 .chain div.on{border-color:var(--accent);background:var(--accent-soft)}
+.ppo-stage{display:grid;grid-template-columns:250px minmax(0,1fr);gap:1.3rem;align-items:start}
+.ppo-side{display:flex;flex-direction:column;gap:.85rem;min-width:0}
+.ppo-side .stats{grid-template-columns:1fr 1fr}
+.ppo-main{display:flex;flex-direction:column;gap:.8rem;min-width:0}
+.ppo-plots{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.ppo-plots figure{margin:0;min-width:0}
+.ppo-plots canvas{display:block;width:100%;aspect-ratio:5/4;border-radius:8px;background:var(--sunk);cursor:ew-resize;touch-action:none;transition:opacity .2s}
+.ppo-plots figure.off canvas{opacity:.42;cursor:pointer}
+.ppo-plots figcaption{margin-top:.3rem;text-align:center;font-family:var(--f-mono);font-size:.76rem;color:var(--muted)}
+.ppo-plots figure:not(.off) figcaption{color:var(--ink);font-weight:600}
+.ppo-tbl th,.ppo-tbl td{text-align:center;padding:.32rem .45rem;font-size:.8rem;vertical-align:middle;background:var(--surface);color:var(--ink)}
+.ppo-tbl th{background:var(--sunk);font-size:.74rem}
+.ppo-tbl td:first-child{font-family:var(--f-display);font-weight:600}
+.ppo-tbl tr.on td{background:color-mix(in srgb,var(--gold) 18%,var(--surface));font-weight:600}
+@media (max-width:980px){.ppo-stage{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.ppo-plots{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -409,14 +425,22 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 5 · Section 12.1.5</span>
     <h2>Proximal policy optimization</h2>
-    <div class="two">
-      <div class="prose">
+    <div class="prose">
         <p>An RL agent creates its own training data, so a big policy update can push it into a region where its data no longer applies. <b>PPO</b> keeps each update close to the old policy. <b>PPO-penalty</b> subtracts β·KL(π<sub>old</sub> ‖ π<sub>θ</sub>) from the objective (equation 12.5), the idea behind TRPO’s trust region. <b>PPO-clip</b> uses the probability ratio r(θ) = π<sub>θ</sub>(a|s) / π<sub>old</sub>(a|s):</p>
         <p class="calc">L<sup>CLIP</sup>(θ) = Ê[min(r(θ) Â, clip(r(θ), 1 − ε, 1 + ε) Â)]</p>
         <p>With a positive advantage, the objective stops rewarding increases of r beyond 1 + ε; with a negative advantage, it stops rewarding decreases below 1 − ε (Figure 12.6). The book uses ε = 0.2.</p>
       </div>
-      <div class="bench" style="margin-top:0"><div class="bench-head"><h4>The clipped objective</h4></div><div class="stage"><div id="ppCtl"></div><canvas id="ppCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Clipped surrogate objective"></canvas><p class="cap">Gray: the unclipped objective r·Â. Colored: L<sup>CLIP</sup>. Flat parts have zero gradient: no incentive to move further.</p></div></div>
-    </div>
+    <div class="bench"><div class="bench-head"><h4>The clipped objective</h4></div><div class="stage ppo-stage">
+      <div class="ppo-side"><div id="ppCtl"></div><div class="btns"><button id="ppSweep" class="primary">Sweep r(θ)</button><button id="ppReset">Reset</button></div><div class="stats" id="ppStats"></div></div>
+      <div class="ppo-main">
+        <div class="ppo-plots">
+          <figure id="ppFigP"><canvas id="ppCvP" aria-label="Clipped objective for a positive advantage"></canvas><figcaption>Â &gt; 0</figcaption></figure>
+          <figure id="ppFigN"><canvas id="ppCvN" aria-label="Clipped objective for a negative advantage"></canvas><figcaption>Â &lt; 0</figcaption></figure>
+        </div>
+        <div class="tbl-wrap"><table class="ppo-tbl" id="ppTbl"></table></div>
+        <p class="cap">Drag on either plot, or use the sliders. Solid line: L<sup>CLIP</sup>. Dashed gray: the unclipped r(θ)Â that clipping replaces. The gold arrow shows the direction the update pushes r(θ); on a flat part the gradient is zero, so the update gains nothing by moving r(θ) further from 1.</p>
+      </div>
+    </div></div>
     <div class="two">
       <div class="prose"><p>The <b>Kullback-Leibler divergence</b> KL(P ‖ Q) = ∫ P(x) log(P(x)/Q(x)) dx measures how different two distributions are. It is zero only when they are identical, and it is not symmetric. For Gaussians it has a closed form: log(σ<sub>Q</sub>/σ<sub>P</sub>) + (σ<sub>P</sub>² + (μ<sub>P</sub> − μ<sub>Q</sub>)²) / (2σ<sub>Q</sub>²) − ½. PPO’s logs report it as approx_kl.</p></div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>KL divergence between two Gaussians</h4></div><div class="stage"><div id="klCtl"></div><canvas id="klCv" class="cv-chart" style="height:180px" aria-label="Two Gaussian densities"></canvas><div class="stats" id="klStats"></div></div></div>
@@ -1187,19 +1211,88 @@ function drawGrid(cv, W, path, o = {}) {
 
 /* ---------- PPO clip and KL divergence ---------- */
 (function ppo() {
-  const ctl = makeControls($("#ppCtl"), [{ key: "e", id: "ppE", label: "Clip range ε", min: .05, max: .5, step: .05, value: .2, fmt: v => v.toFixed(2) }], () => draw());
-  function draw() {
-    const e = ctl.e, ax = axes($("#ppCv"), { x0: 0, x1: 2.2, y0: -2.3, y1: 1.6, xlab: "probability ratio r", ylab: "objective", xd: 1, yd: 1 }), { ctx, X, Y, c } = ax;
-    ctx.fillStyle = c.gold; ctx.globalAlpha = .08; ctx.fillRect(X(1 - e), ax.pad.t, X(1 + e) - X(1 - e), ax.h - ax.pad.t - ax.pad.b); ctx.globalAlpha = 1;
-    const clip = r => Math.max(1 - e, Math.min(1 + e, r)), Lc = (r, A) => Math.min(r * A, clip(r) * A);
-    [[1, c.accent], [-1, c.bad]].forEach(([A, col]) => {
-      ctx.strokeStyle = c.muted; ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(2.2), Y(2.2 * A)); ctx.stroke(); ctx.setLineDash([]);
-      ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.beginPath(); for (let i = 0; i <= 220; i++) { const r = i / 100; i ? ctx.lineTo(X(r), Y(Lc(r, A))) : ctx.moveTo(X(r), Y(Lc(r, A))); } ctx.stroke();
-      ctx.fillStyle = col; ctx.font = `600 12px ${MONO}`; ctx.textAlign = "right"; ctx.textBaseline = A > 0 ? "bottom" : "top"; ctx.fillText(A > 0 ? "Â > 0: flat above 1 + ε" : "Â < 0: flat below 1 − ε", X(2.15), Y(Lc(2.1, A)) + (A > 0 ? -6 : 6));
+  // Figure 12.6: regions I to III for a positive advantage, IV to VI for a negative one
+  const SERIF = '"Source Serif 4", Georgia, serif';
+  const ROWS = [
+    ["I", "Positive", "Better", "r(θ)Â", "Positive", "More likely", "No"],
+    ["II", "Positive", "Better", "r(θ)Â", "Positive", "More likely", "No"],
+    ["III", "Positive", "Better", "(1 + ε)Â", "Zero", "Unchanged", "Yes"],
+    ["IV", "Negative", "Worse", "(1 − ε)Â", "Zero", "Unchanged", "Yes"],
+    ["V", "Negative", "Worse", "r(θ)Â", "Negative", "Less likely", "No"],
+    ["VI", "Negative", "Worse", "r(θ)Â", "Negative", "Less likely", "No"]
+  ];
+  $("#ppTbl").innerHTML = `<thead><tr><th>Region</th><th>Advantage estimate</th><th>Selected action</th><th>Return value of min</th><th>Gradient</th><th>Action likelihood</th><th>Clip objective?</th></tr></thead><tbody>${ROWS.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  const ctl = makeControls($("#ppCtl"), [
+    { key: "s", id: "ppS", type: "select", label: "Advantage estimate Â", value: "1", options: [["1", "Positive: a better action (Â = +1)"], ["-1", "Negative: a worse action (Â = −1)"]] },
+    { key: "r", id: "ppR", label: "Probability ratio r(θ)", min: .05, max: 1.95, step: .01, value: 1, fmt: v => v.toFixed(2) },
+    { key: "e", id: "ppE", label: "Clip range ε", min: .05, max: .5, step: .05, value: .2, fmt: v => v.toFixed(2) }
+  ], () => { stop(); draw(); });
+  const clip = (r, e) => Math.max(1 - e, Math.min(1 + e, r)), Lc = (r, A, e) => Math.min(r * A, clip(r, e) * A);
+  const region = (r, e, A) => (A > 0 ? 0 : 3) + (r < 1 - e ? 0 : r <= 1 + e ? 1 : 2);
+  const flat = k => k === 2 || k === 3, view = {};
+  function plot(cv, A, active) {
+    const e = ctl.e, r = ctl.r, pos = A > 0;
+    const ax = axes(cv, { x0: 0, x1: 2.12, y0: pos ? -.12 : -2.15, y1: pos ? 2.15 : .12, bare: true, pad: pos ? { l: 30, r: 14, t: 22, b: 30 } : { l: 30, r: 14, t: 30, b: 22 } });
+    const { ctx, X, Y, c, pad, h } = ax; view[A] = ax;
+    const top = pad.t, bot = h - pad.b, cur = region(r, e, A), base = pos ? 0 : 3;
+    [[0, 1 - e], [1 - e, 1 + e], [1 + e, 2.12]].forEach(([u, v], k) => {
+      const on = active && cur === base + k;
+      if (on) { ctx.fillStyle = c.gold; ctx.globalAlpha = .14; ctx.fillRect(X(u), top, X(v) - X(u), bot - top); ctx.globalAlpha = 1; }
+      ctx.fillStyle = on ? c.ink : c.muted; ctx.font = `${on ? 700 : 500} 13px ${SERIF}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(ROWS[base + k][0], (X(u) + X(v)) / 2, pos ? top + 10 : bot - 10);
     });
-    [1 - e, 1, 1 + e].forEach(v => { ctx.strokeStyle = c.ink; ctx.globalAlpha = .3; ctx.beginPath(); ctx.moveTo(X(v), ax.pad.t); ctx.lineTo(X(v), ax.h - ax.pad.b); ctx.stroke(); ctx.globalAlpha = 1; });
+    // the r axis sits at L = 0: at the bottom for Â > 0 and at the top for Â < 0, as in the book
+    ctx.strokeStyle = c.ink; ctx.fillStyle = c.ink; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(2.1), Y(0)); ctx.moveTo(X(0), top); ctx.lineTo(X(0), bot); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(2.12), Y(0)); ctx.lineTo(X(2.12) - 7, Y(0) - 4); ctx.lineTo(X(2.12) - 7, Y(0) + 4); ctx.fill();
+    const yEnd = pos ? top : bot, sg = pos ? 1 : -1;
+    ctx.beginPath(); ctx.moveTo(X(0), yEnd); ctx.lineTo(X(0) - 4, yEnd + 7 * sg); ctx.lineTo(X(0) + 4, yEnd + 7 * sg); ctx.fill();
+    ctx.font = `italic 13px ${SERIF}`; ctx.textAlign = "left"; ctx.textBaseline = pos ? "top" : "bottom"; ctx.fillText("L(θ)", X(0) + 8, yEnd + 2 * sg);
+    ctx.textAlign = "right"; ctx.textBaseline = pos ? "bottom" : "top"; ctx.fillText("r(θ)", X(2.1), Y(0) - 5 * sg);
+    ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.font = `11px ${MONO}`; ctx.textBaseline = pos ? "top" : "bottom";
+    // labels sit outside their lines so they never collide, even for a small ε
+    [[1 - e, false, "1 − ε", "right", -3], [1 + e, false, "1 + ε", "left", 3], [1, true, "1", "center", 0]].forEach(([v, red, lab, al, dx]) => {
+      ctx.strokeStyle = red ? c.bad : c.muted; ctx.globalAlpha = red ? .9 : .6; ctx.beginPath(); ctx.moveTo(X(v), top); ctx.lineTo(X(v), bot); ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.fillStyle = red ? c.bad : c.muted; ctx.textAlign = al; ctx.fillText(lab, X(v) + dx, Y(0) + 6 * sg);
+    });
+    ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.fillText("0", X(0) - 5, Y(0) + 6 * sg);
+    // dashed: the unclipped r(θ)Â; solid: L_CLIP
+    ctx.strokeStyle = c.muted; ctx.globalAlpha = .7; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(2.05), Y(2.05 * A)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    ctx.strokeStyle = c.accent; ctx.lineWidth = 3; ctx.lineJoin = "round"; ctx.beginPath();
+    for (let i = 0; i <= 205; i++) { const x = i / 100; i ? ctx.lineTo(X(x), Y(Lc(x, A, e))) : ctx.moveTo(X(x), Y(Lc(x, A, e))); }
+    ctx.stroke();
+    if (!active) return;
+    const L = Lc(r, A, e);
+    ctx.strokeStyle = c.bad; ctx.globalAlpha = .5; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(X(r), Y(0)); ctx.lineTo(X(r), Y(L)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    if (!flat(cur)) { // gradient ascent on L moves r(θ) up for Â > 0 and down for Â < 0
+      const d = .24 * Math.sign(A), x1 = X(r + d), y1 = Y(L + d * A), ang = Math.atan2(y1 - Y(L), x1 - X(r));
+      ctx.strokeStyle = c.gold; ctx.fillStyle = c.gold; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(X(r), Y(L)); ctx.lineTo(x1, y1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - 9 * Math.cos(ang - .45), y1 - 9 * Math.sin(ang - .45)); ctx.lineTo(x1 - 9 * Math.cos(ang + .45), y1 - 9 * Math.sin(ang + .45)); ctx.fill();
+    }
+    dot(ctx, X(r), Y(L), 7, c.bad, c.surface);
   }
-  ro.observe($("#ppCv")); onRedraw(draw); draw();
+  function draw() {
+    const A = +ctl.s, e = ctl.e, r = ctl.r, cur = region(r, e, A), f = v => (v < -1e-9 ? "−" : "") + Math.abs(v).toFixed(2);
+    plot($("#ppCvP"), 1, A > 0); plot($("#ppCvN"), -1, A < 0);
+    $("#ppFigP").classList.toggle("off", A < 0); $("#ppFigN").classList.toggle("off", A > 0);
+    $("#ppTbl").querySelectorAll("tbody tr").forEach((tr, i) => tr.classList.toggle("on", i === cur));
+    stats($("#ppStats"), [["Region", ROWS[cur][0]], ["r(θ)Â", f(r * A)], ["clip(r)Â", f(clip(r, e) * A)], ["L<sup>CLIP</sup> = min", f(Lc(r, A, e))], ["Gradient", flat(cur) ? "0" : f(A)], ["Clipped?", flat(cur) ? "Yes" : "No"]]);
+  }
+  let anim = 0;
+  function stop() { cancelAnimationFrame(anim); anim = 0; $("#ppSweep").textContent = "Sweep r(θ)"; }
+  $("#ppSweep").addEventListener("click", () => {
+    if (anim) return stop();
+    let r = ctl.r >= 1.9 ? .05 : ctl.r, last = 0; $("#ppSweep").textContent = "Pause";
+    const step = t => { if (last) r = Math.min(1.95, r + (t - last) / 2600); last = t; ctl.r = r; draw(); if (r >= 1.95) return stop(); anim = requestAnimationFrame(step); };
+    anim = requestAnimationFrame(step);
+  });
+  $("#ppReset").addEventListener("click", () => { stop(); ctl.s = "1"; ctl.r = 1; ctl.e = .2; draw(); });
+  [[$("#ppCvP"), 1], [$("#ppCvN"), -1]].forEach(([cv, A]) => {
+    const at = ev => { const v = view[A], b = cv.getBoundingClientRect(); stop(); ctl.s = String(A); ctl.r = Math.max(.05, Math.min(1.95, Math.round(v.iX(ev.clientX - b.left) * 100) / 100)); draw(); };
+    cv.addEventListener("pointerdown", ev => { cv.setPointerCapture(ev.pointerId); at(ev); });
+    cv.addEventListener("pointermove", ev => { if (cv.hasPointerCapture(ev.pointerId)) at(ev); });
+    ro.observe(cv);
+  });
+  onRedraw(draw); draw();
   const kc = makeControls($("#klCtl"), [
     { key: "m1", id: "klM1", label: "P: mean", min: -3, max: 3, step: .1, value: 0, fmt: v => v.toFixed(1) }, { key: "s1", id: "klS1", label: "P: standard deviation", min: .3, max: 3, step: .1, value: 1, fmt: v => v.toFixed(1) },
     { key: "m2", id: "klM2", label: "Q: mean", min: -3, max: 3, step: .1, value: 1, fmt: v => v.toFixed(1) }, { key: "s2", id: "klS2", label: "Q: standard deviation", min: .3, max: 3, step: .1, value: 1.5, fmt: v => v.toFixed(1) }
