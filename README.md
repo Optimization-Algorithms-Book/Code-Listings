@@ -21,6 +21,7 @@ Without assuming any prior knowledge of search and optimization, and with only a
 **Quick links:**
 [📘 Get the book (Manning)](https://www.manning.com/books/optimization-algorithms) ·
 [🌐 Website](https://optimization-algorithms-book.github.io/Code-Listings/) ·
+[🗺️ Book overview: Treasure-Hunting Mission](https://optimization-algorithms-book.github.io/Code-Listings/Treasure_Hunting_Mission.html) ·
 [🎥 Video summary](https://www.youtube.com/watch?v=RAVFSvgks3Q) ·
 [🛠 Errata](errata.md) ·
 [🔖 Cite](#-citation)
@@ -36,7 +37,7 @@ Each chapter folder holds the book’s code listings as Jupyter notebooks that r
 | Chapter | Code | Interactive lab |
 |---|---|---|
 | 1. Introduction to search and optimization | [Chapter 1](Chapter%201) | [Optimization Basics Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%201/Ch1_Lab.html) |
-| 2. A deeper look at search and optimization | [Chapter 2](Chapter%202) | [Problems and Algorithms Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%202/Ch2_Lab.html) · [Treasure-Hunting Mission](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%202/Treasure_Hunting_Mission.html) |
+| 2. A deeper look at search and optimization | [Chapter 2](Chapter%202) | [Problems and Algorithms Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%202/Ch2_Lab.html) |
 | 3. Blind search algorithms | [Chapter 3](Chapter%203) | [Blind Search Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%203/BS_Lab.html) |
 | 4. Informed search algorithms | [Chapter 4](Chapter%204) | [Informed Search Lab](https://optimization-algorithms-book.github.io/Code-Listings/Chapter%204/IS_Lab.html) |
 

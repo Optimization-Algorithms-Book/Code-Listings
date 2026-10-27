@@ -44,6 +44,8 @@ header.top{padding-block:1.6rem 1rem;border-bottom:1px solid var(--line)}
 .top .lede{max-width:70ch;color:var(--muted);margin:.5rem 0 0}
 .cite{font-size:.82rem;color:var(--muted);margin-top:.5rem}
 .cite a{color:var(--ink)}
+.home{display:inline-flex;align-items:center;gap:.35rem;margin-bottom:.9rem;padding:.3rem .65rem;font-size:.8rem;font-weight:500;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.home:hover{color:var(--accent);border-color:var(--accent)}
 .theme-switch{display:flex;gap:2px;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:2px}
 .theme-switch button{border:0;background:none;font:inherit;font-size:.78rem;font-weight:500;padding:.3rem .7rem;border-radius:6px;color:var(--muted);cursor:pointer}
 .theme-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
@@ -121,7 +123,8 @@ footer a{color:var(--ink)}
   <div class="wrap">
     <div class="top-row">
       <div>
-        <div class="eyebrow">Interactive companion · Chapter 2 sidebar · Every algorithm family in the book</div>
+        <a class="home" href="index.html" title="Back to the book page with every lab"><span aria-hidden="true">&larr;</span> All labs</a>
+        <div class="eyebrow">Interactive companion · Every algorithm family in the book</div>
         <h1>The Treasure-Hunting Mission</h1>
         <p class="lede">Searching for an optimal solution is like hunting for pirate treasure on an island. You and your friends are the search agents, and every part of the book gives you a different way to search. Pick a hunting strategy, press Run, and watch it work on the same island.</p>
         <p class="cite">Based on Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024.</p>
