@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 6 (Tabu search) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Tabu Search Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -307,6 +325,7 @@ tr.tabu td{color:var(--muted)}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>13</b>Summary</a></li>
+    <li><a href="#quiz"><b>14</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 6, Tabu search.</div>
 </aside>
@@ -319,7 +338,7 @@ tr.tabu td{color:var(--muted)}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 6 · Tabu search</div>
       <h1>Tabu Search <em>Lab</em></h1>
-      <p class="lede">Local search with a memory. Tabu search always moves to the best neighbor it is allowed to visit, even uphill, and keeps a short list of recent moves that are forbidden for a while. That memory is what lets it walk out of local optima instead of circling back into them.</p>
+      <p class="lede">Local search with a memory. Tabu search moves to the best neighbor it is allowed to visit, even uphill, and forbids recent moves for a while so it can walk out of local optima.</p>
       <div class="variants">
         <a class="chip" href="#queens"><b>♛</b> Constraint satisfaction</a>
         <a class="chip" href="#knapsack"><b>0110</b> Binary</a>
@@ -341,23 +360,12 @@ tr.tabu td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Sections 6.1 and 6.2</span>
     <h2>From local search to tabu search</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Imagine a vacation at a resort with several restaurants. Eating only where you ate yesterday, unless a neighbor looks better, is <b>local search</b>: it explores the neighborhood N(s) of the current solution s and moves only when it finds an improvement. Hill climbing is an example. It is fast, but it stops at the first local optimum it reaches.</p>
-        <p>Now suppose you promise yourself not to return to the same restaurant for a few days, and you remember how much you liked each meal. That is <b>tabu search</b> (TS): local search plus <b>adaptive memory</b> and <b>responsive exploration</b>. Fred Glover introduced it in 1986. “Tabu” comes from the Polynesian languages of the South Pacific and means something forbidden.</p>
-        <p>TS accepts non-improving moves deterministically when every neighbor is worse, and forbids, for a while, the moves that would take it back to solutions it just visited. Local search + memory = tabu search.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Pros</th><th>Cons</th></tr></thead>
-        <tbody>
-          <tr><td>Accepts non-improving solutions to escape local optima</td><td>Many parameters to set: tenure, neighborhood, aspiration, stopping rule</td></tr>
-          <tr><td>Works in discrete and continuous solution spaces</td><td>The number of iterations can be very large</td></tr>
-          <tr><td>On scheduling, quadratic assignment and vehicle routing, often surpasses the best solutions found by other methods</td><td>The global optimum may not be found, depending on the parameter settings</td></tr>
-        </tbody></table>
-        <p class="cap" style="padding:.4rem .6rem">Applications include scheduling, design, location and allocation, routing, production, inventory and investment, telecommunications and graph optimization.</p></div>
+    <div class="prose">
+      <p><b>Local search</b> moves only when a neighbor improves the current solution, so it stops at the first local optimum. <b>Tabu search</b> (TS) adds memory: it accepts the best neighbor even when it is worse, and forbids moves back to recently visited solutions.</p>
+      <p class="more">Sections 6.1 and 6.2 of the book build this idea from a resort-restaurant analogy and weigh the pros and cons of TS.</p>
     </div>
     <h3 id="ls-vs-ts">Escaping local optima</h3>
-    <p class="prose">Both searches start at the same point on a rugged landscape and look at the same neighbors (up to k steps left or right). Local search stops at the first valley. Tabu search moves to the best neighbor that is not tabu, even uphill, and marks each position it visits as tabu for the next T iterations (red bars). Click the landscape to choose a new start.</p>
+    <p class="prose">Both searches start at the same point. Local search stops at the first valley; tabu search keeps going and marks each visited position tabu for T iterations (red bars). Click the landscape to choose a new start, then Step or Run.</p>
     <div class="bench">
       <div class="bench-head"><h4>Local search vs. tabu search</h4><span class="eyebrow">Minimize f(x)</span></div>
       <div class="bench-body">
@@ -391,15 +399,8 @@ tr.tabu td{color:var(--muted)}
     update the tabu list T(s) and aspiration A(s)</div>
       </div>
       <div class="prose">
-        <p>Each iteration (Figure 6.1):</p>
-        <ol>
-          <li><b>Create a candidate list</b> of moves from the current solution: swap, insert, delete, and so on.</li>
-          <li><b>Evaluate</b> each candidate.</li>
-          <li><b>Check tabu status.</b> A tabu candidate is admissible only if it satisfies the <b>aspiration criterion</b>, usually “better than the best solution so far.”</li>
-          <li><b>Make the best admissible move</b>, record a new best if it improves on it, and update the tabu restrictions.</li>
-        </ol>
-        <p>Stop when the neighborhood is empty, after a number of iterations without improvement, or when there is evidence that an optimal or near-optimal solution has been reached.</p>
-        <p>For a 4-city TSP with city 1 fixed as home, swapping any two of the other three cities gives C(3, 2) = 3 neighbors: from {1, 2, 4, 3}, the neighbors are {1, 2, 3, 4}, {1, 3, 4, 2} and {1, 4, 2, 3}.</p>
+        <p>Each iteration builds a candidate list of moves, evaluates them, discards tabu ones unless they pass the <b>aspiration criterion</b>, and makes the best admissible move, even a worsening one.</p>
+        <p class="more">Figure 6.1 in Section 6.2 walks through this loop, with stopping rules and a small TSP neighborhood example.</p>
       </div>
     </div>
   </div>
@@ -410,26 +411,12 @@ tr.tabu td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 3 · Section 6.2.1</span>
     <h2>Memory structures</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Human memory, in the Atkinson–Shiffrin model, has a sensory store, a short-term or working memory with limited capacity and duration, and a long-term memory. Tabu search borrows the last two:</p>
-        <ul>
-          <li><b>Recency-based (short-term) memory</b> remembers recently made moves and forbids them for a number of iterations called the <b>tabu tenure</b>. Each iteration, every remaining tenure drops by 1.</li>
-          <li><b>Frequency-based (long-term) memory</b> counts how often each move has been made and penalizes frequent moves, which pushes the search toward unexplored regions (diversification).</li>
-        </ul>
-        <p>For swap moves, both fit in one triangular <b>tabu structure</b> (Figure 6.5): the upper triangle holds the remaining tenure of each swap and the lower triangle holds how many times it has been used.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Tenure T</th><th>Rule</th></tr></thead>
-        <tbody>
-          <tr><td>Static</td><td>A constant that may depend on the problem size N, such as √N or N/10. A static tenure cannot always prevent cycling.</td></tr>
-          <tr><td>Dynamic</td><td>Varies randomly between T<sub>min</sub> and T<sub>max</sub>, which can follow how the search is improving.</td></tr>
-          <tr><td>Adaptive</td><td>Decrease T by 1 after an improvement to intensify, increase it by 1 after a deterioration to diversify (Figure 6.7).</td></tr>
-          <tr><td>Reactive</td><td>Increase T when solutions repeat, and force an escape move when too many repeat (Battiti and Tecchiolli).</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p><b>Recency (short-term) memory</b> forbids recent moves for a number of iterations, the <b>tabu tenure</b>. <b>Frequency (long-term) memory</b> counts how often each move is made and penalizes frequent ones to diversify the search.</p>
+      <p class="more">Section 6.2.1 links these memories to models of human memory and compares static, dynamic, adaptive and reactive tenure rules (Figure 6.7).</p>
     </div>
     <h3 id="tabu-structure">The tabu structure in action</h3>
-    <p class="prose">Seven sheets of a composite laminate are stacked in some order, and each pair of touching sheets adds or removes strength (the data of Listing C.5). The goal is the order with maximum strength. Each move swaps two sheets. Step through the search and watch both memories fill up. With a frequency penalty, frequently used swaps lose value whenever no improving move is available.</p>
+    <p class="prose">Order seven laminate sheets for maximum strength (Listing C.5); each move swaps two sheets. Step through the search and watch the triangle: tenures fill the upper half, swap counts the lower half.</p>
     <div class="bench">
       <div class="bench-head"><h4>Recency and frequency memory</h4><span class="eyebrow">Maximize strength · 21 swap neighbors</span></div>
       <div class="bench-body">
@@ -444,15 +431,9 @@ tr.tabu td{color:var(--muted)}
       </div>
     </div>
     <h3 id="aspiration">Aspiration criteria and the tabu tenure</h3>
-    <div class="two">
-      <div class="prose">
-        <p>Tabu restrictions can also block very good moves. When every non-tabu move is worse and the promising ones are tabu, the search <b>stagnates</b>. An <b>aspiration criterion</b> lifts the restriction for a tabu move when it leads to a solution better than the best found so far (the incumbent). The book’s generic solver can also require that only a few iterations of tenure remain (<span class="mono">aspiration_limit</span>).</p>
-        <p>The tenure is the most important parameter (Figure 6.6). Too short a tenure risks <b>cycling</b> and overlooking promising solutions; too long a tenure risks <b>stagnation</b> and a larger memory footprint. The experiment in Part 9 measures this on the Berlin52 TSP.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Too short a tenure</th><th>Too long a tenure</th></tr></thead>
-        <tbody><tr><td>Cycling risk</td><td>Stagnation risk</td></tr><tr><td>Overlooking promising solutions</td><td>Memory overload</td></tr></tbody></table>
-        <p class="cap" style="padding:.4rem .6rem">TS parameters: the initial solution method, tabu tenure, neighborhood structure, aspiration criteria, stopping criteria, and the penalty on frequency counts. They can be tuned before the run or adapted during it (deterministic, adaptive or self-adaptive).</p></div>
+    <div class="prose">
+      <p>An <b>aspiration criterion</b> lifts the tabu status of a move that would beat the best solution found so far. The tenure matters most: too short risks <b>cycling</b>, too long risks <b>stagnation</b> (try the experiment in Part 9).</p>
+      <p class="more">Figure 6.6 and Section 6.2.1 explain the tenure trade-off and list every TS parameter you can tune or adapt during a run.</p>
     </div>
   </div>
 </section>
@@ -462,7 +443,10 @@ tr.tabu td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 4 · Section 6.3</span>
     <h2>Constraint satisfaction: n-queens</h2>
-    <p class="prose">Place n queens on an n × n board so that no two share a row, column or diagonal. Writing the board as a permutation (queen i sits in row i, column C<sub>i</sub>) removes row and column conflicts, leaving only diagonal <b>collisions</b> to minimize. A move swaps the columns of two queens, so there are C(n, 2) neighbors, and the swap just made becomes tabu. The book’s board (Figure 6.8) has 4 collisions: Q1–Q2, Q2–Q6, Q4–Q5 and Q6–Q7.</p>
+    <div class="prose">
+      <p>Place n queens so that none attack each other. As a permutation, only diagonal <b>collisions</b> remain to minimize; a move swaps two queens’ columns and that swap becomes tabu. Step from the book’s board or a random one.</p>
+      <p class="more">Section 6.3 carries out the first iterations by hand on Figure 6.8 and solves larger boards with Listing 6.1.</p>
+    </div>
     <div class="bench">
       <div class="bench-head"><h4>n-queens with tabu search</h4><span class="eyebrow">Minimize collisions</span></div>
       <div class="bench-body">
@@ -475,12 +459,11 @@ tr.tabu td{color:var(--muted)}
         </div>
       </div>
     </div>
-    <div class="note warn">In Figure 6.8c, swap (Q2, Q3) is listed with Δ = −2. Swapping the columns of Q2 and Q3 on that board gives 5 collisions, so Δ = +1. The other four values in the table are correct.</div>
     <div class="runbox"><b>Run it in Python:</b>
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.1_n-queen_TS.ipynb">Listing 6.1 n-queens</a>
       <a href="#python" data-tab="q">From-scratch code ↓</a>
     </div>
-    <p class="cap">Listing 6.1 uses a different neighborhood: it moves one queen to another column and stores whole boards in the tabu list. The lab above uses the swap moves of the hand iterations.</p>
+    <p class="cap">Listing 6.1 uses a different neighborhood (single-queen moves) from the swap moves above.</p>
   </div>
 </section>
 
@@ -491,9 +474,9 @@ tr.tabu td{color:var(--muted)}
     <h2>A 0/1 knapsack problem</h2>
     <div class="two">
       <div class="prose">
-        <p>Seven items with weights and utilities, and a knapsack of capacity 50 kg. A solution is a bit string: bit i is 1 if item i is packed. Two criteria conflict: fill the knapsack exactly, and pack as much utility as possible. They are combined into one function to <b>minimize</b>:</p>
+        <p>Pack seven items into a 50 kg knapsack. A solution is a bit string, and f below rewards filling the knapsack exactly while packing high utility (<b>minimize</b>):</p>
         <p class="eq" style="white-space:normal;font-size:1rem">f = f₁ − f₂, &nbsp; f₁ = |Σw<sub>i</sub> − 50| (+ 50 if overloaded), &nbsp; f₂ = Σu<sub>i</sub></p>
-        <p>Starting from items 1, 3, 6 and 7 (52 kg, utility 9), f = 52 − 9 = 43. A move adds or deletes one item; the changed item is then tabu. Allowing two-item moves (add one and delete another) reaches the optimum much faster.</p>
+        <p>A move flips one item, which then becomes tabu.</p>
       </div>
       <div><div class="items" id="ksItems"></div><div class="capbar" id="ksBar"><i></i><u></u></div><p class="cap" id="ksBarCap"></p></div>
     </div>
@@ -512,7 +495,7 @@ tr.tabu td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 6 · Graph problems</span>
     <h2>Connecting factory units with cables</h2>
-    <p class="prose">Five factory units must all be connected by buried cables along the possible paths shown, at minimum total cost: a minimum spanning tree. A solution is a set of 4 edges that connects every unit. A move removes one edge of the tree and adds another so the result is still a spanning tree. The edge just <b>added</b> becomes tabu: it cannot be removed for the next T = 2 iterations.</p>
+    <p class="prose">Connect five factory units at minimum cable cost (a minimum spanning tree). A move swaps one tree edge for another; the edge just <b>added</b> is tabu to remove for T = 2 iterations. Press Step to follow each swap.</p>
     <div class="bench">
       <div class="bench-head"><h4>Edge-swap tabu search</h4><span class="eyebrow">Minimize cable cost</span></div>
       <div class="bench-body">
@@ -530,9 +513,9 @@ tr.tabu td{color:var(--muted)}
     <h2>The quadratic assignment problem</h2>
     <div class="two">
       <div class="prose">
-        <p>Place n objects (facilities) on n sites. Objects i and j exchange a flow f<sub>ij</sub>, and sites r and s are a distance d<sub>rs</sub> apart. With p<sub>i</sub> the object on site i, minimize</p>
+        <p>Place n objects on n sites to minimize total flow × distance (the NUG5 instance; matrices at right):</p>
         <p class="eq" style="white-space:normal;font-size:1rem">cost(p) = Σ<sub>i</sub> Σ<sub>j</sub> f<sub>p<sub>i</sub>p<sub>j</sub></sub> d<sub>ij</sub></p>
-        <p>The instance is NUG5 from the literature. Starting from p = (2, 4, 1, 5, 3), meaning object 2 on site 1, object 4 on site 2, and so on, the cost is 72. A move exchanges the objects on two sites. After a move, putting either object back on the site it just left is tabu for t = 6 iterations; the move is forbidden only if it would put <b>both</b> objects back.</p>
+        <p>A move exchanges two sites’ objects; returning an object to a site it just left is tabu for a while. Step and watch the tabu matrix.</p>
       </div>
       <div class="opgrid2" style="gap:.6rem"><div class="tbl-wrap"><table class="qmat" id="qpF"></table></div><div class="tbl-wrap"><table class="qmat" id="qpD"></table></div></div>
     </div>
@@ -541,7 +524,7 @@ tr.tabu td{color:var(--muted)}
       <div class="bench-body">
         <div class="side"><div id="qpCtl"></div><div class="btns"><button id="qpStep" class="primary">Step</button><button id="qpReset">Reset</button></div></div>
         <div class="stage"><div class="assign" id="qpAssign"></div><div class="stats" id="qpStats"></div>
-          <div class="stage-grid"><div><div class="tbl-wrap"><table class="ttab" id="qpTbl"></table></div></div><div><div class="tbl-wrap"><table class="qmat" id="qpT"></table></div><p class="cap">Tabu matrix: rows are objects, columns are sites. A red cell shows how many more iterations the object may not return to that site.</p></div></div>
+          <div class="stage-grid"><div><div class="tbl-wrap"><table class="ttab" id="qpTbl"></table></div></div><div><div class="tbl-wrap"><table class="qmat" id="qpT"></table></div><p class="cap">Tabu matrix: red cells show how long an object may not return to a site.</p></div></div>
           <p class="cap" id="qpNote"></p></div>
       </div>
     </div>
@@ -553,18 +536,9 @@ tr.tabu td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 8 · Section 6.4</span>
     <h2>Continuous functions</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Himmelblau’s function f(x, y) = (x² + y − 11)² + (x + y² − 7)² has four minima of value 0, at (3, 2), (−2.805, 3.131), (−3.779, −3.283) and (3.584, −1.848). Listing 6.2 solves it with the generic solver of the book’s <span class="mono">optalgotools</span> package (100 iterations, tenure 5, 50 neighbors) and reports f = 0.0056 at (3.007, 1.980).</p>
-        <p>In a continuous space the search almost never revisits a point exactly, so here the tabu list stores the last T points and a candidate is tabu if it falls within a <b>tabu radius</b> of any of them. Neighbors are Gaussian steps around the current point. Try Schwefel’s function from appendix C, where local search stalls in the first basin, and Mishra’s Bird function, whose feasible region is a disk.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Function</th><th>Domain</th><th>Global minimum</th></tr></thead>
-        <tbody>
-          <tr><td>Himmelblau (Listing 6.2)</td><td>[−6, 6]²</td><td>0 at four points</td></tr>
-          <tr><td>Mishra’s Bird (Listing 6.2)</td><td>[−10, 0] × [−6.5, 0], (x + 5)² + (y + 5)² &lt; 25</td><td>−106.76 at (−3.130, −1.582)</td></tr>
-          <tr><td>Schwefel (Listing C.4)</td><td>[−500, 500]²</td><td>0 at (420.97, 420.97)</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p>Here a candidate is tabu if it falls within a <b>tabu radius</b> of a recent point. Pick a function (Himmelblau, Mishra’s Bird or Schwefel) and Run.</p>
+      <p class="more">Section 6.4 solves Himmelblau’s function with the book’s <span class="mono">optalgotools</span> solver in Listing 6.2, and Listing C.4 tackles the deceptive Schwefel function.</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>Continuous tabu search lab</h4><span class="eyebrow">Minimize f(x, y)</span></div>
@@ -594,7 +568,10 @@ tr.tabu td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 9 · Section 6.5</span>
     <h2>Routing: the Berlin52 TSP</h2>
-    <p class="prose">Berlin52 has 52 locations in Berlin; the shortest round trip is 7,542. In the book, the tabu search of Google OR-Tools (Listing 6.3, 30 seconds) finds 7,884, and the generic <span class="mono">optalgotools</span> solver finds 7,982.79. Here each move is a 2-opt exchange that reverses a segment of the tour; the two edges it removes become tabu to add back. Compare the swap neighborhood, which exchanges two cities and breaks four edges.</p>
+    <div class="prose">
+      <p>Find the shortest tour through 52 Berlin locations (optimum 7,542). A 2-opt move reverses a segment; removed edges become tabu. Run it, then try the swap neighborhood.</p>
+      <p class="more">Section 6.5 solves Berlin52 with Google OR-Tools in Listing 6.3 and with the generic solver, and Listing 6.4 routes a delivery semi-truck.</p>
+    </div>
     <div class="bench">
       <div class="bench-head"><h4>Berlin52 tabu search lab</h4><span class="eyebrow">Minimize tour length</span></div>
       <div class="bench-body">
@@ -602,13 +579,13 @@ tr.tabu td{color:var(--muted)}
         <div class="stage">
           <div class="btns"><button id="tsRun" class="primary">Run</button><button id="tsStep">Step</button><button id="tsReset">New start</button></div>
           <canvas id="tsCv" class="cv-map" style="aspect-ratio:16/10" aria-label="Berlin52 tour"></canvas>
-          <div class="stage-grid"><div><div class="stats" id="tsStats"></div></div><div><canvas id="tsChart" class="cv-chart" aria-label="Tour length per iteration"></canvas><p class="cap">Current tour (faint) and best tour per iteration. Dashed lines: the optimum, OR-Tools and optalgotools results.</p></div></div>
+          <div class="stage-grid"><div><div class="stats" id="tsStats"></div></div><div><canvas id="tsChart" class="cv-chart" aria-label="Tour length per iteration"></canvas><p class="cap">Current (faint) and best tour length per iteration.</p></div></div>
         </div>
       </div>
       <div class="presets" id="tsPresets"></div>
     </div>
     <h3 id="tenure-exp">Effect of the tabu tenure</h3>
-    <p class="prose">Run 300 iterations of 2-opt tabu search from four random tours for each tenure and compare the best tours found. Short tenures let the search slip back into the same local optimum (cycling); very long ones forbid so many edges that it cannot move toward better tours (stagnation).</p>
+    <p class="prose">Run 2-opt tabu search four times per tenure and compare the best tours. Look for cycling at short tenures and stagnation at long ones.</p>
     <div class="bench">
       <div class="bench-head"><h4>Tenure experiment</h4><span class="eyebrow">Berlin52 · 4 runs per tenure</span></div>
       <div class="stage"><div class="btns"><button id="teRun" class="primary">Run the experiment</button><span class="cap" id="teProg"></span></div>
@@ -630,12 +607,12 @@ tr.tabu td{color:var(--muted)}
     <h2>Assembly line balancing</h2>
     <div class="two">
       <div class="prose">
-        <p>An assembly line moves a product through a sequence of workstations. The <b>simple assembly line balancing problem</b> (SALBP) assigns tasks with given times to stations so that no station’s workload exceeds the <b>cycle time</b> CT and every task follows its predecessors. SALBP-1 minimizes the number of stations NS for a given CT; SALBP-2 minimizes CT for a given NS. Adding space constraints gives the TSALBP family (Table 6.1).</p>
-        <p>The balance between stations is measured by the <b>smoothing index</b> (equation 6.1):</p>
+        <p>Assign tasks to workstations so no station exceeds the <b>cycle time</b> CT and precedence is respected. SALBP-1 minimizes the number of stations; balance is measured by the <b>smoothing index</b>:</p>
         <p class="eq" style="white-space:normal;font-size:1rem">SI = √( Σ<sub>i=1..NS</sub> (WL<sub>max</sub> − WL<sub>i</sub>)² / NS )</p>
-        <p>A solution is a task sequence; tasks fill stations in order, and a new station opens when the next task would exceed CT. A move swaps two tasks, keeping only precedence-feasible sequences. The book’s example has 6 tasks and CT = 4 minutes.</p>
+        <p>A solution is a task sequence; a move swaps two tasks. Step through the 6-task example below.</p>
+        <p class="more">Section 6.6 defines the SALBP and TSALBP variants (Table 6.1) and works this example by hand with Listing 6.5.</p>
       </div>
-      <div><canvas id="abPrec" class="cv-chart" style="height:180px" aria-label="Precedence diagram"></canvas><p class="cap">Precedence diagram (Figure 6.22). Task 4 must finish before tasks 5 and 6; task 5 also needs task 3.</p></div>
+      <div><canvas id="abPrec" class="cv-chart" style="height:180px" aria-label="Precedence diagram"></canvas><p class="cap">Precedence diagram (Figure 6.22).</p></div>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>Hand iterations, automated</h4><span class="eyebrow">6 tasks · CT = 4 · tenure 3</span></div>
@@ -645,7 +622,7 @@ tr.tabu td{color:var(--muted)}
       </div>
     </div>
     <h3 id="albp-lab">Benchmark lab</h3>
-    <p class="prose">The SALBP benchmark sets in appendix B of the book’s repository. Tabu search here minimizes the number of stations first and the smoothing index second. Listing 6.6 runs the generic solver on MANSOOR (cycle time 48) and reports 5 stations with SI = 12.30; the best known is 4 stations.</p>
+    <p class="prose">Pick a SALBP benchmark and Run: tabu search minimizes stations first, then the smoothing index.</p>
     <div class="bench">
       <div class="bench-head"><h4>SALBP-1 benchmarks</h4><span class="eyebrow">Minimize stations, then SI</span></div>
       <div class="bench-body">
@@ -671,9 +648,9 @@ tr.tabu td{color:var(--muted)}
     <span class="eyebrow">Part 11 · Section 6.5 and appendix C</span>
     <h2>More applications</h2>
     <div class="apps">
-      <div class="card"><h5>Delivery semi-truck routing</h5><p>Visit 18 Walmart Supercenters in the Greater Toronto Area, starting from Ajax, Ontario. Tabu search finds a 223.53 km route, slightly shorter than simulated annealing’s 227.17 km.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.4_Walmart.ipynb">Listing 6.4</a></p></div>
-      <div class="card"><h5>Schwefel function</h5><p>A deceptive multimodal function whose global minimum lies far from the next-best basins.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.4_Schwefel_TS.ipynb">Listing C.4</a></p></div>
-      <div class="card"><h5>Composite laminate design</h5><p>Order seven sheets of a laminate for maximum strength, the problem behind the tabu structure demo in Part 3.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.5_Laminate_TS.ipynb">Listing C.5</a></p></div>
+      <div class="card"><h5>Delivery semi-truck routing</h5><p>Route a truck through 18 stores in the Greater Toronto Area.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.4_Walmart.ipynb">Listing 6.4</a></p></div>
+      <div class="card"><h5>Schwefel function</h5><p>A deceptive multimodal test function.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.4_Schwefel_TS.ipynb">Listing C.4</a></p></div>
+      <div class="card"><h5>Composite laminate design</h5><p>The problem behind the Part 3 demo.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.5_Laminate_TS.ipynb">Listing C.5</a></p></div>
       <div class="card"><h5>Assembly line balancing</h5><p>Another SALBP solved with tabu search.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.6_SALBP_TS.ipynb">Listing C.6</a></p></div>
     </div>
   </div>
@@ -684,7 +661,7 @@ tr.tabu td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 12 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s notebooks directly in Colab, or the TS Lab companion notebook, which holds the from-scratch implementations below (NumPy and Matplotlib only, both preinstalled in Colab).</p>
+    <p class="prose">Open the book’s notebooks in Colab, or the companion notebook with the from-scratch code below.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/TS_Lab_Companion.ipynb"><em>All examples</em><b>TS Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -1047,7 +1024,7 @@ seq = list(range(<span class="nm">1</span>, <span class="nm">12</span>))
 best = tabu_search(seq, tenure=<span class="nm">4</span>, max_iter=<span class="nm">60</span>, times=T, pred=P, ct=<span class="nm">48</span>, verbose=<span class="kw">False</span>)
 print(<span class="st">"MANSOOR:"</span>, best, <span class="st">"loads:"</span>, stations(best, T, <span class="nm">48</span>), <span class="st">"SI ="</span>, round(smoothing_index(stations(best, T, <span class="nm">48</span>)), <span class="nm">3</span>))</pre>
     </div>
-    <p class="cap">To run: open the companion notebook in Colab and press Shift+Enter in each cell, or paste a tab’s code into any notebook.</p>
+    <p class="cap">Open the companion notebook in Colab, or paste a tab’s code into any notebook.</p>
   </div>
 </section>
 
@@ -1057,16 +1034,36 @@ print(<span class="st">"MANSOOR:"</span>, best, <span class="st">"loads:"</span>
     <span class="eyebrow">Part 13 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Local search + memory</h5><p>Local search improves a solution by local changes and stops at local optima. Tabu search keeps moving to the best admissible neighbor, even uphill.</p></div>
-      <div class="card"><h5>Tabu list and tenure</h5><p>The tabu list holds tabu-active moves for a number of iterations, the tenure. Too short risks cycling; too long risks stagnation.</p></div>
-      <div class="card"><h5>Aspiration</h5><p>Aspiration criteria lift the tabu status of a move that would beat the best solution found so far.</p></div>
-      <div class="card"><h5>Balance</h5><p>Recency memory intensifies around good solutions; frequency memory diversifies toward unexplored regions.</p></div>
+      <div class="card"><h5>Local search + memory</h5><p>Tabu search moves to the best admissible neighbor, even uphill.</p></div>
+      <div class="card"><h5>Tabu list and tenure</h5><p>Too short a tenure risks cycling; too long risks stagnation.</p></div>
+      <div class="card"><h5>Aspiration</h5><p>A tabu move is allowed if it beats the best solution so far.</p></div>
+      <div class="card"><h5>Balance</h5><p>Recency memory intensifies; frequency memory diversifies.</p></div>
     </div>
     <div class="prose">
       <p class="muted">References: F. Glover, “Tabu search and adaptive memory programming: advances, applications and challenges,” 1997. F. Glover, M. Laguna and R. Martí, “Principles of tabu search.” R. Battiti and G. Tecchiolli, “The reactive tabu search,” 1994. E. Taillard, “Robust taboo search for the quadratic assignment problem,” 1991. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 6.</p>
     </div>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 14 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 6. Pick an answer to check it.</p>
+    <div class="mcq" data-a="2">
+      <p class="mcq-q"><b>Q1.</b> Every neighbor of the current solution is worse, and the only improving move is tabu but would give a solution better than the best found so far. What does tabu search do?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Stops, because it has reached a local optimum</span></button><button type="button" class="mcq-o"><b>B</b><span>Moves to the best non-tabu neighbor, since tabu moves are never allowed</span></button><button type="button" class="mcq-o"><b>C</b><span>Accepts the tabu move, because it satisfies the aspiration criterion</span></button><button type="button" class="mcq-o"><b>D</b><span>Restarts from a random solution to diversify</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>The aspiration criterion lifts the tabu status of a move that would beat the incumbent (best-so-far) solution, so the move is admissible. Tabu search never stops just because neighbors are worse; it would otherwise take the best non-tabu move.</template>
+    </div>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q2.</b> In the tenure experiment on Berlin52, what typically goes wrong when the tabu tenure is very long?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>The search cycles back into the same local optimum</span></button><button type="button" class="mcq-o"><b>B</b><span>So many moves are forbidden that the search stagnates and cannot reach better solutions</span></button><button type="button" class="mcq-o"><b>C</b><span>The search reverts to pure local search and stops at the first valley</span></button><button type="button" class="mcq-o"><b>D</b><span>The aspiration criterion can no longer be applied</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>A long tenure forbids too many moves, causing stagnation (and a larger memory footprint). Cycling is the risk of too short a tenure.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%206" target="_blank" rel="noopener">Chapter 6</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 6 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024). Berlin52 from TSPLIB; SALBP data sets from the book’s repository.</div></footer>
 </div>
 <script>
@@ -1843,5 +1840,15 @@ function drawLoads(cv, seq, P, o = {}) {
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 11 (Supervised and unsupervised learning): machine learning fundamentals of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Intro to ML Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -276,6 +294,7 @@ tr.dim td{color:var(--muted)}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>8</b>Summary</a></li>
+    <li><a href="#quiz"><b>9</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Part V, Machine learning-based methods.</div>
 </aside>
@@ -288,7 +307,7 @@ tr.dim td{color:var(--muted)}
     <div>
       <div class="eyebrow">Interactive companion · Part V · Machine learning-based methods</div>
       <h1>Intro to ML <em>Lab</em></h1>
-      <p class="lede">Machine learning builds an internal model of the world from data instead of explicit rules. Under the hood, learning is itself an optimization problem: search a class of models for the one that minimizes a loss. Part V turns this around too, using learned models to solve optimization problems.</p>
+      <p class="lede">Learning is itself an optimization problem: search a class of models for the one that minimizes a loss. Part V also turns this around, using learned models to solve optimization problems.</p>
       <div class="variants">
         <a class="chip" href="#fitting"><b>argmin</b> Learning as optimization</a>
         <a class="chip" href="#paradigms"><b>?</b> Paradigms</a>
@@ -308,13 +327,8 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Section 11.1</span>
     <h2>A day in the life of AI</h2>
-    <p class="prose">Artificial intelligence creates systems that behave intelligently, often inspired by biological intelligence. Its subfields include situation awareness, knowledge representation, reasoning, machine learning, data analytics, problem solving by search and optimization, and automation. Machine learning (ML) is the subfield that brought AI out of research labs and into everyday products.</p>
-    <div class="cards3">
-      <div class="card"><h5>At home</h5><p>Voice assistants, smart thermostats and smart meters that manage energy use.</p></div>
-      <div class="card"><h5>On the road</h5><p>Navigation with real-time traffic, shared mobility, driver assistance and, soon, self-driving vehicles.</p></div>
-      <div class="card"><h5>At work or school</h5><p>Personalized learning, summarization, translation, text and image generation, and optimization of resources and schedules.</p></div>
-      <div class="card"><h5>Shopping and health</h5><p>Visual and semantic search, recommendations, last-mile delivery, diagnosis support, lab automation and drug discovery.</p></div>
-    </div>
+    <p class="prose">Machine learning (ML) brought AI into everyday products.</p>
+    <p class="more">Section 11.1 of the book follows a day in the life of AI and maps the subfields around ML.</p>
     <div class="flow"><span>AI</span><i>⊃</i><span>Machine learning</span><i>⊃</i><span>Neural networks</span><i>⊃</i><span>Deep learning</span><i>⊃</i><span>Generative AI</span><i>⊃</i><span>Transformers</span><i>⊃</i><span>Large language models</span></div>
   </div>
 </section>
@@ -323,22 +337,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 2 · Section 11.2</span>
     <h2>What is learning?</h2>
-    <div class="two">
-      <div class="prose">
-        <p>“The goal of learning is to create an internal model or abstraction of the external world.” Stanislas Dehaene’s seven definitions of learning (<i>How We Learn</i>) are at the heart of today’s ML algorithms. Learning is:</p>
-        <ul><li>adjusting the parameters of a mental model;</li><li>exploring a combinatorial explosion;</li><li>minimizing errors;</li><li>exploring the space of possibilities;</li><li>optimizing a reward function;</li><li>restricting the search space;</li><li>projecting a priori hypotheses.</li></ul>
-        <p>Tom Mitchell’s definition: a program <b>learns</b> from experience <b>E</b> with respect to tasks <b>T</b> and performance measure <b>P</b> if its performance at T, measured by P, improves with E. For a spam filter, T is labeling email, P the fraction labeled correctly, and E a set of emails labeled by people.</p>
-        <p><b>The unreasonable effectiveness of data:</b> simple models trained on a lot of data often beat elaborate models trained on little data. Try it in Part 3.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Tribe</th><th>Representation</th><th>Evaluation</th><th>Optimization</th></tr></thead>
-        <tbody>
-          <tr><td>Symbolists</td><td>Logic, rules, trees</td><td>Accuracy, information gain</td><td>Inverse deduction</td></tr>
-          <tr><td>Connectionists</td><td>Neural networks</td><td>Squared error</td><td>Gradient descent</td></tr>
-          <tr><td>Evolutionaries</td><td>Genetic programs</td><td>Fitness</td><td>Genetic search</td></tr>
-          <tr><td>Bayesians</td><td>Graphical models</td><td>Posterior probability</td><td>Probabilistic inference</td></tr>
-          <tr><td>Analogizers</td><td>Support vectors</td><td>Margin</td><td>Constrained optimization</td></tr>
-        </tbody></table><p class="cap" style="padding:.4rem .6rem">Figure 11.1: Domingos’ five ML schools of thought (<i>The Master Algorithm</i>). Every tribe needs an optimizer.</p></div>
+    <div class="prose">
+      <p>A program <b>learns</b> from experience <b>E</b> on tasks <b>T</b> if its performance <b>P</b> at T improves with E (Tom Mitchell). Every school of ML, in Domingos’ view, needs an optimizer.</p>
+      <p class="more">Section 11.2 of the book covers Dehaene’s seven definitions of learning and Domingos’ five ML tribes (Figure 11.1).</p>
     </div>
   </div>
 </section>
@@ -347,7 +348,7 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 3 · Learning as optimization</span>
     <h2>Fitting a model is minimizing a loss</h2>
-    <p class="prose">A supervised learner looks for a mapping f: X → y. Ideally it would minimize the expected loss over all data, f* = argmin E[L(y, f(X))]; in practice it minimizes the average loss on the training sample, S(f) = (1/n) Σ L(yᵢ, f(xᵢ)), over a <b>model class</b> F (here, polynomials of a given degree) with a <b>search strategy</b> (here, least squares). A model that is too simple underfits; one that is too flexible memorizes the noise and fails on new data. More data tames the flexible model.</p>
+    <p class="prose">Training picks the polynomial of a given degree that minimizes the loss on the sample. Change the degree and sample size and watch training versus test error.</p>
     <div class="bench">
       <div class="bench-head"><h4>Curve fitting playground</h4><span class="eyebrow">True function: sin(2πx) + noise</span></div>
       <div class="bench-body">
@@ -364,19 +365,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 4 · Section 11.2, Figure 11.2</span>
     <h2>Learning paradigms</h2>
-    <div class="two">
-      <div class="prose">
-        <p><b>Supervised learning</b> learns a mapping from labeled examples: <b>classification</b> (discrete classes, c(x) = argmax<sub>c</sub> f(x, c)) or <b>regression</b> (continuous values). <b>Unsupervised learning</b> finds structure in unlabeled data: <b>clustering</b> and <b>dimensionality reduction</b>. <b>Hybrid learning</b> mixes the two: <b>semi-supervised</b> learning labels a few examples and pseudo-labels the rest, while <b>self-supervised</b> learning creates its own tasks from the data. <b>Reinforcement learning</b> learns from rewards through trial and error.</p>
-        <p>The same two-class data, three ways: with all labels, with no labels, and with only a few labels.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Paradigm</th><th>Tasks</th><th>Examples</th></tr></thead>
-        <tbody>
-          <tr><td>Supervised</td><td>Classification, regression</td><td>Logistic regression, SVM, random forest, neural networks</td></tr>
-          <tr><td>Unsupervised</td><td>Clustering, dimensionality reduction</td><td>K-means, SOM, DBSCAN, CLARA, PCA, t-SNE, UMAP</td></tr>
-          <tr><td>Hybrid</td><td>Semi- and self-supervised</td><td>Co-training, label propagation, pseudo-labeling, contrastive learning</td></tr>
-          <tr><td>Reinforcement</td><td>Sequential decisions</td><td>Q-learning, SARSA, DQN, A2C, PPO, MCTS, world models</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p>The paradigms differ in the feedback they get: labels (<b>supervised</b>), none (<b>unsupervised</b>), a few (<b>semi-supervised</b>), or rewards (<b>reinforcement</b>). Pick a paradigm and press Learn.</p>
+      <p class="more">Figure 11.2 in Section 11.2 of the book lays out the full taxonomy, including self-supervised learning and the tasks each paradigm covers.</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>One dataset, three paradigms</h4><span class="eyebrow">Ringed points are labeled</span></div>
@@ -393,12 +384,8 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 5 · The ML procedure</span>
     <h2>When and how to use ML</h2>
     <div class="flow"><span>1. Collect data</span><i>→</i><span>2. Prepare data</span><i>→</i><span>3. Choose a model</span><i>→</i><span>4. Train</span><i>→</i><span>5. Evaluate</span><i>→</i><span>6. Tune parameters</span><i>→</i><span>7. Predict</span></div>
-    <div class="cards3">
-      <div class="card"><h5>A pattern exists</h5><p>If the output is random with respect to the input, there is nothing to learn.</p></div>
-      <div class="card"><h5>No tractable model</h5><p>If an exact mathematical model is available and cheap, use it instead.</p></div>
-      <div class="card"><h5>Data is available</h5><p>With little data, consider augmentation, few-shot, active or transfer learning, or knowledge distillation.</p></div>
-      <div class="card"><h5>Deep learning</h5><p>Many-layered networks learn features from raw data, reducing hand-crafted feature engineering; geometric deep learning extends this to graphs.</p></div>
-    </div>
+    <p class="prose">Use ML when a pattern exists, no cheap exact model is available, and you have data.</p>
+    <p class="more">Chapter 11 of the book details each step and what to do when data is scarce.</p>
   </div>
 </section>
 
@@ -406,27 +393,13 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 6 · Section 11.5</span>
     <h2>Machine learning for optimization problems</h2>
-    <div class="two">
-      <div class="prose">
-        <p><b>Neural combinatorial optimization</b> applies ML (supervised sequence-to-sequence models, unsupervised models and reinforcement learning) to combinatorial optimization (CO). Bengio and co-authors describe three ways to combine them (Figure 11.14):</p>
-        <ul>
-          <li><b>End-to-end learning:</b> the model outputs solutions directly, as pointer networks do for the TSP (see the Supervised Learning Lab).</li>
-          <li><b>Learning to configure algorithms:</b> the model sets an algorithm’s parameters: a step size, SA’s temperature schedule, GA mutation rates, PSO coefficients, ACO evaporation.</li>
-          <li><b>ML alongside optimization:</b> the algorithm repeatedly asks the same model for decisions, as in deep-learning-assisted tree search.</li>
-        </ul>
-        <p>Surveys apply supervised and reinforcement learning to knapsack, maximal clique and independent set, maximum coverage, MaxCut, minimum vertex cover, SAT, the TSP and vehicle routing. Large language models can even act as optimizers (OPRO), and the NeurIPS ML4CO competition targets the control tasks inside solvers.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th></th><th>Heuristics</th><th>ML-based methods</th></tr></thead>
-        <tbody>
-          <tr><td>Knowledge</td><td>Hand-designed rules</td><td>Learned from data or experience</td></tr>
-          <tr><td>New instances</td><td>Solved from scratch</td><td>Training cost amortized over many instances</td></tr>
-          <tr><td>Speed at use time</td><td>Varies</td><td>Fast inference after training</td></tr>
-          <tr><td>Guarantees</td><td>Rarely</td><td>Rarely; quality depends on training data</td></tr>
-        </tbody></table><p class="cap" style="padding:.4rem .6rem">A 14-city TSP has (14 − 1)! = 6,227,020,800 directed tours: too many to enumerate quickly, which is why heuristics and learned policies matter.</p></div>
+    <div class="prose">
+      <p>ML can solve combinatorial problems in three ways (Figure 11.14): <b>end to end</b> (the model outputs solutions), <b>learning to configure</b> an algorithm’s parameters, or <b>alongside</b> an optimizer that keeps consulting the model.</p>
+      <p class="more">Section 11.5 of the book surveys neural combinatorial optimization, from knapsack to vehicle routing.</p>
     </div>
     <h3 id="configure">Learning to configure: a bandit picks the step size</h3>
-    <p class="prose">A random search perturbs its current point with Gaussian noise of some step size and keeps the result if it is better. Which step size? Small steps refine but crawl; large steps jump between valleys but rarely refine. Here an upper-confidence-bound (UCB) bandit (Chapter 12) learns online which of four step sizes has been paying off, using each improvement as its reward, and the search runs on the Rastrigin function in 2D.</p>
+    <p class="prose">A UCB bandit learns online which of four step sizes helps a random search on Rastrigin most. Press Run, or compare 30 runs.</p>
+    <p class="more">Chapter 12 of the book develops multi-armed bandits and UCB (Listing 12.1), the learner that configures this search.</p>
     <div class="bench">
       <div class="bench-head"><h4>Configure a search while it runs</h4><span class="eyebrow">Minimize Rastrigin: brighter is lower</span></div>
       <div class="bench-body">
@@ -435,7 +408,8 @@ tr.dim td{color:var(--muted)}
       </div>
     </div>
     <h3 id="construct">Construct or improve: two ways to build a tour</h3>
-    <p class="prose">Learned routing methods either <b>construct</b> a solution step by step (learning to construct, like a pointer network choosing the next city) or <b>improve</b> a complete solution with local moves (learning to improve, like a learned 2-opt). Here are their classic, hand-designed counterparts: nearest-neighbor construction and 2-opt improvement.</p>
+    <p class="prose">Learned routing methods either <b>construct</b> a tour or <b>improve</b> one. Click Construct (nearest neighbor), then Improve (2-opt).</p>
+    <p class="more">Listing 11.4 in the book solves the TSP with a pretrained graph neural network, the learned counterpart of these hand-designed heuristics.</p>
     <div class="bench">
       <div class="bench-head"><h4>Nearest neighbor, then 2-opt</h4></div>
       <div class="bench-body">
@@ -450,7 +424,7 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 7 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s Part V notebooks in Colab, or the Intro to ML Lab companion notebook with the from-scratch implementations below (Python and NumPy only).</p>
+    <p class="prose">Open the book’s notebooks or the companion notebook with the from-scratch code below in Colab.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/IntroML_Lab_Companion.ipynb"><em>All examples</em><b>Intro to ML Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -640,14 +614,34 @@ print(f<span class="st">"random tour {L(rand):.3f} -&gt; 2-opt {L(two_opt(rand))
     <span class="eyebrow">Part 8 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Learning is optimization</h5><p>A model class, a loss and a search strategy: training finds the model that minimizes the loss on data.</p></div>
-      <div class="card"><h5>Generalization</h5><p>Too simple underfits, too flexible overfits; more data helps flexible models generalize.</p></div>
-      <div class="card"><h5>Paradigms</h5><p>Supervised, unsupervised, hybrid and reinforcement learning differ in the feedback they get.</p></div>
-      <div class="card"><h5>ML for optimization</h5><p>End-to-end solvers, learned algorithm configuration, and models consulted inside optimizers.</p></div>
+      <div class="card"><h5>Learning is optimization</h5><p>Training searches a model class for the lowest loss.</p></div>
+      <div class="card"><h5>Generalization</h5><p>Too simple underfits, too flexible overfits.</p></div>
+      <div class="card"><h5>Paradigms</h5><p>They differ in the feedback they get.</p></div>
+      <div class="card"><h5>ML for optimization</h5><p>End to end, configuring, or alongside an optimizer.</p></div>
     </div>
     <p class="muted prose">References: S. Dehaene, <i>How We Learn</i>, 2020. T. Mitchell, <i>Machine Learning</i>, 1997. P. Domingos, <i>The Master Algorithm</i>, 2015. A. Halevy, P. Norvig and F. Pereira, “The unreasonable effectiveness of data,” 2009. Y. Bengio, A. Lodi and A. Prouvost, “Machine learning for combinatorial optimization: a methodological tour d’horizon,” 2021. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 11.</p>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 9 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 11. Pick an answer to check it.</p>
+    <div class="mcq" data-a="2">
+      <p class="mcq-q"><b>Q1.</b> A degree-12 polynomial fitted to 15 noisy points reaches almost zero training error but a large test error. What is going on?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>The model underfits: it is too simple for the data</span></button><button type="button" class="mcq-o"><b>B</b><span>The least-squares search failed to find the minimum</span></button><button type="button" class="mcq-o"><b>C</b><span>The model overfits: it memorizes the noise, and more data would help</span></button><button type="button" class="mcq-o"><b>D</b><span>The loss function should be the test error instead</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>A very flexible model can pass through every training point, noise included, so it generalizes poorly. Underfitting would show high training error too, and more data tames a flexible model.</template>
+    </div>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q2.</b> Using a UCB bandit to choose the step size of a random search while the search runs is an example of which way of combining ML with optimization?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>End-to-end learning</span></button><button type="button" class="mcq-o"><b>B</b><span>Learning to configure algorithms</span></button><button type="button" class="mcq-o"><b>C</b><span>Unsupervised clustering of solutions</span></button><button type="button" class="mcq-o"><b>D</b><span>Amortized optimization with a pretrained network</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>The learner does not output solutions itself; it sets a parameter of an existing algorithm (the step size) based on how well each choice has paid off.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2011" target="_blank" rel="noopener">Chapter 11</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Part V of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
 </div>
 <script>
@@ -1056,5 +1050,15 @@ codeTabs({ f: "Least-squares polynomial fits, overfitting, more data, and a line
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 11 (Supervised and unsupervised learning): supervised and graph machine learning of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Supervised Learning Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -282,6 +300,7 @@ tr.dim td{color:var(--muted)}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>9</b>Summary</a></li>
+    <li><a href="#quiz"><b>10</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 11, Supervised and unsupervised learning.</div>
 </aside>
@@ -294,7 +313,7 @@ tr.dim td{color:var(--muted)}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 11 · Supervised learning</div>
       <h1>Supervised Learning <em>Lab</em></h1>
-      <p class="lede">Supervised learning imitates labeled examples. With graphs, attention and pointers, the same idea can learn to classify nodes in a network, point to the corners of a convex hull, or score which roads belong in a traveling salesman’s tour.</p>
+      <p class="lede">Supervised learning imitates labeled examples. With graphs, attention and pointers, it can classify nodes, trace a convex hull, or score the roads of a traveling salesman’s tour.</p>
       <div class="variants">
         <a class="chip" href="#nn"><b>∇</b> Neural networks</a>
         <a class="chip" href="#gcn"><b>Â H W</b> GCN</a>
@@ -315,18 +334,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Section 11.2</span>
     <h2>Supervised learning</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Supervised learning approximates a mapping between data and known labels from N training examples (x<sub>1</sub>, …, x<sub>m</sub>, c). <b>Classification</b> predicts discrete classes with a scoring function f: X × C → ℝ and c(x) = argmax<sub>c</sub> f(x, c); <b>regression</b> predicts continuous values. A self-driving car learns to recognize traffic signs from labeled images. Common architectures: feedforward networks (MLPs), convolutional (CNN), recurrent (RNN, LSTM) and sequence-to-sequence models.</p>
-        <p><b>Deep learning</b> stacks many layers to learn features at several levels of abstraction directly from raw data, and <b>geometric deep learning</b> extends it to non-Euclidean data such as graphs, point clouds and manifolds.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Predictive maintenance</th><th>Task</th><th>Methods</th></tr></thead>
-        <tbody>
-          <tr><td>Will the machine fail within a week? (1 or 0)</td><td>Classification</td><td>Naive Bayes, kNN, logistic regression, random forest, neural networks</td></tr>
-          <tr><td>Remaining useful life</td><td>Regression</td><td>Linear regression, XGBoost, neural networks</td></tr>
-          <tr><td>Readings over the next 24 hours</td><td>Forecasting</td><td>ARIMA, Prophet, neural networks</td></tr>
-        </tbody></table><p class="cap" style="padding:.4rem .6rem">Inputs: vibration, temperature, pressure, RPM, voltage and current readings.</p></div>
+    <div class="prose">
+      <p>Supervised learning maps data to known labels: <b>classification</b> predicts classes, <b>regression</b> continuous values.</p>
+      <p class="more">Section 11.2 of the book frames one predictive-maintenance dataset as classification, regression and forecasting, and introduces geometric deep learning.</p>
     </div>
   </div>
 </section>
@@ -335,7 +345,7 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 2 · Neural networks</span>
     <h2>Training a neural network</h2>
-    <p class="prose">A multilayer perceptron transforms its input through layers of weighted sums and nonlinear activations. <b>Training</b> is optimization: backpropagation computes the gradient of the loss (here, cross-entropy) with respect to every weight, and a gradient method (here, Adam) moves the weights downhill. ReLU, max(0, z), is the usual activation; LeakyReLU keeps a small slope for z &lt; 0 so neurons never “die,” and GAT uses it in its attention scores. Points are split 75/25 into training and test sets.</p>
+    <p class="prose"><b>Training</b> is optimization: backpropagation computes the gradient of the loss and Adam moves the weights downhill. Press Train and watch the decision boundary and loss curve.</p>
     <div class="bench">
       <div class="bench-head"><h4>Neural network playground</h4></div>
       <div class="bench-body">
@@ -352,8 +362,8 @@ tr.dim td{color:var(--muted)}
     <h2>Machine learning with graphs</h2>
     <div class="two">
       <div class="prose">
-        <p>Graphs capture relationships: social networks, road networks, the web, knowledge graphs, molecules. Tabular data can be turned into a graph by choosing what the nodes and edges are. Listing 11.1 links 10 soccer players to their clubs (“plays_for”) and nationalities (“belongs_to”), giving 30 nodes and 20 edges.</p>
-        <p>Graph data is <b>non-Euclidean</b>: closeness comes from connections, not coordinates; there is no fixed grid, no shift-invariance, and no node order (<b>permutation invariance</b>). <b>Graph embedding</b> maps each node to a low-dimensional vector so that nodes similar in the graph are close in the embedding space. <b>Transductive</b> methods (DeepWalk, node2vec, matrix factorization) embed only the nodes seen in training; <b>inductive</b> ones (GNN, GCN) learn a function that also embeds new nodes.</p>
+        <p>Graphs capture relationships, and tabular data becomes a graph once you choose the nodes and edges. The panel shows Listing 11.1: soccer players linked to their clubs and nationalities.</p>
+        <p class="more">Section 11.3 of the book explains why graph data is non-Euclidean and compares graph-embedding methods.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Listing 11.1 as a graph</h4></div><div class="stage"><canvas id="fiCv" class="cv-sq" aria-label="Players, clubs and nationalities"></canvas><div class="legend-row"><span><i style="background:var(--accent)"></i>player</span><span><i style="background:var(--bad)"></i>club</span><span><i style="background:var(--muted)"></i>nationality</span></div></div></div>
     </div>
@@ -361,16 +371,16 @@ tr.dim td{color:var(--muted)}
     <h3 id="gcn">Message passing and graph convolution</h3>
     <div class="two">
       <div class="prose">
-        <p>In a <b>graph convolutional network</b>, each layer lets every node gather messages from its neighbors, aggregate them with a permutation-invariant function (sum or mean), and update its own state (Figures 11.6 and 11.7). In matrix form, H<sup>(t+1)</sup> = σ(Â H<sup>(t)</sup> W<sup>(t)</sup>), with Â = D<sup>−1/2</sup>(A + I)D<sup>−1/2</sup>: A is the adjacency matrix, I adds self-loops so a node keeps its own features, and the degree matrix D normalizes so features do not explode. After k layers, a node’s embedding encodes its <b>k-hop neighborhood</b>.</p>
-        <p>Google DeepMind used this idea to predict arrival times: road segments become nodes, so traffic on one segment informs its neighbors, improving real-time ETA accuracy by up to 50% in several cities.</p>
-        <p>Click a node of the road graph to put a signal there, then apply layers to watch it spread hop by hop.</p>
+        <p>In a <b>graph convolutional network</b>, each layer lets every node aggregate messages from its neighbors, H<sup>(t+1)</sup> = σ(Â H<sup>(t)</sup> W<sup>(t)</sup>). Click a node to put a signal there, then apply layers to watch it spread hop by hop.</p>
+        <p class="more">Figures 11.6 and 11.7 in the book build the normalized matrix Â step by step.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Signal spreading through Â</h4></div>
         <div class="stage"><canvas id="mpCv" class="cv-sq" style="aspect-ratio:16/10;cursor:pointer" aria-label="Six-node graph"></canvas><div class="btns"><button id="mpStep" class="primary small">Apply one layer</button><button id="mpReset" class="small">Reset</button></div><div class="mats" id="mpMats"></div><p class="cap" id="mpNote"></p></div></div>
     </div>
 
     <h3 id="karate">Node classification with a GCN</h3>
-    <p class="prose">Listing 11.2 trains a two-layer GCN (16 hidden units, dropout, Adam with a learning rate of 0.01, 200 epochs) on the Cora citation network: 2,708 papers in 7 classes, 5,429 links and a 1,433-word vocabulary. The same recipe, trained here from scratch in your browser, runs on Zachary’s karate club: 34 members and 78 friendships. The club split in two, and the GCN learns everyone’s side from just 4 labeled members, because friends tend to side together.</p>
+    <p class="prose">A two-layer GCN learns which side of a split karate club each member joined from just 4 labeled members. Press Train.</p>
+    <p class="more">Listing 11.2 in the book applies the same recipe to the Cora citation network, with the full training setup.</p>
     <div class="bench">
       <div class="bench-head"><h4>Semi-supervised node classification</h4><span class="eyebrow">Squares: the 4 labeled members</span></div>
       <div class="bench-body">
@@ -387,8 +397,8 @@ tr.dim td{color:var(--muted)}
     <h2>Attention</h2>
     <div class="two">
       <div class="prose">
-        <p>A GCN gives every neighbor the same learned weight. <b>Attention</b> lets a model decide how much each input matters. A <b>graph attention network</b> (GAT) scores each neighbor u of node v, e<sub>vu</sub> = a(W h<sub>v</sub>, W h<sub>u</sub>) (equation 11.1), and normalizes the scores with a softmax, α<sub>vu</sub> = exp(e<sub>vu</sub>) / Σ<sub>k∈N(v)</sub> exp(e<sub>vk</sub>) (equation 11.2). With <b>multi-head</b> attention, several independent heads attend in different ways and their results are averaged (Figure 11.10).</p>
-        <p>The Transformer (“Attention is all you need”) applies the same idea to sequences: a query q is compared with every key kᵢ, the softmax of the scores weights the values vᵢ, and the output is Σ αᵢ vᵢ. This fixes the forgetting problem of reading long sequences word by word.</p>
+        <p><b>Attention</b> lets a model decide how much each input matters: a <b>graph attention network</b> scores each neighbor and normalizes the scores with a softmax. Switch between GAT and GCN or change the heads; below, click a word to see what it attends to.</p>
+        <p class="more">Section 11.3.2 of the book derives equations 11.1 and 11.2, explains multi-head attention (Figure 11.10), and links GAT to the Transformer.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Node 5 attends to nodes 2, 4 and itself (Figure 11.9)</h4></div>
         <div class="stage"><div id="atCtl"></div><canvas id="atCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Attention coefficients"></canvas><p class="cap" id="atNote"></p></div></div>
@@ -404,14 +414,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 5 · Sections 11.3.3 and 11.9</span>
     <h2>Pointer networks and the convex hull</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Sequence-to-sequence models map one sequence to another, but in problems like the TSP, sorting or the convex hull, the outputs are <b>positions in the input</b>, so the output dictionary changes with the input length. A <b>pointer network</b> (Ptr-Net) uses attention as a pointer: at each decoding step, a softmax over the encoder states, aᵢ = softmax(vᵀ tanh(W₁eⱼ + W₂dᵢ)) (equations 11.3 to 11.5), picks the input element to output next, until an end token.</p>
-        <p>The <b>convex hull</b> is the smallest convex polygon enclosing all the points: maximum area with minimum perimeter. Classic algorithms include the Graham scan, the Jarvis march (gift wrapping) and quickhull; they provide the training targets. The book’s transformer-based ConvexNet reaches about 96.5% validation accuracy; on test sets its accuracy and hull overlap vary with the number of points:</p>
-      </div>
-      <div class="tbl-wrap"><table class="ttab">
-        <thead><tr><th class="n">Points</th><th class="n">Accuracy</th><th class="n">Hull overlap</th></tr></thead>
-        <tbody><tr><td class="n">5</td><td class="n">54.8%</td><td class="n">43.7%</td></tr><tr><td class="n">10</td><td class="n">72.1%</td><td class="n">79.1%</td></tr><tr><td class="n">15</td><td class="n">79.0%</td><td class="n">90.1%</td></tr><tr><td class="n">20</td><td class="n">84.8%</td><td class="n">92.7%</td></tr><tr><td class="n">25</td><td class="n">80.6%</td><td class="n">92.3%</td></tr><tr><td class="n">30</td><td class="n">80.3%</td><td class="n">91.6%</td></tr><tr><td class="n">35</td><td class="n">77.8%</td><td class="n">91.9%</td></tr><tr><td class="n">40</td><td class="n">75.8%</td><td class="n">92.1%</td></tr><tr><td class="n">45</td><td class="n">72.4%</td><td class="n">90.4%</td></tr></tbody></table><p class="cap" style="padding:.4rem .6rem">Listing 11.6 test output (trained on 5 to 50 points).</p></div>
+    <div class="prose">
+      <p>When the outputs are <b>positions in the input</b>, a <b>pointer network</b> uses attention as a pointer, picking one input element per step. Click Next pointer to build the <b>convex hull</b> of the points one vertex at a time.</p>
+      <p class="more">Sections 11.3.3 and 11.9 of the book give equations 11.3 to 11.5 and train a ConvexNet (Listing 11.6).</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>Decoding a hull, one pointer at a time</h4><span class="eyebrow">Pointer scores here come from geometry, not a trained network</span></div>
@@ -427,7 +432,8 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 6 · Section 11.7</span>
     <h2>Solving the TSP with supervised graph ML</h2>
-    <p class="prose">Joshi, Laurent and Bresson’s pipeline (Figure 11.16) has five steps. <b>Data:</b> describe the problem as a graph. <b>Embed:</b> compute node and edge representations by message passing. <b>Predict:</b> an MLP gives each edge a probability of belonging to the optimal tour. <b>Search:</b> decode a feasible tour greedily or with beam search (Chapter 4). <b>Train:</b> learn by imitating optimal tours from the Concorde solver (supervised) or by reinforcement. Listing 11.4 runs a pretrained model on TSP20 to TSP50 instances. Here the “predict” step is a stand-in that scores each edge by a softmax over a city’s nearest neighbors, so the search step can be explored on its own.</p>
+    <p class="prose">A graph network scores each edge’s chance of being in the optimal tour; a search step decodes a tour. Here the probabilities are a simple stand-in; set the beam width (1 is greedy) and press Decode.</p>
+    <p class="more">Section 11.7 of the book walks through the five-step pipeline of Figure 11.16, and Listing 11.4 runs a pretrained model on TSP20 to TSP50.</p>
     <div class="bench">
       <div class="bench-head"><h4>Edge probabilities to a tour</h4><span class="eyebrow">Edge darkness: probability</span></div>
       <div class="bench-body">
@@ -444,8 +450,8 @@ tr.dim td{color:var(--muted)}
     <h2>Amortized optimization: learning to optimize</h2>
     <div class="two">
       <div class="prose">
-        <p>When the same kind of optimization problem is solved again and again, a model can learn to map a problem’s parameters directly to its solution. Training is costly, but each new problem then takes one quick forward pass: the cost is <b>amortized</b>. Listing 11.3 does this on the sphere: “c-convex” functions built from 4 components (soft-min of 0.5·d(y, yₖ)² + αₖ) are parameterized by their centers and offsets, and an MLP is trained to output the minimizer, using f(model(p)) itself as the loss.</p>
-        <p>This lab uses the circle instead of the sphere, so each function can be drawn. Train the model on 64 random problems, then test it on problems it has never seen.</p>
+        <p>A model can learn to map a problem’s parameters straight to its solution, so the training cost is <b>amortized</b> over many problems. Train on 64 random problems on the circle, then test on unseen ones.</p>
+        <p class="more">Listing 11.3 in the book does this on the sphere with c-convex functions, using the objective itself as the training loss.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Predicting minimizers on the circle</h4></div>
         <div class="stage"><div id="amCtl"></div><div class="btns"><button id="amTrain" class="primary small">Train</button><button id="amReset" class="small">Reset</button></div><canvas id="amCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Function on the circle"></canvas><div class="stats" id="amStats"></div><p class="cap" id="amNote"></p></div></div>
@@ -457,7 +463,7 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 8 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s Chapter 11 notebooks in Colab, or the Supervised Learning Lab companion notebook with the from-scratch implementations below (Python and NumPy only).</p>
+    <p class="prose">Open the book’s notebooks or the companion notebook with the from-scratch code below in Colab.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/SL_Lab_Companion.ipynb"><em>All examples</em><b>Supervised Learning Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -742,14 +748,34 @@ print(f<span class="st">"   trained problems {gap(train[:16], pred):.3f}, unseen
     <span class="eyebrow">Part 9 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Training is optimization</h5><p>Backpropagation gives the gradient of the loss; a gradient method adjusts the weights.</p></div>
-      <div class="card"><h5>Graphs</h5><p>GCNs pass messages between neighbors; k layers see k hops, and a few labels can classify a whole network.</p></div>
-      <div class="card"><h5>Attention and pointers</h5><p>Attention weighs inputs by relevance; pointer networks use it to output positions in the input, fitting combinatorial problems.</p></div>
-      <div class="card"><h5>Learned optimizers</h5><p>End-to-end pipelines and amortized models trade training time for fast solutions to new instances.</p></div>
+      <div class="card"><h5>Training is optimization</h5><p>Backpropagation plus a gradient method fits the weights.</p></div>
+      <div class="card"><h5>Graphs</h5><p>GCNs pass messages; k layers see k hops.</p></div>
+      <div class="card"><h5>Attention and pointers</h5><p>Pointer networks use attention to output input positions.</p></div>
+      <div class="card"><h5>Learned optimizers</h5><p>Training time buys fast solutions to new instances.</p></div>
     </div>
     <p class="muted prose">References: T. Kipf and M. Welling, “Semi-supervised classification with graph convolutional networks,” 2017. P. Veličković et al., “Graph attention networks,” 2018. A. Vaswani et al., “Attention is all you need,” 2017. O. Vinyals, M. Fortunato and N. Jaitly, “Pointer networks,” 2015. C. K. Joshi, T. Laurent and X. Bresson, “An efficient graph convolutional network technique for the travelling salesman problem,” 2019. B. Amos, “Tutorial on amortized optimization,” 2023. W. Zachary, “An information flow model for conflict and fission in small groups,” 1977. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 11.</p>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 10 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 11. Pick an answer to check it.</p>
+    <div class="mcq" data-a="2">
+      <p class="mcq-q"><b>Q1.</b> After k layers of a graph convolutional network, what information does a node’s embedding encode?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Only the node’s own input features</span></button><button type="button" class="mcq-o"><b>B</b><span>Every node in the graph, whatever the value of k</span></button><button type="button" class="mcq-o"><b>C</b><span>Its k-hop neighborhood</span></button><button type="button" class="mcq-o"><b>D</b><span>Only the labeled nodes of the graph</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Each layer aggregates messages from direct neighbors, so information spreads one hop per layer: after k layers a node has heard from everything within k hops.</template>
+    </div>
+    <div class="mcq" data-a="3">
+      <p class="mcq-q"><b>Q2.</b> Why is a pointer network, rather than a standard sequence-to-sequence model, a natural fit for the convex hull problem?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>It needs no training data</span></button><button type="button" class="mcq-o"><b>B</b><span>It is guaranteed to find the optimal hull</span></button><button type="button" class="mcq-o"><b>C</b><span>It uses convolution over a fixed grid of points</span></button><button type="button" class="mcq-o"><b>D</b><span>Its outputs are positions in the input, so the output dictionary grows with the number of input points</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>A standard seq2seq model has a fixed output vocabulary; a pointer network uses attention over the inputs to pick one of them at each step, so it handles any number of points.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2011" target="_blank" rel="noopener">Chapter 11</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 11 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
 </div>
 <script>
@@ -1255,5 +1281,15 @@ codeTabs({ n: "A multilayer perceptron trained by backpropagation on two moons, 
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

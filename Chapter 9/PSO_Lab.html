@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 9 (Particle swarm optimization) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Particle Swarm Optimization Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -273,6 +291,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>8</b>Summary</a></li>
+    <li><a href="#quiz"><b>9</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 9, Particle swarm optimization.</div>
 </aside>
@@ -285,7 +304,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 9 · Particle swarm optimization</div>
       <h1>Particle Swarm <em>Optimization</em> Lab</h1>
-      <p class="lede">Watch candidate solutions fly through a search space, learn from their own memory, and copy the success of their neighbors. Every simulation below exposes the parameters, so you can change one and see what it does.</p>
+      <p class="lede">Watch candidate solutions fly through a search space, learning from their own memory and from their neighbors. Change any parameter and see what it does.</p>
       <div class="variants">
         <a class="chip" href="#continuous"><b>x ∈ ℝ</b> Continuous</a>
         <a class="chip" href="#binary"><b>x ∈ {0,1}</b> Binary</a>
@@ -296,7 +315,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
     <div>
       <canvas id="heroCv" class="hero-canvas" aria-label="A swarm of particles converging on the minimum of a cost landscape"></canvas>
-      <p class="cap" style="margin-top:.4rem">A live gbest swarm (20 particles) searching the Rastrigin function. Brighter areas cost more; the gold star is the global best.</p>
+      <p class="cap" style="margin-top:.4rem">A live swarm searching the Rastrigin function; the gold star is the global best.</p>
     </div>
   </div>
 </header>
@@ -308,15 +327,8 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>From flocks and schools to a search algorithm</h2>
     <div class="two">
       <div class="prose">
-        <p>Life on this planet is full of cooperation. Bacteria colonies of 10<sup>9</sup> to 10<sup>12</sup> cells adapt to their surroundings, ants build bridges with their bodies, termites build ventilated mounds, honeybees recruit foragers with the waggle dance, and fireflies attract each other with light. These collective behaviors inspired a family of <b>swarm intelligence</b> (SI) algorithms: ant colony optimization, artificial bee colony, the firefly algorithm, and particle swarm optimization.</p>
-        <p>Swarm intelligence systems share three key elements:</p>
-        <ul>
-          <li>A large number of simple processing elements work without supervision.</li>
-          <li>Elements communicate only with their neighborhood.</li>
-          <li>Convergence is expected, but the time to convergence is uncertain, so most research is experimental.</li>
-        </ul>
-        <p><b>Particle swarm optimization</b> is a population-based stochastic optimization technique developed by Russell Eberhart and James Kennedy in 1995, inspired by bird flocking and fish schooling. They chose the word <i>particle</i> for an individual (a candidate solution) because it suits the notions of velocity and acceleration. The guiding principle is simple: <b>emulate the success of neighboring individuals.</b> If one particle discovers a good path to food, the rest of the swarm can follow it at once.</p>
-        <blockquote>“…allows wisdom to emerge rather than trying to impose it…”<footer>J. Kennedy and R. Eberhart, inventors of PSO</footer></blockquote>
+        <p><b>Particle swarm optimization</b> (Kennedy and Eberhart, 1995) treats each candidate solution as a <i>particle</i> in a flock, guided by one principle: <b>emulate the success of neighboring individuals.</b> The panel shows the three local rules that make a flock emerge.</p>
+        <p class="more">Chapter 9 opens with the wider family of swarm intelligence algorithms and the elements every swarm system shares.</p>
       </div>
       <div>
         <div class="bench" id="flocking" style="margin-top:0">
@@ -325,27 +337,16 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
             <canvas id="boidsCv" class="cv-map" style="aspect-ratio:4/3" aria-label="Flocking simulation"></canvas>
             <div id="boidsCtl" class="stats" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))"></div>
             <div class="btns"><button id="boidsRun" class="primary">Pause</button><button id="boidsScatter">Scatter the flock</button></div>
-            <p class="cap"><b>Separation</b> avoids crowding nearby birds, <b>alignment</b> matches their average heading, and <b>coherence</b> moves toward their average position. Set any weight to zero to see the flock lose that behavior. No bird has global information, yet a flock emerges.</p>
+            <p class="cap">Separation, alignment and coherence: set any weight to zero to see the flock lose that behavior.</p>
           </div>
         </div>
       </div>
     </div>
 
     <h3 id="pso-vs-ga">PSO compared with a genetic algorithm</h3>
-    <div class="two">
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Genetic algorithm</th><th>Particle swarm optimization</th></tr></thead>
-        <tbody>
-          <tr><td>Population</td><td>Swarm</td></tr>
-          <tr><td>Individual</td><td>Particle</td></tr>
-          <tr><td>Fitness</td><td>Fitness</td></tr>
-          <tr><td>Survival of the fittest</td><td>Less fit particles do not die</td></tr>
-          <tr><td>Crossover and mutation</td><td>Past experience and relationship to neighbors</td></tr>
-        </tbody></table></div>
-      <div class="prose">
-        <p>PSO is easy to implement and has few parameters to adjust. Nobody is eliminated: a poor particle keeps flying and keeps learning. Its memory (the personal best) and its social link (the neighborhood best) replace the genetic operators.</p>
-        <p class="muted">The book’s theme-park analogy: a group of friends looking for the most thrilling ride. Each keeps walking in the direction they were already going (<b>inertia</b>), remembers the best ride they have tried (<b>cognitive</b> pull), and is drawn toward the ride a friend is raving about (<b>social</b> pull).</p>
-      </div>
+    <div class="prose">
+      <p>Unlike a GA, PSO eliminates nobody: each particle’s memory (pbest) and its social link (nbest) replace crossover and mutation.</p>
+      <p class="more">The book compares PSO with GAs term by term and explains it with a memorable theme-park analogy.</p>
     </div>
   </div>
 </section>
@@ -356,9 +357,11 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <span class="eyebrow">Part 2 · The algorithm</span>
     <h2>Pseudocode, motion equations and steps</h2>
     <div class="two" id="pseudocode">
-      <div>
-        <p class="prose">Each particle <i>i</i> holds its current position <b>x</b><sub>i</sub>, its velocity <b>v</b><sub>i</sub>, its personal best <b>pbest</b><sub>i</sub>, and the best position found in its neighborhood, <b>nbest</b>. When the neighborhood is the whole swarm, nbest is the global best <b>gbest</b>; when it is a few particles, it is the local best <b>lbest</b>.</p>
-        <div class="pseudo"><span class="k">Algorithm</span>: PSO
+      <div class="prose">
+        <p>Each particle keeps its position <b>x</b>, velocity <b>v</b>, personal best <b>pbest</b> and the best position in its neighborhood, <b>nbest</b> (gbest for the whole swarm, lbest for a few neighbors). Every iteration it updates its velocity, then moves.</p>
+        <p class="more">Section 9.2 of the book walks through every step, from initialization to stopping criteria, and explains each term of equations 9.1 to 9.4.</p>
+      </div>
+      <div class="pseudo"><span class="k">Algorithm</span>: PSO
 <span class="k">for each</span> particle
     initialize position x (random) and velocity v (zero or small)
     pbest ← x
@@ -375,23 +378,10 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
         x ← x + v                                         <span class="c"># eq. 9.2</span>
     <span class="k">end</span>
 <span class="k">while</span> maximum iterations or minimum error is not reached</div>
-      </div>
-      <div>
-        <ol class="steps">
-          <li>Initialize the algorithm parameters (N, w, c1, c2).</li>
-          <li>Initialize the swarm with random positions and zero or small velocities.</li>
-          <li>Evaluate the fitness of each particle.</li>
-          <li>Update each particle’s pbest and each neighborhood’s best.</li>
-          <li>Generate random numbers r1 and r2 in [0, 1], per dimension.</li>
-          <li>Update the velocity of each particle (eq. 9.1).</li>
-          <li>Update the position of each particle (eq. 9.2).</li>
-          <li class="loop">Stopping criteria met? If not, start a new iteration at step 3. Typical criteria: maximum iterations, maximum function evaluations, an acceptable solution, or no improvement over several iterations.</li>
-        </ol>
-      </div>
     </div>
 
     <div class="eq">v<sub>k+1</sub><sup>id</sup> = <span class="t-in">w·v<sub>k</sub><sup>id</sup></span> + <span class="t-cog">c<sub>1</sub>r<sub>1</sub>(pbest<sub>k</sub><sup>id</sup> − x<sub>k</sub><sup>id</sup>)</span> + <span class="t-soc">c<sub>2</sub>r<sub>2</sub>(gbest<sub>k</sub><sup>d</sup> − x<sub>k</sub><sup>id</sup>)</span><span class="tag">(9.1)</span><br>x<sub>k+1</sub><sup>id</sup> = x<sub>k</sub><sup>id</sup> + v<sub>k+1</sub><sup>id</sup><span class="tag">(9.2)</span></div>
-    <p class="prose">Here <i>k</i> is the iteration, <i>i</i> the particle and <i>d</i> the dimension. The <span style="color:var(--muted)">inertia</span> term reflects that a bird cannot change direction suddenly. The <span style="color:var(--accent)">cognitive</span> term pulls the particle toward its own experience, and the <span style="color:var(--gold)">social</span> term pulls it toward the swarm’s experience. Drag the points below to build intuition.</p>
+    <p class="prose"><span style="color:var(--muted)">Inertia</span> keeps the particle on course, the <span style="color:var(--accent)">cognitive</span> term pulls it toward its own best, and the <span style="color:var(--gold)">social</span> term toward the swarm’s best. Drag the points below to see how they combine.</p>
 
     <div class="bench" id="velocity">
       <div class="bench-head"><h4>Anatomy of one velocity update</h4><span class="eyebrow">Drag x, pbest, gbest or the tip of v<sub>k</sub></span></div>
@@ -408,16 +398,15 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <div class="tbl-wrap"><table>
       <thead><tr><th>Parameter</th><th>Typical value</th><th>Effect</th></tr></thead>
       <tbody>
-        <tr><td>Inertia weight <i>w</i></td><td class="mono">0.792</td><td>Large <i>w</i> promotes exploration; small <i>w</i> promotes exploitation and gives control to the cognitive and social terms.</td></tr>
-        <tr><td>Acceleration <i>c1</i>, <i>c2</i></td><td class="mono">1.49 (1.4944)</td><td><i>c1</i> = 0 gives the social-only (selfless) model, all attracted to gbest. <i>c2</i> = 0 gives the cognition-only model, independent hill climbers. Usually c1 + c2 ≤ 4.</td></tr>
-        <tr><td>Swarm size <i>N</i></td><td class="mono">20 to 40</td><td>About 10 is enough for many problems; 100 to 200 for difficult ones. Larger swarms explore more at higher cost.</td></tr>
-        <tr><td>Maximum velocity <i>V</i><sub>max</sub></td><td class="mono">10% to 20% of range</td><td>Too low and the swarm crawls; too high and it becomes unstable.</td></tr>
-        <tr><td>Initial velocity</td><td class="mono">0 or small</td><td>Large initial velocities cause large updates that can lead to divergence.</td></tr>
-        <tr><td>Update mode</td><td>Synchronous or asynchronous</td><td>S-PSO moves everyone, then updates the bests. A-PSO updates the bests after each particle, so later particles use the newest information.</td></tr>
+        <tr><td>Inertia weight <i>w</i></td><td class="mono">0.792</td><td>Large <i>w</i> explores; small <i>w</i> exploits.</td></tr>
+        <tr><td>Acceleration <i>c1</i>, <i>c2</i></td><td class="mono">1.49</td><td>Weights of the cognitive and social pulls.</td></tr>
+        <tr><td>Swarm size <i>N</i></td><td class="mono">20 to 40</td><td>Larger swarms explore more at higher cost.</td></tr>
       </tbody></table></div>
+    <p class="more">Chapter 9 explains how to set every parameter, including V<sub>max</sub>, the initial velocity and the update mode.</p>
 
     <h3 id="topologies">Neighborhood topologies</h3>
-    <p class="prose">The social network decides who shares information with whom. It controls how fast good news spreads, and therefore the balance between fast convergence and robust exploration. Pick a topology and click a particle to see its neighborhood.</p>
+    <p class="prose">The topology decides who shares information with whom, and so how fast good news spreads. Pick a topology and click a particle to see its neighborhood.</p>
+    <p class="more">The book explains how each topology trades fast convergence for robust exploration, and which suits unimodal or multimodal problems.</p>
     <div class="bench">
       <div class="bench-head"><h4>Communication structure</h4><span class="eyebrow">Click a node</span></div>
       <div class="bench-body">
@@ -436,10 +425,11 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 3 · Variant 1</span>
     <h2>Continuous PSO</h2>
-    <p class="prose">In the original PSO every coordinate is a real number, and equations 9.1 and 9.2 are applied directly. Start with a hand calculation, then run full swarms on the benchmark functions.</p>
+    <p class="prose">Every coordinate is a real number, so equations 9.1 and 9.2 apply directly.</p>
 
     <h3 id="cont-worked">Use case 1: worked example, maximize f(x) = −x² + 2x + 11</h3>
-    <p class="prose">Range −2 ≤ x ≤ 2, maximum f = 12 at x = 1. Four particles start at x = −1.5, 0.0, 0.5 and 1.25 with zero velocity. The calculation uses w = 1, c1 = c2 = 1, r1 = 0.3294 and r2 = 0.9542 in iteration 1, and r1 = 0.1482 and r2 = 0.4867 in iteration 2. Step through the iterations; later iterations draw seeded random numbers.</p>
+    <p class="prose">Four particles maximize f(x) on −2 ≤ x ≤ 2 (maximum 12 at x = 1). Click <b>Next iteration</b> to apply equations 9.1 and 9.2 by hand; the table shows every update.</p>
+    <p class="more">Chapter 9 works through the first two iterations by hand, with numbers you can check against the panel.</p>
     <div class="bench">
       <div class="bench-head"><h4>Hand calculation, one iteration at a time</h4><span class="eyebrow" id="wkIterLbl">Iteration 0</span></div>
       <div class="bench-body">
@@ -456,7 +446,8 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
 
     <h3>Use case 2: function optimization with a full swarm</h3>
-    <p class="prose">Listing 9.1 minimizes the <b>Michalewicz</b> function, whose minimum for d = 2 is −1.8013 at (2.20, 1.57). The lab also includes the four benchmarks used to compare PSO with a GA (Sphere, Rosenbrock, Ackley, Rastrigin), and the <b>C-V2X trilateration</b> problem (Listing C.13). Thin lines link each particle to the leader it follows, which makes the topology visible.</p>
+    <p class="prose">Pick a benchmark, a topology and the parameters, then press <b>Run</b>. Thin lines link each particle to the leader it follows.</p>
+    <p class="more">Listing 9.1 in the book solves the Michalewicz function from scratch, with pymoo and with PySwarms.</p>
     <div class="bench" id="contLab">
       <div class="bench-head"><h4>Continuous swarm lab</h4><span class="eyebrow">Minimization in two dimensions</span></div>
       <div class="bench-body">
@@ -473,7 +464,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
               <canvas id="cChart" class="cv-chart" aria-label="Best cost per iteration"></canvas>
               <p class="cap" id="cChartCap">Best cost so far (solid) and the swarm mean cost (faint) per iteration. The dashed line is the known optimum.</p>
               <canvas id="cDiv" class="cv-chart" style="height:120px" aria-label="Swarm diversity per iteration"></canvas>
-              <p class="cap">Swarm diversity: mean distance of the particles to their centroid. High means exploring, low means exploiting.</p>
+              <p class="cap">Swarm diversity: high means exploring, low means exploiting.</p>
             </div>
           </div>
           <p class="cap" id="cFnNote"></p>
@@ -485,9 +476,8 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h3 id="trilateration">Use case 3: trilateration of a connected vehicle</h3>
     <div class="two">
       <div class="prose">
-        <p>Three C-V2X macro cells at (1, 1), (2, 2) and (3, 3) measure distances r = 4, 6.5 and 8 to a connected vehicle. With e<sub>i</sub> = r<sub>i</sub> − √((x − f<sub>i</sub>)² + (y − l<sub>i</sub>)²), the vehicle position minimizes Σ e<sub>i</sub>². The hand calculation uses two particles at (1, 0) and (0.5, 1.25), zero velocity, w = 0.79, c1 = c2 = 1 and r1 = r2 = 0.2.</p>
-        <p class="note warn">Some versions of this example list 11.65 and 13.2 for the two particles. Those numbers are Σ e<sub>i</sub> (unsquared). The objective Σ e<sub>i</sub>² gives 46.49 and 59.59. Both rank the particles the same way here, so the iteration is identical. Use the squared form when you code it: the unsquared sum is unbounded below once a point is far from all three towers.</p>
-        <p>Select <b>C-V2X trilateration</b> in the swarm lab above to watch a full swarm locate the vehicle near (−2.36, −2.36).</p>
+        <p>Three C-V2X cells measure their distances to a vehicle; the vehicle position minimizes Σ e<sub>i</sub>², the squared distance errors. The table shows one hand-calculated iteration. Select <b>C-V2X trilateration</b> in the swarm lab above to watch a full swarm locate the vehicle.</p>
+        <p class="more">Listing C.13 in Appendix C solves this localization problem in Python, with the full problem setup.</p>
       </div>
       <div class="tbl-wrap"><table id="triTbl"></table></div>
     </div>
@@ -509,15 +499,14 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>Binary PSO</h2>
     <div class="two">
       <div class="prose">
-        <p>Many real problems are discrete: feature selection, task allocation, scheduling, the TSP. Discrete PSO comes in two flavors: <b>binary PSO</b> discretizes the position vector, and <b>permutation PSO</b> redefines the arithmetic operations.</p>
-        <p>In binary PSO (Kennedy and Eberhart, 1997) each bit is 0 or 1. The velocity stays a real number, but it is read as the <b>propensity of the bit to be 1</b>. The sigmoid squeezes it into a probability, and a random draw decides the new bit.</p>
+        <p>In <b>binary PSO</b> each bit is 0 or 1. The velocity stays real but is read as the <b>propensity of the bit to be 1</b>: the sigmoid turns it into a probability, and a random draw sets the bit.</p>
         <div class="eq" style="font-size:1.02rem">v<sub>k+1</sub><sup>id</sup> = v<sub>k</sub><sup>id</sup> + φ<sub>1</sub>(pbest<sub>k</sub><sup>id</sup> − x<sub>k</sub><sup>id</sup>) + φ<sub>2</sub>(gbest<sub>k</sub><sup>d</sup> − x<sub>k</sub><sup>id</sup>)<span class="tag">(9.8)</span><br>sig(v) = 1 / (1 + e<sup>−v</sup>)<span class="tag">(9.9)</span><br>x<sub>k+1</sub><sup>id</sup> = 1 if sig(v<sub>k+1</sub><sup>id</sup>) &gt; r, otherwise 0<span class="tag">(9.10)</span></div>
-        <p>For example, sig(v) = 0.3 means a 30% chance the bit becomes 1 and a 70% chance it becomes 0. A velocity of 0 means a coin flip. φ<sub>1</sub> and φ<sub>2</sub> are random numbers, often drawn from U(0, 2) so their limits sum to 4.</p>
+        <p class="more">Section 9.3 of the book explains binary PSO in full, including how φ<sub>1</sub>, φ<sub>2</sub> and V<sub>max</sub> shape the search.</p>
       </div>
       <div class="bench" id="bin-worked" style="margin-top:0">
         <div class="bench-head"><h4>Use case 1: the BPSO worked example</h4><span class="eyebrow">Chapter 9 · Section 9.3</span></div>
         <div class="stage">
-          <p class="cap" style="font-size:.85rem">Five 6-bit particles: 101101, 110001, 011110, 100010, 001011. Update bit 3 of particle 4 (bits counted from the left starting at 0, as in the book) with v = 0.23, pbest = 101110, gbest = 101111, φ<sub>1</sub> = 1.5, φ<sub>2</sub> = 1.9 and r = 0.6. Change any value.</p>
+          <p class="cap" style="font-size:.85rem">Update bit 3 of particle 4 (bits counted from the left, starting at 0) with the book’s values. Change any value.</p>
           <div id="bxCtl" class="stats" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))"></div>
           <div><div class="eyebrow" style="margin-bottom:.3rem">Particle (bit to update outlined)</div><div class="bits" id="bxBits"></div></div>
           <canvas id="bxCv" class="cv-chart" style="height:180px" aria-label="Sigmoid function"></canvas>
@@ -529,7 +518,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
 
     <h3 id="bin-lab">Use case 2: a binary swarm selecting projects under a budget</h3>
-    <p class="prose">A practice problem in the spirit of the knapsack: choose a subset of 16 logistics projects to maximize total value (in $M) with a budget of $60M. Each particle is a 16-bit string. Fitness = value − 3 × (cost over budget). The optimum, found by dynamic programming, is <b id="bOptTxt">91</b>. In the grid, each row is a particle and each column a project; the cell shade is sig(v), the probability the bit becomes 1, and a dot marks a bit that is currently 1.</p>
+    <p class="prose">Practice problem: choose among 16 projects to maximize value under a $60M budget (optimum <b id="bOptTxt">91</b>). Rows are particles, columns projects; the shade is sig(v), and a dot marks a 1.</p>
     <div class="bench">
       <div class="bench-head"><h4>Binary swarm lab</h4><span class="eyebrow">Maximization over {0,1}<sup>16</sup></span></div>
       <div class="bench-body">
@@ -566,7 +555,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 5 · Variant 3</span>
     <h2>Permutation-based PSO</h2>
-    <p class="prose">For problems such as the TSP, a position is an ordering of cities, for example [2, 4, 6, 1, 5, 3, 8, 7]. Velocity and direction have no natural meaning here, so M. Clerc (2004) redefined the three operations in equation 9.1. A <b>velocity is a list of swaps</b>; each swap (a, b) exchanges cities a and b in the tour.</p>
+    <p class="prose">For the TSP a position is an ordering of cities, so Clerc (2004) redefined the arithmetic: a <b>velocity is a list of swaps</b>. Edit the fields below to try each operation.</p>
     <div class="opgrid" id="perm-ops">
       <div class="op">
         <h4>Subtraction: position − position = velocity</h4>
@@ -585,16 +574,17 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       </div>
       <div class="op">
         <h4>Multiplication: constant × velocity</h4>
-        <p class="cap">c = 0 empties the list, c &lt; 1 truncates it, c &gt; 1 augments it with swaps taken from the top (Figure 9.8).</p>
+        <p class="cap">c = 0 empties, c &lt; 1 truncates and c &gt; 1 augments the list (Figure 9.8).</p>
         <label class="cap" for="mulV">Velocity (swaps)</label><input type="text" id="mulV" value="(2,6) (3,7)">
         <div class="ctl"><label for="mulC">Constant c<output id="mulCo">1.8</output></label><input type="range" id="mulC" min="0" max="3" step="0.1" value="1.8"></div>
         <div id="mulOut"></div>
       </div>
     </div>
-    <p class="note">With these operators, equation 9.1 reads v ← (w ⊗ v) ⊕ (c1·r1 ⊗ (pbest ⊖ x)) ⊕ (c2·r2 ⊗ (nbest ⊖ x)), where ⊕ joins swap lists. The new length is ⌈c·|v|⌉ for 0 &lt; c &lt; 1 and ⌊c·|v|⌋ for c ≥ 1, which reproduces the book’s figure. V<sub>max</sub> caps the number of swaps applied per move.</p>
+    <p class="more">Section 9.4 of the book builds these operators step by step (Figures 9.8 to 9.10) and shows how equation 9.1 is rewritten with them.</p>
 
     <h3 id="tsp-lab">Use case: TSP of 20 major US cities (Listing 9.2)</h3>
-    <p class="prose">The same 20 cities used with the GA in Chapter 8, starting from New York City, with haversine distances. Listing 9.2 solves it with PySwarms (100 particles, 150 iterations) and reports a route of <b>12,781.9 km</b>. Here, a swap-based permutation PSO runs in your browser. Turn on the 2-opt option to see what a simple local search adds to the swarm.</p>
+    <p class="prose">The 20 US cities from Chapter 8, starting from New York City. A swap-based PSO runs in your browser; turn on 2-opt to see what a simple local search adds.</p>
+    <p class="more">Listing 9.2 in the book solves this TSP with PySwarms and discusses the route it finds.</p>
     <div class="bench">
       <div class="bench-head"><h4>Permutation swarm lab</h4><span class="eyebrow">Minimize tour length (km)</span></div>
       <div class="bench-body">
@@ -605,7 +595,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
           <div class="stage-grid">
             <div><div class="stats" id="tStats"></div><p class="tour" id="tTour"></p></div>
             <div><canvas id="tChart" class="cv-chart" aria-label="Best tour length per iteration"></canvas>
-            <p class="cap">Best tour length so far. Dashed lines: the book’s PySwarms result (12,781.9 km) and the best tour known for this instance (<span id="tRefTxt"></span> km, from multistart 2-opt). Basemap: Natural Earth (public domain), Web Mercator.</p></div>
+            <p class="cap">Best tour length so far. Dashed lines: the book’s PySwarms result and the best known tour (<span id="tRefTxt"></span> km). Basemap: Natural Earth (public domain).</p></div>
           </div>
         </div>
       </div>
@@ -624,46 +614,21 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 6 · Section 9.5</span>
     <h2>Adaptive PSO</h2>
-    <div class="two">
-      <div class="prose">
-        <p>The inertia, cognitive and social components are the main levers for balancing exploration and exploitation. A fixed setting is a compromise. <b>Adaptive PSO</b> changes these parameters while the search runs: it explores broadly at the start and homes in on the best solutions late.</p>
-        <p>The inertia weight is a particle’s tendency to keep its current trajectory. When <i>w</i> &gt; 1, velocities grow over time toward the maximum velocity, if velocity clamping is used, and the swarm diverges. Particles then struggle to turn back toward promising regions. When <i>w</i> &lt; 1, particles gradually slow down until their velocities approach 0, depending on c1 and c2.</p>
-        <p><b>Velocity clamping</b> sets a maximum (and minimum) velocity. If a computed velocity exceeds the limit, it is set to the limit. This keeps particles from wandering far off in the problem space or getting stuck in one region.</p>
-      </div>
-      <div class="zoom" aria-label="Effect of PSO parameters on search behavior (Figure 9.11)">
-        <div class="card ex"><h5>Exploration: zoom out <span>large w · c1 &gt; c2</span></h5><p>Free candidate solutions spread over the feasible search space, looking for new regions. Overdone, c1 &gt; c2 makes individuals wander excessively.</p></div>
-        <div class="card it"><h5>Exploitation: zoom in <span>small w · c2 &gt; c1</span></h5><p>The swarm concentrates on the neighbors of elite solutions and refines them. Overdone, c2 &gt; c1 makes particles rush prematurely toward a local optimum.</p></div>
-        <p class="cap">After Figure 9.11: effect of PSO parameters on search behavior.</p>
-      </div>
+    <div class="prose">
+      <p><b>Adaptive PSO</b> changes w, c1 and c2 while the search runs: it explores broadly at the start and homes in on the best solutions late.</p>
+      <p class="more">Section 9.5 explains why <i>w</i> &gt; 1 makes the swarm diverge, how velocity clamping helps, and how each parameter shifts the search (Figure 9.11).</p>
     </div>
 
     <h3 id="adapt-inertia">Inertia weight schedules (9.5.1)</h3>
-    <div class="two">
-      <div class="prose">
-        <ul>
-          <li><b>Random selection (RS)</b> picks a different inertia weight in each iteration. The mean is 0.75, and the swarm must still converge despite the randomness.</li>
-          <li><b>Linear time varying (LTV)</b> decreases <i>w</i> steadily from <i>w</i><sub>max</sub> to <i>w</i><sub>min</sub>, typically 0.9 and 0.4.</li>
-          <li><b>Nonlinear time varying (NLTV)</b> also starts high (<i>w</i><sub>0</sub> = 0.9), but falls nonlinearly. It reaches the low end of the range early and stays there, which strengthens local search (exploitation).</li>
-        </ul>
-      </div>
-      <div class="eq" style="font-size:1.02rem;white-space:normal">
-        <span class="tag">(9.11)</span>w<sub>t</sub> = 0.5 + rand(·) / 2<br><br>
-        <span class="tag">(9.12)</span>w<sub>t</sub> = (w<sub>max</sub> − w<sub>min</sub>) × (t<sub>max</sub> − t) / t<sub>max</sub> + w<sub>min</sub><br><br>
-        <span class="tag">(9.13)</span>w<sub>t+1</sub> = (w<sub>t</sub> − w<sub>min</sub>) × (t<sub>max</sub> − t) / (t<sub>max</sub> + w<sub>min</sub>) + w<sub>min</sub>
-        <p class="cap" style="margin-top:.6rem">rand(·) is uniform on [0, 1], t is the current iteration and t<sub>max</sub> the number of iterations.</p>
-      </div>
+    <div class="prose">
+      <p>Three schedules for <i>w</i>: <b>RS</b> picks a random weight each iteration, <b>LTV</b> falls linearly from 0.9 to 0.4, and <b>NLTV</b> falls nonlinearly and reaches the low end early.</p>
+      <p class="more">Section 9.5.1 gives the formulas for all three schedules (equations 9.11 to 9.13) and plots them in Figure 9.12.</p>
     </div>
 
     <h3 id="adapt-coeff">Cognitive and social components (9.5.2)</h3>
-    <div class="two">
-      <div class="prose">
-        <p>c1 measures how much a particle learns from its own experience; c2 measures how much it is pulled by the best solutions of its neighbors. If c1 &gt; c2 the algorithm explores, and if c2 &gt; c1 it exploits the local search space. c1 = 0 gives the social-only (selfless) model, and c2 = 0 gives the cognition-only model, where particles act as independent hill climbers. Keep c1 + c2 ≤ 4 to avoid divergence.</p>
-        <p>Adaptive PSO decreases c1 and increases c2 linearly, so the swarm starts individualistic and ends cooperative (Figure 9.13 uses c1 from 2.0 to 0.5 and c2 from 0.8 to 2.5).</p>
-      </div>
-      <div class="eq" style="font-size:1.02rem;white-space:normal">
-        <span class="tag">(9.14)</span>c1<sub>t</sub> = (c1<sub>max</sub> − c1<sub>min</sub>) × (t<sub>max</sub> − t) / t<sub>max</sub> + c1<sub>min</sub><br><br>
-        <span class="tag">(9.15)</span>c2<sub>t</sub> = c2<sub>max</sub> − (c2<sub>max</sub> − c2<sub>min</sub>) × (t<sub>max</sub> − t) / t<sub>max</sub>
-      </div>
+    <div class="prose">
+      <p>c1 (learning from oneself) falls and c2 (learning from neighbors) rises, so the swarm starts individualistic and ends cooperative. Press <b>Play t</b> below to watch where the settings sit over time.</p>
+      <p class="more">Section 9.5.2 gives the c1 and c2 schedules (equations 9.14 and 9.15) and the limit c1 + c2 ≤ 4.</p>
     </div>
 
     <div class="bench" id="adapt-explorer">
@@ -691,7 +656,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
 
     <h3 id="adapt-compare">Strategy comparison: does adapting pay off?</h3>
-    <p class="prose">Run the continuous swarm several times with each strategy, using the same seeds for all of them, and compare the average convergence. Constant inertia uses w = 0.792 and c1 = c2 = 1.49; the adaptive strategies keep c1 = c2 = 1.49 except the last, which also varies c1 and c2. You can also pick any inertia schedule, or the time-varying c1 and c2, in the <a href="#contLab">continuous swarm lab</a> and watch a single run.</p>
+    <p class="prose">Run each strategy several times on the same seeds and compare average convergence, or try one schedule in the <a href="#contLab">continuous swarm lab</a>.</p>
     <div class="bench">
       <div class="bench-head"><h4>Adaptive strategies, head to head</h4><span class="eyebrow">Mean of repeated runs</span></div>
       <div class="bench-body">
@@ -703,7 +668,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
         <div class="stage">
           <canvas id="acChart" class="cv-chart" style="height:240px" aria-label="Mean best cost per strategy"></canvas>
           <div class="tbl-wrap"><table id="acTbl"></table></div>
-          <p class="cap">Success means the run ended within 0.01 of the known optimum. Results vary with the problem, swarm size and budget; there is no universally best schedule, which is why the chapter recommends experimenting.</p>
+          <p class="cap">Success means ending within 0.01 of the known optimum; no schedule wins on every problem.</p>
         </div>
       </div>
     </div>
@@ -721,7 +686,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 7 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Two ways to code along. Open the book notebooks directly in Colab, or open the PSO Lab companion notebook, which holds the from-scratch implementations below (NumPy and Matplotlib only, both preinstalled in Colab). Each from-scratch version mirrors the simulation on this page, so you can reproduce what you saw and change it.</p>
+    <p class="prose">Open the book notebooks in Colab, or the companion notebook with the from-scratch code below, which mirrors each simulation on this page.</p>
 
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
@@ -1061,7 +1026,7 @@ strategies = [("Constant w<span class="st">", "</span>const<span class="st">", F
 plt.yscale(<span class="st">"log"</span>); plt.xlabel("iteration<span class="st">"); plt.ylabel("</span>mean best cost<span class="st">")
 plt.title("</span>Adaptive PSO on Rastrigin (d = <span class="nm">10</span>)"); plt.legend(); plt.show()</pre>
     </div>
-    <p class="cap">To run: open the companion notebook in Colab and press Shift+Enter in each cell, or paste a tab’s code into any notebook. Change the arguments of <code>pso()</code>, <code>bpso()</code>, <code>permutation_pso()</code> or <code>adaptive_pso()</code> to repeat the experiments from the labs.</p>
+    <p class="cap">Run each cell in Colab, or paste a tab’s code into any notebook.</p>
   </div>
 </section>
 
@@ -1071,17 +1036,36 @@ plt.title("</span>Adaptive PSO on Rastrigin (d = <span class="nm">10</span>)"); 
     <span class="eyebrow">Part 8 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Continuous PSO</h5><p>Positions and velocities are real vectors. Inertia, cognitive and social terms set the balance between exploration and exploitation. Star topologies converge fast on unimodal problems; ring and Von Neumann topologies resist premature convergence on multimodal ones.</p></div>
-      <div class="card"><h5>Binary PSO</h5><p>Velocity becomes the propensity of a bit to be 1. The sigmoid turns it into a probability, and V<sub>max</sub> keeps that probability away from 0 and 1 so the swarm keeps exploring.</p></div>
-      <div class="card"><h5>Permutation PSO</h5><p>Velocity is a list of swaps. Subtraction, addition and multiplication are redefined so equation 9.1 still applies. Pure swap PSO is weak on the TSP; hybridizing with local search such as 2-opt helps a lot.</p></div>
-      <div class="card"><h5>Adaptive PSO</h5><p>Change w, c1 and c2 during the run. Random, linear and nonlinear inertia schedules, plus a falling c1 and a rising c2, move the swarm from diversification early to intensification late.</p></div>
+      <div class="card"><h5>Continuous PSO</h5><p>Inertia, cognitive and social pulls, plus the topology, balance exploration and exploitation.</p></div>
+      <div class="card"><h5>Binary PSO</h5><p>Velocity becomes the probability, through the sigmoid, that a bit is 1.</p></div>
+      <div class="card"><h5>Permutation PSO</h5><p>Velocity is a list of swaps, and local search such as 2-opt helps a lot.</p></div>
+      <div class="card"><h5>Adaptive PSO</h5><p>Schedules for w, c1 and c2 move the swarm from exploration to exploitation.</p></div>
     </div>
     <div class="prose">
-      <p>The basic principle: let the swarm move toward the best positions in the search space, while each particle remembers its own best position and the best position known to its neighbors. Adaptive PSO goes one step further and changes w, c1 and c2 during the run (random, linear or nonlinear schedules), starting with exploration and ending with exploitation.</p>
       <p class="muted">References: J. Kennedy and R. Eberhart, “Particle swarm optimization,” 1995. J. Kennedy and R. C. Eberhart, “A discrete binary version of the particle swarm algorithm,” 1997. M. Clerc, “Discrete particle swarm optimization, illustrated by the traveling salesman problem,” 2004. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 9.</p>
     </div>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 9 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 9. Pick an answer to check it.</p>
+    <div class="mcq" data-a="2">
+      <p class="mcq-q"><b>Q1.</b> In binary PSO, what does the velocity <i>v</i> of one bit represent?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>The distance the bit moves along the search axis</span></button><button type="button" class="mcq-o"><b>B</b><span>The number of bits to flip in the next iteration</span></button><button type="button" class="mcq-o"><b>C</b><span>After the sigmoid, the probability that the bit becomes 1</span></button><button type="button" class="mcq-o"><b>D</b><span>The Hamming distance between the particle and gbest</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>The velocity stays a real number but is read as the propensity of the bit to be 1: sig(v) turns it into a probability, and a random draw sets the bit. A velocity of 0 means a coin flip.</template>
+    </div>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q2.</b> Which setting shifts a PSO swarm toward exploitation, refining the area around elite solutions?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Raising the inertia weight <i>w</i> above 1</span></button><button type="button" class="mcq-o"><b>B</b><span>A small <i>w</i> with c<sub>2</sub> larger than c<sub>1</sub></span></button><button type="button" class="mcq-o"><b>C</b><span>Setting c<sub>2</sub> = 0 so particles ignore their neighbors</span></button><button type="button" class="mcq-o"><b>D</b><span>Making c<sub>1</sub> larger than c<sub>2</sub></span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>A small inertia weight and a stronger social pull concentrate the swarm around the best positions found. A large w or c1 > c2 favors exploration, and c2 = 0 turns the particles into independent hill climbers.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%209" target="_blank" rel="noopener">Chapter 9</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 9 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
 
 </div>
@@ -2080,5 +2064,15 @@ function tspStep(S, p) {
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

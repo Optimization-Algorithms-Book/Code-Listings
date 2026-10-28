@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 10 (Ant colony optimization) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Ant Colony Optimization Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -285,6 +303,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>10</b>Summary</a></li>
+    <li><a href="#quiz"><b>11</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 10, Other swarm intelligence algorithms to explore.</div>
 </aside>
@@ -297,7 +316,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 10 · Ant colony optimization</div>
       <h1>Ant Colony <em>Optimization</em> Lab</h1>
-      <p class="lede">Almost blind and individually simple, ants still find the shortest route between their nest and food. They do it by writing on the ground: pheromone trails that the colony reads, reinforces and slowly forgets. Every simulation below lets you change the parameters and watch what the colony does.</p>
+      <p class="lede">Simple, almost blind ants find the shortest route to food by writing on the ground: pheromone trails that the colony reads, reinforces and slowly forgets. Change the parameters and watch what the colony does.</p>
       <div class="variants">
         <a class="chip" href="#saco"><b>SACO</b> Shortest path</a>
         <a class="chip" href="#variants"><b>AS · ACS · MMAS</b> Variants</a>
@@ -308,7 +327,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
     <div>
       <canvas id="heroCv" class="hero-canvas" aria-label="Ants foraging between a nest and three food sources"></canvas>
-      <p class="cap" style="margin-top:.4rem">A live colony: ants leave the nest (purple), carry food home from three piles, and lay chemical (green to white) on the way. Other ants follow the strongest trails.</p>
+      <p class="cap" style="margin-top:.4rem">A live colony laying pheromone (green to white) as it carries food home.</p>
     </div>
   </div>
 </header>
@@ -318,36 +337,14 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Source of inspiration</span>
     <h2>Nature’s tiny problem-solvers</h2>
-    <div class="facts">
-      <div class="fact"><b>~100 M</b><span>years ants have been on earth</span></div>
-      <div class="fact"><b>~10<sup>16</sup></b><span>ants alive today, weighing about as much as all humans</span></div>
-      <div class="fact"><b>~12,000</b><span>ant species, most of them social</span></div>
-      <div class="fact"><b>30 to millions</b><span>individuals in a colony</span></div>
-    </div>
-    <div class="two" id="stigmergy">
-      <div class="prose">
-        <p>Ants are almost blind and cannot achieve complex tasks alone. Each one is a simple stimulus-response agent. Yet a colony builds bridges with its own bodies, digs intricate tunnels, takes down prey far larger than any single ant, and finds the shortest route between its nest and a food source.</p>
-        <p>The secret is <b>stigmergy</b> (from the Greek <i>stigma</i>, a mark, and <i>ergon</i>, work), a term introduced by the French biologist Pierre-Paul Grassé in 1959: indirect communication through changes to the environment. A foraging ant lays a chemical trail, the <b>pheromone</b>, on its way. Other ants smell it and tend to follow stronger concentrations. The environment itself becomes the colony’s external memory, and any ant can continue the work.</p>
-        <ul>
-          <li>The pheromone trail acts as a <b>collective memory</b> of the colony’s foraging experience.</li>
-          <li>Pheromone <b>evaporates</b> over time, so old information fades.</li>
-          <li>Pheromone concentration is a <b>feedback signal</b> that steers each ant’s next decision.</li>
-        </ul>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Real ant colony</th><th>Artificial ant colony</th></tr></thead>
-        <tbody>
-          <tr><td>Real ant</td><td>Artificial ant (stimulus-response agent)</td></tr>
-          <tr><td>Pheromone</td><td>Artificial pheromone (a value on each edge)</td></tr>
-          <tr><td>Food</td><td>Solution</td></tr>
-          <tr><td>Continuous space</td><td>Discrete graph</td></tr>
-          <tr><td>Pheromone laid while moving</td><td>Pheromone usually updated after a path is complete</td></tr>
-          <tr><td>Solutions evaluated implicitly</td><td>An explicit function evaluates each solution</td></tr>
-        </tbody></table></div>
+    <div class="prose" id="stigmergy">
+      <p>Each ant is a simple stimulus-response agent, yet the colony solves hard problems through <b>stigmergy</b>: indirect communication by marking the environment. Ants lay <b>pheromone</b> as they move and tend to follow stronger trails, so the trails become the colony’s shared memory.</p>
+      <p class="more">Chapter 10 tells the story of stigmergy and compares real and artificial ant colonies feature by feature.</p>
     </div>
 
     <h3 id="bridge">The bridge experiments</h3>
-    <p class="prose">In the <b>binary bridge</b> experiment, a nest was connected to food by two bridges of equal length: the colony soon converged on one of them, chosen by chance. In the <b>bridges with non-equal lengths</b> experiment, ants on the shorter branch returned to the nest sooner, so that branch was reinforced sooner and became more attractive. This positive feedback is called <b>autocatalytic behavior</b>. The simulation follows equation 10.1: each ant takes branch 1 with probability p₁ = τ₁ / (τ₁ + τ₂), then pheromone evaporates and each ant deposits Q / L on its branch.</p>
+    <p class="prose">Two bridges link the nest to food. Ants on the shorter branch return sooner, so it is reinforced sooner and attracts more ants (equation 10.1). Choose an experiment and the length of branch 2, then press <b>Run</b>.</p>
+    <p class="more">The book describes the original bridge experiments and the autocatalytic feedback they reveal.</p>
     <div class="bench">
       <div class="bench-head"><h4>Double bridge</h4><span class="eyebrow">Equation 10.1</span></div>
       <div class="bench-body">
@@ -357,13 +354,14 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
           <canvas id="brCv" class="cv-bridge" aria-label="Ants crossing two bridges"></canvas>
           <div class="stats" id="brStats"></div>
           <canvas id="brChart" class="cv-chart" aria-label="Probability of the short branch per iteration"></canvas>
-          <p class="cap">Probability p₁ of choosing branch 1 per iteration. With equal lengths, which branch wins is decided by chance; with unequal lengths the shorter one almost always wins.</p>
+          <p class="cap">Probability p₁ of choosing branch 1 per iteration.</p>
         </div>
       </div>
     </div>
 
     <h3 id="evaporation">Why evaporation matters</h3>
-    <p class="prose">Figure 10.4 of the book compares evaporation rates in a foraging simulation. With <b>ρ = 0</b> trails never fade, so the ants keep following the first trails they made, even after better ones exist. With <b>ρ = 1</b> trails vanish immediately and the ants wander at random. A moderate rate keeps useful trails while forgetting stale ones. The simulation follows the NetLogo Ants model the book uses: ants leave the purple nest, pick up one unit of food from a pile, and carry it home while dropping chemical. Food is finite, so each pile shrinks as the ants carry it away. Try it.</p>
+    <p class="prose">Evaporation (ρ) lets the colony forget stale trails. Change ρ and watch how the ants share out the three food piles.</p>
+    <p class="more">Figure 10.4 in the book compares foraging runs at three evaporation rates and explains what goes wrong at each extreme.</p>
     <div class="bench">
       <div class="bench-head"><h4>Foraging colony</h4><span class="eyebrow">After the NetLogo Ants model</span></div>
       <div class="bench-body">
@@ -374,7 +372,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
           <div class="legend"><span><i style="background:#8E5BB8"></i>nest</span><span><i style="background:#54C4C9"></i>near pile</span><span><i style="background:#2E93C4"></i>middle pile</span><span><i style="background:#345DB8"></i>far pile</span><span><i style="background:#E23A2E"></i>searching ant</span><span><i style="background:#F7943D"></i>ant carrying food</span><span><i style="background:linear-gradient(90deg,#000,#148C1E,#fff)"></i>chemical (pheromone)</span></div>
           <div class="stats" id="fgStats"></div>
           <canvas id="fgChart" class="cv-chart" style="height:150px" aria-label="Food left in each pile"></canvas>
-          <p class="cap">Food left in each pile over time (one point every 10 ticks). The colony usually empties the nearest pile first.</p>
+          <p class="cap">Food left in each pile over time.</p>
         </div>
       </div>
       <div class="presets" id="fgPresets"></div>
@@ -389,7 +387,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>ACO metaheuristics</h2>
     <div class="two">
       <div>
-        <p class="prose">A group of artificial ants builds solutions step by step on a graph. Each choice is biased by the pheromone on the edges (what the colony has learned) and by a heuristic desirability, usually the inverse of the edge length (what the problem tells us). After the ants finish, pheromone evaporates and good solutions are reinforced.</p>
+        <p class="prose">Ants build solutions step by step on a graph, biased by pheromone τ (learned) and desirability η (usually 1/distance); then trails evaporate and good solutions are reinforced.</p>
         <div class="pseudo"><span class="k">Algorithm</span>: Ant colony optimization metaheuristic
 Set parameters, initialize pheromone trails
 <span class="k">while</span> termination conditions not met <span class="k">do</span>
@@ -397,32 +395,26 @@ Set parameters, initialize pheromone trails
     ApplyLocalSearch               <span class="c"># optional, e.g. 2-opt</span>
     UpdatePheromones               <span class="c"># evaporation and deposit (eqs. 10.2 to 10.5)</span>
 <span class="k">end while</span></div>
-        <p class="prose">Typical termination criteria: the maximum number of iterations is reached, an acceptable solution is found, or <b>stagnation</b>: all (or most) ants follow the same path.</p>
+        <p class="more">Chapter 10 explains each step, the stopping criteria, and how α and β in equation 10.6 trade experience against greed.</p>
       </div>
       <div>
         <div class="eq" id="transition" style="white-space:normal">p<sub>ij</sub><sup>k</sup>(t) = [τ<sub>ij</sub>(t)]<sup>α</sup> [η<sub>ij</sub>(t)]<sup>β</sup> / Σ<sub>l ∈ N<sub>i</sub><sup>k</sup></sub> [τ<sub>il</sub>(t)]<sup>α</sup> [η<sub>il</sub>(t)]<sup>β</sup> &nbsp;if j ∈ N<sub>i</sub><sup>k</sup>, otherwise 0<span class="tag">(10.6)</span></div>
-        <p class="cap">N<sub>i</sub><sup>k</sup> is the set of feasible nodes for ant k at node i. τ<sub>ij</sub> is the pheromone on edge (i, j), and η<sub>ij</sub> = 1/d<sub>ij</sub> is its desirability. α ≥ 0 amplifies the pheromone; large values give too much weight to early (random) trails and cause premature convergence. β ≥ 1 weights the desirability.</p>
+        <p class="cap">α weights the pheromone and β the desirability η = 1/d.</p>
         <div class="eq" id="update" style="white-space:normal">τ<sub>ij</sub>(t+1) = (1 − ρ) τ<sub>ij</sub>(t)<span class="tag">(10.2)</span><br><br>Δτ<sub>ij</sub><sup>k</sup>(t) = Q / L<sup>k</sup>(t) &nbsp;&nbsp;τ<sub>ij</sub>(t+1) = τ<sub>ij</sub>(t) + Σ<sub>k=1</sub><sup>m</sup> Δτ<sub>ij</sub><sup>k</sup>(t)<span class="tag">(10.4, 10.5)</span></div>
       </div>
     </div>
     <h3>Three ways to deposit pheromone</h3>
-    <div class="cards3">
-      <div class="card"><h5>Ant density (online, step by step)</h5><p>Each ant adds a constant Q to every edge it crosses. The total is proportional to the number of ants that used the edge; edge length is ignored.</p></div>
-      <div class="card"><h5>Ant quantity (online, step by step)</h5><p>Each ant adds Q / d<sub>ij</sub> while moving. Only local information is used: shorter edges become more desirable.</p></div>
-      <div class="card"><h5>Ant cycle (online, delayed)</h5><p>After an ant completes its path, it retraces it and adds Q / L<sup>k</sup> to each edge. Global information: better complete solutions earn more pheromone.</p></div>
-      <div class="card"><h5>Combinations</h5><p>Step-by-step and delayed updates can be combined. The choice depends on the problem being solved.</p></div>
-    </div>
+    <p class="prose">Ants deposit pheromone while moving or after completing a path (Q / L<sup>k</sup>).</p>
+    <p class="more">The book compares the ant density, ant quantity and ant cycle rules and when to combine them.</p>
     <h3 id="params">Choosing the parameters</h3>
     <div class="tbl-wrap"><table>
       <thead><tr><th>Parameter</th><th>Effect</th></tr></thead>
       <tbody>
-        <tr><td>Number of ants m</td><td>More ants mean more computation, but also more exploration per iteration.</td></tr>
-        <tr><td>Maximum iterations</td><td>Must be large enough to allow convergence.</td></tr>
-        <tr><td>Initial pheromone τ₀</td><td>Constant, random, the maximum value (MMAS) or a small value.</td></tr>
-        <tr><td>Evaporation rate ρ</td><td>0 never forgets (trapped on old trails); 1 forgets everything (random search).</td></tr>
-        <tr><td>α and β</td><td>Balance the colony’s learned knowledge (pheromone) against greedy local information (desirability).</td></tr>
-        <tr><td>Q</td><td>Scales the amount deposited; with Q / L it sets how strongly good solutions are rewarded.</td></tr>
+        <tr><td>Number of ants m</td><td>More exploration per iteration, at more cost.</td></tr>
+        <tr><td>Evaporation rate ρ</td><td>0 never forgets; 1 forgets everything.</td></tr>
+        <tr><td>α and β</td><td>Learned knowledge versus greedy local information.</td></tr>
       </tbody></table></div>
+    <p class="more">Chapter 10 discusses how to set every parameter, including the initial pheromone τ₀ and the deposit constant Q.</p>
   </div>
 </section>
 
@@ -431,7 +423,8 @@ Set parameters, initialize pheromone trails
   <div class="wrap">
     <span class="eyebrow">Part 3 · Section 10.3.1</span>
     <h2>Simple ACO: the shortest path problem</h2>
-    <p class="prose">Simple ACO (SACO) is an algorithmic version of the double bridge experiment. The graph is the book’s example (Figure 10.7): find the shortest path from source node 1 to goal node 5. Each edge shows <i>length : pheromone</i>. The defaults follow the book: 5 ants, τ₀ = 0.5, α = β = 1 and ρ = 0.7. Step through one ant decision at a time and watch equation 10.6 at work.</p>
+    <p class="prose">SACO finds the shortest path from node 1 to node 5 on the book’s graph (Figure 10.7); edges show <i>length : pheromone</i>. Click <b>Next decision</b> to watch equation 10.6 choose each step.</p>
+    <p class="more">Section 10.3.1 works through the first iteration by hand, ant by ant, up to Figure 10.10.</p>
     <div class="bench" id="saco-lab">
       <div class="bench-head"><h4>SACO, one decision at a time</h4><span class="eyebrow" id="scIter">Iteration 1 · ant 1</span></div>
       <div class="bench-body">
@@ -451,7 +444,7 @@ Set parameters, initialize pheromone trails
         </div>
       </div>
     </div>
-    <div class="note warn">Two notes on the book’s worked example. Figure 10.10 shows 0.59 on the reinforced edges, but with ρ = 0.7 and a deposit of Q / L¹ = 1/11 the value is 0.15 + 0.09 = 0.24, which the lab computes. And the text says the ants find 1 → 3 → 4 → 5 (length 11), but 1 → 2 → 5 has length 4 + 1 = 5. Run a few iterations: the colony converges on 1 → 2 → 5.</div>
+    <div class="note warn">The lab computes 0.24 on the reinforced edges where Figure 10.10 shows 0.59, and the colony converges on 1 → 2 → 5 (length 5) rather than 1 → 3 → 4 → 5.</div>
   </div>
 </section>
 
@@ -460,15 +453,16 @@ Set parameters, initialize pheromone trails
   <div class="wrap">
     <span class="eyebrow">Part 4 · Section 10.3</span>
     <h2>ACO variants</h2>
-    <p class="prose">Several variants have been proposed to address the limitations of SACO: the ant system (AS), ant colony system (ACS), max-min ant system (MMAS), elitist ant system, Ant-Q (a local update rule inspired by Q-learning), fast ant system (FANT), Antabu (with tabu search as local search), AS-rank, and approximate non-deterministic tree search (ANTS).</p>
+    <p class="prose">Several variants address the limitations of SACO. Four of them run in the labs below.</p>
     <div class="cards3">
-      <div class="card" id="as"><h5>Ant system (AS)</h5><p>Adds memory to SACO: each ant keeps a tabu list of visited nodes, so it never revisits a node. After every ant completes a path, all ants deposit pheromone (ant density, ant quantity or ant cycle). Dorigo, Maniezzo and Colorni, 1996.</p></div>
-      <div class="card" id="acs-card"><h5>Ant colony system (ACS)</h5><p>Uses the pseudo-random proportional rule: with probability r₀ an ant greedily takes the best edge, otherwise it samples equation 10.6 with α = 1. Only the global-best ant reinforces its path. Dorigo and Gambardella, 1997.</p></div>
-      <div class="card" id="mmas"><h5>Max-min ant system (MMAS)</h5><p>Fights stagnation: only the iteration-best ant deposits, pheromone is bounded within [τ<sub>min</sub>, τ<sub>max</sub>], trails start at τ<sub>max</sub> and are reset to τ<sub>max</sub> when the colony stagnates. Stützle and Hoos, 2000.</p></div>
-      <div class="card"><h5>Elitist ant system</h5><p>Like AS, but the best path found so far receives an extra deposit in every iteration, which speeds up convergence toward it.</p></div>
+      <div class="card" id="as"><h5>Ant system (AS)</h5><p>Ants keep a tabu list of visited nodes, and all ants deposit pheromone.</p></div>
+      <div class="card" id="acs-card"><h5>Ant colony system (ACS)</h5><p>Ants often take the best edge greedily, and only the global-best ant deposits.</p></div>
+      <div class="card" id="mmas"><h5>Max-min ant system (MMAS)</h5><p>Only the iteration-best ant deposits, and trails stay within [τ<sub>min</sub>, τ<sub>max</sub>].</p></div>
+      <div class="card"><h5>Elitist ant system</h5><p>Like AS, plus an extra deposit on the best path so far.</p></div>
     </div>
     <h3 id="acs">The ACS decision rule, at node 4</h3>
-    <p class="prose">Section 10.3.3 places an ant at node 4 of the shortest-path graph, choosing between nodes 2 and 5 with r₀ = 0.5, β = 1 and η = 1/d. A random number r ≤ r₀ means <b>exploitation</b>: take j = argmax τ<sub>ij</sub> η<sub>ij</sub><sup>β</sup> (equation 10.10). Otherwise the ant <b>explores</b> with the roulette wheel of equation 10.6. Smaller r₀ means more exploration.</p>
+    <p class="prose">An ant at node 4 chooses between nodes 2 and 5. If a random r ≤ r₀ it <b>exploits</b> the best edge (equation 10.10); otherwise it <b>explores</b> with equation 10.6. Change r₀ and watch the probabilities.</p>
+    <p class="more">Section 10.3 details each variant and several more; Section 10.3.3 works through this decision by hand.</p>
     <div class="bench">
       <div class="bench-head"><h4>Pseudo-random proportional rule</h4><span class="eyebrow">Equation 10.10</span></div>
       <div class="bench-body">
@@ -484,7 +478,8 @@ Set parameters, initialize pheromone trails
   <div class="wrap">
     <span class="eyebrow">Part 5 · Section 10.3.5 · Listing 10.1</span>
     <h2>Solving the open TSP with ACO</h2>
-    <p class="prose">A salesperson starts in New York City and must visit each of 20 major US cities once, <b>without returning home</b>. Distances are haversine (great-circle) distances. Listing 10.1 uses 30 ants, 100 iterations, α = 1, β = 0.9, ρ = 0.5 and Q = 100, and reports a route of <b>7,937.1 km</b> in the book’s run. The exact optimum for this instance, computed by dynamic programming (Held-Karp), is <b>7,909.2 km</b>. The lab starts with Listing 10.1’s settings and seed 10, which reproduces the book’s run.</p>
+    <p class="prose">Visit 20 US cities once from New York City, <b>without returning home</b>. Press <b>Run</b> and watch pheromone gather on a good route.</p>
+    <p class="more">Listing 10.1 in the book solves this open TSP from scratch and with ACOpy, and Section 10.3.5 discusses the route it finds.</p>
     <div class="bench" id="tsp-lab">
       <div class="bench-head"><h4>Colony lab</h4><span class="eyebrow">Gold edges: pheromone · blue: best route so far</span></div>
       <div class="bench-body">
@@ -495,14 +490,14 @@ Set parameters, initialize pheromone trails
           <div class="stage-grid">
             <div><div class="stats" id="tsStats"></div><p class="tour" id="tsTour"></p></div>
             <div><canvas id="tsChart" class="cv-chart" aria-label="Best route length per iteration"></canvas>
-            <p class="cap">Best route so far (blue) and mean route of the iteration (faint). Dashed: the book’s run (7,937.1 km) and the optimum (7,909.2 km).</p></div>
+            <p class="cap">Best route so far (blue) and iteration mean (faint). Dashed: the book’s run and the optimum.</p></div>
           </div>
         </div>
       </div>
       <div class="presets" id="tsPresets"></div>
     </div>
     <h3 id="tsp-compare">Variant comparison</h3>
-    <p class="prose">Run every variant several times with the current settings (ants, iterations, α, β, ρ) and the same random seeds, then compare the average convergence and how often each reaches the optimum.</p>
+    <p class="prose">Run every variant several times with the current settings and the same seeds, then compare their average convergence.</p>
     <div class="bench">
       <div class="bench-head"><h4>AS vs. elitist AS vs. ACS vs. MMAS</h4><span class="eyebrow">Mean of repeated runs</span></div>
       <div class="stage">
@@ -524,7 +519,8 @@ Set parameters, initialize pheromone trails
   <div class="wrap">
     <span class="eyebrow">Part 6 · Continuous optimization</span>
     <h2>ACO for a continuous variable</h2>
-    <p class="prose">ACO can also handle continuous variables by discretizing them. Minimize f(x) = x² − 2x − 11 on [0, 3] (minimum −12 at x = 1). The range becomes seven permissible values, x = 0, 0.5, …, 3, and each value is a path from home to food. Four ants pick paths by roulette wheel; pheromone evaporates with ρ = 0.5, and the best ants deposit Δτ = ζ · f<sub>best</sub> / f<sub>worst</sub> with ζ = 2. Iterations 1 and 2 use the random numbers of the worked example (after S. S. Rao, <i>Engineering Optimization: Theory and Practice</i>, Wiley, 2009); later iterations draw seeded random numbers. For several variables, the same idea uses one layer of nodes per variable, and each ant picks one node per layer.</p>
+    <p class="prose">ACO handles a continuous variable by discretizing it: minimize f(x) = x² − 2x − 11 on [0, 3], where each of seven values of x is a path. Click <b>Next iteration</b> to watch four ants choose and reinforce paths.</p>
+    <p class="more">Chapter 10 works through the first two iterations by hand and extends the idea to several variables.</p>
     <div class="bench">
       <div class="bench-head"><h4>Discretized ACO, iteration by iteration</h4><span class="eyebrow" id="ctIter">Iteration 0</span></div>
       <div class="bench-body">
@@ -547,19 +543,9 @@ Set parameters, initialize pheromone trails
   <div class="wrap">
     <span class="eyebrow">Part 7 · Adaptation</span>
     <h2>Adaptive ACO</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Instead of fixing ρ, α, β and r₀, adapt them to the progress of the search:</p>
-        <ul>
-          <li><b>Evaporation:</b> start with high evaporation (exploration) and decrease it over time (exploitation).</li>
-          <li><b>Pheromone and heuristic importance:</b> gradually increase α or β to bias the colony toward greedy behavior late in the run.</li>
-          <li><b>ACS exploitation r₀:</b> start low and increase it over time, or raise it after an improvement and lower it after stagnation.</li>
-          <li><b>Deposit:</b> switch between the iteration-best and best-so-far ant depending on the variance of solution quality, or make the deposit grow nonlinearly with quality.</li>
-          <li><b>MMAS limits:</b> tighten τ<sub>min</sub> and τ<sub>max</sub> as the colony converges.</li>
-        </ul>
-        <p>Choose an adaptation strategy in the <a href="#tsp-lab">colony lab</a> to see the effect on the open TSP.</p>
-      </div>
-      <div class="eq" style="white-space:normal;font-size:1.02rem">ρ<sub>t</sub> = ρ<sub>max</sub> − (ρ<sub>max</sub> − ρ<sub>min</sub>) · t / T<br><br>r₀(t) = r₀,min + (r₀,max − r₀,min) · t / T<br><br>r₀(t+1) = r₀(t) + δ after an improvement, r₀(t) − δ after stagnation<p class="cap" style="margin-top:.6rem">t is the current iteration and T the maximum number of iterations. δ is a small positive constant.</p></div>
+    <div class="prose">
+      <p>Instead of fixing ρ, α, β and r₀, adapt them as the search progresses, for example by lowering evaporation or raising r₀ over time. Pick an <b>Adaptation</b> option in the <a href="#tsp-lab">colony lab</a> to see the effect.</p>
+      <p class="more">Chapter 10 describes more strategies, such as switching which ant deposits or tightening the MMAS limits.</p>
     </div>
   </div>
 </section>
@@ -569,14 +555,13 @@ Set parameters, initialize pheromone trails
   <div class="wrap">
     <span class="eyebrow">Part 8 · Applications</span>
     <h2>Where ants go to work</h2>
-    <p class="prose">ACO has been applied to vehicle routing (multi-depot, periodic, stochastic, with pickup and delivery or time windows), scheduling (job shop, open shop, flow shop, project scheduling), assignment (quadratic, generalized, frequency, redundancy allocation) and set problems (set covering and partitioning, multiple knapsack, maximum independent set).</p>
+    <p class="prose">ACO is used for routing, scheduling, assignment and set problems. Open a listing to try one.</p>
     <div class="apps">
-      <div class="card"><h5>Routing</h5><p>Shortest routes on real road networks, the setting of Listing C.17.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%2010/Listing%20C.17_Routing_ACO.ipynb">Listing C.17</a></p></div>
-      <div class="card"><h5>Reverse osmosis pump</h5><p>Maximizing the power of a high-pressure pump in a reverse osmosis desalination plant.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%2010/Listing%20C.18_Reverse_Osmosis_ACO_Scipy.ipynb">Listing C.18</a></p></div>
-      <div class="card"><h5>Supply and demand</h5><p>A supply-demand planning problem solved with the MIDACO solver, an ACO-based mixed-integer optimizer.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%2010/Listing%20C.19_Supply_demand_MIDACO.ipynb">Listing C.19</a></p></div>
-      <div class="card"><h5>Robot motion planning</h5><p>Build a MAKLINK graph of free space around grown obstacles, find a collision-free path with Dijkstra’s algorithm, then let ACS slide each path node along its MAKLINK line (P = P₁ + (P₂ − P₁)h, h ∈ [0, 1]) to shorten the path (Tan, He and Sloman, 2007).</p></div>
-      <div class="card"><h5>Quadratic assignment</h5><p>Assign n facilities to n locations to minimize Σ flow × distance. Ants pick facility-location couplings guided by pheromone and by distance and flow potentials, with a tabu list for couplings already used (Dorigo, Maniezzo and Colorni, 1996).</p></div>
+      <div class="card"><h5>Routing</h5><p>Shortest routes on road networks.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%2010/Listing%20C.17_Routing_ACO.ipynb">Listing C.17</a></p></div>
+      <div class="card"><h5>Reverse osmosis pump</h5><p>Maximize a desalination pump’s power.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%2010/Listing%20C.18_Reverse_Osmosis_ACO_Scipy.ipynb">Listing C.18</a></p></div>
+      <div class="card"><h5>Supply and demand</h5><p>Planning with the ACO-based MIDACO solver.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%2010/Listing%20C.19_Supply_demand_MIDACO.ipynb">Listing C.19</a></p></div>
     </div>
+    <p class="more">Chapter 10 also shows ACS planning robot paths on a MAKLINK graph and ants solving quadratic assignment.</p>
   </div>
 </section>
 
@@ -585,7 +570,7 @@ Set parameters, initialize pheromone trails
   <div class="wrap">
     <span class="eyebrow">Part 9 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s notebooks directly in Colab, or the ACO Lab companion notebook, which holds the from-scratch implementations below (NumPy and Matplotlib only, both preinstalled in Colab).</p>
+    <p class="prose">Open the book’s notebooks in Colab, or the companion notebook with the from-scratch code below.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2010/ACO_Lab_Companion.ipynb"><em>All examples</em><b>ACO Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -769,7 +754,7 @@ xs = np.arange(<span class="nm">0</span>, <span class="nm">3.01</span>, <span cl
 x_best = aco_continuous(randoms=[[<span class="nm">0.3122</span>, <span class="nm">0.8701</span>, <span class="nm">0.4729</span>, <span class="nm">0.6190</span>], [<span class="nm">0.3688</span>, <span class="nm">0.8577</span>, <span class="nm">0.0776</span>, <span class="nm">0.5791</span>]])
 print(<span class="st">"most reinforced path: x ="</span>, x_best, <span class="st">" f ="</span>, f(x_best))   <span class="cm"># x = 1.0, f = -12</span></pre>
     </div>
-    <p class="cap">To run: open the companion notebook in Colab and press Shift+Enter in each cell, or paste a tab’s code into any notebook.</p>
+    <p class="cap">Run each cell in Colab, or paste a tab’s code into any notebook.</p>
   </div>
 </section>
 
@@ -779,16 +764,36 @@ print(<span class="st">"most reinforced path: x ="</span>, x_best, <span class="
     <span class="eyebrow">Part 10 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Stigmergy</h5><p>Ants communicate indirectly by marking the environment. Pheromone is a collective memory that is reinforced by success and erased by evaporation.</p></div>
-      <div class="card"><h5>Construction plus learning</h5><p>Each ant builds a solution with a randomized construction heuristic (eq. 10.6). The colony’s accumulated experience lives in the pheromone trails.</p></div>
-      <div class="card"><h5>Exploration vs. exploitation</h5><p>ρ, α, β and the ACS r₀ set the balance. Elitist, ACS and MMAS updates converge faster; MMAS bounds the trails to avoid stagnation.</p></div>
-      <div class="card"><h5>Strengths</h5><p>ACO performs well on ill-structured combinatorial problems such as routing, scheduling and assignment, and local search is extremely important for good results.</p></div>
+      <div class="card"><h5>Stigmergy</h5><p>Pheromone is a collective memory, reinforced by success and erased by evaporation.</p></div>
+      <div class="card"><h5>Construction plus learning</h5><p>Each ant builds a solution with equation 10.6, guided by the colony’s trails.</p></div>
+      <div class="card"><h5>Exploration vs. exploitation</h5><p>ρ, α, β and r₀ set the balance; MMAS bounds trails to avoid stagnation.</p></div>
+      <div class="card"><h5>Strengths</h5><p>ACO shines on combinatorial problems, especially with local search.</p></div>
     </div>
     <div class="prose">
       <p class="muted">References: P.-P. Grassé, 1959 (stigmergy). J.-L. Deneubourg, S. Aron, S. Goss and J. M. Pasteels, “The self-organizing exploratory pattern of the Argentine ant,” 1990. M. Dorigo, V. Maniezzo and A. Colorni, “Ant system: optimization by a colony of cooperating agents,” 1996. M. Dorigo and L. M. Gambardella, “Ant colony system,” 1997. T. Stützle and H. H. Hoos, “MAX-MIN ant system,” 2000. S. S. Rao, <i>Engineering Optimization: Theory and Practice</i>, 2009. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 10.</p>
     </div>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 11 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 10. Pick an answer to check it.</p>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q1.</b> In the double-bridge experiment with unequal branches, why does the colony end up on the shorter branch?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Each ant measures both branches and picks the shorter one</span></button><button type="button" class="mcq-o"><b>B</b><span>Ants on the shorter branch return sooner, so it is reinforced sooner and attracts more ants</span></button><button type="button" class="mcq-o"><b>C</b><span>Pheromone evaporates only from the longer branch</span></button><button type="button" class="mcq-o"><b>D</b><span>The heuristic desirability forbids ants from taking the longer branch</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Individual ants have no global view. The shorter branch collects pheromone faster, which raises its choice probability, a positive feedback loop called autocatalytic behavior. Evaporation acts on both branches alike.</template>
+    </div>
+    <div class="mcq" data-a="3">
+      <p class="mcq-q"><b>Q2.</b> What happens to an ACO colony if the evaporation rate ρ is set to 0?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Trails vanish at once and the ants search at random</span></button><button type="button" class="mcq-o"><b>B</b><span>The algorithm becomes the max-min ant system</span></button><button type="button" class="mcq-o"><b>C</b><span>Ants ignore pheromone and follow only the desirability η</span></button><button type="button" class="mcq-o"><b>D</b><span>Trails never fade, so the colony keeps following early trails even after better ones exist</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>With ρ = 0 the colony never forgets, so early (possibly poor) trails dominate. ρ = 1 is the opposite extreme, where trails vanish and the search becomes random; a moderate rate keeps useful trails while forgetting stale ones.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2010" target="_blank" rel="noopener">Chapter 10</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 10 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024). Basemap: Natural Earth (public domain).</div></footer>
 </div>
 <script>
@@ -1471,5 +1476,15 @@ function acoStep(S, P) {
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

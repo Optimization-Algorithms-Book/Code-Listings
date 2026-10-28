@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapters 7 and 8 (Genetic algorithms and their variants) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Genetic Algorithm Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -320,6 +338,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>12</b>Summary</a></li>
+    <li><a href="#quiz"><b>13</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 7, Genetic algorithms, and Chapter 8, Genetic algorithm variants.</div>
 </aside>
@@ -332,7 +351,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <div>
       <div class="eyebrow">Interactive companion · Chapters 7 and 8 · Genetic algorithms</div>
       <h1>Genetic Algorithm <em>Lab</em></h1>
-      <p class="lede">A population of candidate solutions, a fitness function, and three operators borrowed from nature: selection, crossover and mutation. Generation after generation, the fittest survive and pass on their genes. Every operator and every example below is interactive.</p>
+      <p class="lede">A population of candidate solutions evolves through selection, crossover and mutation, and the fittest pass on their genes. Every operator and example below is interactive.</p>
       <div class="variants">
         <a class="chip" href="#ticket"><b>0101</b> Binary</a>
         <a class="chip" href="#gray"><b>0111→0100</b> Gray</a>
@@ -354,47 +373,20 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Source of inspiration</span>
     <h2>Evolution as a search algorithm</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Genetic algorithms simulate the processes that Charles Darwin described in his theory of evolution: individuals compete, the fitter ones are more likely to reproduce, and offspring inherit a mix of their parents’ traits with occasional random changes. The first genetic algorithm, the <b>simple genetic algorithm</b> (also called the classical or canonical GA), was developed by <b>John Holland in 1975</b>, using bit strings, fitness-proportionate selection and crossover.</p>
-        <p>In living cells, genetic information is stored in <b>chromosomes</b> built of DNA (humans have 23 pairs). A chromosome is divided into <b>genes</b> that code for properties, and each gene has variants called <b>alleles</b>. The specific combination of alleles is the <b>genotype</b>; the observable characteristics it produces are the <b>phenotype</b>.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Natural evolution</th><th>Genetic algorithm</th></tr></thead>
-        <tbody>
-          <tr><td>Chromosome</td><td>A candidate solution (a string)</td></tr>
-          <tr><td>Gene</td><td>A string position</td></tr>
-          <tr><td>Locus</td><td>The position of a gene</td></tr>
-          <tr><td>Allele</td><td>The value at a certain position</td></tr>
-          <tr><td>Fitness</td><td>The fitness function value</td></tr>
-          <tr><td>Recombination</td><td>Crossover</td></tr>
-          <tr><td>Mutation</td><td>Random change of genes</td></tr>
-          <tr><td>Survival of the fittest</td><td>Survivor selection</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p>Genetic algorithms mimic evolution: fitter individuals reproduce more, and offspring inherit a mix of their parents’ genes. A <b>chromosome</b> is a candidate solution, its positions are <b>genes</b>, and their values are <b>alleles</b>.</p>
+      <p class="more">Chapter 7 of the book traces the GA back to John Holland’s simple GA and maps every term of natural evolution onto its GA counterpart.</p>
     </div>
     <h3 id="genetics">Genotype and phenotype</h3>
-    <p class="prose">Imagine an animal’s DNA with four genes: appetite, movement, feet and skin. Each gene comes in a few versions, or <b>alleles</b>. The <b>genotype</b> is the specific combination of alleles in the DNA; the <b>phenotype</b> is the physical and behavioral characteristics it produces, which place the animal in a species, genus or family. Optimization uses the same split: the chromosome <b>3 1 5 2 4</b> for a delivery problem is a genotype, and the route it decodes to, with its length and lateness, is the phenotype.</p>
+    <p class="prose">The <b>genotype</b> is the combination of alleles; the <b>phenotype</b> is what it produces. Click an allele for each of the four genes and see the creature it encodes.</p>
     <div class="bench">
       <div class="bench-head"><h4>Encode a creature</h4><span class="eyebrow">4 genes · 3 × 4 × 4 × 3 = 144 genotypes</span></div>
       <div class="stage" id="crBox"></div>
     </div>
     <h3 id="pmeta">Population-based metaheuristics</h3>
-    <div class="two">
-      <div class="prose">
-        <p>Population-based metaheuristics (P-metaheuristics) start from a population of solutions and repeatedly <b>generate</b> a new population and <b>replace</b> the current one, optionally guided by a search memory.</p>
-        <ul>
-          <li><b>Evolution-based generation:</b> new solutions are built directly from existing ones by variation operators (crossover, mutation). Evolutionary algorithms such as GA belong here.</li>
-          <li><b>Blackboard-based generation:</b> solutions write to a shared memory (pheromone matrix, global and local bests) that drives the next population, as in ant colony optimization and particle swarm optimization.</li>
-        </ul>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>P-metaheuristic</th><th>Search memory</th></tr></thead>
-        <tbody>
-          <tr><td>Evolutionary algorithms</td><td>Population of individuals</td></tr>
-          <tr><td>Ant colony optimization</td><td>Pheromone matrix</td></tr>
-          <tr><td>Particle swarm optimization</td><td>Population of particles, global and local bests</td></tr>
-          <tr><td>Artificial bee colony</td><td>Population of bees</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p>Population-based metaheuristics repeatedly generate a new population and replace the old one; GAs build new solutions directly from existing ones.</p>
+      <p class="more">Chapter 7 compares the main population-based metaheuristics and the search memory each one keeps.</p>
     </div>
   </div>
 </section>
@@ -418,25 +410,20 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     Select survivors     <span class="c"># form the next generation</span></div>
       </div>
       <div class="prose">
-        <p>Termination criteria include a number of generations or fitness evaluations, an adequate solution, no improvement for a number of generations, memory or time limits, or a combination. The GA is modular and easy to parallelize, handles multi-objective problems, and is robust in noisy environments.</p>
-        <p class="muted">As of 2024, “genetic algorithm” returns about 100,000 results on Google Patent Search and 1,940,000 on Google Scholar.</p>
+        <p>The loop repeats selection, crossover, mutation and survivor selection until a stopping criterion is met.</p>
+        <p class="more">Section 7.3 explains each building block of Algorithm 7.1 and the usual termination criteria.</p>
       </div>
     </div>
     <h3 id="fitness">Fitness function</h3>
     <div class="two">
       <div class="prose">
-        <p>GAs mimic survival of the fittest, so they naturally <b>maximize</b>. A minimization objective O(x) is turned into a fitness to maximize:</p>
-        <ul>
-          <li><b>Negation:</b> f(x) = −O(x).</li>
-          <li><b>Reciprocal</b> (non-negative objectives): f(x) = 1 / (1 + O(x)) (equation 7.1).</li>
-          <li><b>Shifting</b> (equation 7.2): f(x<sub>i</sub>) = V − O(x<sub>i</sub>) N / Σ O(x<sub>j</sub>), with V large enough to keep fitness non-negative.</li>
-        </ul>
-        <p>These transformations do not move the location of the optimum.</p>
+        <p>GAs <b>maximize</b> fitness, so a minimization objective is transformed first, for example negated.</p>
+        <p class="more">Section 7.3 gives the reciprocal and shifting transformations (equations 7.1 and 7.2).</p>
       </div>
-      <div class="eq" style="white-space:normal">Ticket pricing (equation 7.3):<br>profit(x) = −20x² + 6200x − 350,000, &nbsp; 75 ≤ x ≤ 235<p class="cap" style="margin-top:.5rem">An event organizer chooses the ticket price x. The maximum profit is $130,500 at x = $155.</p></div>
+      <div class="eq" style="white-space:normal">Ticket pricing (equation 7.3):<br>profit(x) = −20x² + 6200x − 350,000, &nbsp; 75 ≤ x ≤ 235<p class="cap" style="margin-top:.5rem">An event organizer chooses the ticket price x.</p></div>
     </div>
     <h3 id="representation">Representation schemes</h3>
-    <p class="prose">An <b>encoding</b> is the data structure for candidate solutions, and a good encoding is probably the most important factor for GA performance. <b>Binary</b> encoding (simple GA), <b>value</b> encoding (real-valued GA) and <b>permutation</b> encoding are the three main schemes. For binary encoding, the number of bits follows from the range and the precision: steps = ⌈(UB − LB) / P⌉ and bits = ⌈log₂(steps)⌉.</p>
+    <p class="prose">The main encodings are <b>binary</b>, <b>value</b> (real) and <b>permutation</b>. Set a range and precision to see how many bits a binary gene needs.</p>
     <div class="bench">
       <div class="bench-head"><h4>How many bits?</h4><span class="eyebrow">Binary encoding</span></div>
       <div class="bench-body"><div class="side" id="bitsCtl"></div><div class="stage"><div class="calc" id="bitsCalc"></div><div id="bitsDemo"></div></div></div>
@@ -449,11 +436,14 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 3 · Sections 7.3 and 7.4</span>
     <h2>Binary GA: the ticket pricing problem</h2>
-    <p class="prose">With integer prices from 75 to 235, each candidate is an 8-bit chromosome. The book starts from this population of five (Table 7.2):</p>
+    <p class="prose">Each price from 75 to 235 is an 8-bit chromosome. The panels start from the book’s population (Table 7.2):</p>
     <div class="tbl-wrap" style="max-width:640px"><table id="popTbl"></table></div>
 
     <h3 id="selection">Parent selection</h3>
-    <p class="prose">Selection operators differ in <b>selective pressure</b>, the chance of the best individual being picked compared to the average. High pressure speeds up convergence but can lose diversity and converge prematurely. From highest to lowest: elitism, fitness-proportionate selection (FPS), rank-based selection, stochastic universal sampling (SUS), tournament selection and random selection.</p>
+    <div class="prose">
+      <p>Operators differ in <b>selective pressure</b>: high pressure converges fast but loses diversity. Pick one and click Select parents.</p>
+      <p class="more">Section 7.4 works each selection operator by hand on Table 7.2.</p>
+    </div>
     <div class="bench">
       <div class="bench-head"><h4>Selection explorer</h4><span class="eyebrow">Table 7.2 population</span></div>
       <div class="bench-body">
@@ -463,29 +453,32 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
 
     <h3 id="crossover">Crossover</h3>
-    <p class="prose">Crossover exchanges genetic material between two parents. The book applies it to parents 77 (01001101) and 145 (10010001). <b>1-point</b>: cut once and swap tails. <b>n-point</b>: cut n times and alternate. <b>Uniform</b>: flip a coin for every gene of child 1; child 2 takes the other parent’s gene. Children outside 75 to 235 are infeasible and rejected.</p>
+    <p class="prose">Crossover exchanges genes between two parents. Choose a type and watch the children.</p>
     <div class="bench">
       <div class="bench-head"><h4>Binary crossover</h4><span class="eyebrow">Figures 7.13 to 7.15</span></div>
       <div class="bench-body"><div class="side" id="cxCtl"></div><div class="stage"><div id="cxOut"></div><p class="cap" id="cxNote"></p></div></div>
     </div>
-    <div class="note warn">In Figure 7.13 the 1-point crossover is drawn with child 2 equal to parent 1 (01001101, 77). Swapping the tails after bit 3 actually gives child 2 = 10001101 (141), profit $126,580, which is also the child the book’s 2-point example produces.</div>
+    <div class="note warn">Erratum: in Figure 7.13, child 2 of the 1-point crossover should be 10001101 (141).</div>
 
     <h3 id="mutation">Mutation and survivor selection</h3>
-    <p class="prose">Bit-flip mutation alters each gene independently: for each gene draw r in [0, 1] and flip it if p<sub>m</sub> &gt; r. Mutation adds diversity and keeps every allele reachable. A common rule of thumb is 1/(population size) &lt; p<sub>m</sub> &lt; 1/(chromosome length).</p>
+    <p class="prose">Bit-flip mutation flips each gene whose random number falls below p<sub>m</sub>. Draw new numbers to try it.</p>
     <div class="bench">
       <div class="bench-head"><h4>Bit-flip mutation</h4><span class="eyebrow">Figure 7.16</span></div>
       <div class="bench-body"><div class="side"><div id="muCtl"></div><div class="btns"><button id="muDraw" class="primary">Draw new random numbers</button><button id="muBook">Book example</button></div></div><div class="stage"><div id="muOut"></div></div></div>
     </div>
     <div class="two">
       <div class="prose">
-        <p>The next generation comes from the old population and the offspring. In a <b>generational</b> GA the offspring replace the whole population; in a <b>steady-state</b> GA only some individuals are replaced. Survivor selection can be random, age-based (delete oldest), fitness-based, <b>elitist</b> (always keep the best), or genitor (delete worst).</p>
-        <p>Table 7.7 applies elitist selection to the old population plus the offspring 81 and 77 (from crossover) and 103 (from mutation).</p>
+        <p>The table forms the next generation with <b>elitist</b> survivor selection, which always keeps the best (Table 7.7).</p>
+        <p class="more">Section 7.4 contrasts generational and steady-state GAs and the other survivor selection schemes.</p>
       </div>
       <div class="tbl-wrap"><table id="eliteTbl"></table></div>
     </div>
 
     <h3 id="bga-lab">Ticket pricing lab</h3>
-    <p class="prose">A complete binary GA on the ticket pricing problem. Dots show the population on the profit curve each generation; the gold dot is the best so far. Listing 7.2 uses a population of 5, crossover probability 0.7, mutation probability 0.3 and random parent selection, and finds the optimum of <b>$155</b> and <b>$130,500</b>.</p>
+    <div class="prose">
+      <p>A complete binary GA: dots are the population on the profit curve, gold is the best. Pick settings and Run.</p>
+      <p class="more">Listings 7.2 and 7.3 solve this problem from scratch and with pymoo.</p>
+    </div>
     <div class="bench">
       <div class="bench-head"><h4>Binary GA lab</h4><span class="eyebrow">Maximize profit</span></div>
       <div class="bench-body">
@@ -517,8 +510,8 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>Gray-coded GA and the Hamming cliff</h2>
     <div class="two">
       <div class="prose">
-        <p>In binary coding, neighboring values can differ in many bits: 7 = 0111 and 8 = 1000 differ in all four. This <b>Hamming cliff</b> means a small step in the search space needs a large change in the chromosome, and flipping a high-order bit makes a huge jump. In the reflected binary code invented by Frank Gray, neighboring values always differ by exactly one bit (7 = 0100, 8 = 1100), which gives a smoother genotype-to-phenotype mapping.</p>
-        <p>Conversion uses XOR gates: the most significant bit is copied, and every other Gray bit is the XOR of two neighboring binary bits. The benefit of Gray coding is problem-dependent; try the <b>Gray coding</b> option in the ticket pricing lab.</p>
+        <p>In binary, neighbors such as 7 = 0111 and 8 = 1000 can differ in every bit: a <b>Hamming cliff</b>. In Gray code they differ by one bit. Move the slider to see the XOR conversion.</p>
+        <p class="more">Section 8.1 explains when Gray coding helps; try it in the ticket pricing lab.</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Binary to Gray</h4><span class="eyebrow">XOR gates</span></div>
@@ -534,16 +527,18 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 5 · Section 8.2</span>
     <h2>Real-valued GA</h2>
-    <p class="prose">For continuous variables, real-valued genes give better <b>precision</b> (binary needs 17 bits for 0 to 10 at a precision of 0.0001), <b>efficiency</b>, <b>smoothness</b> (no Hamming cliffs) and <b>adaptability</b>. Crossover and mutation are redefined for real numbers.</p>
+    <div class="prose">
+      <p>Real-valued genes suit continuous variables; crossover and mutation work on real numbers. Adjust the operators below.</p>
+      <p class="more">Section 8.2 compares real and binary encodings and covers simulated binary crossover (SBX).</p>
+    </div>
     <div class="opgrid2" id="real-ops">
       <div class="op"><h4>Arithmetic crossover</h4><div id="rcCtl"></div><div id="rcOut"></div><p class="cap" id="rcNote"></p></div>
       <div class="op"><h4>Mutation methods</h4><div id="rmCtl"></div><canvas id="rmCv" class="cv-chart" style="height:180px" aria-label="Distribution of mutated gene values"></canvas><p class="cap" id="rmNote"></p></div>
     </div>
-    <p class="cap">Simulated binary crossover (SBX), used in pymoo and in the NSGA-II lab below, creates children close to their parents using a probability distribution, balancing exploration and exploitation.</p>
-    <h3 id="curve-lab">Curve fitting</h3>
+        <h3 id="curve-lab">Curve fitting</h3>
     <div class="two">
       <div class="prose">
-        <p>Fit y = ax³ + bx² + cx + d to five points generated by a, b, c, d = 2, −3, 4, 1 (Table 8.2), minimizing the mean squared error. The worked example evaluates two parents and recombines them:</p>
+        <p>Fit y = ax³ + bx² + cx + d to five points (Table 8.2) by minimizing the mean squared error, then Run the lab below.</p>
         <div class="calc" id="cfCalc" style="white-space:normal"></div>
       </div>
       <div class="tbl-wrap"><table id="cfTbl"></table></div>
@@ -574,13 +569,16 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 6 · Sections 8.3 and 8.6</span>
     <h2>Permutation-based GA</h2>
-    <p class="prose">When a solution is an order of events, each value must appear exactly once. Two kinds of problems use this: those where <b>order</b> matters because events share limited resources or time (ride-sharing scheduling), and those where <b>adjacency</b> matters (the traveling salesman problem). Ordinary crossover would duplicate or drop cities, so permutation GAs use dedicated operators. The book’s parents are P1 = 1 2 3 4 5 6 7 8 and P2 = 1 6 7 8 5 2 4 3.</p>
+    <div class="prose">
+      <p>In a permutation each value appears once, so special operators are needed. Pick one to see the children.</p>
+      <p class="more">Section 8.3 works through each permutation operator by hand.</p>
+    </div>
     <div class="opgrid2" id="perm-ops">
       <div class="op"><h4>Crossover</h4><div id="pcCtl"></div><div id="pcOut"></div></div>
       <div class="op"><h4>Mutation</h4><div id="pmCtl"></div><div id="pmOut"></div></div>
     </div>
     <h3 id="tsp-lab">TSP of 20 major US cities (Listing 8.4)</h3>
-    <p class="prose">A round trip starting and ending in New York City. Listing 8.4 uses pymoo’s GA with order crossover, inversion mutation and a population of 20, keeps New York City first with a repair operator, and stops after 300 generations without improvement. It finds a tour of <b>10,934.8 km</b>, which is the optimum for this instance. Like pymoo, the lab keeps the best of parents and offspring together and removes duplicates.</p>
+    <p class="prose">Evolve a round trip from New York City. Choose the operators and Run; the dashed line is the book’s result.</p>
     <div class="bench">
       <div class="bench-head"><h4>Permutation GA lab</h4><span class="eyebrow">Minimize tour length</span></div>
       <div class="bench-body">
@@ -588,7 +586,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
         <div class="stage">
           <div class="btns"><button id="tgRun" class="primary">Run</button><button id="tgStep">Step</button><button id="tgReset">New population</button></div>
           <canvas id="tgMap" class="cv-map" aria-label="Best tour on the map"></canvas>
-          <div class="stage-grid"><div><div class="stats" id="tgStats"></div><p class="tour" id="tgTour"></p></div><div><canvas id="tgChart" class="cv-chart" aria-label="Best tour length per generation"></canvas><p class="cap">Best tour length per generation. Dashed: the optimum found in the book (10,934.8 km).</p></div></div>
+          <div class="stage-grid"><div><div class="stats" id="tgStats"></div><p class="tour" id="tgTour"></p></div><div><canvas id="tgChart" class="cv-chart" aria-label="Best tour length per generation"></canvas><p class="cap">Best tour length per generation; dashed: the book’s optimum.</p></div></div>
         </div>
       </div>
       <div class="presets" id="tgPresets"></div>
@@ -608,8 +606,8 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>Multi-objective optimization</h2>
     <div class="two">
       <div class="prose">
-        <p>With several conflicting objectives there is no single best solution. A solution is <b>Pareto optimal</b> (non-dominated) if no other solution improves one objective without worsening another; together they form the <b>Pareto front</b>. In the book’s electric vehicle example, no car has both the shortest acceleration time and the longest driving range.</p>
-        <p>Solution X <b>dominates</b> Y if X is no worse than Y in every objective and better in at least one. Approaches are <b>scalar</b> (weighted aggregation), <b>criterion-based</b>, or <b>dominance-based</b>, like NSGA-II, SPEA2, PAES, NPGA, SMS-EMOA and MOEA/D.</p>
+        <p>X <b>dominates</b> Y if it is no worse in every objective and better in one. Non-dominated points form the <b>Pareto front</b>. Click a point.</p>
+        <p class="more">Section 8.4 introduces Pareto optimality and surveys multi-objective approaches.</p>
       </div>
       <div class="bench" style="margin-top:0" id="pareto">
         <div class="bench-head"><h4>Pareto dominance</h4><span class="eyebrow">Click a point · both objectives minimized</span></div>
@@ -619,8 +617,8 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h3 id="nsga-lab">NSGA-II on the manufacturing problem (Listing 8.3)</h3>
     <div class="two">
       <div class="prose">
-        <p>A manufacturer makes products P1 and P2 on machines M1 and M2. P1 takes 2 h on M1 or 3 h on M2 (cost $100 or $150); P2 takes 4 h on M1 or 1 h on M2 ($200 or $50). Let x₁, x₂ be the units of P1 and y₁, y₂ the units of P2 on M1 and M2, with x ≤ 100 and y ≤ 500 per machine. At least 80 units of P1 and 300 of P2 are needed.</p>
-        <p><b>NSGA-II</b> sorts the population into non-dominated fronts, keeps diversity with the <b>crowding distance</b>, and selects survivors from parents and offspring together. A decision maker then picks one trade-off, here with the augmented scalarization function (ASF) and weights.</p>
+        <p>Trade cost against time imbalance. <b>NSGA-II</b> sorts solutions into non-dominated fronts and keeps diversity with the <b>crowding distance</b>. Run it and watch the front form.</p>
+        <p class="more">Listing 8.3 sets up this problem and shows how to pick one trade-off.</p>
       </div>
       <div class="eq" style="white-space:normal;font-size:1.02rem">minimize f₁ = 100x₁ + 150x₂ + 200y₁ + 50y₂ &nbsp;(total cost)<br>minimize f₂ = |(2x₁ + 4y₁) − (3x₂ + y₂)| &nbsp;(time imbalance)<br>subject to x₁ + x₂ ≥ 80, &nbsp; y₁ + y₂ ≥ 300</div>
     </div>
@@ -636,7 +634,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
         </div>
       </div>
     </div>
-    <div class="note">The book’s run (40 individuals, 10 offspring per generation, 40 generations) reports the trade-off x = (90, 12, 30, 310) with cost $32,498.69 and an imbalance of 43 hours. A longer run finds solutions that are better in both objectives; the gray crosses show the book’s ten reported solutions for comparison.</div>
+    <div class="note">The gray crosses show the book’s ten reported solutions for comparison.</div>
     <div class="runbox"><b>Run it in Python:</b>
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.3_Manufacturing.ipynb">Listing 8.3 Manufacturing with NSGA-II</a>
       <a href="#python" data-tab="moo">From-scratch code ↓</a>
@@ -651,16 +649,12 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>Adaptive GA</h2>
     <div class="two">
       <div class="prose">
-        <p>One of the main drawbacks of metaheuristics is parameter tuning. Parameters can be set <b>before the run</b> (parameter tuning) or changed <b>during the run</b> (parameter control), which can be deterministic, adaptive or self-adaptive (Eiben, Hinterding and Michalewicz, 1999). Population size, crossover and mutation can all be adapted; a larger population favors exploration, a smaller one faster convergence.</p>
-        <ul>
-          <li><b>Deterministic:</b> σ(i) = 1 − 0.9 i / N, from 1 at the start to 0.1 at generation N.</li>
-          <li><b>Adaptive, Rechenberg’s 1/5 success rule:</b> if more than one in five mutations improve, increase σ (σ / c); if fewer, decrease it (σ · c), with 0.82 ≤ c ≤ 1. Here the success rate is pooled over 10 generations.</li>
-          <li><b>Self-adaptive:</b> each individual carries its own σ, mutated as σ′ = σ · e<sup>N(0, τ₀)</sup>, then x′ = x + N(0, σ′).</li>
-        </ul>
+        <p>Parameter control changes settings such as the mutation step σ during the run: <b>deterministic</b>, <b>adaptive</b> or <b>self-adaptive</b>. Compare the modes on curve fitting.</p>
+        <p class="more">Section 8.5 gives the formula for each control mode.</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Mutation step size during a run</h4><span class="eyebrow">Curve fitting</span></div>
-        <div class="stage"><div id="adCtl"></div><div class="btns"><button id="adRun" class="primary">Compare the four modes</button></div><canvas id="adCv" class="cv-chart" style="height:200px" aria-label="Best MSE per generation for each mode"></canvas><p class="cap">log₁₀ of the best MSE per generation, averaged over 5 runs (population 60, whole arithmetic crossover, Gaussian mutation).</p><div class="tbl-wrap"><table id="adTbl"></table></div></div>
+        <div class="stage"><div id="adCtl"></div><div class="btns"><button id="adRun" class="primary">Compare the four modes</button></div><canvas id="adCv" class="cv-chart" style="height:200px" aria-label="Best MSE per generation for each mode"></canvas><p class="cap">log₁₀ of the best MSE per generation, averaged over 5 runs.</p><div class="tbl-wrap"><table id="adTbl"></table></div></div>
       </div>
     </div>
     <div class="runbox"><b>Run it in Python:</b>
@@ -675,18 +669,9 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 9 · Section 8.7</span>
     <h2>PID tuning with a GA</h2>
-    <div class="two">
-      <div class="prose">
-        <p>A PID controller turns the error e(t) between the set point and the measured state into a control signal u(t) = K<sub>p</sub>e + K<sub>i</sub>∫e dt + K<sub>d</sub> de/dt. With the HVAC plant G(s) = 1/(s² + 10s + 20) and unity feedback, the closed loop is T(s) = (K<sub>d</sub>s² + K<sub>p</sub>s + K<sub>i</sub>) / (s³ + (K<sub>d</sub> + 10)s² + (K<sub>p</sub> + 20)s + K<sub>i</sub>).</p>
-        <p>Tuning K<sub>p</sub>, K<sub>i</sub>, K<sub>d</sub> ∈ [0, 100] is a 3-variable real-valued problem. The GA minimizes a performance criterion of the step response: ITAE = ∫t|e|dt, ITSE = ∫te²dt, IAE = ∫|e|dt, ISE = ∫e²dt, or the combined W = (1 − e<sup>−β</sup>)(M<sub>p</sub> + e<sub>ss</sub>) + e<sup>−β</sup>(t<sub>s</sub> − t<sub>r</sub>).</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Parameter</th><th>Rise time</th><th>Overshoot</th><th>Settling time</th><th>Steady-state error</th></tr></thead>
-        <tbody>
-          <tr><td>K<sub>p</sub></td><td>Decreases</td><td>Increases</td><td>Small change</td><td>Decreases</td></tr>
-          <tr><td>K<sub>i</sub></td><td>Decreases</td><td>Increases</td><td>Increases</td><td>Decreases significantly</td></tr>
-          <tr><td>K<sub>d</sub></td><td>Small change</td><td>Decreases</td><td>Decreases</td><td>Small change</td></tr>
-        </tbody></table><p class="cap" style="padding:.4rem .6rem">Table 8.6: typical effects; the gains interact, so use it only as a guide.</p></div>
+    <div class="prose">
+      <p>A PID controller sets u(t) = K<sub>p</sub>e + K<sub>i</sub>∫e dt + K<sub>d</sub> de/dt. Tune the gains by hand, then let a GA do it.</p>
+      <p class="more">Section 8.7 derives the HVAC closed loop, compares error criteria with Listing 8.5, and Table 8.6 shows how each gain shapes the response.</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>Step response lab</h4><span class="eyebrow">Tune by hand, then let the GA try</span></div>
@@ -708,7 +693,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <span class="eyebrow">Part 10 · Section 8.8 and appendix C</span>
     <h2>More applications</h2>
     <div class="apps">
-      <div class="card"><h5>Political districting</h5><p>Group 16 East Toronto neighborhoods into 3 contiguous electoral districts with balanced population (margin 6,000). The GA minimizes the number of over- and under-populated districts; the book’s result is three balanced districts.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.6_Political_districting.ipynb">Listing 8.6</a></p></div>
+      <div class="card"><h5>Political districting</h5><p>Group Toronto neighborhoods into balanced electoral districts.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.6_Political_districting.ipynb">Listing 8.6</a></p></div>
       <div class="card"><h5>Facility allocation</h5><p>Choose facility locations and assignments with a GA.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%208/Listing%20C.9_Facility.ipynb">Listing C.9</a></p></div>
       <div class="card"><h5>All ones</h5><p>The classic warm-up for binary GAs: evolve a string of all 1s.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%208/Listing%20C.10_ALL_ONES.ipynb">Listing C.10</a></p></div>
       <div class="card"><h5>Cargo bike loading</h5><p>Load a cargo bike with the most valuable set of items within its capacity.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%208/Listing%20C.11_Cargo_bike.ipynb">Listing C.11</a></p></div>
@@ -722,7 +707,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <span class="eyebrow">Part 11 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s notebooks directly in Colab, or the GA Lab companion notebook, which holds the from-scratch implementations below (NumPy and Matplotlib only, both preinstalled in Colab).</p>
+    <p class="prose">Open the book’s notebooks in Colab, or the companion notebook with the from-scratch code below.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/GA_Lab_Companion.ipynb"><em>All examples</em><b>GA Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -1181,7 +1166,7 @@ rise = t[np.argmax(y &gt;= .<span class="nm">9</span>)] - t[np.argmax(y &gt;= .<
 print(f<span class="st">"Kp = {Kp:.1f}, Ki = {Ki:.1f}, Kd = {Kd:.1f}, ITAE = {J:.4f}, overshoot = {max(0, y.max() - 1) * 100:.1f}%, rise time = {rise:.3f} s"</span>)
 plt.plot(t, y); plt.axhline(<span class="nm">1</span>, ls=<span class="st">"--"</span>, c=<span class="st">"gray"</span>); plt.xlabel(<span class="st">"time (s)"</span>); plt.title(<span class="st">"Step response"</span>); plt.show()</pre>
     </div>
-    <p class="cap">To run: open the companion notebook in Colab and press Shift+Enter in each cell, or paste a tab’s code into any notebook.</p>
+    <p class="cap">Open the companion notebook in Colab, or paste a tab’s code into any notebook.</p>
   </div>
 </section>
 
@@ -1191,16 +1176,36 @@ plt.plot(t, y); plt.axhline(<span class="nm">1</span>, ls=<span class="st">"--"<
     <span class="eyebrow">Part 12 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Building blocks</h5><p>Encoding, fitness, parent selection, crossover, mutation and survivor selection. Selective pressure trades convergence speed against diversity.</p></div>
-      <div class="card"><h5>Encodings</h5><p>Binary is simple but suffers from Hamming cliffs; Gray coding smooths them. Real-valued genes suit continuous problems; permutations need order-preserving operators.</p></div>
-      <div class="card"><h5>Many objectives</h5><p>With conflicting objectives the answer is a Pareto front. NSGA-II combines non-dominated sorting, crowding distance and elitism.</p></div>
-      <div class="card"><h5>Adaptation</h5><p>Controlling parameters during the run (deterministic, adaptive or self-adaptive) moves the search from exploration to exploitation.</p></div>
+      <div class="card"><h5>Building blocks</h5><p>Selective pressure trades convergence speed against diversity.</p></div>
+      <div class="card"><h5>Encodings</h5><p>Match the encoding (binary, Gray, real, permutation) to the problem.</p></div>
+      <div class="card"><h5>Many objectives</h5><p>Conflicting objectives yield a Pareto front, not one answer.</p></div>
+      <div class="card"><h5>Adaptation</h5><p>Parameter control shifts the search from exploration to exploitation.</p></div>
     </div>
     <div class="prose">
       <p class="muted">References: J. H. Holland, <i>Adaptation in Natural and Artificial Systems</i>, 1975. A. E. Eiben, R. Hinterding and Z. Michalewicz, “Parameter control in evolutionary algorithms,” 1999. K. Deb, <i>Multi-objective Optimization Using Evolutionary Algorithms</i>, 2001. E. Zitzler, <i>Evolutionary Algorithms for Multiobjective Optimization</i>, 1999. E.-G. Talbi, <i>Metaheuristics: From Design to Implementation</i>, 2009. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapters 7 and 8.</p>
     </div>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 13 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapters 7 and 8. Pick an answer to check it.</p>
+    <div class="mcq" data-a="0">
+      <p class="mcq-q"><b>Q1.</b> What is the main risk of a parent selection operator with very high selective pressure?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>The population loses diversity and may converge prematurely to a poor solution</span></button><button type="button" class="mcq-o"><b>B</b><span>Infeasible children are produced more often</span></button><button type="button" class="mcq-o"><b>C</b><span>The GA can no longer be used for minimization problems</span></button><button type="button" class="mcq-o"><b>D</b><span>Convergence becomes much slower</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>High selective pressure picks the best individuals far more often than average ones, which speeds convergence but erodes diversity and can cause premature convergence. Slower convergence is the effect of low pressure.</template>
+    </div>
+    <div class="mcq" data-a="3">
+      <p class="mcq-q"><b>Q2.</b> Why does a permutation-based GA for the TSP need special crossover operators such as order crossover instead of ordinary 1-point crossover?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Ordinary crossover is too slow for 20 cities</span></button><button type="button" class="mcq-o"><b>B</b><span>Permutations cannot be mutated, so crossover must do all the work</span></button><button type="button" class="mcq-o"><b>C</b><span>Ordinary crossover would make every child identical to a parent</span></button><button type="button" class="mcq-o"><b>D</b><span>Ordinary crossover can duplicate some cities and drop others, so the child is not a valid tour</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>In a permutation each city must appear exactly once. Swapping tails between two tours generally duplicates some cities and loses others, so permutation GAs use order-preserving operators.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%207" target="_blank" rel="noopener">Chapter 7</a> and <a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%208" target="_blank" rel="noopener">Chapter 8</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapters 7 and 8 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024). Basemap: Natural Earth (public domain).</div></footer>
 </div>
 <script>
@@ -2250,5 +2255,15 @@ function pidCost(y, crit, beta) {
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

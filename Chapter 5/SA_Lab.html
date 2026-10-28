@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 5 (Simulated annealing) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Simulated Annealing Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -304,6 +322,7 @@ tr.rej td{color:var(--muted)}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>12</b>Summary</a></li>
+    <li><a href="#quiz"><b>13</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 5, Simulated annealing.</div>
 </aside>
@@ -316,7 +335,7 @@ tr.rej td{color:var(--muted)}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 5 · Simulated annealing</div>
       <h1>Simulated Annealing <em>Lab</em></h1>
-      <p class="lede">A hiker looking for the lowest valley in a rugged landscape, without a map. Early on, while the search is “hot,” the hiker is willing to climb hills to see what lies behind them; as it cools, only downhill steps remain. Simulated annealing turns this idea, borrowed from the slow cooling of metals and glass, into a search algorithm.</p>
+      <p class="lede">While the search is “hot,” simulated annealing is willing to climb hills to see what lies behind them; as it cools, only downhill steps remain.</p>
       <div class="variants">
         <a class="chip" href="#functions"><b>f(x)</b> Continuous</a>
         <a class="chip" href="#sudoku"><b>9 × 9</b> Sudoku</a>
@@ -339,42 +358,14 @@ tr.rej td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Sections 5.1 and 5.2.1</span>
     <h2>Trajectory-based search and physical annealing</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Simulated annealing (SA) is a stochastic, trial-and-error search. Moves that improve the objective are always accepted; moves that make it worse are accepted with a probability that shrinks as the search proceeds. That occasional uphill step is what lets it leave a local valley.</p>
-        <p>SA is a <b>trajectory-based metaheuristic</b> (S-metaheuristic): a single search agent moves through the search space step by step, tracing a trajectory. Tabu search, GRASP, iterated local search, guided local search and variable neighborhood search belong to the same family. <b>Population-based</b> metaheuristics (P-metaheuristics) such as genetic algorithms, particle swarm optimization and ant colony optimization move many agents at once, so they lean toward exploration; trajectory-based ones lean toward exploitation (Figure 5.1).</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Physical annealing</th><th>Simulated annealing</th></tr></thead>
-        <tbody>
-          <tr><td>State of a material</td><td>Solution of an optimization problem</td></tr>
-          <tr><td>Energy of a state</td><td>Cost of a solution</td></tr>
-          <tr><td>Temperature</td><td>Control parameter (temperature)</td></tr>
-          <tr><td>High temperature: molecules move freely</td><td>High temperature favors exploration</td></tr>
-          <tr><td>Low temperature restricts motion</td><td>Low temperature favors exploitation</td></tr>
-          <tr><td>Gradual cooling reduces stress, increases homogeneity</td><td>Gradual cooling avoids poor local minima</td></tr>
-        </tbody></table><p class="cap" style="padding:.4rem .6rem">Table 5.1. Metropolis and colleagues introduced the first computational model of annealing in 1953; Kirkpatrick, Gelatt and Vecchi applied it to optimization.</p></div>
+    <div class="prose">
+      <p>Simulated annealing (SA) sometimes accepts worse moves, less often as it cools, so it can leave a local valley.</p>
+      <p class="more">Section 5.1 places SA among the metaheuristics (Figure 5.1), and Table 5.1 maps physical annealing onto the algorithm.</p>
     </div>
     <h3 id="physical">Physical annealing: slow cooling vs. quenching</h3>
-    <div class="two">
-      <div class="prose">
-        <p>Annealing heats a material until its atoms move freely, then cools it. As it cools, the atoms slow down and settle into place. Cooled <b>slowly</b>, they have time to line up in a regular crystal, the arrangement with the lowest energy. Cooled <b>too fast</b> (quenched), they freeze wherever they happen to be: an irregular, amorphous solid, like glass instead of quartz (Figures 5.2 and 5.3).</p>
-        <p>The experiment below starts two identical boxes of hot, liquid atoms and cools them at different speeds:</p>
-        <ol>
-          <li>Press <b>Start</b>. Both boxes begin at the same high temperature with the same atoms.</li>
-          <li>The <b>left box cools slowly</b>; the <b>right box cools almost instantly</b> and then stays frozen.</li>
-          <li>Compare the result: how many atoms ended up in perfect crystal order (gold), and which box reached the lower energy.</li>
-        </ol>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>In the experiment</th><th>In simulated annealing</th></tr></thead>
-        <tbody>
-          <tr><td>Positions of all the atoms</td><td>A candidate solution</td></tr>
-          <tr><td>Energy (lower is more stable)</td><td>Cost to minimize</td></tr>
-          <tr><td>A random nudge to one atom, kept by the Metropolis rule</td><td>A random move, kept by the acceptance probability</td></tr>
-          <tr><td>Slow cooling → perfect crystal</td><td>Gradual cooling schedule → global or near-global optimum</td></tr>
-          <tr><td>Quenching → frozen defects</td><td>Cooling too fast → stuck in a local optimum, like greedy search</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p>Press <b>Start</b>: the left box cools slowly, the right one at once. Which reaches crystal order (gold) and lower energy?</p>
+      <p class="more">Figures 5.2 and 5.3 in Section 5.2.1 explain why slow cooling yields a crystal and quenching does not.</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>Slow cooling vs. fast cooling</h4><span class="eyebrow">64 atoms · Metropolis rule</span></div>
@@ -415,29 +406,9 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
 <span class="k">return</span> the best solution found</div>
       </div>
       <div class="prose">
-        <p>SA is a <b>Markov chain</b>: the next state depends only on the current one, through a transition probability. A better neighbor x<sub>k</sub> is always accepted (p<sub>ik</sub> = 1); a worse neighbor x<sub>j</sub> is accepted with p<sub>ij</sub> = e<sup>−(f(x<sub>j</sub>) − f(x<sub>i</sub>))/T</sup> &lt; 1 (Figure 5.4).</p>
-        <p>SA is easy to use and gives optimal or near-optimal solutions on many continuous and discrete problems. Its drawbacks are the number of parameters to tune and occasional slow convergence.</p>
+        <p>Each iteration tries a random neighbor, always keeps it if it is better, and otherwise keeps it with probability e<sup>−Δf/T</sup>; then the temperature drops.</p>
+        <p class="more">Section 5.2.2 explains SA as a Markov chain (Figure 5.4) and surveys its variants, including quantum annealing.</p>
       </div>
-    </div>
-    <div class="opgrid2">
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Variant</th><th>Idea</th></tr></thead>
-        <tbody>
-          <tr><td>Classical SA (CSA)</td><td>The algorithm above (Kirkpatrick et al.)</td></tr>
-          <tr><td>Fast SA (FSA)</td><td>Semi-local search with occasional long jumps from a Cauchy distribution</td></tr>
-          <tr><td>Generalized SA (GSA)</td><td>A distorted Cauchy–Lorentz visiting distribution</td></tr>
-          <tr><td>Dual annealing</td><td>Combines CSA and FSA; SciPy’s <span class="mono">dual_annealing</span> (Listing 5.1)</td></tr>
-          <tr><td>Adaptive SA (ASA)</td><td>Tunes the schedule and step sizes automatically (Ingber)</td></tr>
-        </tbody></table></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Feature</th><th>SA</th><th>Quantum annealing</th></tr></thead>
-        <tbody>
-          <tr><td>Initial state</td><td>A random solution</td><td>A superposition of all solutions</td></tr>
-          <tr><td>Evolution</td><td>Small random changes</td><td>Schrödinger equation</td></tr>
-          <tr><td>Escaping local minima</td><td>Thermal jumps</td><td>Quantum tunneling</td></tr>
-          <tr><td>Acceptance</td><td>Transition probability</td><td>Quantum-mechanical probability</td></tr>
-          <tr><td>Trade-off</td><td>Simpler, slower</td><td>Faster, harder to implement</td></tr>
-        </tbody></table></div>
     </div>
   </div>
 </section>
@@ -449,9 +420,10 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
     <h2>Acceptance probability</h2>
     <div class="two">
       <div class="prose">
-        <p>In thermodynamics, the probability of an energy increase ΔE at temperature t follows the Boltzmann–Gibbs distribution p = e<sup>−ΔE/(kt)</sup>. SA drops the Boltzmann constant (k = 1) and replaces ΔE with the change in the objective, Δf, so</p>
+        <p>A worse move is accepted when</p>
         <p class="eq" style="white-space:normal">p = e<sup>−Δf/T</sup>; &nbsp; accept a worse move if p &gt; r, r uniform in [0, 1]</p>
-        <p>With T → ∞ almost every move is accepted (a random walk); with T → 0 no worse move is accepted, and SA becomes hill climbing. Because the exponential takes about a third of the computation, a lookup table or a non-exponential form such as p = 1 − Δf/(T·Δf<sub>max</sub>) can be used instead (Figure 5.6).</p>
+        <p>Move the sliders, then draw random numbers to see which moves pass.</p>
+        <p class="more">Section 5.2.3 derives this rule from physics and shows cheaper forms (Figure 5.6).</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>To accept or not to accept?</h4><span class="eyebrow">Minimization</span></div>
@@ -466,13 +438,14 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
   <div class="wrap">
     <span class="eyebrow">Part 4 · Sections 5.2.4 and 5.2.5</span>
     <h2>The annealing schedule</h2>
-    <p class="prose">The annealing process is defined by four choices (Figure 5.7): the <b>starting temperature</b> (high, but not so high that the search is random), how the temperature <b>decreases</b>, how many <b>iterations</b> run at each temperature (few when hot, more when cold), and the <b>final temperature</b>, a small value such as 10<sup>−10</sup> to 10<sup>−5</sup>, or the moment the system freezes and no moves are accepted.</p>
+    <div class="prose"><p>The schedule sets the <b>starting temperature</b>, how it <b>decreases</b>, the <b>iterations</b> per temperature and the <b>final temperature</b>.</p>
+    <p class="more">Figure 5.7 and Section 5.2.4 discuss how to pick each of these four settings.</p></div>
     <h3 id="t0">Initial temperature</h3>
     <div class="two">
       <div class="prose">
-        <p>If the largest expected increase max(Δf) is known, choose T<sub>0</sub> so that such a move is accepted with probability p<sub>0</sub> (equation 5.5):</p>
         <p class="eq" style="white-space:normal">T<sub>0</sub> ≈ −max(Δf) / ln p<sub>0</sub></p>
-        <p>Otherwise, start very hot so almost every move is accepted, cool quickly until 50 to 60% of worse moves are accepted, and use that temperature as T<sub>0</sub>. The warm-up on the right does this on Berlin52 with 2-opt moves.</p>
+        <p>Set max(Δf) and p<sub>0</sub>, or run the warm-up on Berlin52.</p>
+        <p class="more">Equation 5.5 and the text around it explain both ways of choosing T<sub>0</sub>.</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Choosing T₀</h4></div>
@@ -480,6 +453,7 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
       </div>
     </div>
     <h3 id="schedules">Cooling schedules</h3>
+    <p class="prose">Tune T<sub>0</sub> and each schedule’s factor to compare how fast they cool.</p>
     <div class="bench">
       <div class="bench-head"><h4>Cooling schedule explorer</h4><span class="eyebrow">Figure 5.8</span></div>
       <div class="bench-body">
@@ -488,22 +462,10 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
       </div>
     </div>
     <h3 id="adaptive">Adaptation in SA</h3>
-    <div class="two">
       <div class="prose">
-        <p>All the schedules above decrease monotonically and ignore how the search is going. SA can adapt instead:</p>
-        <ul>
-          <li><b>Iterations per temperature:</b> few at high temperatures, many at low temperatures to explore the local optimum fully.</li>
-          <li><b>Reheating</b> when no progress is observed, or cooling only after a number of accepted moves.</li>
-          <li><b>Nonmonotonic adaptive cooling</b> (equation 5.12): scale the scheduled temperature T(i) by how far the current solution is from the best one, T = (1 + (f<sub>i</sub> − f*)/f<sub>i</sub>) T(i). When the search drifts away from its best, it heats up.</li>
-          <li><b>Penalty weights</b> for constraints can be relaxed early and tightened later. Avoid cost functions that give the same value to many states, such as the number of edges in a TSP route.</li>
-        </ul>
-        <p>Try the adaptive options in the function lab below and in the Berlin52 lab.</p>
+        <p>SA can adapt its schedule, for example by reheating when it stalls; try it in the Berlin52 lab.</p>
+        <p class="more">Section 5.2.5 covers reheating, nonmonotonic cooling (equation 5.12) and Figure 5.9.</p>
       </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Temperature</th><th>Behavior</th></tr></thead>
-        <tbody><tr><td>High</td><td>Accepts most non-improving moves: oscillation and exploration</td></tr><tr><td>Medium</td><td>Most of the useful work is done here</td></tr><tr><td>Low</td><td>Accepts few non-improving moves: stabilization and exploitation</td></tr></tbody></table>
-        <p class="cap" style="padding:.4rem .6rem">Figure 5.9: high temperature zooms out, low temperature zooms in. Ingber’s adaptive SA (ASA) and Geng et al.’s ASA with greedy search adjust these parameters automatically.</p></div>
-    </div>
   </div>
 </section>
 
@@ -513,7 +475,8 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
     <span class="eyebrow">Part 5 · Section 5.3</span>
     <h2>Function optimization</h2>
     <h3 id="hand">Hand iterations: minimize (x − 6)² on [0, 31]</h3>
-    <p class="prose">T<sub>0</sub> = 5, two iterations per temperature and geometric cooling with α = 0.85. Neighbors add a Gaussian step N(0, 1) to the last accepted solution. The first three iterations use the book’s numbers; later ones draw their own.</p>
+    <div class="prose"><p>Press <b>Next iteration</b> to follow each candidate, its Δf and the accept or reject decision.</p>
+    <p class="more">Section 5.3 works these first iterations out by hand, with every random number shown.</p></div>
     <div class="bench">
       <div class="bench-head"><h4>Step through SA</h4><span class="eyebrow">T₀ = 5 · α = 0.85 · 2 iterations per T</span></div>
       <div class="bench-body">
@@ -522,7 +485,8 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
       </div>
     </div>
     <h3 id="fn-lab">Function lab</h3>
-    <p class="prose">The functions of Listing 5.2. Each frame runs one temperature level (k<sub>max</sub> moves), then cools. Neighbors are Gaussian steps with the step sizes the book uses (5 for Bohachevsky and Bukin, 0.1 for Gramacy &amp; Lee, a tenth of the range for Griewank). The book’s generic solver reports f = 0.6093 at (−14.63, 2.14) on the Bukin function, whose minimum is 0 at (−10, 1).</p>
+    <div class="prose"><p>Pick a function, then <b>Run</b> or step one temperature at a time.</p>
+    <p class="more">Listings 5.1 and 5.2 solve these functions with SciPy, MEALPY and the book’s solver.</p></div>
     <div class="bench">
       <div class="bench-head"><h4>Continuous SA lab</h4><span class="eyebrow">Minimize f</span></div>
       <div class="bench-body">
@@ -542,7 +506,6 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.2_FcnOpt_SA.ipynb">Listing 5.2 Function optimization</a>
       <a href="#python" data-tab="f">From-scratch code ↓</a>
     </div>
-    <div class="note warn">The book writes the Bohachevsky function with 0.4cos(3πx<sub>2</sub>), while Listings 5.1 and 5.2 use 0.4cos(4πx<sub>2</sub>), the standard form. The lab uses the listings’ version.</div>
   </div>
 </section>
 
@@ -551,15 +514,9 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
   <div class="wrap">
     <span class="eyebrow">Part 6 · Section 5.4</span>
     <h2>Sudoku</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Fill a 9 × 9 grid so that every row, column and 3 × 3 box contains the digits 1 to 9. Sudoku grows out of the Latin square, and the generalized n × n puzzle is NP-complete. Backtracking, dancing links and Crook’s pencil-and-paper method are the classic solvers.</p>
-        <p>Here SA fills each box with its missing digits, so the boxes are always valid. A move swaps two non-given cells inside a box, and the cost counts the digits missing from all rows and columns; 0 means solved. If the search freezes, it reheats. The book’s Listing 5.3 uses a different neighborhood: it changes one conflicting cell at a time.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Seconds</th><th class="n">Trivial</th><th class="n">Easy</th><th class="n">Medium</th><th class="n">Hard</th><th class="n">Evil</th></tr></thead>
-        <tbody><tr><td>Backtracking</td><td class="n">0.01</td><td class="n">0.01</td><td class="n">0.11</td><td class="n">0.69</td><td class="n">1.58</td></tr><tr><td>PuLP</td><td class="n">0.69</td><td class="n">0.12</td><td class="n">0.11</td><td class="n">0.13</td><td class="n">0.12</td></tr><tr><td>Classical SA</td><td class="n">0.10</td><td class="n">0.07</td><td class="n">0.01</td><td class="n">3:17</td><td class="n">not solved</td></tr></tbody></table>
-        <p class="cap" style="padding:.4rem .6rem">Table 5.2. For a well-structured problem with a good exact algorithm, a metaheuristic rarely wins.</p></div>
+    <div class="prose">
+      <p>A move swaps two cells inside a box; the cost counts digits missing from rows and columns. Pick a puzzle and press <b>Run</b>.</p>
+      <p class="more">Listing 5.3 solves Sudoku with SA, and Table 5.2 compares it with backtracking and PuLP.</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>Sudoku with SA</h4><span class="eyebrow">Minimize row and column conflicts</span></div>
@@ -581,7 +538,8 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
     <span class="eyebrow">Part 7 · Section 5.5</span>
     <h2>The traveling salesman problem</h2>
     <h3 id="tsp5">Five cities (Figures 5.11 to 5.14)</h3>
-    <p class="prose">A salesman visits five cities and returns home; with symmetric distances there are 5!/2 = 60 tours. The book uses T<sub>0</sub> = 500, T<sub>f</sub> = 50, a linear decrement of 50 and one iteration per temperature, with swap moves. The tour [1, 3, 4, 2, 5] costs 28. Swapping cities 2 and 3 gives 35, a worse tour accepted with probability e<sup>−7/T</sup>; the book assumes it is rejected. Swapping 2 and 5 instead gives 18, which is accepted, and is also the optimum.</p>
+    <div class="prose"><p>Step through SA with swap moves on a five-city tour and watch which swaps are accepted.</p>
+    <p class="more">Figures 5.11 to 5.14 work this example through by hand, iteration by iteration.</p></div>
     <div class="bench">
       <div class="bench-head"><h4>5-city walkthrough</h4><span class="eyebrow">T₀ = 500 · T = T − 50 · swap moves</span></div>
       <div class="bench-body">
@@ -590,7 +548,8 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
       </div>
     </div>
     <h3 id="berlin">Berlin52 lab (Listing 5.5)</h3>
-    <p class="prose">The book runs SA on Berlin52 with 1,200 temperature levels, 500 iterations per level, T<sub>0</sub> = 150, T<sub>f</sub> = 0.01 and linear cooling, and the <b>mutate</b> neighborhood, and gets 8,106.88; the optimum is 7,542. The book’s solver offers four neighborhoods: <b>swap</b> two cities, <b>reverse</b> a segment, <b>insert</b> a city elsewhere, and <b>mutate</b>. In the solver’s code, mutate removes 1 to (n − 1)/5 consecutive cities and reinserts them one by one at random positions, a bigger change than the shuffle described in the text.</p>
+    <div class="prose"><p>Choose a neighborhood and schedule, then run SA on the 52 Berlin locations.</p>
+    <p class="more">Listing 5.5 gives the book’s Berlin52 settings and compares its result with the optimum.</p></div>
     <div class="bench">
       <div class="bench-head"><h4>Berlin52 SA lab</h4><span class="eyebrow">Minimize tour length</span></div>
       <div class="bench-body">
@@ -598,7 +557,7 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
         <div class="stage">
           <div class="btns"><button id="bsRun" class="primary">Run</button><button id="bsStep">One temperature</button><button id="bsReset">New start</button></div>
           <canvas id="bsCv" class="cv-map" style="aspect-ratio:16/10" aria-label="Berlin52 tour"></canvas>
-          <div class="stage-grid"><div><div class="stats" id="bsStats"></div></div><div><canvas id="bsChart" class="cv-chart" aria-label="Tour length per temperature level"></canvas><p class="cap">Current (faint) and best tour per temperature level. Dashed: the optimum 7,542 and the book’s 8,106.88.</p></div></div>
+          <div class="stage-grid"><div><div class="stats" id="bsStats"></div></div><div><canvas id="bsChart" class="cv-chart" aria-label="Tour length per temperature level"></canvas><p class="cap">Current (faint) and best tour per level; dashed: the optimum and the book’s result.</p></div></div>
         </div>
       </div>
       <div class="presets" id="bsPresets"></div>
@@ -618,8 +577,8 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
     <h2>Plant layout</h2>
     <div class="two">
       <div class="prose">
-        <p>Six departments A to F must be placed on six locations of a 2 × 3 grid. Products flow between departments (the flow matrix), and material moves only horizontally or vertically between locations. Minimize the total material handling cost, TMHC = Σ flow × distance. A move swaps the locations of two departments. The annealing schedule is T<sub>0</sub> = 100, geometric cooling with α = 0.85 and two iterations per temperature.</p>
-        <p>The worked example swaps B and D, then A and D, with random numbers 0.2 and 0.6.</p>
+        <p>Place six departments on a 2 × 3 grid to minimize TMHC = Σ flow × distance. A move swaps two departments.</p>
+        <p class="more">The book works the first swaps of this example by hand.</p>
       </div>
       <div class="tbl-wrap"><table class="ttab" id="plFlow"></table></div>
     </div>
@@ -638,7 +597,8 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
   <div class="wrap">
     <span class="eyebrow">Part 9 · Scheduling</span>
     <h2>Scheduling</h2>
-    <p class="prose">Scheduling objectives include the <b>makespan</b> C<sub>max</sub> (when the last job finishes), machine utilization, total (weighted) completion time Σw<sub>i</sub>C<sub>i</sub>, lateness L<sub>i</sub> = C<sub>i</sub> − d<sub>i</sub>, and tardiness T<sub>i</sub> = max(0, L<sub>i</sub>). Both examples use T<sub>0</sub> = 0.9, geometric cooling with α = 0.9 and two iterations per temperature.</p>
+    <div class="prose"><p>Minimize weighted tardiness on one machine and the <b>makespan</b> on three; press <b>Next iteration</b> in each.</p>
+    <p class="more">The book defines the main scheduling objectives and solves both examples by hand.</p></div>
     <div class="opgrid2">
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>One machine, weighted tardiness</h4></div>
@@ -646,7 +606,7 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Three machines, makespan</h4></div>
-        <div class="stage"><p class="cap">Six jobs with times 2, 3, 4, 6, 2, 2. A solution assigns a machine to each job, e.g. (1, 1, 2, 2, 3, 3); every machine must get a job.</p><canvas id="msCv" class="cv-chart" style="height:130px" aria-label="Gantt chart"></canvas><div class="btns"><button id="msStep" class="primary small">Next iteration</button><button id="msReset" class="small">Reset</button></div><div class="stats" id="msStats"></div><div class="tbl-wrap"><table class="ttab" id="msTbl"></table></div></div>
+        <div class="stage"><p class="cap">Six jobs (times 2, 3, 4, 6, 2, 2); each job gets a machine, and every machine at least one job.</p><canvas id="msCv" class="cv-chart" style="height:130px" aria-label="Gantt chart"></canvas><div class="btns"><button id="msStep" class="primary small">Next iteration</button><button id="msReset" class="small">Reset</button></div><div class="stats" id="msStats"></div><div class="tbl-wrap"><table class="ttab" id="msTbl"></table></div></div>
       </div>
     </div>
   </div>
@@ -657,11 +617,11 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
   <div class="wrap">
     <span class="eyebrow">Part 10 · Section 5.6 and appendix C</span>
     <h2>More applications</h2>
+    <p class="more">Section 5.6 solves the delivery routing case on real road data, and appendix C adds the US-cities TSP examples.</p>
     <div class="apps">
-      <div class="card"><h5>Delivery semi-truck routing</h5><p>Visit 18 Walmart Supercenters in the Greater Toronto Area from Ajax, Ontario, on real road distances (OSMnx and NetworkX). SA shortens a 593.88 km initial route to 227.17 km; tabu search later finds 223.53 km.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.6_Walmart.ipynb">Listing 5.6</a></p></div>
+      <div class="card"><h5>Delivery semi-truck routing</h5><p>Route a truck to 18 Walmart stores in the Greater Toronto Area on real roads.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.6_Walmart.ipynb">Listing 5.6</a></p></div>
       <div class="card"><h5>TSP of 20 US cities</h5><p>The twenty largest US cities with the book’s SA solver.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%205/Listing%20C.2_TSP_US_1.ipynb">Listing C.2</a></p></div>
       <div class="card"><h5>TSP with simanneal</h5><p>The same cities with the simanneal package.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%205/Listing%20C.3_TSP_US_2.ipynb">Listing C.3</a></p></div>
-      <div class="card"><h5>Other uses</h5><p>Academic course scheduling, network design, task allocation, circuit partitioning and placement, robot motion planning, vehicle routing and tennis tournament planning.</p></div>
     </div>
   </div>
 </section>
@@ -671,7 +631,7 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
   <div class="wrap">
     <span class="eyebrow">Part 11 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s notebooks directly in Colab, or the SA Lab companion notebook, which holds the from-scratch implementations below (NumPy and Matplotlib only, both preinstalled in Colab).</p>
+    <p class="prose">Open the book’s notebooks in Colab, or the companion notebook with the from-scratch code below.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/SA_Lab_Companion.ipynb"><em>All examples</em><b>SA Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -1019,16 +979,36 @@ print(<span class="st">"SA assignment:"</span>, anneal_makespan(), <span class="
     <span class="eyebrow">Part 12 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Trajectory-based</h5><p>SA moves a single agent through the search space. It always accepts improving moves and sometimes accepts worse ones.</p></div>
-      <div class="card"><h5>Temperature</h5><p>p = e<sup>−Δf/T</sup>. Hot: almost a random walk. Cold: hill climbing. Cool gradually to balance exploration and exploitation.</p></div>
-      <div class="card"><h5>Schedule</h5><p>Starting temperature, cooling schedule, iterations per temperature and final temperature all shape the result; adaptive SA tunes them during the run.</p></div>
-      <div class="card"><h5>Derivative-free</h5><p>SA needs only objective values, so it handles continuous, discrete and constrained problems, but it guarantees neither optimality nor feasibility.</p></div>
+      <div class="card"><h5>Trajectory-based</h5><p>One agent always takes better moves and sometimes worse ones.</p></div>
+      <div class="card"><h5>Temperature</h5><p>p = e<sup>−Δf/T</sup>: hot explores, cold exploits.</p></div>
+      <div class="card"><h5>Schedule</h5><p>Temperatures, cooling and iterations per level shape the result.</p></div>
+      <div class="card"><h5>Derivative-free</h5><p>SA needs only objective values but guarantees no optimum.</p></div>
     </div>
     <div class="prose">
       <p class="muted">References: N. Metropolis et al., “Equation of state calculations by fast computing machines,” 1953. S. Kirkpatrick, C. D. Gelatt and M. P. Vecchi, “Optimization by simulated annealing,” <i>Science</i>, 1983. L. Ingber, “Adaptive simulated annealing (ASA): Lessons learned,” 1996. X. Geng et al., “Solving the traveling salesman problem based on an adaptive simulated annealing algorithm with greedy search,” 2011. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 5.</p>
     </div>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 13 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 5. Pick an answer to check it.</p>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q1.</b> In simulated annealing, a worse move with objective change Δf &gt; 0 is accepted with probability e<sup>−Δf/T</sup>. What happens as the temperature T approaches 0?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Almost every move is accepted, so the search becomes a random walk</span></button><button type="button" class="mcq-o"><b>B</b><span>Worse moves are almost never accepted, so SA behaves like hill climbing</span></button><button type="button" class="mcq-o"><b>C</b><span>Only worse moves are accepted</span></button><button type="button" class="mcq-o"><b>D</b><span>The acceptance probability stays the same, but the neighborhood grows</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>As T goes to 0, e<sup>−Δf/T</sup> goes to 0 for any worse move, so only improving moves remain, which is hill climbing. A very high temperature gives the random walk.</template>
+    </div>
+    <div class="mcq" data-a="3">
+      <p class="mcq-q"><b>Q2.</b> In the slow cooling vs. quenching experiment, why does slow cooling reach a lower-energy state?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Slow cooling starts from a lower temperature</span></button><button type="button" class="mcq-o"><b>B</b><span>Quenching accepts more uphill moves than slow cooling</span></button><button type="button" class="mcq-o"><b>C</b><span>Slow cooling uses a different energy function</span></button><button type="button" class="mcq-o"><b>D</b><span>Slow cooling gives the system time to escape poor configurations while it is still warm, instead of freezing in the first local minimum it falls into</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Gradual cooling keeps occasional uphill moves possible long enough to leave poor local minima. Quenching drops the temperature at once, so the system freezes with defects, like a greedy search stuck in a local optimum.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%205" target="_blank" rel="noopener">Chapter 5</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 5 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024). Berlin52 from TSPLIB; Sudoku puzzles from Listing 5.3.</div></footer>
 </div>
 <script>
@@ -1791,5 +1771,15 @@ const sdCost = g => { let s = 0; for (let i = 0; i < 9; i++) { const R = new Set
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

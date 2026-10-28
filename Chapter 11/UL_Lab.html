@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 11 (Supervised and unsupervised learning): unsupervised learning of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Unsupervised Learning Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -278,6 +296,7 @@ tr.dim td{color:var(--muted)}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>8</b>Summary</a></li>
+    <li><a href="#quiz"><b>9</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 11, Supervised and unsupervised learning.</div>
 </aside>
@@ -290,7 +309,7 @@ tr.dim td{color:var(--muted)}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 11 · Unsupervised learning</div>
       <h1>Unsupervised Learning <em>Lab</em></h1>
-      <p class="lede">With no labels to imitate, unsupervised learning looks for structure: groups of similar points, low-dimensional maps, shapes in the data. And a map that stretches itself over a set of cities turns out to be a way to solve the traveling salesman problem.</p>
+      <p class="lede">Unsupervised learning finds structure in unlabeled data, and a self-stretching map can even solve the traveling salesman problem.</p>
       <div class="variants">
         <a class="chip" href="#similarity"><b>d(x, y)</b> Similarity</a>
         <a class="chip" href="#kmeans"><b>k</b> K-means</a>
@@ -311,21 +330,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Section 11.2</span>
     <h2>Unsupervised learning</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Unsupervised learning works with <b>unlabeled data</b>. In <b>clustering</b>, n objects with d features each are grouped into c clusters so that objects in a cluster have a “natural” relation and objects in different clusters differ, according to a similarity measure. <b>Dimensionality reduction</b> maps the data to fewer dimensions while keeping its structure. A self-driving car might cluster driving scenes into kinds of intersections without anyone labeling them.</p>
-        <p>Viewed as a mapping, unsupervised learning sends each input x to a latent description z (its cluster or low-dimensional coordinates). Generative models (GANs, variational autoencoders, diffusion and flow models) go the other way and generate x from z.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Family</th><th>Examples</th></tr></thead>
-        <tbody>
-          <tr><td>Partitioning</td><td>K-means, MiniBatchKMeans, CLARA, fuzzy C-means</td></tr>
-          <tr><td>Hierarchical</td><td>Agglomerative (bottom-up), divisive (top-down), Birch</td></tr>
-          <tr><td>Density-based</td><td>DBSCAN, OPTICS, mean shift</td></tr>
-          <tr><td>Model-based</td><td>Gaussian mixtures</td></tr>
-          <tr><td>Neural</td><td>Self-organizing maps, autoencoders</td></tr>
-          <tr><td>Dimensionality reduction</td><td>PCA, LDA, truncated SVD, factor analysis, t-SNE, UMAP</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p>Unsupervised learning works with <b>unlabeled data</b>: <b>clustering</b> groups similar objects, and <b>dimensionality reduction</b> maps data to fewer dimensions while keeping its structure.</p>
+      <p class="more">Section 11.2 of the book surveys the main families of clustering and dimensionality-reduction algorithms.</p>
     </div>
   </div>
 </section>
@@ -334,7 +341,8 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 2 · Similarity</span>
     <h2>Similarity measures</h2>
-    <p class="prose">Clustering is only as good as its notion of distance. The <b>Euclidean</b> distance √Σ(xᵢ − yᵢ)² measures a straight line, <b>Manhattan</b> Σ|xᵢ − yᵢ| a city-block path, <b>Chebyshev</b> max|xᵢ − yᵢ| the largest coordinate gap. <b>Cosine</b> similarity compares directions, ignoring length. <b>Mahalanobis</b> √((x − y)ᵀΣ⁻¹(x − y)) accounts for the spread and correlation of the data, so a point along the data’s trend is “closer” than one across it. On the globe, the <b>haversine</b> formula gives great-circle distances. The contours show points at equal distance from the center; click to place a point.</p>
+    <p class="prose">Pick a measure to see its contours of equal distance; click to place a point.</p>
+    <p class="more">Chapter 11 of the book gives the formula for each measure and works a haversine example.</p>
     <div class="bench">
       <div class="bench-head"><h4>Distance explorer</h4><span class="eyebrow">Click to place a point</span></div>
       <div class="bench-body">
@@ -343,7 +351,7 @@ tr.dim td{color:var(--muted)}
       </div>
     </div>
     <div class="two">
-      <div class="prose"><p>The haversine distance from Los Angeles to Madrid is about 9,363 km. Pick two cities to compare the great-circle distance with a flat-map straight line.</p></div>
+      <div class="prose"><p>On the globe, the <b>haversine</b> formula gives great-circle distances. Pick two cities to compare it with a flat-map straight line.</p></div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Haversine</h4></div><div class="stage"><div id="hvCtl"></div><div class="calc" id="hvOut"></div></div></div>
     </div>
   </div>
@@ -353,19 +361,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 3 · K-means</span>
     <h2>K-means clustering</h2>
-    <div class="two">
-      <div class="prose">
-        <ol><li>Pick k centers (at random, or spread out with <b>k-means++</b>).</li><li>Assign every point to its nearest center.</li><li>Move each center to the mean of its points.</li><li>Repeat steps 2 and 3 until the assignments stop changing.</li></ol>
-        <p>Each step lowers the <b>within-cluster sum of squares</b> (inertia), Σ<sub>i</sub> Σ<sub>x∈Cᵢ</sub> ‖x − μᵢ‖², so k-means is a local search that always converges, but to a local minimum that depends on the seeds. Its cost is O(n·k·i) for n points, k clusters and i iterations, with O(n + k) memory: 100 points, 5 clusters and 10 iterations take about 5,000 operations; a million points about 5 × 10⁷.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th></th><th>K-means</th><th>DBSCAN</th><th>Agglomerative</th></tr></thead>
-        <tbody>
-          <tr><td>Parameters</td><td>k</td><td>ε, minPts</td><td>Linkage, metric, cut</td></tr>
-          <tr><td>Cost</td><td>O(nki)</td><td>O(n log n) to O(n²)</td><td>O(n²) or more</td></tr>
-          <tr><td>Cluster shape</td><td>Compact, roughly spherical</td><td>Any shape</td><td>Depends on linkage</td></tr>
-          <tr><td>Outliers</td><td>Sensitive</td><td>Labeled as noise</td><td>Sensitive</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p>K-means alternates two steps: assign every point to its nearest center, then move each center to the mean of its points. It converges, but to a local minimum that depends on the seeds. Click Next step, or try Bad seeds.</p>
+      <p class="more">Chapter 11 of the book covers k-means++ seeding, the cost of k-means, and how it compares with other algorithms.</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>K-means step by step</h4><span class="eyebrow">Click to add points</span></div>
@@ -375,7 +373,8 @@ tr.dim td{color:var(--muted)}
       </div>
     </div>
     <h3 id="validation">Validating clusters</h3>
-    <p class="prose">Without labels, how good is a clustering? <b>Internal</b> measures use only the data: the <b>silhouette index</b> (SI, in [−1, 1], higher is better) compares each point’s distance to its own cluster with the nearest other cluster; the <b>Davies-Bouldin index</b> (DBI, ≥ 0, lower is better) compares cluster spread with the distance between centers. <b>External</b> measures compare with known classes: the <b>adjusted Rand index</b> (ARI, up to 1) and <b>normalized mutual information</b> (NMI, in [0, 1]). The <b>elbow</b> in the inertia curve is another hint for choosing k.</p>
+    <p class="prose"><b>Internal</b> measures (silhouette, Davies-Bouldin) judge a clustering from the data alone; <b>external</b> ones (ARI, NMI) compare it with known classes. The chart scores each k for the data above.</p>
+    <p class="more">Chapter 11 of the book defines each validation index and explains the elbow method for choosing k.</p>
     <div class="bench">
       <div class="bench-head"><h4>Choosing k for the data above</h4></div>
       <div class="stage"><canvas id="vaChart" class="cv-chart" style="height:190px" aria-label="Validation measures vs k"></canvas><div class="tbl-wrap"><table class="ttab" id="vaTbl"></table></div><p class="cap" id="vaNote"></p></div>
@@ -387,7 +386,7 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 4 · Density and hierarchy</span>
     <h2>Beyond k-means: DBSCAN and agglomerative clustering</h2>
-    <p class="prose"><b>DBSCAN</b> grows clusters from <b>core points</b> that have at least minPts neighbors within ε; points reachable from a core point join its cluster, and the rest are <b>noise</b>. It finds clusters of any shape without being told how many. <b>Agglomerative</b> clustering starts with every point alone and repeatedly merges the two closest clusters; with <b>single linkage</b> (closest pair of points) it follows chains, with <b>average linkage</b> it prefers compact groups. Agreement with the true groups is measured with ARI.</p>
+    <p class="prose"><b>DBSCAN</b> grows clusters of any shape from dense core points; <b>agglomerative</b> clustering keeps merging the closest clusters. Change ε and the linkage and compare ARI.</p>
     <div class="bench">
       <div class="bench-head"><h4>Three algorithms, one dataset</h4></div>
       <div class="bench-body">
@@ -404,9 +403,8 @@ tr.dim td{color:var(--muted)}
     <h2>Self-organizing maps</h2>
     <div class="two">
       <div class="prose">
-        <p>A <b>self-organizing map</b> (SOM, or Kohonen map) is a neural network trained by <b>competitive learning</b>. Its neurons sit on a lattice and each holds a weight vector in input space. For each input, the neuron with the closest weights, the <b>best matching unit</b> (BMU), wins, and it and its lattice neighbors move toward the input (Algorithm 11.1):</p>
-        <p class="calc">W<sub>v</sub>(s + 1) = W<sub>v</sub>(s) + α(s) · θ(u, v, s) · (D<sub>t</sub> − W<sub>v</sub>(s))</p>
-        <p>The neighborhood θ shrinks over time; with a very small σ only the winner learns (“winner take all”). Neighbors on the lattice end up close in input space, so the map <b>preserves topology</b>; this is why SOMs can be better than PCA at reducing high-dimensional data to a 2D map.</p>
+        <p>In a <b>self-organizing map</b>, the neuron closest to each input wins, and it and its lattice neighbors move toward the input. Change σ to compare neighborhood shapes, then train the 2D map below.</p>
+        <p class="more">Section 11.4 of the book gives Algorithm 11.1 and the update rule, and explains why a SOM preserves topology.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Neighborhood functions (equation 11.6)</h4></div><div class="stage"><div id="nbCtl"></div><canvas id="nbCv" class="cv-chart" style="height:180px" aria-label="Neighborhood functions"></canvas></div></div>
     </div>
@@ -424,7 +422,8 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 6 · Section 11.8, Listing 11.5</span>
     <h2>Solving the TSP with a self-organizing map</h2>
-    <p class="prose">Make the lattice a <b>ring</b> of neurons. Each city pulls its winning neuron and the neuron’s ring neighbors toward it, so the ring stretches like an elastic band until it passes near every city; reading the cities in the order of their winners along the ring gives a tour. Listing 11.5 uses 8 neurons per city, a learning rate of 0.8 decaying by 0.99997 per step, a neighborhood radius starting at a tenth of the neurons and decaying by 0.9997, and up to 12,000 iterations on the 194-city Qatar instance (qa194), whose optimal tour is 9,352. The book’s run gives 9,816; its MiniSom version gives 11,844.47.</p>
+    <p class="prose">Make the lattice a <b>ring</b>: it stretches like an elastic band over the cities, and reading them in ring order gives a tour. Press Run, then polish with 2-opt.</p>
+    <p class="more">Section 11.8 of the book walks through Listing 11.5, its settings and results on qa194.</p>
     <div class="bench">
       <div class="bench-head"><h4>194 cities in Qatar</h4><span class="eyebrow">TSPLIB qa194, from the book’s repo</span></div>
       <div class="bench-body">
@@ -439,7 +438,7 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 7 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s notebooks in Colab, or the Unsupervised Learning Lab companion notebook with the from-scratch implementations below (Python and NumPy only).</p>
+    <p class="prose">Open the book’s notebooks or the companion notebook with the from-scratch code below in Colab.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/UL_Lab_Companion.ipynb"><em>All examples</em><b>Unsupervised Learning Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -695,14 +694,34 @@ print(f<span class="st">"SOM route length: {L:,.0f}   optimal: 9,352   gap: {(L 
     <span class="eyebrow">Part 8 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Distance matters</h5><p>The similarity measure decides what “close” means; choose it to match the data.</p></div>
-      <div class="card"><h5>K-means is local search</h5><p>Fast and simple, it lowers inertia every step but depends on its seeds and assumes compact clusters.</p></div>
-      <div class="card"><h5>Validate</h5><p>Silhouette and Davies-Bouldin judge clusterings without labels; ARI and NMI compare them with known classes.</p></div>
-      <div class="card"><h5>SOMs</h5><p>Competitive learning with a shrinking neighborhood builds topology-preserving maps, and a ring map gives good TSP tours.</p></div>
+      <div class="card"><h5>Distance matters</h5><p>The measure decides what “close” means.</p></div>
+      <div class="card"><h5>K-means is local search</h5><p>It lowers inertia every step but depends on its seeds.</p></div>
+      <div class="card"><h5>Validate</h5><p>Internal indexes need no labels; external ones do.</p></div>
+      <div class="card"><h5>SOMs</h5><p>A ring-shaped SOM gives good TSP tours.</p></div>
     </div>
     <p class="muted prose">References: T. Kohonen, “Self-organized formation of topologically correct feature maps,” 1982. M. Ester, H.-P. Kriegel, J. Sander and X. Xu, “A density-based algorithm for discovering clusters in large spatial databases with noise,” 1996. D. Arthur and S. Vassilvitskii, “k-means++: the advantages of careful seeding,” 2007. TSPLIB national instances (qa194). A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 11.</p>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 9 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 11. Pick an answer to check it.</p>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q1.</b> Two runs of k-means on the same data with the same k give different clusterings. Why?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>K-means uses labels that differ between runs</span></button><button type="button" class="mcq-o"><b>B</b><span>It converges to a local minimum of the inertia that depends on the initial centers</span></button><button type="button" class="mcq-o"><b>C</b><span>It never converges, so it stops at a random iteration</span></button><button type="button" class="mcq-o"><b>D</b><span>The distance measure changes from run to run</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Each k-means step lowers the within-cluster sum of squares, so it always converges, but only to a local minimum that depends on where the centers started; k-means++ seeding reduces this effect.</template>
+    </div>
+    <div class="mcq" data-a="0">
+      <p class="mcq-q"><b>Q2.</b> When a ring-shaped self-organizing map is used to solve the TSP, how is the tour obtained?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Visit the cities in the order of their winning neurons along the ring</span></button><button type="button" class="mcq-o"><b>B</b><span>Connect each city to its nearest unvisited neighbor</span></button><button type="button" class="mcq-o"><b>C</b><span>Cluster the cities with k-means and visit one cluster at a time</span></button><button type="button" class="mcq-o"><b>D</b><span>Pick the edges with the highest learned probabilities</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Training stretches the ring of neurons like an elastic band toward the cities; reading the cities in the ring order of their best matching units gives a tour.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2011" target="_blank" rel="noopener">Chapter 11</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 11 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
 </div>
 <script>
@@ -1161,5 +1180,15 @@ codeTabs({ d: "Euclidean, Manhattan, Chebyshev, cosine, Mahalanobis and haversin
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

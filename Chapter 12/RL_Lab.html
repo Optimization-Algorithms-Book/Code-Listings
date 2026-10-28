@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 12 (Reinforcement learning) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Reinforcement Learning Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -370,6 +388,7 @@ tr.dim td{color:var(--muted)}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>10</b>Summary</a></li>
+    <li><a href="#quiz"><b>11</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 12, Reinforcement learning.</div>
 </aside>
@@ -382,7 +401,7 @@ tr.dim td{color:var(--muted)}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 12 · Reinforcement learning</div>
       <h1>Reinforcement Learning <em>Lab</em></h1>
-      <p class="lede">A reinforcement learning agent is never told the right answer. It acts, receives rewards or penalties, and gradually learns a policy that maximizes the cumulative reward: trial and error, turned into an optimization algorithm.</p>
+      <p class="lede">A reinforcement learning agent is never told the right answer: it acts, collects rewards or penalties, and learns a policy that maximizes the cumulative reward.</p>
       <div class="variants">
         <a class="chip" href="#grid"><b>Q</b> Q-learning</a>
         <a class="chip" href="#cartpole"><b>A2C</b> CartPole</a>
@@ -403,21 +422,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Section 12.1</span>
     <h2>Reinforcement learning</h2>
-    <div class="two">
-      <div class="prose">
-        <p>Reinforcement learning (RL) studies how an agent learns to act in an environment to reach goals by trial and error. In Sutton and Barto’s words, it is learning how to map situations to actions so as to maximize a numerical reward signal. The agent observes a state sₜ, takes an action aₜ chosen by its policy π, receives a reward rₜ₊₁ and moves to a new state sₜ₊₁ (Figure 12.3).</p>
-        <p>RL problems split into <b>Markov decision processes</b> (MDPs), where actions change the environment and their consequences unfold over many steps, and <b>multi-armed bandits</b> (MABs), where there is a single state and the agent only chooses among actions (arms). <b>Contextual</b> bandits add side information that changes which arm is best.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Family</th><th>Examples</th></tr></thead>
-        <tbody>
-          <tr><td>Model-based, model given</td><td>AlphaZero</td></tr>
-          <tr><td>Model-based, model learned</td><td>World models, I2A, MBMF, MBVE</td></tr>
-          <tr><td>Model-free, Q-learning</td><td>DQN, C51, QR-DQN, HER</td></tr>
-          <tr><td>Model-free, both</td><td>DDPG, TD3, SAC</td></tr>
-          <tr><td>Model-free, policy optimization</td><td>Policy gradient, A2C, A3C, TRPO, PPO</td></tr>
-          <tr><td>Bandits</td><td>Non-contextual MAB, contextual MAB</td></tr>
-        </tbody></table><p class="cap" style="padding:.4rem .6rem">Figure 12.1: RL algorithm taxonomy.</p></div>
+    <div class="prose">
+      <p>An agent observes a state, takes an action from its policy π, collects a reward and moves on, learning by trial and error. In <b>Markov decision processes</b> (MDPs) actions change future states; in <b>multi-armed bandits</b> the agent only chooses among actions.</p>
+      <p class="more">Section 12.1 explains the agent-environment loop (Figure 12.3) and maps the RL algorithm families in Figure 12.1.</p>
     </div>
   </div>
 </section>
@@ -427,33 +434,37 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 2 · Sections 12.1.1 and 12.1.2</span>
     <h2>Markov decision processes</h2>
     <div class="prose">
-        <p>A deterministic planner (like A* in Chapter 4) would compare a 1 h 48 min train, a 1 h 7 min drive and a 3 h 16 min bike ride. Real commutes are uncertain (Figure 12.2b): the train is on time 60% of the time; otherwise you wait, and 90% of the time the next train gets you there in 2 h 25 min, while 10% of the time it never comes and you look for an alternative. Driving takes 50 min (30%), 1 h 7 min (50%) or 2 h (20%). Biking is predictable.</p>
-        <p>When the next state depends only on the current state and action, and the state is fully observable, the problem is an <b>MDP</b>; with only partial observations it is a <b>POMDP</b>. The quantity to maximize is the <b>expected return</b>, the discounted sum of future rewards Σ γᵗ rₜ₊₁ with a discount factor γ between 0 (myopic) and 1 (farsighted).</p>
+        <p>Real commutes are uncertain, so the next state follows probabilities: an <b>MDP</b>. Switch between the deterministic and nondeterministic models, pick a mode of transport and take trips.</p>
+        <p class="more">Section 12.1.1 contrasts the two commute models of Figure 12.2 and defines the expected return and discount factor γ.</p>
       </div>
     <div class="bench"><div class="bench-head"><h4>Take the commute (Figure 12.2)</h4></div><div class="stage cm-stage">
       <div class="cm-side"><div id="cmCtl"></div><div class="cm-right"><div class="btns"><button id="cmGo" class="primary">Take a trip</button><button id="cmMany">Run 100 trips</button><button id="cmReset">Reset</button></div><div class="stats" id="cmStats"></div></div></div>
       <div class="cm-main">
         <canvas id="cmCv" aria-label="State transition model of the commute"></canvas>
         <p class="note" id="cmNote" style="margin:0"></p>
-        <p class="cap">Blue: the routes your choice can take. Red italics: transition probabilities. Each trip lights up in gold as the commuter moves, and edges thicken as more trips use them. The figure gives no times for missed trains, so the lab assumes a missed train costs the extra wait you set, and giving up also costs the 37 minutes already lost to the late train.</p>
+        <p class="cap">Blue: routes your choice can take. Red italics: transition probabilities. Gold: the current trip; edges thicken with use.</p>
       </div>
     </div></div>
 
     <h3 id="treasure">Reach the Treasure (Figure 12.4)</h3>
     <div class="prose">
-        <p>Four cells: a fire pit (−10, terminal), the treasure (+10), the start, and the exit (+4, terminal). The agent moves left or right. The book computes the expected return of one stochastic policy tree: left with probability 0.4 (treasure, +10) or right with 0.6 (exit, +4); after the treasure, 0.2 into the fire, otherwise back to the start, and so on. The expected return adds each reward weighted by the probability of reaching it:</p>
+        <p>A stochastic policy moves the agent left or right between a fire pit (−10), the treasure (+10) and the exit (+4); its expected return weights each reward by its probability:</p>
         <p class="calc" id="trCalc"></p>
-        <p>Treating the game as an MDP and solving it with <b>value iteration</b>, V(s) ← max<sub>a</sub> [r + γ V(s′)], gives the optimal plan: left for the treasure, then right twice to exit, worth 10 + γ²·4.</p>
+        <p>Play episodes or drag the policy sliders.</p>
+        <p class="more">Section 12.1.2 computes this expected return by hand (Figure 12.4) and solves the game with value iteration.</p>
       </div>
     <div class="bench"><div class="bench-head"><h4>Walk the policy tree</h4></div><div class="stage">
       <div class="tt-bar"><div class="btns"><button id="trPlay" class="primary">Play an episode</button><button id="trMany">Play 1,000 episodes</button><button id="trBook">Book’s policy</button><button id="trBest">Best policy</button></div><div class="stats" id="trStats"></div></div>
       <p class="note" id="trNote" style="margin:0"></p>
       <div class="tt" id="trTree"></div>
-      <p class="cap">🔥 fire pit (−10, ends) · 💎 treasure (+10) · 🤖 agent · 🏁 exit (+4, ends). Each card is a state the agent can reach; p is the probability of reaching it under the current policy. obs = [cell, treasure collected]. The figure in the book prints the policy at obs = [1,1] as [0.8, 0.2], but its arrows (0.2 into the fire, 0.8 back to the start) correspond to [0.2, 0.8] in [left, right] order, which the lab uses.</p>
+      <p class="cap">🔥 fire pit (−10, ends) · 💎 treasure (+10) · 🤖 agent · 🏁 exit (+4, ends). Each card is a state the agent can reach; p is the probability of reaching it under the current policy. obs = [cell, treasure collected]; policies are [left, right] probabilities.</p>
     </div></div>
 
     <h3 id="grid">Learning by trial and error: Q-learning</h3>
-    <p class="prose">Without a model of the environment, the agent can still learn. <b>Q-learning</b> keeps an estimate Q(s, a) of the return of taking action a in state s, acts ε-greedily, and after each step moves the estimate toward the observed reward plus the best estimate at the next state: Q(s, a) ← Q(s, a) + α [r + γ max<sub>a′</sub> Q(s′, a′) − Q(s, a)]. It is <b>model-free</b> and <b>off-policy</b>: it learns the greedy policy while behaving ε-greedily. Click cells to edit the world (empty → wall → fire pit).</p>
+    <div class="prose">
+      <p><b>Q-learning</b> learns the return Q(s, a) of each action by trial and error, with no model. Press Learn and watch the arrows settle; click cells to cycle empty, wall and fire pit.</p>
+      <p class="more">Section 12.1.2 derives the Q-learning update and explains why it is off-policy.</p>
+    </div>
     <div class="bench">
       <div class="bench-head"><h4>A gridworld</h4><span class="eyebrow">Each move −0.1; treasure +10; fire pit −10</span></div>
       <div class="bench-body">
@@ -468,19 +479,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 3 · Sections 12.1.2 to 12.1.4</span>
     <h2>Values, policies and actor-critic</h2>
-    <div class="two">
-      <div class="prose">
-        <p>The <b>state-value</b> function V<sup>π</sup>(s) = E<sub>π</sub>[Σ γᵏ rₜ₊ₖ₊₁ | sₜ = s] (equation 12.1) rates states; the <b>action-value</b> function Q<sup>π</sup>(s, a) (equation 12.2) rates actions. <b>Policy iteration</b> alternates evaluating and improving a policy. <b>Policy gradient</b> methods instead adjust the parameters θ of a stochastic policy π<sub>θ</sub> to increase the return, using the loss L<sup>PG</sup> = Ê[log π<sub>θ</sub>(aₜ|sₜ) Âₜ] (equation 12.3), where the <b>advantage</b> Â = Q(s, a) − V(s) (equation 12.4) says how much better the action was than expected: positive advantages make the action more likely, negative ones less.</p>
-        <p>In <b>actor-critic</b> methods such as A2C (Figure 12.5), an <b>actor</b> network outputs the policy and a <b>critic</b> network estimates V(s); the critic’s estimate r + γV(s′) − V(s) serves as the advantage that trains the actor.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th></th><th>Model-based</th><th>Model-free</th></tr></thead>
-        <tbody>
-          <tr><td>Environment model</td><td>Known or learned transitions</td><td>None: learns what to do directly</td></tr>
-          <tr><td>Policy learning</td><td>Through the model</td><td>From trial and error</td></tr>
-          <tr><td>Examples</td><td>AlphaZero, world models, I2A</td><td>Q-learning, A2C, A3C, PPO</td></tr>
-          <tr><td colspan="3"><b>Off-policy</b> methods (Q-learning, DDPG, TD3) learn from data generated by another policy and can reuse past experience. <b>On-policy</b> methods (REINFORCE, A2C, PPO) learn only from the current policy’s experience: simpler, but less sample-efficient.</td></tr>
-        </tbody></table><p class="cap" style="padding:.4rem .6rem">Tables 12.1 and 12.2, condensed.</p></div>
+    <div class="prose">
+      <p><b>Policy gradient</b> methods make actions with a positive <b>advantage</b> Â = Q(s, a) − V(s) more likely; in <b>actor-critic</b> methods such as A2C, a critic network estimates V(s) for the actor.</p>
+      <p class="more">Sections 12.1.2 to 12.1.4 build up equations 12.1 to 12.4, compare model-based, model-free, on-policy and off-policy methods (Tables 12.1 and 12.2), and draw A2C in Figure 12.5.</p>
     </div>
   </div>
 </section>
@@ -489,7 +490,10 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 4 · Section 12.3, Listing 12.2</span>
     <h2>Balancing CartPole with an actor-critic</h2>
-    <p class="prose">The state has four continuous variables: cart position (−4.8 to 4.8), cart velocity, pole angle (±0.418 rad, or ±23.95°) and pole angular velocity. Two actions push the cart left or right. Every step the pole stays up earns +1, and the episode ends when the pole tips past 12°, the cart leaves ±2.4, or the step limit is reached (500 in CartPole-v1). This lab simulates CartPole’s physics and trains Listing 12.2’s A2C in your browser: an actor network (4 → 32 → 2, softmax) and a critic network (4 → 32 → 1), updated after every step with Adam. Returns fluctuate while learning, as the book notes.</p>
+    <div class="prose">
+      <p>Keep the pole upright (+1 per step). Play manually, then train an A2C agent and watch the return per episode climb.</p>
+      <p class="more">Section 12.3 details CartPole’s states and stopping rules; Listings 12.2 and 12.3 train A2C and PPO with Stable-Baselines3.</p>
+    </div>
     <div class="bench">
       <div class="bench-head"><h4>CartPole</h4><span class="eyebrow">Keyboard in manual mode: ← and →</span></div>
       <div class="bench-body">
@@ -497,7 +501,6 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="cpCv" class="cv-sq" style="aspect-ratio:16/7" aria-label="Cart and pole"></canvas><canvas id="cpChart" class="cv-chart" style="height:170px" aria-label="Return per episode"></canvas><p class="cap" id="cpNote"></p></div>
       </div>
     </div>
-    <p class="prose">Stable-Baselines3 provides tested A2C and PPO implementations; Listings 12.2 and 12.3 train them for 10,000 time steps with an MLP policy and evaluate them over 10 episodes. Its PPO log reports, for example, a mean episode length of 61.8 after 10,240 steps, with a clip range of 0.2.</p>
   </div>
 </section>
 
@@ -506,9 +509,10 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 5 · Section 12.1.5</span>
     <h2>Proximal policy optimization</h2>
     <div class="prose">
-        <p>An RL agent creates its own training data, so a big policy update can push it into a region where its data no longer applies. <b>PPO</b> keeps each update close to the old policy. <b>PPO-penalty</b> subtracts β·KL(π<sub>old</sub> ‖ π<sub>θ</sub>) from the objective (equation 12.5), the idea behind TRPO’s trust region. <b>PPO-clip</b> uses the probability ratio r(θ) = π<sub>θ</sub>(a|s) / π<sub>old</sub>(a|s):</p>
+        <p><b>PPO</b> keeps each policy update close to the old policy. PPO-clip caps how far the probability ratio r(θ) = π<sub>θ</sub>(a|s) / π<sub>old</sub>(a|s) can move from 1:</p>
         <p class="calc">L<sup>CLIP</sup>(θ) = Ê[min(r(θ) Â, clip(r(θ), 1 − ε, 1 + ε) Â)]</p>
-        <p>With a positive advantage, the objective stops rewarding increases of r beyond 1 + ε; with a negative advantage, it stops rewarding decreases below 1 − ε (Figure 12.6). The book uses ε = 0.2.</p>
+        <p>Drag r(θ) on the plots, or sweep it, to see where the objective goes flat.</p>
+        <p class="more">Section 12.1.5 explains why big updates are risky and compares PPO-penalty (equation 12.5) with PPO-clip (Figure 12.6).</p>
       </div>
     <div class="bench"><div class="bench-head"><h4>The clipped objective</h4></div><div class="stage ppo-stage">
       <div class="ppo-side"><div id="ppCtl"></div><div class="btns"><button id="ppSweep" class="primary">Sweep r(θ)</button><button id="ppReset">Reset</button></div><div class="stats" id="ppStats"></div></div>
@@ -518,11 +522,11 @@ tr.dim td{color:var(--muted)}
           <figure id="ppFigN"><canvas id="ppCvN" aria-label="Clipped objective for a negative advantage"></canvas><figcaption>Â &lt; 0</figcaption></figure>
         </div>
         <div class="tbl-wrap"><table class="ppo-tbl" id="ppTbl"></table></div>
-        <p class="cap">Drag on either plot, or use the sliders. Solid line: L<sup>CLIP</sup>. Dashed gray: the unclipped r(θ)Â that clipping replaces. The gold arrow shows the direction the update pushes r(θ); on a flat part the gradient is zero, so the update gains nothing by moving r(θ) further from 1.</p>
+        <p class="cap">Solid: L<sup>CLIP</sup>. Dashed gray: unclipped r(θ)Â. Gold arrow: the direction the update pushes r(θ) (none on a flat part).</p>
       </div>
     </div></div>
     <div class="two">
-      <div class="prose"><p>The <b>Kullback-Leibler divergence</b> KL(P ‖ Q) = ∫ P(x) log(P(x)/Q(x)) dx measures how different two distributions are. It is zero only when they are identical, and it is not symmetric. For Gaussians it has a closed form: log(σ<sub>Q</sub>/σ<sub>P</sub>) + (σ<sub>P</sub>² + (μ<sub>P</sub> − μ<sub>Q</sub>)²) / (2σ<sub>Q</sub>²) − ½. PPO’s logs report it as approx_kl.</p></div>
+      <div class="prose"><p>The <b>KL divergence</b> measures how different two distributions are; it is not symmetric. Move the sliders to see it change.</p><p class="more">Section 12.1.5 defines it and shows its role in PPO.</p></div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>KL divergence between two Gaussians</h4></div><div class="stage"><div id="klCtl"></div><canvas id="klCv" class="cv-chart" style="height:180px" aria-label="Two Gaussian densities"></canvas><div class="stats" id="klStats"></div></div></div>
     </div>
   </div>
@@ -533,19 +537,14 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 6 · Section 12.1.6, Listing 12.1</span>
     <h2>Multi-armed bandits</h2>
     <div class="prose">
-        <p>Three slot machines pay out normally distributed rewards with (mean, standard deviation) of (8, 0.5), (10, 0.7) and (5, 0.45), unknown to the player, who has 90 pulls (Figure 12.7). <b>Regret</b> is the reward lost by not always playing the best machine.</p>
-        <ul>
-          <li><b>Explore only:</b> pull at random; about 30 × 8 + 30 × 10 + 30 × 5 = 690 instead of 90 × 10 = 900, a regret of 210 (2.33 per pull).</li>
-          <li><b>Exploit only (greedy):</b> try each machine once, then always play the best so far. First payoffs of 7, 6 and 3 lock it onto machine 1 for good.</li>
-          <li><b>ε-greedy:</b> explore with probability ε (about 9 of 90 pulls for ε = 0.1), otherwise exploit.</li>
-          <li><b>UCB:</b> play argmax<sub>a</sub> [Qₜ(a) + c √(ln t / Nₜ(a))] (equation 12.7): estimated value plus a bonus for uncertainty.</li>
-        </ul>
+        <p>Three slot machines, unknown payoffs, 90 pulls (Figure 12.7). Pick a strategy, press Play, then compare strategies over 2,000 runs by their <b>regret</b>.</p>
+        <p class="more">Section 12.1.6 works out each strategy’s regret, shows the greedy trap and derives UCB (equation 12.7); Listing 12.1 codes all four.</p>
       </div>
     <div class="bench"><div class="bench-head"><h4>Play 90 pulls</h4></div><div class="stage">
       <div class="mb-bar"><div id="mbCtl"></div><div class="mb-right"><div class="btns"><button id="mbPlay" class="primary">Play</button><button id="mbTrap">Greedy trap (7, 6, 3)</button><button id="mbMany">Compare 2,000 runs</button></div><div class="stats" id="mbStats"></div></div></div>
       <div class="casino" id="mbCasino"></div>
       <canvas id="mbCv" aria-label="Cumulative reward over 90 pulls"></canvas>
-      <p class="cap">The player never sees the payoff curves; they are shown so you can watch the estimates converge. Ticks under each curve: the payoffs that machine has paid so far. Dashed gold line: the player’s estimate Q, the average of those payoffs. The bar under each machine fills with its share of the 90 pulls, and the most-played machine is outlined in blue at the end.</p>
+      <p class="cap">Curves: true payoffs (hidden from the player). Ticks: payoffs so far. Dashed gold: the estimate Q. Bars: share of the 90 pulls.</p>
     </div></div>
     <div class="tbl-wrap"><table class="ttab" id="mbTbl"></table></div>
     <p class="cap" id="mbNote"></p>
@@ -556,7 +555,10 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 7 · Section 12.5, Listing 12.5</span>
     <h2>Contextual bandits: choosing a delivery truck</h2>
-    <p class="prose">A delivery company picks a truck for each route: size (small, medium, large), engine (petrol, diesel, electric) and tires. Each combination is an arm; the route type (city or interstate) is the <b>context</b>. Listing 12.5’s reward multiplies size, engine and tire scores ([0.8, 1.0, 0.9], [0.7, 0.9, 1.0] and [0.9, 0.8, 1.0, 0.95]) and adds Gaussian noise with σ = 0.05; Vowpal Wabbit’s <span class="mono">--cb_explore_adf</span> learner explores with ε = 0.2 over 2,500 iterations. Here a simple table-based ε-greedy learner keeps a running mean reward for every (context, truck) pair.</p>
+    <div class="prose">
+      <p>Each truck is an arm, and the route type is the <b>context</b> that changes which arm is best. Press Learn to watch an ε-greedy learner pick a truck per route.</p>
+      <p class="more">Section 12.5 builds this reward model and solves it with Vowpal Wabbit (Listing 12.5).</p>
+    </div>
     <div class="bench">
       <div class="bench-head"><h4>Learn a truck per route</h4></div>
       <div class="bench-body">
@@ -571,14 +573,9 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 8 · Sections 12.2 and 12.4</span>
     <h2>Reinforcement learning for optimization</h2>
-    <p class="prose">Framing a combinatorial problem as an MDP lets RL learn a policy that builds or improves solutions. Examples from the chapter:</p>
-    <div class="cards3">
-      <div class="card"><h5>Routing</h5><p>End-to-end RL for the TSP and VRP (Nazari et al.; RLOR), and the capacitated VRP with combinatorial actions.</p></div>
-      <div class="card"><h5>Mobility</h5><p>DeepPool for ride-sharing dispatch, DeepFreight for truck dispatch and package matching, MOVI for large-scale taxi dispatch.</p></div>
-      <div class="card"><h5>Traffic</h5><p>RL traffic signal control on real Hangzhou data, and multi-agent RL for mixed traffic.</p></div>
-      <div class="card"><h5>Buildings</h5><p>RL dispatching of four elevators in a 10-floor building: about 2.88 × 10²¹ states.</p></div>
-      <div class="card"><h5>Learning to optimize</h5><p>Any optimization algorithm can be seen as a policy; guided policy search trains optimizers that beat hand-designed ones.</p></div>
-      <div class="card"><h5>Mobile networks</h5><p>Listing 12.4 trains PPO in mobile-env to connect 5 users to 3 base stations for the best quality of experience, centrally or with one agent per user (Ray RLlib).</p></div>
+    <div class="prose">
+      <p>Framed as an MDP, a combinatorial problem can be solved by a learned policy.</p>
+      <p class="more">Sections 12.2 and 12.4 survey routing, dispatch and traffic applications, and Listing 12.4 coordinates a mobile network with PPO.</p>
     </div>
   </div>
 </section>
@@ -587,7 +584,7 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 9 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s Chapter 12 notebooks in Colab, or the Reinforcement Learning Lab companion notebook with the from-scratch implementations below (Python and NumPy only, no Gym, PyTorch or Vowpal Wabbit needed).</p>
+    <p class="prose">Open the book’s Chapter 12 notebooks in Colab, or the companion notebook with the from-scratch code below (Python and NumPy only).</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2012/RL_Lab_Companion.ipynb"><em>All examples</em><b>Reinforcement Learning Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -914,14 +911,34 @@ print(<span class="st">"best noise-free book reward: medium, electric, performan
     <span class="eyebrow">Part 10 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>MDPs and bandits</h5><p>MDP actions change future states; bandits have one state and only the exploration-exploitation trade-off.</p></div>
-      <div class="card"><h5>Values and advantages</h5><p>V and Q estimate returns; the advantage tells a policy gradient which actions to reinforce.</p></div>
-      <div class="card"><h5>Stable updates</h5><p>Actor-critic methods use a learned baseline; PPO clips the probability ratio to keep updates small.</p></div>
-      <div class="card"><h5>RL for optimization</h5><p>Routing, dispatch, traffic signals, elevators, network coordination and algorithm design can all be learned as policies.</p></div>
+      <div class="card"><h5>MDPs and bandits</h5><p>MDP actions change future states; bandits only trade off exploration and exploitation.</p></div>
+      <div class="card"><h5>Values and advantages</h5><p>The advantage tells a policy gradient which actions to reinforce.</p></div>
+      <div class="card"><h5>Stable updates</h5><p>PPO clips the probability ratio to keep updates small.</p></div>
+      <div class="card"><h5>RL for optimization</h5><p>Routing, dispatch and network coordination can be learned as policies.</p></div>
     </div>
     <p class="muted prose">References: R. S. Sutton and A. G. Barto, <i>Reinforcement Learning: An Introduction</i>, 2nd ed., 2018. J. Schulman et al., “Proximal policy optimization algorithms,” 2017. V. Mnih et al., “Asynchronous methods for deep reinforcement learning,” 2016. A. G. Barto, R. S. Sutton and C. W. Anderson, “Neuronlike adaptive elements that can solve difficult learning control problems” (CartPole), 1983. S. Schneider et al., “mobile-env: an open platform for reinforcement learning in wireless mobile networks,” 2022. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 12.</p>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 11 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 12. Pick an answer to check it.</p>
+    <div class="mcq" data-a="2">
+      <p class="mcq-q"><b>Q1.</b> In PPO-clip, the advantage Â of an action is positive and the probability ratio r(θ) has already risen above 1 + ε. What does the clipped objective L<sup>CLIP</sup> do?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>It keeps rewarding further increases of r(θ) in proportion to Â</span></button><button type="button" class="mcq-o"><b>B</b><span>It reverses the update and pushes r(θ) back below 1</span></button><button type="button" class="mcq-o"><b>C</b><span>It goes flat, so there is no gain from making the action even more likely</span></button><button type="button" class="mcq-o"><b>D</b><span>It adds a KL penalty that grows with r(θ)</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Above 1 + ε the clipped term caps the objective at (1 + ε)Â, so the gradient is zero and the update has no incentive to move the policy further from the old one. A KL penalty belongs to the separate PPO-penalty variant.</template>
+    </div>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q2.</b> Why can the purely greedy (exploit-only) bandit strategy get stuck on a worse slot machine, while UCB does not?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Greedy uses a larger discount factor γ than UCB</span></button><button type="button" class="mcq-o"><b>B</b><span>Greedy trusts early, noisy averages and never retries the other machines, while UCB adds an uncertainty bonus that grows for rarely played machines</span></button><button type="button" class="mcq-o"><b>C</b><span>UCB knows the true payoff distributions in advance</span></button><button type="button" class="mcq-o"><b>D</b><span>Greedy explores at random with probability ε, which wastes pulls</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>After one unlucky payoff, a greedy player never pulls the best machine again. UCB plays argmax [Q(a) + c √(ln t / N(a))], so a machine pulled only a few times keeps a large bonus and gets retried.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2012" target="_blank" rel="noopener">Chapter 12</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 12 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
 </div>
 <script>
@@ -1738,5 +1755,15 @@ codeTabs({ m: "The commute of Figure 12.2, Reach the Treasure by value iteration
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

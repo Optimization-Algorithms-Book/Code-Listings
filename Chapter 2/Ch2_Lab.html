@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 2 (A deeper look at search and optimization) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Problems and Algorithms Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -293,6 +311,7 @@ tr.bad td{color:var(--bad)}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>6</b>Summary</a></li>
+    <li><a href="#quiz"><b>7</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 2, A deeper look at search and optimization.</div>
 </aside>
@@ -305,7 +324,7 @@ tr.bad td{color:var(--bad)}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 2 · A deeper look at search and optimization</div>
       <h1>Problems and Algorithms <em>Lab</em></h1>
-      <p class="lede">Before choosing an algorithm, classify the problem: how many variables, of what type, how many objectives, what kind of landscape, which constraints, and how much time you have. Then pick a search strategy, often a heuristic: a rule of thumb that finds good answers fast without promising the best.</p>
+      <p class="lede">Classify the problem before choosing an algorithm, then pick a search strategy, often a heuristic: a rule of thumb that finds good answers fast without promising the best.</p>
       <div class="variants">
         <a class="chip" href="#combinatorics"><b>n!</b> Search spaces</a>
         <a class="chip" href="#landscapes"><b>f(x,y)</b> Landscapes</a>
@@ -327,7 +346,8 @@ tr.bad td{color:var(--bad)}
   <div class="wrap">
     <span class="eyebrow">Part 1 · Section 2.1</span>
     <h2>Classifying optimization problems</h2>
-    <p class="prose">Classifying problems lets us group similar ones and reuse solutions: a traveling salesman model of cities and roads can also minimize wire length in a VLSI chip. Figure 2.1 classifies a problem by its decision variables (number and type), its objectives (number and landscape), its constraints (equality or inequality, hard or soft), the linearity of objectives and constraints, and the time allowed versus the quality expected. Pick an example to see how it is classified.</p>
+    <p class="prose">Figure 2.1 classifies problems by variables, objectives, constraints, linearity and time budget. Pick an example to see how it is classified.</p>
+    <p class="more">Section 2.1 of the book explains each axis of Figure 2.1 with examples, and why classifying lets one model serve many problems.</p>
     <div class="bench">
       <div class="bench-head"><h4>Problem classifier</h4><span class="eyebrow">Examples from Chapters 1 and 2</span></div>
       <div class="stage"><div id="clCtl"></div><div class="tags" id="clTags"></div><p class="cap" id="clNote"></p></div>
@@ -336,24 +356,16 @@ tr.bad td{color:var(--bad)}
     <h3 id="combinatorics">Counting search spaces (Section 2.1.1)</h3>
     <div class="two">
       <div class="prose">
-        <p><b>Combinatorial</b> problems have solutions that are sets, combinations or permutations. Order matters in a permutation, not in a combination. Choosing 3 of 5 exercises (jogging, swimming, biking, yoga, aerobics) for a weekly plan gives 35 combinations with repetition, 10 without (“5 choose 3”), 125 permutations with repetition and 60 without.</p>
-        <p>The <b>TSP</b> solution is a permutation of cities: 13 cities in the Greater Toronto Area give 13! = 6,227,020,800 tours. Dynamic programming (Bellman-Held-Karp) needs about 2ⁿn² steps; the Christofides algorithm guarantees a tour at most 50% longer than optimal in O(n³).</p>
-        <p><b>Clustering</b> partitions objects into groups. The <b>Stirling number of the second kind</b> S(n, k) counts the ways to split n objects into k non-empty groups (equation 2.1): 50 smart carts and 4 assembly points give about 5.3 × 10²⁸ partitions.</p>
+        <p><b>Combinatorial</b> solutions are sets, combinations or permutations. Use the counters to see how fast combinations, TSP tours (n!) and clustering partitions (equation 2.1) grow.</p>
+        <p class="more">Section 2.1.1 of the book works through these counts, compares exact and approximate TSP algorithms, and explains P, NP and NP-hard problems.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Count it</h4></div>
         <div class="stage"><div id="cbCtl"></div><div class="bigcount" id="cbOut"></div><div id="cbCtl2"></div><div class="bigcount" id="cbTsp"></div><div id="cbCtl3"></div><div class="bigcount" id="cbStir"></div></div></div>
     </div>
-    <div class="tbl-wrap"><table>
-      <thead><tr><th>Class</th><th>Meaning</th><th>Examples</th></tr></thead>
-      <tbody>
-        <tr><td><b>P</b></td><td>Solvable in polynomial time by a deterministic algorithm (tractable)</td><td>MST, shortest path, maximum flow, some single-machine scheduling</td></tr>
-        <tr><td><b>NP</b></td><td>A “yes” answer can be verified in polynomial time given a witness</td><td>Integer factorization, graph isomorphism</td></tr>
-        <tr><td><b>NP-complete</b></td><td>In NP and at least as hard as every problem in NP</td><td>Bin packing, knapsack, subset sum, Hamiltonian circuit, vertex cover, SAT</td></tr>
-        <tr><td><b>NP-hard</b></td><td>At least as hard as the hardest NP problems; solutions may not even be verifiable quickly</td><td>TSP, graph coloring, set covering, vehicle routing, districting</td></tr>
-      </tbody></table><p class="cap" style="padding:.4rem .6rem">Problem classes by hardness and completeness (sidebar in Section 2.1.1).</p></div>
 
     <h3 id="landscapes">Landscapes: unimodal, multimodal and deceptive (Listing 2.1)</h3>
-    <p class="prose">A <b>unimodal</b> landscape has one optimum. A <b>multimodal</b> one has several. A <b>deceptive</b> one hides the global minimum in a narrow valley while a wide basin leads elsewhere (Figure 2.4). Click the map to start a search there. The deterministic compass search always follows the same path from the same start; the stochastic searches change from run to run.</p>
+    <p class="prose">A <b>unimodal</b> landscape has one optimum, a <b>multimodal</b> one has several, and a <b>deceptive</b> one hides the global minimum in a narrow valley (Figure 2.4). Click the map to start a search: the deterministic compass search repeats its path, while the stochastic searches change from run to run.</p>
+    <p class="more">Listing 2.1 in the book builds these landscapes in Python; Section 2.2 explains why randomness helps escape local optima.</p>
     <div class="bench">
       <div class="bench-head"><h4>Search a landscape</h4><span class="eyebrow">Minimize: brighter is lower · click to start</span></div>
       <div class="bench-body">
@@ -365,9 +377,8 @@ tr.bad td{color:var(--bad)}
     <h3 id="nqueen">Constraint satisfaction: the n-queen problem (Listings 2.2 and 2.3)</h3>
     <div class="two">
       <div class="prose">
-        <p>A constraint-satisfaction problem has no objective, only constraints: place n queens so no two share a row, column or diagonal. Figure 2.5 repairs a 4-queen board by moving queens to reduce conflicts (5, 3, 1, 0). <b>Min-conflicts</b> does this automatically: pick a queen under attack and move it within its column to the row with the fewest conflicts.</p>
-        <p><b>Listing 2.2</b> places queens column by column; when a column has no safe row, it drops the first column, slides the board left and retries. For n = 4 it finds a solution in 6 steps (Figure 2.6), but it is not a general method: for n = 6 it returns to an earlier state and cycles forever. <b>Listing 2.3</b> instead hands the model to OR-Tools’ CP-SAT solver with three all-different constraints (rows and both diagonals).</p>
-        <p>Click a square to move that column’s queen there.</p>
+        <p>A constraint-satisfaction problem has no objective, only constraints: place n queens so no two share a row, column or diagonal. Click a square to move that column’s queen there, or let <b>min-conflicts</b> move an attacked queen to its least-attacked row.</p>
+        <p class="more">Section 2.1.2 of the book repairs a 4-queen board by hand (Figure 2.5), shows why Listing 2.2 cycles for n = 6, and solves it with CP-SAT (Listing 2.3).</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Place the queens</h4></div>
         <div class="stage"><div id="nqCtl"></div><div class="board" id="nqBoard"></div><div class="btns"><button id="nqMc" class="primary small">Min-conflicts move</button><button id="nqSolve" class="small">Solve</button><button id="nqBook" class="small">Listing 2.2 step</button><button id="nqRand" class="small">Random</button></div><div class="stats" id="nqStats"></div><p class="cap" id="nqNote"></p></div></div>
@@ -376,8 +387,8 @@ tr.bad td{color:var(--bad)}
     <h3 id="lagrange">Constraints and Lagrange multipliers (Listings 2.4 and 2.5)</h3>
     <div class="two">
       <div class="prose">
-        <p>Listing 2.4 solves the Chapter 1 ticket pricing problem with SciPy’s bounded scalar minimizer: $155 and a profit of $130,500. Now the event also sells online tickets, and a welcome package limited to 10,000 units means x in-person and y online tickets must satisfy <b>x + y = 10,000</b>. The profit is f(x, y) = 155x + (0.001x<sup>3/2</sup> + 70)y − 1,000,000 (equation 2.2): online tickets earn more as the venue looks more crowded.</p>
-        <p>The <b>Lagrangian</b> L(x, y, λ) = f(x, y) − λ(x + y − 10,000) turns this into an unconstrained problem: set ∂L/∂x = ∂L/∂y = ∂L/∂λ = 0 (Figure 2.8). SymPy finds x = 6,424 and y = 3,576 with a profit of $2,087,260.</p>
+        <p>Splitting tickets between x in-person and y online sales under a package limit <b>x + y = 10,000</b> is an equality-constrained problem. Move along the constraint line and watch the profit; the <b>Lagrangian</b> finds the peak analytically.</p>
+        <p class="more">Section 2.1.3 of the book derives the profit model (equation 2.2) and solves the Lagrangian conditions with SymPy in Listing 2.5 (Figure 2.8).</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Split 10,000 tickets</h4></div>
         <div class="stage"><div id="lgCtl"></div><canvas id="lgCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Profit along the constraint x + y = 10,000"></canvas><div class="stats" id="lgStats"></div><p class="cap" id="lgNote"></p></div></div>
@@ -386,9 +397,8 @@ tr.bad td{color:var(--bad)}
     <h3 id="lp">Linear programming: the animal feed mix (Listing 2.6)</h3>
     <div class="two">
       <div class="prose">
-        <p>When the objective and every constraint are linear, the problem is a <b>linear program</b>. Mix corn, limestone and soybean meal (Table 2.1) at minimum cost per kg, with calcium between 0.8% and 1.2%, protein at least 22% and fiber at most 5%; the proportions sum to 1.</p>
-        <p>Because the proportions sum to 1, limestone = 1 − corn − soy and the problem can be drawn in two dimensions. The feasible region is a polygon, cost lines are parallel, and the optimum sits at a vertex: about <b>64.9% corn, 2.8% limestone and 32.3% soybean meal at $0.4916 per kg</b>. PuLP’s CBC solver gives the same answer, rounded to 65%, 3% and 32%. Click inside the plot to test any mix.</p>
-        <p>If an objective or a constraint is nonlinear, the problem is <b>nonlinear programming</b>; with a quadratic objective it is <b>quadratic programming</b>, such as the plant layout problem (Figure 2.9). The MineProbe wheel design and the hanging-chain catenary are nonlinear too.</p>
+        <p>When the objective and every constraint are linear, the problem is a <b>linear program</b>: here, the cheapest mix of corn, limestone and soybean meal that meets calcium, protein and fiber limits. Click inside the plot to test any mix, or jump to the optimum.</p>
+        <p class="more">Section 2.1.4 of the book solves this feed mix with PuLP (Listing 2.6), explains why the optimum sits at a vertex, and introduces nonlinear and quadratic programs.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Find the cheapest feasible mix</h4></div>
         <div class="stage"><canvas id="lpCv" class="cv-sq" style="aspect-ratio:1/1;cursor:crosshair" aria-label="Feasible region of the feed mix LP"></canvas>
@@ -397,18 +407,9 @@ tr.bad td{color:var(--bad)}
     </div>
 
     <h3 id="timescale">Design, planning and control problems (Section 2.1.5)</h3>
-    <div class="two">
-      <div class="prose">
-        <p><b>Design</b> problems (strategic) can run offline for minutes or days because quality matters most: vehicle design, class scheduling, flight scheduling, political districting. <b>Planning</b> problems (tactical) need answers in seconds to minutes: ride-sharing, dispatching, surgery and crew scheduling. <b>Control</b> problems (operational) need answers in milliseconds, repeatedly: vehicle motion control, or a swarm of micro aerial vehicles forming a communication relay to a trapped victim, where small errors are fixed in the next cycle (Figure 2.12).</p>
-        <p><b>Political districting</b> groups basic units into districts with balanced population, contiguity, compactness and respect for boundaries. Drawing the lines to favor a party is <b>gerrymandering</b> (Figure 2.13). Paint the 50 voters below into 5 districts of 10 and see who wins.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Type</th><th>Search time</th><th>Quality</th><th>Examples</th></tr></thead>
-        <tbody>
-          <tr><td>Design</td><td>Minutes to days, infrequent</td><td>High</td><td>Vehicle design, asset allocation, districting</td></tr>
-          <tr><td>Planning</td><td>Seconds to minutes, intermittent</td><td>Medium</td><td>Motion planning, ride-sharing, crew scheduling</td></tr>
-          <tr><td>Control</td><td>Milliseconds to seconds, continuous</td><td>Lower</td><td>Motion control, traffic control, relaying</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p><b>Design</b> problems run offline for quality, <b>planning</b> problems need answers in minutes, <b>control</b> problems in milliseconds. Paint the 50 voters below into 5 districts of 10 and see how the lines change who wins.</p>
+      <p class="more">Section 2.1.5 of the book compares these time scales with real examples (Figure 2.12) and explains districting criteria and gerrymandering (Figure 2.13).</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>Draw the districts</h4><span class="eyebrow">Illustrative: 20 Shield and 30 Bell voters</span></div>
@@ -425,25 +426,10 @@ tr.bad td{color:var(--bad)}
   <div class="wrap">
     <span class="eyebrow">Part 2 · Section 2.2</span>
     <h2>Classifying search and optimization algorithms</h2>
-    <div class="two">
-      <div class="prose">
-        <p><b>Local search</b> uses only information around the current solution and finds local optima; <b>global search</b> uses more of the search space to look for global optima. <b>Deterministic</b> algorithms repeat the same path from the same start; <b>stochastic</b> algorithms use randomness, so their paths and running times vary, which helps them escape local optima (Figure 2.16). The landscape lab above shows the difference.</p>
-        <p>The <b>treasure-hunting mission</b> makes this concrete: the island is the feasible search space, the volcano is infeasible, the treasure is the optimum, and you and your friends are search agents. Searching with no clues is blind search; climbing the steepest cliff is hill climbing; moving from hint to hint is trajectory-based search; recruiting the best hunters is evolution; copying the best hunters is swarm intelligence; learning from a metal detector is machine learning.</p>
-        <p><a class="colab-btn" target="_blank" rel="noopener" href="https://optimization-algorithms-book.github.io/Code-Listings/Treasure_Hunting_Mission.html">Open the Treasure Hunting Mission</a></p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Family</th><th>Examples</th><th>Book</th></tr></thead>
-        <tbody>
-          <tr><td colspan="3"><b>Deterministic</b></td></tr>
-          <tr><td>Numerical / classical</td><td>Graphical, gradient and Hessian, penalty, gradient projection</td><td>Appendix A</td></tr>
-          <tr><td>Blind graph search</td><td>BFS, DFS, Dijkstra</td><td>Chapter 3</td></tr>
-          <tr><td>Informed graph search</td><td>Hill climbing, beam, best-first, A*, contraction hierarchies</td><td>Chapter 4</td></tr>
-          <tr><td colspan="3"><b>Stochastic</b></td></tr>
-          <tr><td>Trajectory-based</td><td>Simulated annealing, tabu search</td><td>Part 2</td></tr>
-          <tr><td>Evolutionary computing</td><td>Genetic algorithm, differential evolution</td><td>Part 3</td></tr>
-          <tr><td>Swarm intelligence</td><td>PSO, ACO, artificial bee colony</td><td>Part 4</td></tr>
-          <tr><td>Machine learning-based</td><td>Graph neural networks, self-organizing maps, reinforcement learning</td><td>Part 5</td></tr>
-        </tbody></table></div>
+    <div class="prose">
+      <p><b>Local</b> or <b>global</b>, <b>deterministic</b> or <b>stochastic</b>: the landscape lab above shows the difference, and the Treasure Hunting Mission turns each algorithm family into a way of searching an island.</p>
+      <p><a class="colab-btn" target="_blank" rel="noopener" href="https://optimization-algorithms-book.github.io/Code-Listings/Treasure_Hunting_Mission.html">Open the Treasure Hunting Mission</a></p>
+      <p class="more">Section 2.2 of the book maps each algorithm family to the chapter that covers it and shows how randomness changes a search (Figure 2.16).</p>
     </div>
   </div>
 </section>
@@ -453,7 +439,7 @@ tr.bad td{color:var(--bad)}
   <div class="wrap">
     <span class="eyebrow">Part 3 · Section 2.3</span>
     <h2>Heuristics and metaheuristics</h2>
-    <p class="prose"><b>Heuristics</b> (from the Greek <i>heuriskein</i>, to find; Archimedes’ “Eureka!”) are rules of thumb that find acceptable solutions in practical time without guaranteeing feasibility or optimality. <b>Metaheuristics</b>, a term coined by Fred Glover, are higher-level strategies that guide other heuristics and balance exploration and exploitation.</p>
+    <p class="prose"><b>Heuristics</b> are rules of thumb that find acceptable solutions in practical time without guarantees; <b>metaheuristics</b> guide them by balancing exploration and exploitation.</p>
     <h3 id="binpack">Bin packing (Figures 2.17 to 2.20, Listing 2.7)</h3>
     <div class="bench">
       <div class="bench-head"><h4>Pack objects into bins of size 7</h4><span class="eyebrow">Lower bound = ⌈total / capacity⌉</span></div>
@@ -466,17 +452,13 @@ tr.bad td{color:var(--bad)}
       <div class="bench-head"><h4>Load a 4 × 8 container (Listing 2.7)</h4><span class="eyebrow">Objects 3×1, 3×3, 5×1, 4×2, 3×2</span></div>
       <div class="stage"><canvas id="ctCv" class="cv-sq" style="aspect-ratio:16/8" aria-label="Container loading heuristics"></canvas><p class="cap" id="ctNote"></p></div>
     </div>
+    <p class="more">Section 2.3 of the book packs these objects by hand (Figures 2.17 to 2.20) and implements container loading in Listing 2.7.</p>
 
     <h3 id="strategies">Heuristic search strategies: the cargo bike again</h3>
     <div class="two">
       <div class="prose">
-        <p>Three ways to generate candidate solutions, applied to the cargo bike of Section 1.3.3 (100 kg payload), with a solution written as a bit string (item 1 first):</p>
-        <ul>
-          <li><b>Repeated construction</b> builds a solution from scratch, here greedily by efficiency ($/kg) (Table 2.3), as in graph search and ant colony optimization.</li>
-          <li><b>Repeated modification</b> changes an existing solution, here swapping item 9 out and item 5 in, as in tabu search, simulated annealing and PSO.</li>
-          <li><b>Repeated recombination</b> mixes solutions, here the first genes of S1 with the rest of S2 (Figure 2.21), as in genetic algorithms and differential evolution.</li>
-        </ul>
-        <p>Click the bits to edit the current solution.</p>
+        <p>Three ways to generate candidates for the cargo bike of Section 1.3.3, written as a bit string: <b>construct</b> one greedily, <b>modify</b> one by swapping items, or <b>recombine</b> two. Click the bits to edit the current solution.</p>
+        <p class="more">Section 2.3 of the book links each strategy to the algorithms built on it (Table 2.3, Figure 2.21).</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Build, modify, recombine</h4></div>
         <div class="stage"><div class="bits" id="sgBits"></div><div class="stats" id="sgStats"></div>
@@ -492,15 +474,8 @@ tr.bad td{color:var(--bad)}
   <div class="wrap">
     <span class="eyebrow">Part 4 · Section 2.4</span>
     <h2>Nature-inspired algorithms</h2>
-    <p class="prose">Problems in nature are ill-structured, dynamic, partially observable, multimodal and multi-objective, and nature solves them without global information. Nature-inspired algorithms mimic those behaviors.</p>
-    <div class="cards3">
-      <div class="card"><h5>Physics <span>Chapter 5</span></h5><p>Molecular dynamics and thermal annealing inspire simulated annealing.</p></div>
-      <div class="card"><h5>Behavioral psychology <span>Chapter 6</span></h5><p>Adaptive memory and responsive exploration inspire tabu search.</p></div>
-      <div class="card"><h5>Evolutionary biology <span>Part 3</span></h5><p>Genetic algorithms, genetic programming, evolution strategies, differential evolution, cultural algorithms, co-evolution.</p></div>
-      <div class="card"><h5>Ethology <span>Part 4</span></h5><p>Swarm intelligence: PSO, ACO, artificial bee colony, firefly, bat, grey wolf and many more.</p></div>
-      <div class="card"><h5>Neuroscience <span>Part 5</span></h5><p>Neural networks: graph convolutional and attention networks, self-organizing maps.</p></div>
-      <div class="card"><h5>Psychology and control <span>Part 5</span></h5><p>Reinforcement learning: actor-critic, PPO, multi-armed and contextual bandits.</p></div>
-    </div>
+    <p class="prose">Nature solves ill-structured, dynamic, multimodal problems without global information, and many algorithms mimic how it does so.</p>
+    <p class="more">Section 2.4 of the book maps each source of inspiration, from physics to neuroscience, to the algorithms in later chapters.</p>
   </div>
 </section>
 
@@ -509,7 +484,7 @@ tr.bad td{color:var(--bad)}
   <div class="wrap">
     <span class="eyebrow">Part 5 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s Chapter 2 notebooks directly in Colab, or the Problems and Algorithms Lab companion notebook with the from-scratch implementations below. The companion needs only the Python standard library; the book’s notebooks use SciPy, SymPy, PuLP and OR-Tools.</p>
+    <p class="prose">Open the book’s Chapter 2 notebooks in Colab, or the companion notebook with the from-scratch code below.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Ch2_Lab_Companion.ipynb"><em>All examples</em><b>Problems and Algorithms Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -777,16 +752,36 @@ print(<span class="st">"recombination:"</span>, S1, total(S1), <span class="st">
     <span class="eyebrow">Part 6 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Classify the problem</h5><p>Variables (number, type), objectives (number, landscape), constraints (type, hardness), linearity, and the time allowed versus the quality needed.</p></div>
-      <div class="card"><h5>Search spaces explode</h5><p>Permutations, partitions and state spaces grow factorially or exponentially, so exhaustive search quickly becomes impossible.</p></div>
-      <div class="card"><h5>Classify the algorithm</h5><p>Local or global, deterministic or stochastic, offline or online: each fits different problems.</p></div>
-      <div class="card"><h5>Heuristics</h5><p>Rules of thumb find good solutions fast without guarantees; metaheuristics guide them by balancing exploration and exploitation.</p></div>
+      <div class="card"><h5>Classify the problem</h5><p>Its variables, objectives, constraints and time budget guide the algorithm choice.</p></div>
+      <div class="card"><h5>Search spaces explode</h5><p>They grow so fast that exhaustive search soon becomes impossible.</p></div>
+      <div class="card"><h5>Classify the algorithm</h5><p>Local or global, deterministic or stochastic: each fits different problems.</p></div>
+      <div class="card"><h5>Heuristics</h5><p>Rules of thumb find good solutions fast, without guarantees.</p></div>
     </div>
     <div class="prose">
       <p class="muted">References: M. Held and R. M. Karp, “A dynamic programming approach to sequencing problems,” 1962. N. Christofides, “Worst-case analysis of a new heuristic for the travelling salesman problem,” 1976. P. A. Jensen and J. F. Bard, <i>Operations Research Models and Methods</i>, 2003. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 2.</p>
     </div>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 7 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 2. Pick an answer to check it.</p>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q1.</b> You start two searches from the same point on a multimodal landscape, twice each: a deterministic compass search and a stochastic search. What should you expect?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Both searches follow a different path on each run</span></button><button type="button" class="mcq-o"><b>B</b><span>The compass search repeats the same path, while the stochastic search can take a different path each run</span></button><button type="button" class="mcq-o"><b>C</b><span>The stochastic search always reaches the global minimum, the compass search never does</span></button><button type="button" class="mcq-o"><b>D</b><span>Both searches repeat their paths exactly, since the start point is fixed</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>A deterministic algorithm always produces the same path from the same start, while a stochastic one uses randomness, so its path varies; that randomness can help it escape local optima but guarantees nothing.</template>
+    </div>
+    <div class="mcq" data-a="2">
+      <p class="mcq-q"><b>Q2.</b> In the animal feed mix linear program, why does the cheapest feasible mix sit at a vertex of the feasible region?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Because the proportions of the three ingredients must sum to 1</span></button><button type="button" class="mcq-o"><b>B</b><span>Because the solver only checks a few random points of the region</span></button><button type="button" class="mcq-o"><b>C</b><span>Because the cost is linear, so sliding a cost line in the improving direction last touches the region at a corner</span></button><button type="button" class="mcq-o"><b>D</b><span>Because every constraint is an equality constraint</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>With a linear objective, cost lines are parallel and the cost keeps decreasing in one direction until the line is about to leave the feasible polygon, which happens at a vertex. The sum-to-1 condition only lets the problem be drawn in two dimensions.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%202" target="_blank" rel="noopener">Chapter 2</a>).</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 2 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024).</div></footer>
 </div>
 <script>
@@ -1308,5 +1303,15 @@ function drawBoardCanvas(cv, q, cap) {
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>

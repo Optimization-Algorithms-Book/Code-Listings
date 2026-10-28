@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Interactive companion to Chapter 3 (Blind search algorithms) of Optimization Algorithms by Alaa Khamis (Manning, 2024).">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}/* quiz:css */
+.more{max-width:72ch;margin:.8rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:.9rem;line-height:1.5}
+.more::before{content:"\1F4D6\00a0"}
+.prose .more{margin-top:.6rem}
+.mcq{max-width:820px;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.mcq-q{margin:0 0 .7rem;line-height:1.5}
+.mcq-q b{font-family:var(--f-mono);color:var(--accent)}
+.mcq-opts{display:grid;gap:.45rem}
+button.mcq-o{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.mcq-o b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.mcq-o:disabled{cursor:default;opacity:1}
+button.mcq-o:disabled:hover{border-color:var(--line)}
+button.mcq-o.right,button.mcq-o.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.mcq-fb{margin:.6rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.mcq-fb .ok{color:var(--good);font-weight:600}
+.mcq-fb .no{color:var(--bad);font-weight:600}
+/* quiz:css-end */
+</style>
 <title>Blind Search Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -288,6 +306,7 @@ td.del{color:var(--muted);text-decoration:line-through}
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
     <li><a href="#summary"><b>7</b>Summary</a></li>
+    <li><a href="#quiz"><b>8</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Chapter 3, Blind search algorithms.</div>
 </aside>
@@ -300,7 +319,7 @@ td.del{color:var(--muted);text-decoration:line-through}
     <div>
       <div class="eyebrow">Interactive companion · Chapter 3 · Blind search algorithms</div>
       <h1>Blind Search <em>Lab</em></h1>
-      <p class="lede">How do you find your way without a map, a compass or any sense of where the goal lies? Blind (uninformed) search explores a graph by rule alone: level by level, branch by branch, or cheapest-first. Watch these rules solve puzzles, steer a robot around obstacles and cross a university campus.</p>
+      <p class="lede">Blind (uninformed) search explores a graph by rule alone: level by level, branch by branch, or cheapest first.</p>
       <div class="variants">
         <a class="chip" href="#graphs"><b>G = (V, E)</b> Graphs</a>
         <a class="chip" href="#puzzle"><b>FIFO · LIFO</b> BFS and DFS</a>
@@ -324,8 +343,8 @@ td.del{color:var(--muted);text-decoration:line-through}
     <h2>Graphs</h2>
     <div class="two">
       <div class="prose">
-        <p>A graph G = (V, E) is a nonlinear data structure: a set of <b>vertices</b> (nodes) and a set of <b>edges</b> (arcs, links) between them. Edges can carry attributes such as length, capacity or road material. A <b>tree</b> is a special graph: connected, with no cycles or self-loops.</p>
-        <p>Graphs are everywhere. A search engine sees the web as pages joined by links. On social media, users are nodes; a friendship is an undirected edge and “following” is a directed one (Table 3.1). In a road network, intersections and points of interest are nodes and roads are mostly directed edges with lengths and speed limits. OSMnx downloads such networks from OpenStreetMap as NetworkX graphs.</p>
+        <p>A graph G = (V, E) is a set of <b>vertices</b> joined by <b>edges</b>. Pick a graph type to see how it looks.</p>
+        <p class="more">Section 3.1 of the book builds each type in Listings 3.1 to 3.6 and turns web, social and road networks into graphs.</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Graph types (Listings 3.1 to 3.6)</h4></div>
@@ -340,20 +359,10 @@ td.del{color:var(--muted);text-decoration:line-through}
   <div class="wrap">
     <span class="eyebrow">Part 2 · Section 3.2</span>
     <h2>Graph search</h2>
-    <div class="two">
-      <div class="prose">
-        <p><b>Deterministic</b> search follows a rigorous procedure: the same start always gives the same path. <b>Stochastic</b> search involves randomness. Deterministic graph search is <b>blind</b> (uninformed) when it uses no information about the search space, such as the distance to the goal, and <b>informed</b> when it does (Chapter 4).</p>
-        <p>Blind search treats every node equally, so it is also called uniform search. It may stop at the first solution it meets, which need not be the best; an exhaustive (British Museum) search that checks every possibility does find the optimum, at great cost.</p>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Blind search</th><th>Informed search (Chapter 4)</th></tr></thead>
-        <tbody>
-          <tr><td><b>Traversal:</b> breadth-first (BFS), depth-first (DFS), depth-limited (DLS), iterative deepening (IDS)</td><td>Hill climbing, beam search, best-first, A*</td></tr>
-          <tr><td><b>Shortest path:</b> Dijkstra, uniform-cost search (UCS), bidirectional search</td><td>Bidirectional A*, contraction hierarchies; minimum spanning trees (Kruskal, Borůvka, Jarník, Prim, Chazelle)</td></tr>
-        </tbody></table><p class="cap" style="padding:.4rem .6rem">Figure 3.10: graph search methods.</p></div>
-    </div>
+    <p class="prose"><b>Blind</b> search uses no information about where the goal lies; <b>informed</b> search does (Chapter 4).</p>
+    <p class="more">Section 3.2 of the book maps the graph search methods (Figure 3.10) and the trade-offs of searching blind.</p>
     <h3 id="containers">Stacks, queues and priority queues</h3>
-    <p class="prose">What separates the blind search algorithms is mostly the container that holds the nodes waiting to be explored, the <b>frontier</b>. Push the same items into all three and pop them to see the difference.</p>
+    <p class="prose">Blind search algorithms differ mostly in the container holding the <b>frontier</b>. Push items into all three and pop to compare.</p>
     <div class="bench">
       <div class="bench-head"><h4>Which item comes out next?</h4><span class="eyebrow">LIFO · FIFO · lowest cost first</span></div>
       <div class="stage">
@@ -363,7 +372,7 @@ td.del{color:var(--muted);text-decoration:line-through}
           <div class="box"><h5>Queue (FIFO) → BFS</h5><div class="chips" id="dsQueue"></div><small class="cap" id="dsQueueOut"></small></div>
           <div class="box"><h5>Priority queue → UCS, Dijkstra</h5><div class="chips" id="dsPq"></div><small class="cap" id="dsPqOut"></small></div>
         </div>
-        <p class="cap">Each item has a cost in parentheses. The outlined chip is the one the next pop will remove. A min-heap is the usual way to implement a priority queue.</p>
+        <p class="cap">Costs are in parentheses; the outlined chip is the next one popped.</p>
       </div>
     </div>
   </div>
@@ -374,28 +383,13 @@ td.del{color:var(--muted);text-decoration:line-through}
   <div class="wrap">
     <span class="eyebrow">Part 3 · Section 3.3</span>
     <h2>Graph traversal: BFS and DFS</h2>
-    <div class="two">
-      <div>
-        <div class="pseudo"><span class="k">Algorithm 3.1</span>: BFS   (<span class="k">Algorithm 3.2</span>: DFS)
-frontier ← a FIFO queue (LIFO stack) with the source
-explored ← empty; found ← False
-<span class="k">while</span> frontier is not empty <span class="k">and not</span> found
-    node ← frontier.dequeue()   <span class="c"># stack.pop() for DFS</span>
-    add node to explored
-    <span class="k">for</span> child <span class="k">in</span> node.expand()
-        <span class="k">if</span> child not in explored and not in frontier
-            <span class="k">if</span> child is the destination
-                route ← child.route(); found ← True
-            add child to frontier
-<span class="k">return</span> route</div>
-      </div>
-      <div class="prose">
-        <p><b>BFS</b> explores layer by layer: all neighbors of the source, then their neighbors, and so on. It always finds the path with the fewest edges, but every generated node stays in memory.</p>
-        <p><b>DFS</b> dives as deep as it can and backtracks at dead ends. It uses far less memory but can wander down a long branch, or forever in an infinite tree. <b>Depth-limited search</b> (DLS) caps the depth; <b>iterative deepening</b> (IDS) raises the cap one level at a time, combining DFS’s small memory with BFS’s shallow solutions.</p>
-      </div>
+    <div class="prose">
+      <p><b>BFS</b> explores layer by layer and finds the fewest-edge path at a high memory cost; <b>DFS</b> dives deep and backtracks, using little memory but possibly wandering.</p>
+      <p class="more">Section 3.3 of the book gives both as pseudocode (Algorithms 3.1 and 3.2) and adds depth-limited and iterative deepening search.</p>
     </div>
     <h3 id="puzzle">The 8-puzzle lab</h3>
-    <p class="prose">A well-structured problem. <b>States:</b> where the blank and the eight tiles are. <b>Operators:</b> move the blank left, up, right or down, tried in that order. <b>Goal:</b> the ordered board. <b>Cost:</b> the number of moves. Click a tile next to the blank to slide it, or start from the book’s board (Listing 3.9). Not every board can be solved: a board is solvable only if its tiles have an even number of inversions.</p>
+    <p class="prose">Click a tile next to the blank to slide it, or load the book’s board, then search with BFS or DFS and play the solution.</p>
+    <p class="more">Section 3.3 of the book formulates the 8-puzzle, explains which boards are solvable, and solves it in Listings 3.9 and 3.10.</p>
     <div class="bench">
       <div class="bench-head"><h4>Solve the 8-puzzle blindly</h4><span class="eyebrow">Goal: blank top left, then 1 to 8</span></div>
       <div class="bench-body">
@@ -420,7 +414,8 @@ explored ← empty; found ← False
     </div>
 
     <h3 id="robot">Robot path planning</h3>
-    <p class="prose">A robot must reach a destination around obstacles (Figures 3.13 to 3.25). From each cell it can move to any free neighboring cell, tried in compass order S, SE, E, NE, N, NW, W, SW. Step through the search and watch the frontier: BFS pulls from the front of its queue, DFS from the top of its stack. Click cells to add or remove obstacles.</p>
+    <p class="prose">Step through the search and watch the frontier grow; click cells to add or remove obstacles.</p>
+    <p class="more">Figures 3.13 to 3.25 in the book trace BFS and DFS on this grid move by move.</p>
     <div class="bench">
       <div class="bench-head"><h4>Path planning on a grid</h4><span class="eyebrow">Click to edit obstacles</span></div>
       <div class="bench-body">
@@ -437,15 +432,8 @@ explored ← empty; found ← False
     <h3 id="bigo">Complexity: will it scale?</h3>
     <div class="two">
       <div class="prose">
-        <p><b>Big O notation</b> describes how an algorithm’s work grows with the input size n, usually in the worst case. Keep the fastest-growing term and drop constant factors: the ticket-pricing profit −20x² + 6200x − 350,000 is O(n²).</p>
-        <p>For a graph G = (V, E), BFS runs in O(|V| + |E|). In terms of the branching factor b and the depth d of the shallowest goal, BFS needs O(b<sup>d</sup>) time and memory, while DFS needs O(b<sup>m</sup>) time but only O(bm) memory, where m is the maximum depth.</p>
-        <div class="tbl-wrap"><table class="ttab">
-          <thead><tr><th></th><th>BFS</th><th>DFS</th></tr></thead>
-          <tbody>
-            <tr><td>Space</td><td>More expensive</td><td>Linear: only the current path and its siblings</td></tr>
-            <tr><td>Time</td><td>Finds shallow goals first</td><td>Can waste time on deep branches</td></tr>
-            <tr><td>Prefer when</td><td>The solution is near the start, the branching factor is moderate</td><td>The graph is very wide, solutions are deep, no path is excessively deep</td></tr>
-          </tbody></table><p class="cap" style="padding:.4rem .6rem">Table 3.5, summarized.</p></div>
+        <p><b>Big O notation</b> describes how work grows with input size. Move the sliders to see how long each complexity class, and BFS, would take.</p>
+        <p class="more">Section 3.3 of the book derives the time and memory of BFS and DFS and compares them in Tables 3.3 to 3.5.</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>How long would it take?</h4></div>
@@ -465,7 +453,7 @@ explored ← empty; found ← False
   <div class="wrap">
     <span class="eyebrow">Part 4 · Section 3.4</span>
     <h2>Shortest path algorithms</h2>
-    <p class="prose">BFS and DFS find <i>a</i> path but ignore edge lengths. <b>Dijkstra’s algorithm</b> (1959) solves the single-source shortest path problem on graphs with non-negative edge costs. It is a dynamic programming method: it repeatedly settles the closest unsettled node and relaxes its edges. It is the base of the routing in today’s navigation apps and of extensions such as A*, bidirectional A*, contraction hierarchies and A* with landmarks (Figure 3.26).</p>
+    <p class="prose"><b>Dijkstra’s algorithm</b> finds shortest paths with non-negative costs by repeatedly settling the closest unsettled node and relaxing its edges.</p>
     <h3 id="dijkstra">Dijkstra step by step (Figures 3.27 to 3.32)</h3>
     <div class="bench">
       <div class="bench-head"><h4>Dijkstra’s algorithm from S</h4><span class="eyebrow">Settle the closest node, relax its edges</span></div>
@@ -474,21 +462,15 @@ explored ← empty; found ← False
         <div class="stage"><div class="stage-grid"><div><canvas id="djCv" class="cv-sq" aria-label="Weighted graph"></canvas></div><div><div class="tbl-wrap"><table class="ttab" id="djTbl"></table></div><div class="box"><h5>Priority queue (unsettled, by distance)</h5><div class="chips" id="djPq"></div></div></div></div><p class="cap" id="djNote"></p></div>
       </div>
     </div>
+    <p class="more">Figures 3.27 to 3.32 in the book run Dijkstra on this graph by hand; Figure 3.26 shows the routing methods built on it.</p>
     <h3 id="ucs">Uniform-cost search</h3>
-    <div class="two">
-      <div class="prose">
-        <p><b>UCS</b> is Dijkstra’s algorithm for one destination. Dijkstra puts every node in the queue at the start with an infinite distance; UCS starts with only the source, adds nodes as it discovers them, and stops as soon as the destination is popped. That suits huge or implicit graphs, such as puzzle state spaces, that cannot be listed in advance. When every edge costs the same, UCS expands nodes in the same order as BFS. Switch the stepper above to UCS to compare.</p>
-      </div>
-      <div class="tbl-wrap"><table class="ttab">
-        <thead><tr><th class="n">|V| + |E|</th><th class="n">Dijkstra</th><th class="n">UCS</th></tr></thead>
-        <tbody><tr><td class="n">108</td><td class="n">0.25 s</td><td class="n">0.14 s</td></tr><tr><td class="n">628</td><td class="n">84.61 s</td><td class="n">58.23 s</td></tr><tr><td class="n">1,514</td><td class="n">2,082.97 s</td><td class="n">1,360.98 s</td></tr></tbody></table>
-        <p class="cap" style="padding:.4rem .6rem">Table 3.6: all-pairs shortest paths with each algorithm (Comparison.ipynb).</p></div>
-    </div>
+    <p class="prose"><b>UCS</b> is Dijkstra’s algorithm for one destination, adding nodes only as it finds them. Switch the stepper above to UCS to compare.</p>
+    <p class="more">Section 3.4 of the book explains when UCS beats Dijkstra and times both (Table 3.6).</p>
     <h3 id="bidir">Bidirectional search</h3>
     <div class="two">
       <div class="prose">
-        <p>Search forward from the source and backward from the destination at the same time, alternating, until the two searches meet. If the source and destination are 2r apart, one search sweeps a disk of radius 2r, area C<sub>1</sub> = 4πr², while two searches that meet halfway sweep two disks of radius r, area C<sub>2</sub> + C<sub>3</sub> = 2πr²: about half (Figure 3.33). For BFS with branching factor b and depth d, the cost drops from O(b<sup>d</sup>) to O(b<sup>d/2</sup>).</p>
-        <p>Stopping needs care. The first node where the two searches meet is not always on the shortest path. The safe rule is to stop when the two smallest frontier distances add up to at least the best meeting cost found so far. The campus lab below shows what happens with each rule.</p>
+        <p>Search from both ends until the searches meet. Run both to compare the area explored.</p>
+        <p class="more">Section 3.4 of the book shows why this halves the area (Figure 3.33) and when it is safe to stop.</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Search area: one search vs. two</h4></div>
@@ -503,7 +485,7 @@ explored ← empty; found ← False
   <div class="wrap">
     <span class="eyebrow">Part 5 · Section 3.5</span>
     <h2>Routing across a campus</h2>
-    <p class="prose">You are at the King Edward VII equestrian statue in Queen’s Park, Toronto, your phone is dead, and you have a meeting at the Bahen Centre for Information Technology. With no idea which way to go, you pick a rule and stick to it. The road network within 300 m of King’s College Circle comes from OpenStreetMap through OSMnx, as in the book’s Comparison.ipynb: 646 nodes and 1,646 one-way road segments after merging parallel edges and dropping self-loops (Figures 3.38 and 3.39).</p>
+    <p class="prose">Route from the King Edward VII statue to the Bahen Centre on real OpenStreetMap roads: animate one algorithm or compare them all.</p>
     <div class="bench">
       <div class="bench-head"><h4>Campus routing lab</h4><span class="eyebrow">Statue → Bahen Centre</span></div>
       <div class="bench-body">
@@ -517,7 +499,8 @@ explored ← empty; found ← False
         </div>
       </div>
     </div>
-    <div class="note">Road data © OpenStreetMap contributors, downloaded in 2026. Streets change over time, so the lengths differ from the book’s run: the book reports 955.962 m for BFS, 3,347.482 m for DFS and 806.892 m for Dijkstra (Table 3.7), with 278, 153 and 393 explored nodes.</div>
+    <div class="note">Road data © OpenStreetMap contributors, downloaded in 2026, so lengths differ from the book’s run.</div>
+    <p class="more">Section 3.5 of the book builds this network with OSMnx (Figures 3.38 and 3.39) and compares each algorithm’s route in Table 3.7.</p>
     <div class="runbox"><b>Run it in Python:</b>
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%203/Comparison.ipynb">Comparison.ipynb</a>
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%203/Listing%203.8_folium.ipynb">Listing 3.8 folium</a>
@@ -531,7 +514,7 @@ explored ← empty; found ← False
   <div class="wrap">
     <span class="eyebrow">Part 6 · Code</span>
     <h2>Python in Google Colab</h2>
-    <p class="prose">Open the book’s notebooks directly in Colab, or the Blind Search Lab companion notebook with the from-scratch implementations below. They need only the standard library and Matplotlib, except the campus example, which installs OSMnx.</p>
+    <p class="prose">Open the book’s notebooks in Colab, or the companion notebook with the from-scratch code below.</p>
     <h3 id="notebooks">Notebooks</h3>
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%203/BS_Lab_Companion.ipynb"><em>All examples</em><b>Blind Search Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
@@ -924,16 +907,36 @@ b = <span class="nm">5</span>
     <span class="eyebrow">Part 7 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
-      <div class="card"><h5>Graphs</h5><p>Vertices and edges, possibly directed, weighted, parallel or acyclic. Road networks, social networks and puzzle state spaces are all graphs.</p></div>
-      <div class="card"><h5>Traversal</h5><p>BFS (queue) finds the fewest-edge path at a high memory cost; DFS (stack) uses little memory but can wander. DLS and IDS bound the depth.</p></div>
-      <div class="card"><h5>Shortest paths</h5><p>Dijkstra and UCS settle nodes in order of distance and return optimal routes on non-negative costs; bidirectional search roughly halves the search.</p></div>
-      <div class="card"><h5>Trade-offs</h5><p>Choosing an algorithm balances time, memory and how much of the graph must be known in advance.</p></div>
+      <div class="card"><h5>Graphs</h5><p>Roads, social networks and puzzle states are all vertices joined by edges.</p></div>
+      <div class="card"><h5>Traversal</h5><p>BFS (queue) finds the fewest-edge path; DFS (stack) saves memory but can wander.</p></div>
+      <div class="card"><h5>Shortest paths</h5><p>Dijkstra and UCS return optimal routes on non-negative costs.</p></div>
+      <div class="card"><h5>Trade-offs</h5><p>Choose by time, memory and how much of the graph is known.</p></div>
     </div>
     <div class="prose">
       <p class="muted">References: E. W. Dijkstra, “A note on two problems in connexion with graphs,” 1959. A. Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024, Chapter 3. Road data © OpenStreetMap contributors (ODbL), via OSMnx.</p>
     </div>
   </div>
 </section>
+<!-- quiz:start -->
+<section class="chapter" id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Part 8 · Quiz</span>
+    <h2>Check your understanding</h2>
+    <p class="prose">Two quick questions on Chapter 3. Pick an answer to check it.</p>
+    <div class="mcq" data-a="1">
+      <p class="mcq-q"><b>Q1.</b> On a graph where every edge counts the same, which blind search is guaranteed to return a path with the fewest edges, and what does it pay for that guarantee?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>DFS, because its stack always explores the shortest branch first</span></button><button type="button" class="mcq-o"><b>B</b><span>BFS, at the cost of keeping every generated node in memory</span></button><button type="button" class="mcq-o"><b>C</b><span>DFS, at the cost of exploring every node before stopping</span></button><button type="button" class="mcq-o"><b>D</b><span>BFS, at the cost of possibly looping forever in an infinite tree</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>BFS uses a FIFO queue and explores layer by layer, so the first time it reaches the goal it has used the fewest edges, but all generated nodes stay in memory. DFS saves memory yet can wander down a long branch and return a longer path.</template>
+    </div>
+    <div class="mcq" data-a="3">
+      <p class="mcq-q"><b>Q2.</b> In bidirectional Dijkstra, when is it safe to stop and report the shortest path?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>As soon as some node has been reached by both searches</span></button><button type="button" class="mcq-o"><b>B</b><span>When one of the two frontiers becomes empty</span></button><button type="button" class="mcq-o"><b>C</b><span>After each search has settled half of the nodes</span></button><button type="button" class="mcq-o"><b>D</b><span>When the two smallest frontier distances add up to at least the best meeting cost found so far</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>The first node where the two searches meet is not always on the shortest path. Only when no unsettled node could still give a cheaper connection, that is, when the smallest forward and backward frontier distances sum to at least the best meeting cost, is the result guaranteed optimal.</template>
+    </div>
+    <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>.</p>
+  </div>
+</section>
+<!-- quiz:end -->
 <footer class="end"><div class="wrap">Interactive companion to Chapter 3 of <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a> by Alaa Khamis (Manning, 2024). Road data © OpenStreetMap contributors.</div></footer>
 </div>
 <script>
@@ -1603,5 +1606,15 @@ const RB_W = 16, RB_H = 10, RB_COMPASS = [["S", 1, 0], ["SE", 1, 1], ["E", 0, 1]
 })();
 
 </script>
+<script>/* quiz:js */
+document.addEventListener("click", e => {
+  const o = e.target.closest(".mcq-o"); if (!o) return;
+  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
+  const ok = opts.indexOf(o) === +q.dataset.a;
+  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
+});
+/* quiz:js-end */</script>
 </body>
 </html>
