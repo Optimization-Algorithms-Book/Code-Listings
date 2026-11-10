@@ -1424,11 +1424,15 @@ function acoStep(S, P) {
       $("#ctCap").innerHTML = `${it.given ? "Random numbers from the worked example. " : "Seeded random numbers. "}Best f = ${it.fb.toFixed(2)} (x = ${XS[it.bi]}), worst f = ${it.fw.toFixed(2)}. Evaporation: τ ← ${(1 - ctl.rho).toFixed(2)} τ. Deposit on the best path: Δτ = ${it.nb > 1 ? it.nb + " × " : ""}${ctl.zeta} × (${it.fb.toFixed(2)}) / (${it.fw.toFixed(2)}) = <b>${it.dTau.toFixed(4)}</b>, so τ(x = ${XS[it.bi]}) = <b>${it.tau[it.bi].toFixed(4)}</b>.`;
     }
     const cv = $("#ctCv"), { ctx, w, h } = setupCanvas(cv), c = colors(); ctx.clearRect(0, 0, w, h);
-    const pad = { l: 44, r: 12, t: 14, b: 26 }, X = x => pad.l + (w - pad.l - pad.r) * x / 3, tmax = Math.max(...tau), Yt = v => h - pad.b - (h - pad.t - pad.b) * v / tmax, Yf = v => pad.t + (h - pad.t - pad.b) * (v + 8) / 4 * -1 + (h - pad.t - pad.b) + pad.t * 0;
+    // title above the plot (two lines when narrow), then room for the τ labels over the tallest bar
+    ctx.font = `11px ${MONO}`; const T1 = "f(x) = x² − 2x − 11 (blue, minimum at x = 1)", T2 = "bars: pheromone τ", one = ctx.measureText(T1 + " · " + T2).width <= w - 8;
+    const bw = (w - 24) / 9.5, pad = { l: bw / 2 + 12, r: bw / 2 + 12, t: one ? 34 : 48, b: 26 }, X = x => pad.l + (w - pad.l - pad.r) * x / 3, tmax = Math.max(...tau), Yt = v => h - pad.b - (h - pad.t - pad.b) * v / tmax, Yf = v => pad.t + (h - pad.t - pad.b) * (v + 8) / 4 * -1 + (h - pad.t - pad.b) + pad.t * 0;
     const fy = v => pad.t + (h - pad.t - pad.b) * (1 - (v + 12.2) / 4.4);
-    XS.forEach((x, i) => { const bw = (w - pad.l - pad.r) / 9; ctx.fillStyle = c.gold; ctx.globalAlpha = .85; ctx.fillRect(X(x) - bw / 2, Yt(tau[i]), bw, h - pad.b - Yt(tau[i])); ctx.globalAlpha = 1; ctx.fillStyle = c.ink; ctx.font = `11px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.fillText(tau[i].toFixed(2), X(x), Yt(tau[i]) - 2); ctx.textBaseline = "top"; ctx.fillStyle = c.muted; ctx.fillText(x.toFixed(1), X(x), h - pad.b + 5); });
+    XS.forEach((x, i) => { ctx.fillStyle = c.gold; ctx.globalAlpha = .85; ctx.fillRect(X(x) - bw / 2, Yt(tau[i]), bw, h - pad.b - Yt(tau[i])); ctx.globalAlpha = 1; ctx.font = `11px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillStyle = c.muted; ctx.fillText(x.toFixed(1), X(x), h - pad.b + 5); });
     ctx.strokeStyle = c.accent; ctx.lineWidth = 2; ctx.beginPath(); for (let s = 0; s <= 60; s++) { const x = 3 * s / 60; s ? ctx.lineTo(X(x), fy(f(x))) : ctx.moveTo(X(x), fy(f(x))); } ctx.stroke();
-    ctx.fillStyle = c.accent; ctx.font = `11px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText("f(x) = x² − 2x − 11 (blue, minimum at x = 1) · bars: pheromone τ", pad.l, 2);
+    ctx.font = `11px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    XS.forEach((x, i) => { const s = tau[i].toFixed(2), tw = ctx.measureText(s).width, y = Yt(tau[i]) - 2; ctx.fillStyle = css("--sunk"); ctx.fillRect(X(x) - tw / 2 - 2, y - 12, tw + 4, 12); ctx.fillStyle = c.ink; ctx.fillText(s, X(x), y); });   // τ labels drawn over the curve
+    ctx.fillStyle = c.accent; ctx.textAlign = "left"; ctx.textBaseline = "top"; if (one) ctx.fillText(T1 + " · " + T2, 4, 2); else { ctx.fillText(T1, 4, 2); ctx.fillText(T2, 4, 16); }
   }
   ro.observe($("#ctCv")); onRedraw(render); render();
 })();
