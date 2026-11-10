@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Intro to ML Lab</title>
 <!-- katex:start -->
@@ -349,6 +418,7 @@ tr.dim td{color:var(--muted)}
     <p class="prose">Machine learning (ML) brought AI into everyday products.</p>
     <p class="more">Section 11.1 of the book follows a day in the life of AI and maps the subfields around ML.</p>
     <div class="flow"><span>AI</span><i>⊃</i><span>Machine learning</span><i>⊃</i><span>Neural networks</span><i>⊃</i><span>Deep learning</span><i>⊃</i><span>Generative AI</span><i>⊃</i><span>Transformers</span><i>⊃</i><span>Large language models</span></div>
+    <!-- kc --><div class="kc" data-sec="ai"></div>
   </div>
 </section>
 
@@ -360,6 +430,7 @@ tr.dim td{color:var(--muted)}
       <p>A program <b>learns</b> from experience <b>\(E\)</b> on tasks <b>\(T\)</b> if its performance <b>\(P\)</b> at \(T\) improves with \(E\) (Tom Mitchell). Every school of ML, in Domingos’ view, needs an optimizer.</p>
       <p class="more">Section 11.2 of the book covers Dehaene’s seven definitions of learning and Domingos’ five ML tribes (Figure 11.1).</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="learning"></div>
   </div>
 </section>
 
@@ -377,6 +448,7 @@ tr.dim td{color:var(--muted)}
           <canvas id="cfChart" class="cv-chart" aria-label="Error vs degree"></canvas><p class="cap" id="cfNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="fitting"></div>
   </div>
 </section>
 
@@ -395,6 +467,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="pdCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Paradigm demo"></canvas><p class="cap" id="pdNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="paradigms"></div>
   </div>
 </section>
 
@@ -405,6 +478,7 @@ tr.dim td{color:var(--muted)}
     <div class="flow"><span>1. Collect data</span><i>→</i><span>2. Prepare data</span><i>→</i><span>3. Choose a model</span><i>→</i><span>4. Train</span><i>→</i><span>5. Evaluate</span><i>→</i><span>6. Tune parameters</span><i>→</i><span>7. Predict</span></div>
     <p class="prose">Use ML when a pattern exists, no cheap exact model is available, and you have data.</p>
     <p class="more">Chapter 11 of the book details each step and what to do when data is scarce.</p>
+    <!-- kc --><div class="kc" data-sec="procedure"></div>
   </div>
 </section>
 
@@ -436,6 +510,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="ciCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="TSP tour"></canvas><p class="cap" id="ciNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="ml4co"></div>
   </div>
 </section>
 
@@ -646,17 +721,8 @@ print(f<span class="st">"random tour {L(rand):.3f} -&gt; 2-opt {L(two_opt(rand))
   <div class="wrap">
     <span class="eyebrow">Part 9 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 11. Pick an answer to check it.</p>
-    <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> A degree-12 polynomial fitted to 15 noisy points reaches almost zero training error but a large test error. What is going on?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>The model underfits: it is too simple for the data</span></button><button type="button" class="mcq-o"><b>B</b><span>The least-squares search failed to find the minimum</span></button><button type="button" class="mcq-o"><b>C</b><span>The model overfits: it memorizes the noise, and more data would help</span></button><button type="button" class="mcq-o"><b>D</b><span>The loss function should be the test error instead</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>A very flexible model can pass through every training point, noise included, so it generalizes poorly. Underfitting would show high training error too, and more data tames a flexible model.</template>
-    </div>
-    <div class="mcq" data-a="1">
-      <p class="mcq-q"><b>Q2.</b> Using a UCB bandit to choose the step size of a random search while the search runs is an example of which way of combining ML with optimization?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>End-to-end learning</span></button><button type="button" class="mcq-o"><b>B</b><span>Learning to configure algorithms</span></button><button type="button" class="mcq-o"><b>C</b><span>Unsupervised clustering of solutions</span></button><button type="button" class="mcq-o"><b>D</b><span>Amortized optimization with a pretrained network</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>The learner does not output solutions itself; it sets a parameter of an existing algorithm (the step size) based on how well each choice has paid off.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 11 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2011" target="_blank" rel="noopener">Chapter 11</a>).</p>
   </div>
 </section>
@@ -1069,15 +1135,171 @@ codeTabs({ f: "Least-squares polynomial fits, overfitting, more data, and a line
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"ai": [{"type": "order", "q": "Put these fields in order from the broadest to the most specific, following the nesting on the page.", "items": ["Artificial intelligence", "Machine learning", "Neural networks", "Deep learning", "Generative AI", "Transformers", "Large language models"], "why": "Each field sits inside the one before it, so a large language model is a transformer, a generative model, a deep network, a neural network, an ML model and an AI system all at once.", "hint": "Start with the umbrella field that the whole lab belongs to and end with the systems behind today's chat assistants."}, {"type": "mcq", "q": "Given the nesting AI \\(\\supset\\) ML \\(\\supset\\) neural networks \\(\\supset\\) deep learning, which statement must be true?", "options": [{"t": "Every deep-learning model is a machine learning model", "why": "Deep learning sits inside neural networks, which sit inside machine learning, so the containment carries through."}, {"t": "Every machine learning model is a neural network", "why": "The containment runs the other way: neural networks are one family inside ML, alongside trees, SVMs and others."}, {"t": "Every AI system learns from data", "why": "AI is the broadest field and also covers areas such as reasoning and search that need not learn from data."}, {"t": "Deep learning and machine learning are separate fields", "why": "Deep learning is a subset of machine learning, not a separate field beside it."}], "answer": 0}, {"type": "mcq", "q": "According to the lab, what role did machine learning play for AI as a whole?", "options": [{"t": "It brought AI into everyday products", "why": "Voice assistants, navigation, recommendations and translation are all examples of ML-powered products in daily life."}, {"t": "It replaced every other subfield of AI", "why": "Other subfields such as reasoning, knowledge representation and search and optimization still exist next to ML."}, {"t": "It removed the need for any optimization", "why": "Training an ML model is itself an optimization problem, so ML relies on optimization rather than removing it."}, {"t": "It limited AI to systems that generate text", "why": "Text generation is only one recent application; ML also powers vision, routing, scheduling and many other tasks."}], "answer": 0}], "learning": [{"type": "match", "q": "Apply Tom Mitchell's definition of learning to a spam filter: match each symbol to what it stands for.", "pairs": [{"l": "Task \\(T\\)", "r": "Labeling each email as spam or not", "why": "The task is the job the program is supposed to do, here sorting incoming email."}, {"l": "Performance \\(P\\)", "r": "Fraction of emails labeled correctly", "why": "The performance measure scores how well the task is done, so it must be something we can compute."}, {"l": "Experience \\(E\\)", "r": "A set of emails labeled by people", "why": "The experience is the data the program learns from, and learning means \\(P\\) at \\(T\\) improves as \\(E\\) grows."}]}, {"type": "mcq", "q": "A chess program plays 1,000 more games, but its win rate against the same opponents stays flat. Under Mitchell's definition, has it learned?", "options": [{"t": "No, since its performance did not improve", "why": "Learning requires \\(P\\) at \\(T\\) to improve with \\(E\\), and here more experience left performance unchanged."}, {"t": "Yes, because it gained a lot of experience", "why": "Experience alone is not enough; the definition asks for performance to improve as experience grows."}, {"t": "Yes, because playing chess is a well-defined task", "why": "Having a task \\(T\\) is only one ingredient; without improvement in \\(P\\) there is no learning."}, {"t": "It cannot be judged, since a win rate is not a measure", "why": "A win rate is a perfectly good performance measure \\(P\\), and it shows no gain here."}], "answer": 0}, {"type": "mcq", "q": "Why does every school of ML, in Domingos' view, need an optimizer?", "options": [{"t": "Learning means searching for the model that scores best", "why": "Whatever the representation, training has to pick the best model by some evaluation, which is an optimization problem."}, {"t": "Optimizers are needed only to store the training data", "why": "Storing data takes no optimizer; the optimizer is what chooses a model from the data."}, {"t": "Without an optimizer the model could not make predictions", "why": "A finished model predicts without any optimizer; the optimizer is needed to train it."}, {"t": "Every school uses gradient descent on neural networks", "why": "The schools differ in representation and optimizer, so not all of them use neural networks or gradients."}], "answer": 0}], "fitting": [{"type": "mcq", "q": "What does training in the curve fitting playground actually minimize?", "options": [{"t": "The average loss on the training sample", "why": "The expected loss over all data is unknown, so the learner minimizes its sample average, \\(S(f) = \\frac{1}{n}\\sum L(y_i, f(x_i))\\), within the model class."}, {"t": "The error on the test points", "why": "The test points are held back to measure generalization; optimizing on them would hide overfitting."}, {"t": "The distance between the fit and the true function \\(\\sin(2\\pi x)\\)", "why": "The learner never sees the true function, only the noisy sample drawn from it."}, {"t": "The degree of the polynomial", "why": "The degree fixes the model class; it is chosen by the user, not by the least-squares search."}], "answer": 0}, {"type": "fill", "q": "A degree-\\(d\\) polynomial has \\(d + 1\\) coefficients. With \\(n = 8\\) training points at distinct \\(x\\) values, what is the smallest degree that lets least squares pass exactly through every point?", "answer": 7, "tol": 0, "unit": "", "hint": "Exact interpolation needs as many free coefficients as there are points.", "why": "With \\(d + 1 = 8\\) coefficients the polynomial can match all 8 points, so \\(d = 7\\), and it then memorizes the noise along with the signal."}, {"type": "classify", "q": "Sort each fitting result into what it shows.", "cats": ["Underfitting", "Overfitting", "Good fit"], "items": [{"t": "Degree 0 on the sine data: high training error and high test error", "cat": 0, "why": "A constant cannot follow the wave, so even the training points are fitted badly."}, {"t": "Degree 1 on the sine data: both errors stay high as \\(n\\) grows", "cat": 0, "why": "A straight line is too simple for one period of a sine, and more data cannot fix a model class that is too narrow."}, {"t": "Degree 10 on 12 points: almost zero training error, large test error", "cat": 1, "why": "With nearly as many coefficients as points the curve threads through the noise and swings wildly between points."}, {"t": "Degree 9 on 15 points: training error far below test error", "cat": 1, "why": "The gap between training and test error is the signature of a model that memorized its sample."}, {"t": "Degree 3 on 15 points: low training error and low test error", "cat": 2, "why": "A cubic is flexible enough for one sine period yet too stiff to chase the noise."}, {"t": "Degree 9 on 300 points: low training error and low test error", "cat": 2, "why": "With plenty of data even a flexible model cannot bend toward individual noisy points."}]}], "paradigms": [{"type": "classify", "q": "The paradigms differ in the feedback they get. Sort each setting by its paradigm.", "cats": ["Supervised", "Unsupervised", "Semi-supervised", "Reinforcement"], "items": [{"t": "A neural network trained on points that are all labeled", "cat": 0, "why": "Every example comes with its label, which is the feedback of supervised learning."}, {"t": "Emails that are each tagged spam or not spam", "cat": 0, "why": "A label for every example is exactly what supervised learning needs."}, {"t": "K-means grouping the points with no labels at all", "cat": 1, "why": "It gets no labels and can only find structure such as compact groups."}, {"t": "Customer records grouped into segments, with no labels", "cat": 1, "why": "Nobody says which segment is right, so the learner works from the data alone."}, {"t": "Label propagation from 4 labeled points to the rest", "cat": 2, "why": "A few labels are given and the unlabeled data does the rest of the work."}, {"t": "A few hundred labeled photos among millions of unlabeled ones", "cat": 2, "why": "Only a small fraction of the data is labeled, the defining trait of semi-supervised learning."}, {"t": "An agent that learns a game from the score it earns", "cat": 3, "why": "The feedback is a reward for its actions, not a label for each input."}, {"t": "A thermostat rewarded for saving energy while keeping comfort", "cat": 3, "why": "It learns from rewards by trial and error, which is reinforcement learning."}]}, {"type": "mcq", "q": "On the two moons data, k-means splits the points into two groups that do not match the true classes. Why?", "options": [{"t": "It forms compact groups; the moons are not compact", "why": "Each point joins its nearest centroid, so the split is a straight boundary that cuts across the curved moons."}, {"t": "It was given far too few labeled points to learn from", "why": "K-means uses no labels at all; that is what makes it unsupervised."}, {"t": "It needs many more training epochs to converge", "why": "K-means converges quickly; its problem here is the shape of the groups it can represent, not training time."}, {"t": "It can only find a single cluster in any data", "why": "The panel asks for two clusters and k-means returns two, they just do not follow the moons."}], "answer": 0}, {"type": "mcq", "q": "In semi-supervised mode only 4 points are labeled, yet the result agrees well with the true classes on the two moons. What does the work?", "options": [{"t": "Labels spread to near points along the data's shape", "why": "Label propagation passes each label to close neighbors repeatedly, so it flows along each moon rather than across the gap."}, {"t": "The 4 labels are copied to the points farthest from them", "why": "Labels go to nearby points, not distant ones, which is why the moon shapes are followed."}, {"t": "A neural network is trained on all the hidden labels", "why": "Only the supervised mode uses every label; semi-supervised mode never sees the other labels."}, {"t": "Rewards are handed out for every correct label it gives", "why": "Rewards belong to reinforcement learning; label propagation uses no reward signal."}], "answer": 0}], "procedure": [{"type": "order", "q": "Put the steps of the ML procedure in order.", "items": ["Collect data", "Prepare data", "Choose a model", "Train", "Evaluate", "Tune parameters", "Predict"], "why": "Data comes first, a model is trained and evaluated on it, its parameters are tuned on the results, and only then is it used to predict.", "hint": "You cannot train before choosing a model, and you should not predict before you have evaluated and tuned it."}, {"type": "classify", "q": "Following the lab's three conditions for using ML, sort each case.", "cats": ["A good fit for ML", "Not a good fit for ML"], "items": [{"t": "Predicting machine failures from years of logged sensor readings", "cat": 0, "why": "A pattern likely exists, no exact physical model is cheap, and plenty of data is available."}, {"t": "Recognizing traffic signs from a large set of labeled images", "cat": 0, "why": "The pattern is real but hard to write down by hand, and labeled data exists."}, {"t": "Predicting a fair coin toss from the time of day", "cat": 1, "why": "The output is random with respect to the input, so there is no pattern to learn."}, {"t": "Computing the area of a rectangle from its side lengths", "cat": 1, "why": "An exact and cheap mathematical model already exists, so it should be used instead."}, {"t": "Forecasting sales of a product that has never been sold, with no related data", "cat": 1, "why": "Without data the model has no experience to learn from."}]}, {"type": "mcq", "q": "Why does the procedure evaluate the trained model before using it to predict?", "options": [{"t": "To check that it works on data it was not trained on", "why": "A low training error can hide overfitting, as the curve fitting panel shows, so the model is first tested on held-out data."}, {"t": "Because evaluation is what trains the weights", "why": "Training adjusts the weights; evaluation only measures the result without changing it."}, {"t": "Because predictions cannot be computed until evaluation ends", "why": "A trained model can predict at any time, but its predictions are not yet trustworthy."}, {"t": "To collect more data for the next training round", "why": "Data is collected in the first step; evaluation measures quality on data already in hand."}], "answer": 0}], "ml4co": [{"type": "classify", "q": "Sort each example into one of the three ways of combining ML with combinatorial optimization.", "cats": ["End-to-end learning", "Learning to configure algorithms", "ML alongside optimization"], "items": [{"t": "A pointer network outputs a TSP tour directly", "cat": 0, "why": "The model itself produces the solution, with no separate optimizer."}, {"t": "A pretrained graph network predicts which edges form the tour", "cat": 0, "why": "The learned model produces the solution itself, and only a light decoding step turns its output into a tour."}, {"t": "A model sets the temperature schedule of simulated annealing", "cat": 1, "why": "The learner tunes a parameter of an existing algorithm instead of producing solutions."}, {"t": "A model chooses the evaporation rate of an ant colony algorithm", "cat": 1, "why": "Evaporation is an algorithm parameter, so learning it is configuration."}, {"t": "A tree search asks a deep network for a decision at every node it expands", "cat": 2, "why": "The optimizer stays in charge and keeps consulting the same model during the search."}]}, {"type": "mcq", "q": "In the construct-or-improve panel, what happens when you press Improve (2-opt) after Construct (nearest neighbor)?", "options": [{"t": "It reverses segments until none shortens the tour", "why": "Nearest neighbor already gives a decent tour, so 2-opt only has to repair a few long detours before it reaches a local optimum."}, {"t": "It is guaranteed to reach the optimal tour", "why": "2-opt stops at a local optimum, a tour no single segment reversal can improve, which need not be the global optimum."}, {"t": "It builds a new tour one city at a time", "why": "Building city by city is construction, which nearest neighbor does; 2-opt changes a complete tour."}, {"t": "It lengthens the tour so that it can escape local optima", "why": "This 2-opt accepts only reversals that shorten the tour, so the length never grows."}], "answer": 0}, {"type": "fill", "q": "Fixing the start city, a TSP with \\(n\\) cities has \\((n - 1)!\\) directed tours. How many directed tours does a 10-city TSP have?", "answer": 362880, "tol": 0, "unit": "tours", "hint": "Multiply all whole numbers from 1 up to one less than the number of cities.", "why": "\\((10 - 1)! = 9! = 362{,}880\\), and the count explodes so quickly with \\(n\\) that heuristics and learned policies are needed for larger instances."}], "quiz": [{"type": "mcq", "q": "A degree-12 polynomial fitted to 15 noisy points reaches almost zero training error but a large test error. What is going on?", "options": [{"t": "The model overfits: it memorizes the noise", "why": "A very flexible model can pass through every training point, noise included, and more data tames it."}, {"t": "The model underfits: it is too simple for the data", "why": "Underfitting would show a high training error too, not almost zero."}, {"t": "The least-squares search failed to find the minimum", "why": "Near-zero training error shows the search did find the minimum of the training loss."}, {"t": "The loss should be the test error instead", "why": "Training on the test error would use up the test set and hide the overfitting rather than cure it."}], "answer": 0}, {"type": "mcq", "q": "Using a UCB bandit to choose the step size of a random search while the search runs is an example of which way of combining ML with optimization?", "options": [{"t": "Learning to configure algorithms", "why": "The bandit does not output solutions itself; it sets a parameter of an existing algorithm based on how well each choice has paid off."}, {"t": "End-to-end learning", "why": "End-to-end models output the solution directly, while here the random search still produces every point."}, {"t": "Unsupervised clustering of solutions", "why": "The bandit learns from rewards (improvements), not by grouping unlabeled solutions."}, {"t": "Amortized optimization with a pretrained network", "why": "Nothing is pretrained here: the bandit learns online, during a single run."}], "answer": 0}, {"type": "match", "q": "Learning is optimization: match each ingredient of the curve fitting playground to what it is.", "pairs": [{"l": "Model class \\(F\\)", "r": "Polynomials of a given degree", "why": "The model class is the set of candidate functions the search is allowed to choose from."}, {"l": "Loss", "r": "Mean squared error on the training points", "why": "The loss scores each candidate on the data, and training seeks its minimum."}, {"l": "Search strategy", "r": "Least squares", "why": "Least squares is the optimizer that finds the polynomial with the lowest squared error."}, {"l": "Test error", "r": "How well the fit generalizes to new data", "why": "The test error is not minimized during training; it measures whether the learned model generalizes."}]}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

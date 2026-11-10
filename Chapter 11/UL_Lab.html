@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Unsupervised Learning Lab</title>
 <!-- katex:start -->
@@ -364,6 +433,7 @@ tr.dim td{color:var(--muted)}
       <p>Unsupervised learning works with <b>unlabeled data</b>: <b>clustering</b> groups similar objects, and <b>dimensionality reduction</b> maps data to fewer dimensions while keeping its structure.</p>
       <p class="more">Section 11.2 of the book surveys the main families of clustering and dimensionality-reduction algorithms.</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="ul"></div>
   </div>
 </section>
 
@@ -383,6 +453,7 @@ tr.dim td{color:var(--muted)}
       <div class="prose"><p>On the globe, the <b>haversine</b> formula gives great-circle distances. Pick two cities to compare it with a flat-map straight line.</p></div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Haversine</h4></div><div class="stage"><div id="hvCtl"></div><div class="calc" id="hvOut"></div></div></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="similarity"></div>
   </div>
 </section>
 
@@ -407,6 +478,7 @@ tr.dim td{color:var(--muted)}
       <div class="bench-head"><h4>Choosing k for the data above</h4></div>
       <div class="stage"><canvas id="vaChart" class="cv-chart" style="height:190px" aria-label="Validation measures vs k"></canvas><div class="tbl-wrap"><table class="ttab" id="vaTbl"></table></div><p class="cap" id="vaNote"></p><div class="va-cards" id="vaInfo"></div></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="kmeans"></div>
   </div>
 </section>
 
@@ -422,6 +494,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><div class="trio"><canvas id="dbA" aria-label="K-means"></canvas><canvas id="dbB" aria-label="DBSCAN"></canvas><canvas id="dbC" aria-label="Agglomerative"></canvas></div><p class="cap" id="dbNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="density"></div>
   </div>
 </section>
 
@@ -443,6 +516,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="smCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="SOM lattice in data space"></canvas><p class="cap" id="smNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="som"></div>
   </div>
 </section>
 
@@ -459,6 +533,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="stCv" class="cv-sq" style="aspect-ratio:4/5;max-height:620px" aria-label="SOM ring over Qatar cities"></canvas><canvas id="stChart" class="cv-chart" style="height:150px" aria-label="Route length per iteration"></canvas><p class="cap" id="stNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="somtsp"></div>
   </div>
 </section>
 
@@ -735,17 +810,8 @@ print(f<span class="st">"SOM route length: {L:,.0f}   optimal: 9,352   gap: {(L 
   <div class="wrap">
     <span class="eyebrow">Part 9 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 11. Pick an answer to check it.</p>
-    <div class="mcq" data-a="1">
-      <p class="mcq-q"><b>Q1.</b> Two runs of k-means on the same data with the same k give different clusterings. Why?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>K-means uses labels that differ between runs</span></button><button type="button" class="mcq-o"><b>B</b><span>It converges to a local minimum of the inertia that depends on the initial centers</span></button><button type="button" class="mcq-o"><b>C</b><span>It never converges, so it stops at a random iteration</span></button><button type="button" class="mcq-o"><b>D</b><span>The distance measure changes from run to run</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Each k-means step lowers the within-cluster sum of squares, so it always converges, but only to a local minimum that depends on where the centers started; k-means++ seeding reduces this effect.</template>
-    </div>
-    <div class="mcq" data-a="0">
-      <p class="mcq-q"><b>Q2.</b> When a ring-shaped self-organizing map is used to solve the TSP, how is the tour obtained?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Visit the cities in the order of their winning neurons along the ring</span></button><button type="button" class="mcq-o"><b>B</b><span>Connect each city to its nearest unvisited neighbor</span></button><button type="button" class="mcq-o"><b>C</b><span>Cluster the cities with k-means and visit one cluster at a time</span></button><button type="button" class="mcq-o"><b>D</b><span>Pick the edges with the highest learned probabilities</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Training stretches the ring of neurons like an elastic band toward the cities; reading the cities in the ring order of their best matching units gives a tour.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 11 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2011" target="_blank" rel="noopener">Chapter 11</a>).</p>
   </div>
 </section>
@@ -1249,15 +1315,171 @@ codeTabs({ d: "Euclidean, Manhattan, Chebyshev, cosine, Mahalanobis and haversin
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"ul": [{"type": "mcq", "q": "A self-driving car groups thousands of recorded driving scenes into kinds of intersections, and nobody has labeled the scenes. Which task is this?", "options": [{"t": "Clustering, an unsupervised task", "why": "The scenes carry no labels and the goal is to group similar ones, which is exactly what clustering does."}, {"t": "Classification into known, labeled classes", "why": "Classification needs labeled examples to learn from, and here no scene has been labeled."}, {"t": "Dimensionality reduction of each scene", "why": "Dimensionality reduction maps data to fewer dimensions; it does not by itself sort the scenes into groups."}], "answer": 0}, {"type": "classify", "q": "Sort each unlabeled-data task into the kind of unsupervised learning it needs.", "cats": ["Clustering", "Dimensionality reduction"], "items": [{"t": "Group customers into segments of similar buyers", "cat": 0, "why": "Putting similar objects in the same group is the definition of clustering."}, {"t": "Find the natural groups in the k-means panel's points", "cat": 0, "why": "The panel assigns every point to one of k groups, which is clustering."}, {"t": "Map 50 measured features to 2 coordinates for a plot", "cat": 1, "why": "Keeping the structure of the data with fewer dimensions is dimensionality reduction."}, {"t": "Compress long sensor records to a few numbers each", "cat": 1, "why": "It reduces the number of dimensions per record rather than grouping the records."}, {"t": "Separate the two moons without being told the classes", "cat": 0, "why": "Recovering groups such as the moons from unlabeled points is a clustering task."}]}, {"type": "mcq", "q": "With no labels to learn from, what decides whether two objects end up in the same cluster?", "options": [{"t": "The similarity measure", "why": "The measure decides what close means, so changing it can change which objects are grouped together."}, {"t": "The class each object belongs to", "why": "Unsupervised data has no known classes; they are used only afterward, by external validation indexes."}, {"t": "The order in which objects are stored", "why": "A sensible clustering depends on how similar the objects are, not on the order they arrive in."}], "answer": 0}], "similarity": [{"type": "fill", "q": "In the distance explorer, the reference point is \\(\\mathbf{y} = (1, 0.5)\\) and your point is \\(\\mathbf{x} = (2, 1.6)\\). What is their Euclidean distance? Give 3 decimals.", "answer": 1.487, "tol": 0.002, "unit": "", "hint": "Take the square root of the sum of the squared coordinate differences.", "why": "The differences are 1 and 1.1, so \\(d = \\sqrt{1^2 + 1.1^2} = \\sqrt{2.21} \\approx 1.487\\)."}, {"type": "match", "q": "Match each measure to the shape of its contours of equal distance in the explorer.", "pairs": [{"l": "Euclidean", "r": "Circles", "why": "Every direction counts equally, so points at the same straight-line distance form a circle."}, {"l": "Manhattan", "r": "Diamonds", "why": "Distance is measured along the grid, as on city blocks, so the contours are diamonds."}, {"l": "Chebyshev", "r": "Squares", "why": "Only the largest coordinate difference counts, so the contours are squares."}, {"l": "Cosine distance", "r": "Wedges from the origin", "why": "Only the angle from the origin matters, so every point on a ray through the origin has the same distance."}, {"l": "Mahalanobis", "r": "Ellipses along the data trend", "why": "It accounts for the spread and correlation of the data, stretching the contours along the trend."}]}, {"type": "mcq", "q": "With correlation \\(\\rho = 0.7\\), two points both lie at Euclidean distance 1 from the reference: one is displaced along the direction \\((1, 1)\\), the other along \\((1, -1)\\). Which is closer in Mahalanobis distance?", "options": [{"t": "The point along \\((1, 1)\\)", "why": "With positive correlation, moving along the trend costs less: its Mahalanobis distance is about 0.77, against about 1.83 across it."}, {"t": "The point along \\((1, -1)\\)", "why": "That direction cuts across the trend of positively correlated data, so it costs more, not less."}, {"t": "Both are equally close", "why": "That would hold for the Euclidean distance, but Mahalanobis weights directions by the spread and correlation of the data."}], "answer": 0}], "kmeans": [{"type": "order", "q": "Put the steps of k-means in order.", "items": ["Pick k initial centers, at random or with k-means++", "Assign every point to its nearest center", "Move each center to the mean of its points", "Repeat the two previous steps until no point changes cluster"], "why": "K-means alternates an assignment step and an update step after seeding, and stops once the assignments no longer change.", "hint": "The centers must exist before any point can be assigned, and a center can only move to the mean of points already assigned to it."}, {"type": "fill", "q": "For one point, the mean distance to the other points of its own cluster is \\(a(i) = 0.4\\), and its mean distance to the points of the nearest other cluster is \\(b(i) = 1.6\\). What is its silhouette \\(s(i)\\)? Give 2 decimals.", "answer": 0.75, "tol": 0.005, "unit": "", "hint": "Use \\(s(i) = (b(i) - a(i)) / \\max\\{a(i), b(i)\\}\\).", "why": "\\(s(i) = (1.6 - 0.4)/1.6 = 0.75\\), close to 1, so this point sits well inside a compact, well-separated cluster."}, {"type": "classify", "q": "Sort each measure used to judge a clustering.", "cats": ["Internal (data only)", "External (needs known classes)"], "items": [{"t": "Silhouette index (SI)", "cat": 0, "why": "It compares each point's distance to its own cluster with its distance to the nearest other cluster, using only the data."}, {"t": "Davies-Bouldin index (DBI)", "cat": 0, "why": "It compares cluster spread with the distances between centers, using only the data."}, {"t": "Inertia and its elbow", "cat": 0, "why": "It sums squared distances from points to their own centers, so it needs no labels."}, {"t": "Adjusted Rand index (ARI)", "cat": 1, "why": "It counts the point pairs on which the clustering and the true classes agree, corrected for chance."}, {"t": "Normalized mutual information (NMI)", "cat": 1, "why": "It measures how much knowing the cluster tells you about the true class."}]}], "density": [{"type": "mcq", "q": "In the three-panel comparison, you keep \\(\\varepsilon\\) fixed and raise DBSCAN's minPts. What do you expect to see?", "options": [{"t": "More points labeled as noise", "why": "A higher minPts makes fewer points dense enough to be core points, so more points are left out as noise."}, {"t": "Fewer noise points and larger clusters", "why": "That happens when minPts is lowered or \\(\\varepsilon\\) is raised, since more points then count as dense."}, {"t": "No change, since only \\(\\varepsilon\\) matters", "why": "Both parameters set density: \\(\\varepsilon\\) is the radius and minPts the number of neighbors needed inside it."}, {"t": "K-means and DBSCAN results become identical", "why": "DBSCAN's parameters do not affect k-means, which still cuts the data around k centers."}], "answer": 0}, {"type": "classify", "q": "Sort each description by the algorithm it fits in the three-panel comparison.", "cats": ["K-means", "DBSCAN", "Agglomerative"], "items": [{"t": "Moves each center to the mean of its points", "cat": 0, "why": "Center updates belong to k-means, which keeps one mean per cluster."}, {"t": "Cuts the two moons with a straight boundary", "cat": 0, "why": "K-means assigns points to the nearest center, which splits non-convex shapes along a straight line."}, {"t": "Grows clusters from points with at least minPts neighbors within ε", "cat": 1, "why": "Growing clusters from dense core points is how DBSCAN works."}, {"t": "Labels scattered points as noise", "cat": 1, "why": "DBSCAN leaves points that no core point reaches out of every cluster."}, {"t": "Repeatedly merges the two closest clusters", "cat": 2, "why": "Agglomerative clustering starts with every point alone and merges bottom-up."}, {"t": "Chains clusters together with single linkage", "cat": 2, "why": "Single linkage uses the closest pair of points, so a path of nearby points can join two clusters."}]}, {"type": "mcq", "q": "On the three blobs with scattered noise, single linkage scores a much lower ARI than DBSCAN. Why?", "options": [{"t": "It chains blobs together through the noise", "why": "Single linkage merges clusters through any nearby pair of points, so noise points act as bridges, while DBSCAN labels them as noise."}, {"t": "It can only find round, compact clusters", "why": "Single linkage follows chains and non-convex shapes well; its weakness here is the noise, not the shape."}, {"t": "Its \\(\\varepsilon\\) and minPts are set too low", "why": "Those are DBSCAN's parameters; agglomerative clustering is set by its linkage instead."}, {"t": "It moves centers toward the noise points", "why": "Agglomerative clustering keeps no centers; moving centers to means is what k-means does."}], "answer": 0}], "som": [{"type": "order", "q": "Put one training step of the self-organizing map in order.", "items": ["Draw an input from the data", "Find the winner, the neuron whose weights are closest to the input", "Move the winner and its lattice neighbors toward the input, the neighbors by less", "Shrink the learning rate \\(\\alpha\\) and the neighborhood \\(\\sigma\\) for the next step"], "why": "Competition picks the winner first, the neighborhood around it then learns, and the panel's \\(\\alpha\\) and \\(\\sigma\\) shrink as the steps go by.", "hint": "The neighbors are measured on the lattice from the winner, so the winner must be found before anything moves."}, {"type": "match", "q": "Match each neighborhood function in the plot to its shape around the winner.", "pairs": [{"l": "Gaussian", "r": "Smooth bell that never quite reaches zero", "why": "The Gaussian decays smoothly with lattice distance, so even distant neurons learn a little."}, {"l": "Mexican hat", "r": "Dips below zero away from the winner", "why": "Its negative values beyond about \\(\\sigma\\) push those neurons away from the input instead of toward it."}, {"l": "Cone", "r": "Falls in a straight line to zero", "why": "The cone decreases linearly with lattice distance and is zero beyond \\(2\\sigma\\)."}, {"l": "Bubble", "r": "Flat top with a sharp edge", "why": "Every neuron within \\(\\sigma\\) gets the full update and every neuron beyond it gets none."}]}, {"type": "mcq", "q": "Why does the 2D map in the panel unfold over the data early in training and only fine-tune later?", "options": [{"t": "Its neighborhood starts wide, then shrinks", "why": "A wide neighborhood moves the whole map together so it unfolds, and a narrow one later lets each neuron specialize."}, {"t": "Its learning rate grows as training goes on", "why": "The learning rate \\(\\alpha\\) falls during training, as the panel's statistics show, so later steps make smaller moves."}, {"t": "Only the winner learns from the start", "why": "If only the winner learned, the lattice would not move as a whole and could not unfold."}, {"t": "Its neurons start spread over the data", "why": "In the panel all neurons start in a small clump, and training spreads them out."}], "answer": 0}], "somtsp": [{"type": "mcq", "q": "Why does the TSP version of the self-organizing map use a ring of neurons rather than a 2D lattice?", "options": [{"t": "Its order closes into a full tour", "why": "Reading the cities in the order of their winning neurons around a closed ring gives a tour that returns to its start."}, {"t": "A ring has fewer neurons, so it trains faster", "why": "The ring has 8 neurons per city by default, far more than there are cities, so speed is not the reason."}, {"t": "A ring places exactly one neuron on each city", "why": "With 8 neurons per city, many neurons win no city at all; only their order along the ring matters."}], "answer": 0}, {"type": "fill", "q": "In the qa194 panel you set Neurons per city to 5. How many neurons does the ring have?", "answer": 970, "tol": 0, "unit": "neurons", "hint": "The instance name tells you how many cities there are.", "why": "qa194 has 194 cities, so the ring has \\(194 \\times 5 = 970\\) neurons, many more than cities, so most neurons win no city."}, {"type": "mcq", "q": "After the ring has converged, what does Polish with 2-opt do to the tour?", "options": [{"t": "It removes the remaining crossings", "why": "2-opt replaces two edges with two shorter ones by reversing the segment between them, which undoes crossings."}, {"t": "It retrains the ring with a larger neighborhood", "why": "2-opt works on the tour itself, not on the neurons, so the SOM is not trained again."}, {"t": "It reorders cities by their distance from the center", "why": "That would ignore the ring order entirely; 2-opt only makes local changes to the existing tour."}], "answer": 0}], "quiz": [{"type": "mcq", "q": "Two runs of k-means on the same data with the same k give different clusterings. Why?", "options": [{"t": "It reaches a local minimum set by its seeds", "why": "Each step lowers the within-cluster sum of squares, so k-means always converges, but only to a local minimum set by its seeds; k-means++ reduces this effect."}, {"t": "It uses labels that differ between runs", "why": "K-means is unsupervised and uses no labels at all."}, {"t": "It never converges, so it stops at a random iteration", "why": "It always converges, because no step can raise the inertia and there are finitely many assignments."}, {"t": "The distance measure changes from run to run", "why": "The measure is fixed, usually Euclidean; only the starting centers change."}], "answer": 0}, {"type": "mcq", "q": "When a ring-shaped self-organizing map is used to solve the TSP, how is the tour obtained?", "options": [{"t": "Visit the cities in the ring order of their winning neurons", "why": "Training stretches the ring like an elastic band toward the cities, so the ring order of their best matching units gives a tour."}, {"t": "Connect each city to its nearest unvisited neighbor", "why": "That is the nearest-neighbor heuristic, which uses no neurons at all."}, {"t": "Cluster the cities with k-means and visit one cluster at a time", "why": "The SOM builds the tour from the ring itself, without a separate clustering step."}, {"t": "Pick the edges with the highest learned probabilities", "why": "Learned edge probabilities describe pheromone-style methods, not a SOM, whose neurons hold positions, not edge scores."}], "answer": 0}, {"type": "mcq", "q": "On the two moons, k-means with k = 2 gets a reasonable silhouette but a low ARI. What does this show?", "options": [{"t": "Internal indexes reward compact, round clusters", "why": "The silhouette judges compactness and separation from the data alone, so it can score round clusters that cut across the true moons."}, {"t": "The silhouette index is computed incorrectly for two clusters", "why": "The silhouette is well defined for any k of at least 2; the gap comes from what it measures."}, {"t": "ARI is an internal index, so it disagrees by design", "why": "ARI is external: it compares the clustering with the known classes, which is why it exposes the mistake."}, {"t": "K-means found the true moons, and ARI is too strict", "why": "A low ARI means little agreement with the true classes, so k-means did not recover the moons."}], "answer": 0}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

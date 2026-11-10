@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Simulated Annealing Lab</title>
 <!-- katex:start -->
@@ -401,6 +470,7 @@ tr.rej td{color:var(--muted)}
         <p class="cap" id="crNote">Press Start to heat both boxes and cool them.</p>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="inspiration"></div>
   </div>
 </section>
 
@@ -429,6 +499,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
         <p class="more">Section 5.2.2 explains SA as a Markov chain (Figure 5.4) and surveys its variants, including quantum annealing.</p>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="algorithm"></div>
   </div>
 </section>
 
@@ -449,6 +520,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
         <div class="stage"><div id="apCtl"></div><canvas id="apCv" class="cv-chart" style="height:200px" aria-label="Acceptance probability against the objective change"></canvas><div class="btns"><button id="apDraw" class="primary small">Draw 100 random numbers</button></div><p class="cap" id="apNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="acceptance"></div>
   </div>
 </section>
 
@@ -485,6 +557,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
         <p>SA can adapt its schedule, for example by reheating when it stalls; try it in the Berlin52 lab.</p>
         <p class="more">Section 5.2.5 covers reheating, nonmonotonic cooling (equation 5.12) and Figure 5.9.</p>
       </div>
+    <!-- kc --><div class="kc" data-sec="cooling"></div>
   </div>
 </section>
 
@@ -525,6 +598,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.2_FcnOpt_SA.ipynb">Listing 5.2 Function optimization</a>
       <a href="#python" data-tab="f">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="functions"></div>
   </div>
 </section>
 
@@ -548,6 +622,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.3_Sudoku.ipynb">Listing 5.3 Sudoku</a>
       <a href="#python" data-tab="s">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="sudoku"></div>
   </div>
 </section>
 
@@ -586,6 +661,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%205/Listing%205.5_Berlin52.ipynb">Listing 5.5 Berlin52</a>
       <a href="#python" data-tab="t">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="tsp"></div>
   </div>
 </section>
 
@@ -608,6 +684,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
         <div class="stage"><canvas id="plCv" class="cv-sq" style="aspect-ratio:16/8" aria-label="Layout of the departments"></canvas><p class="cap" id="plNote"></p><div class="tbl-wrap"><table class="ttab" id="plTbl"></table></div></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="layout"></div>
   </div>
 </section>
 
@@ -628,6 +705,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
         <div class="stage"><p class="cap">Six jobs (times 2, 3, 4, 6, 2, 2); each job gets a machine, and every machine at least one job.</p><canvas id="msCv" class="cv-chart" style="height:130px" aria-label="Gantt chart"></canvas><div class="btns"><button id="msStep" class="primary small">Next iteration</button><button id="msReset" class="small">Reset</button></div><div class="stats" id="msStats"></div><div class="tbl-wrap"><table class="ttab" id="msTbl"></table></div></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="scheduling"></div>
   </div>
 </section>
 
@@ -642,6 +720,7 @@ set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
       <div class="card"><h5>TSP of 20 US cities</h5><p>The twenty largest US cities with the book’s SA solver.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%205/Listing%20C.2_TSP_US_1.ipynb">Listing C.2</a></p></div>
       <div class="card"><h5>TSP with simanneal</h5><p>The same cities with the simanneal package.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%205/Listing%20C.3_TSP_US_2.ipynb">Listing C.3</a></p></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="more"></div>
   </div>
 </section>
 
@@ -1013,17 +1092,8 @@ print(<span class="st">"SA assignment:"</span>, anneal_makespan(), <span class="
   <div class="wrap">
     <span class="eyebrow">Part 13 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 5. Pick an answer to check it.</p>
-    <div class="mcq" data-a="1">
-      <p class="mcq-q"><b>Q1.</b> In simulated annealing, a worse move with objective change \(\Delta f \gt 0\) is accepted with probability \(e^{-\Delta f/T}\). What happens as the temperature \(T\) approaches 0?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Almost every move is accepted, so the search becomes a random walk</span></button><button type="button" class="mcq-o"><b>B</b><span>Worse moves are almost never accepted, so SA behaves like hill climbing</span></button><button type="button" class="mcq-o"><b>C</b><span>Only worse moves are accepted</span></button><button type="button" class="mcq-o"><b>D</b><span>The acceptance probability stays the same, but the neighborhood grows</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>As \(T\) goes to 0, \(e^{-\Delta f/T}\) goes to 0 for any worse move, so only improving moves remain, which is hill climbing. A very high temperature gives the random walk.</template>
-    </div>
-    <div class="mcq" data-a="3">
-      <p class="mcq-q"><b>Q2.</b> In the slow cooling vs. quenching experiment, why does slow cooling reach a lower-energy state?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Slow cooling starts from a lower temperature</span></button><button type="button" class="mcq-o"><b>B</b><span>Quenching accepts more uphill moves than slow cooling</span></button><button type="button" class="mcq-o"><b>C</b><span>Slow cooling uses a different energy function</span></button><button type="button" class="mcq-o"><b>D</b><span>Slow cooling gives the system time to escape poor configurations while it is still warm, instead of freezing in the first local minimum it falls into</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Gradual cooling keeps occasional uphill moves possible long enough to leave poor local minima. Quenching drops the temperature at once, so the system freezes with defects, like a greedy search stuck in a local optimum.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 5 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%205" target="_blank" rel="noopener">Chapter 5</a>).</p>
   </div>
 </section>
@@ -1790,15 +1860,171 @@ const sdCost = g => { let s = 0; for (let i = 0; i < 9; i++) { const R = new Set
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"inspiration": [{"type": "mcq", "q": "In the slow cooling vs. quenching experiment, why does the slowly cooled box end with more atoms in crystal order?", "options": [{"t": "Its atoms can still leave bad arrangements before freezing", "why": "While the box is still warm, the Metropolis rule allows occasional uphill nudges, so atoms can escape defects and settle into the low-energy crystal."}, {"t": "It starts from a lower temperature than the quenched box", "why": "Both boxes start at the same high temperature with the same atoms; only the cooling speed differs."}, {"t": "It uses a different energy function that rewards order", "why": "Both boxes share the same energy and the same Metropolis rule, so the difference comes from the schedule alone."}, {"t": "The quenched box accepts too many uphill moves at the end", "why": "A quenched box is cold almost at once, so it accepts almost no uphill moves and freezes its defects in place."}], "answer": 0}, {"type": "match", "q": "Match each idea from physical annealing to its counterpart in simulated annealing (Table 5.1).", "pairs": [{"l": "State of a material", "r": "Solution of an optimization problem", "why": "Each arrangement of atoms corresponds to one candidate solution."}, {"l": "Energy of a state", "r": "Cost of a solution", "why": "Lower energy means a more stable state, just as a lower cost means a better solution in minimization."}, {"l": "High temperature, molecules move freely", "r": "Exploration of the search space", "why": "A hot search accepts many worse moves, so it roams widely."}, {"l": "Gradual cooling", "r": "Avoiding poor local minima", "why": "Cooling slowly keeps uphill moves possible long enough to leave poor valleys."}, {"l": "Quenching", "r": "Stuck in a local optimum", "why": "Cooling too fast freezes the search like a greedy method in the first valley it reaches."}]}, {"type": "classify", "q": "Sort each metaheuristic by how many search agents it moves at a time.", "cats": ["Trajectory-based (one agent)", "Population-based (many agents)"], "items": [{"t": "Simulated annealing", "cat": 0, "why": "SA moves a single solution step by step, tracing one trajectory."}, {"t": "Tabu search", "cat": 0, "why": "Tabu search also improves one current solution, guided by a memory of recent moves."}, {"t": "Variable neighborhood search", "cat": 0, "why": "It moves one solution while switching between neighborhoods, so it is trajectory-based."}, {"t": "Genetic algorithm", "cat": 1, "why": "A genetic algorithm evolves a whole population of solutions at once."}, {"t": "Particle swarm optimization", "cat": 1, "why": "PSO moves a swarm of particles together, which leans toward exploration."}, {"t": "Ant colony optimization", "cat": 1, "why": "Many ants build solutions in parallel and share information through pheromone."}]}], "algorithm": [{"type": "order", "q": "Put the steps of one inner iteration of Algorithm 5.1 in order, for a minimization problem.", "items": ["Move randomly to a neighbor \\(x'\\)", "Compute \\(\\Delta f = f(x') - f(x)\\)", "If \\(\\Delta f \\lt 0\\), accept \\(x'\\)", "Otherwise draw \\(r \\in [0, 1]\\) and accept \\(x'\\) if \\(e^{-\\Delta f/T} \\gt r\\)"], "why": "SA first proposes a neighbor, measures how much worse or better it is, keeps improvements outright and gambles only on worse moves.", "hint": "You cannot judge a move before you know its objective change \\(\\Delta f\\)."}, {"type": "mcq", "q": "Algorithm 5.1 returns the <i>best<\/i> solution found rather than the current one. Why?", "options": [{"t": "The current one may have drifted uphill via worse moves", "why": "Because SA accepts some worse moves, the final current solution can be worse than one visited earlier."}, {"t": "The current solution is always the starting guess \\(x_0\\)", "why": "The current solution changes every time a neighbor is accepted, so it rarely stays at \\(x_0\\)."}, {"t": "The best solution is guaranteed to be the global optimum", "why": "SA keeps the best solution it has seen, but it does not guarantee that this is the global optimum."}, {"t": "The current solution is reset to random at each temperature", "why": "SA continues from the current solution at every temperature; it does not restart randomly."}], "answer": 0}, {"type": "mcq", "q": "SA can be described as a Markov chain. What does that mean for its search?", "options": [{"t": "The next state depends only on the current one", "why": "A better neighbor is reached with probability 1 and a worse one with \\(e^{-\\Delta f/T} \\lt 1\\), based only on where the search is now."}, {"t": "The next state depends on all past states", "why": "That would need a memory such as a tabu list; SA's transition uses only the current state."}, {"t": "Every neighbor is accepted with equal probability", "why": "Acceptance depends on \\(\\Delta f\\) and \\(T\\), so better and worse neighbors are treated differently."}, {"t": "The search always moves to a better neighbor", "why": "SA also accepts some worse neighbors, which is what separates it from hill climbing."}], "answer": 0}], "acceptance": [{"type": "fill", "q": "In the book's hand iteration, a move is worse by \\(\\Delta f = 23.23 - 14.06 = 9.17\\) at \\(T = 5\\). What is the acceptance probability \\(p = e^{-\\Delta f/T}\\)? Give 3 decimals.", "answer": 0.16, "tol": 0.002, "unit": "", "hint": "Divide \\(\\Delta f\\) by \\(T\\) first, then take the exponential of the negative result.", "why": "\\(e^{-9.17/5} = e^{-1.834} \\approx 0.160\\), so about one such move in six would be accepted."}, {"type": "mcq", "q": "With \\(p \\approx 0.16\\), you press <b>Draw 100 random numbers<\/b>. About how many of the 100 draws let the move pass?", "options": [{"t": "About 16, the draws with \\(r \\lt p\\)", "why": "Each uniform \\(r\\) falls below \\(p\\) with probability \\(p\\), so roughly \\(100 \\times 0.16 = 16\\) draws accept the move."}, {"t": "About 84, the draws with \\(r \\gt p\\)", "why": "A worse move passes only when \\(p \\gt r\\), so the draws above \\(p\\) are the rejections."}, {"t": "None, because a worse move is never accepted", "why": "SA accepts worse moves with probability \\(e^{-\\Delta f/T}\\), which is small here but not zero."}, {"t": "About 50, since each draw is a coin flip", "why": "The chance of passing is set by \\(p\\), not fixed at one half."}], "answer": 0}, {"type": "mcq", "q": "What happens to the acceptance of worse moves as \\(T \\to \\infty\\)?", "options": [{"t": "Almost every move is accepted, so SA becomes a random walk", "why": "With a huge \\(T\\), \\(\\Delta f/T \\to 0\\) and \\(e^{-\\Delta f/T} \\to 1\\), so worse moves pass almost always."}, {"t": "No worse move is accepted, so SA becomes hill climbing", "why": "That is the limit \\(T \\to 0\\), where \\(e^{-\\Delta f/T} \\to 0\\)."}, {"t": "Only moves with \\(\\Delta f\\) below 1 are accepted", "why": "The rule has no fixed threshold on \\(\\Delta f\\); at very high \\(T\\) even large increases pass."}, {"t": "The acceptance probability no longer depends on \\(T\\)", "why": "\\(T\\) is exactly what drives \\(p\\) toward 1 here, so the probability still depends on it."}], "answer": 0}], "cooling": [{"type": "fill", "q": "The largest expected increase is \\(\\max(\\Delta f) = 50\\), and you want such a move accepted with probability \\(p_0 = 0.8\\) at the start. Using \\(T_0 \\approx -\\max(\\Delta f)/\\ln p_0\\), what is \\(T_0\\)? Give 1 decimal.", "answer": 224.1, "tol": 0.5, "unit": "", "hint": "\\(\\ln 0.8\\) is negative, so the minus sign makes \\(T_0\\) positive.", "why": "\\(T_0 \\approx -50/\\ln 0.8 = -50/(-0.2231) \\approx 224.1\\)."}, {"type": "match", "q": "Match each cooling schedule formula, with \\(i\\) the iteration, to its name.", "pairs": [{"l": "\\(T = T_0\\,\\alpha^i\\)", "r": "Geometric", "why": "Each step multiplies the temperature by the same factor \\(\\alpha\\), typically 0.7 to 0.95."}, {"l": "\\(T = T_0 - \\beta i\\), \\(\\beta = (T_0 - T_f)/N\\)", "r": "Linear", "why": "The temperature drops by the same amount \\(\\beta\\) every step and reaches \\(T_f\\) after \\(N\\) steps."}, {"l": "\\(T = T_0/(1 + \\alpha i)\\)", "r": "Linear inverse", "why": "It cools fast early and slowly later, and it is the default schedule of the book's solver."}, {"l": "\\(T = T_0/(1 + \\alpha \\ln(1 + i))\\)", "r": "Logarithmic", "why": "The logarithm grows slowly, so this schedule (with \\(\\alpha \\gt 1\\)) keeps the search warm for a long time."}, {"l": "\\(T = T_0\\,e^{-\\alpha i^{1/n}}\\)", "r": "Exponential", "why": "The exponent uses \\(i^{1/n}\\), where \\(n\\) is the problem dimension."}]}, {"type": "mcq", "q": "When \\(\\max(\\Delta f)\\) is unknown, how does the warm-up on Berlin52 choose \\(T_0\\)?", "options": [{"t": "Start very hot, cool fast until 50 to 60% of worse moves pass", "why": "The temperature at which the acceptance share falls into that band is hot enough to explore but not a random walk."}, {"t": "Start at \\(T_0 = 0\\) and heat until the first worse move is accepted", "why": "The warm-up runs the other way, starting very hot (\\(T = 10{,}000\\)) and cooling."}, {"t": "Pick the temperature at which no worse move is accepted", "why": "That temperature is where the system freezes, which is a final temperature, not a starting one."}, {"t": "Set \\(T_0\\) equal to the length of a random tour", "why": "The warm-up measures the share of accepted worse moves, not the tour length."}], "answer": 0}], "functions": [{"type": "mcq", "q": "In the hand iterations on \\((x - 6)^2\\), the current solution is \\(x = 2.25\\) with \\(f = 14.06\\). The candidate \\(x' = 1.18\\) gives \\(f = 23.23\\), \\(p = 0.1597\\) and \\(r = 0.37\\). What does SA do?", "options": [{"t": "Rejects it, because \\(p\\) is smaller than \\(r\\)", "why": "A worse move passes only when \\(p \\gt r\\), and here \\(0.1597 \\lt 0.37\\), so SA stays at \\(x = 2.25\\)."}, {"t": "Accepts it, because \\(p\\) is positive", "why": "A positive \\(p\\) is only a chance of acceptance; the move must still beat the random number \\(r\\)."}, {"t": "Accepts it, because \\(x'\\) is closer to 0", "why": "SA judges a move by its change in \\(f\\), not by its distance to any point."}, {"t": "Rejects it and lowers the temperature at once", "why": "The temperature drops only after two iterations at each level, not after every rejection."}], "answer": 0}, {"type": "fill", "q": "The hand iterations use \\(T_0 = 5\\), geometric cooling with \\(\\alpha = 0.85\\) and two iterations per temperature, so iterations 1 and 2 run at \\(T = 5\\). At what temperature does iteration 5 run? Give 4 decimals.", "answer": 3.6125, "tol": 0.001, "unit": "", "hint": "Iterations 3 and 4 share one temperature level, and iteration 5 starts the next.", "why": "Iteration 5 is on the third level, so \\(T = 5 \\times 0.85^2 = 3.6125\\)."}, {"type": "classify", "q": "In the function lab, sort each setting by the behavior it produces.", "cats": ["Close to a random walk", "Close to hill climbing"], "items": [{"t": "The \"Too hot for too long\" preset, \\(T_0 = 10{,}000\\) with \\(\\alpha = 0.99\\)", "why": "A very hot start that cools slowly accepts nearly every worse move for many levels.", "cat": 0}, {"t": "The \"Quenched\" preset, \\(T_0 = 0.1\\)", "why": "Starting cold, SA rejects almost every worse move and stays near its start.", "cat": 1}, {"t": "The first levels of a run with a very large \\(T_0\\)", "why": "While \\(T\\) is huge, \\(e^{-\\Delta f/T}\\) is close to 1 for most moves.", "cat": 0}, {"t": "The last levels of any run, as \\(T\\) nears \\(T_f\\)", "why": "Near the end the temperature is tiny, so only improving moves survive.", "cat": 1}]}], "sudoku": [{"type": "classify", "q": "In the lab's Sudoku model, sort each Sudoku rule by how SA handles it.", "cats": ["Always kept by the fill and the move", "Measured by the cost"], "items": [{"t": "Each 3 × 3 box holds the digits 1 to 9", "cat": 0, "why": "Each box is filled with its missing digits and moves only swap cells inside a box, so boxes stay valid."}, {"t": "The given digits never change", "cat": 0, "why": "A move swaps only non-given cells, so the clues are never touched."}, {"t": "Each row holds the digits 1 to 9", "cat": 1, "why": "The cost counts the digits missing from every row, so row conflicts are what SA tries to remove."}, {"t": "Each column holds the digits 1 to 9", "cat": 1, "why": "Column conflicts are also counted, and a cost of 0 means every row and column is complete."}]}, {"type": "mcq", "q": "In the Sudoku panel, the <b>Backtracking<\/b> button solves the same puzzle in milliseconds, often far faster than SA. What is the best takeaway?", "options": [{"t": "An exact method can beat SA on a well-structured problem", "why": "Sudoku's strict rules let a systematic search prune quickly, so SA's random swaps are at a disadvantage."}, {"t": "SA is slower than exact methods on every kind of problem", "why": "SA is valuable where exact methods are impractical, and one puzzle does not show a general rule."}, {"t": "Backtracking is just a metaheuristic tuned for Sudoku", "why": "Backtracking is an exact, systematic search, not a metaheuristic."}, {"t": "SA would win if it started from a hotter temperature", "why": "A hotter start only lengthens the random phase; it does not change how well exact search fits this structure."}], "answer": 0}, {"type": "mcq", "q": "Why does the lab's Sudoku solver reheat (reset \\(T\\) to \\(T_0\\)) after many moves without progress?", "options": [{"t": "The search froze in a local minimum; heat frees it", "why": "At a low temperature almost no worse swap is accepted, so raising \\(T\\) reopens uphill moves out of the trap."}, {"t": "Reheating guarantees that the next swap lowers the cost", "why": "A higher temperature accepts more worse swaps, so it makes cost increases more likely, not less."}, {"t": "The boxes become invalid when the temperature is low", "why": "Boxes stay valid at every temperature because swaps never leave a box."}, {"t": "The cost function changes at low temperatures", "why": "The cost always counts missing digits in rows and columns; only the temperature is reset."}], "answer": 0}], "tsp": [{"type": "fill", "q": "In the five-city example, the tour [1, 3, 4, 2, 5] costs 28. Swapping cities 2 and 5 gives [1, 3, 4, 5, 2]. Using the distances \\(d_{13} = 2\\), \\(d_{34} = 4\\), \\(d_{45} = 3\\), \\(d_{25} = 5\\) and \\(d_{12} = 4\\), what is its length?", "answer": 18, "tol": 0, "unit": "", "hint": "Add the five edges of the closed tour, including the return from city 2 to city 1.", "why": "\\(2 + 4 + 3 + 5 + 4 = 18\\), an improvement of 10 that SA always accepts, and also the optimum."}, {"type": "mcq", "q": "In the first iteration, swapping cities 2 and 3 makes the tour 7 units longer at \\(T = 500\\). How likely is SA to accept this worse move?", "options": [{"t": "Very likely, since \\(e^{-7/500} \\approx 0.99\\)", "why": "At such a high temperature a small increase passes with \\(p \\approx 0.986\\); the book simply assumes this one is rejected."}, {"t": "Impossible, since the new tour is longer", "why": "SA does accept longer tours with probability \\(e^{-\\Delta f/T}\\), which is what lets it escape local minima."}, {"t": "About one chance in seven, roughly 0.14", "why": "The probability is \\(e^{-7/500}\\), not \\(1/7\\), and at \\(T = 500\\) it is close to 1."}, {"t": "Exactly one half, like a fair coin flip", "why": "The probability depends on \\(\\Delta f / T\\); it is not fixed at one half."}], "answer": 0}, {"type": "match", "q": "Match each neighborhood in the Berlin52 lab to the change it makes to a tour.", "pairs": [{"l": "Swap", "r": "Exchange the positions of two cities", "why": "Swapping two cities changes up to four edges of the tour."}, {"l": "Reverse (2-opt)", "r": "Reverse the order of a segment", "why": "Reversing a segment removes two edges and reconnects the tour with two new ones."}, {"l": "Insert", "r": "Move one city to another position", "why": "Insertion takes out a single city and places it elsewhere in the tour."}, {"l": "Mutate", "r": "Remove a run of cities and reinsert them at random", "why": "The book's mutate moves 1 to \\((n - 1)/5\\) consecutive cities, the biggest change of the four."}]}], "layout": [{"type": "mcq", "q": "The first worked swap exchanges departments B and D and leaves TMHC at 1,770. Why does SA accept it?", "options": [{"t": "\\(\\Delta f = 0\\) gives \\(p = 1\\), so it always passes", "why": "An equal-cost move has acceptance probability 1, which beats any random number \\(r\\)."}, {"t": "Because \\(r = 0.2\\) is small enough for any move", "why": "A small \\(r\\) helps worse moves, but here no gamble is needed since the cost does not rise."}, {"t": "Because B and D have the largest flow between them", "why": "The decision depends only on the change in TMHC, not on which departments are swapped."}, {"t": "Because SA accepts the first move at every temperature", "why": "SA has no such rule; every move is judged by \\(\\Delta f\\) and, if worse, by \\(p\\) against \\(r\\)."}], "answer": 0}, {"type": "fill", "q": "The second worked swap exchanges A and D and raises TMHC from 1,770 to 2,020 at \\(T = 100\\). What is \\(p = e^{-\\Delta f/T}\\)? Give 3 decimals.", "answer": 0.082, "tol": 0.002, "unit": "", "hint": "First find the increase in TMHC, then divide it by the temperature.", "why": "\\(\\Delta f = 250\\), so \\(p = e^{-250/100} = e^{-2.5} \\approx 0.082\\), below \\(r = 0.6\\), and the swap is rejected."}, {"type": "mcq", "q": "What kind of layout tends to give a low \\(\\mathrm{TMHC} = \\sum \\text{flow} \\times \\text{distance}\\)?", "options": [{"t": "Heavy-flow departments placed side by side", "why": "Large flows multiplied by short distances keep the total handling cost low."}, {"t": "Departments in alphabetical order on the grid", "why": "Names play no role; only flows and rectilinear distances enter the cost."}, {"t": "Heavy-flow departments in opposite corners", "why": "Putting heavy flows far apart multiplies them by long distances, which raises TMHC."}, {"t": "Any layout, since placement does not matter", "why": "On the 2 × 3 grid, distances between locations range from 1 to 3 units, so placement changes the cost."}], "answer": 0}], "scheduling": [{"type": "fill", "q": "On one machine, jobs 1 to 4 have processing times 9, 9, 12, 3, due dates 10, 8, 5, 28 and weights 14, 12, 1, 12. What is the total weighted tardiness \\(\\sum w_j \\max(0, C_j - d_j)\\) of the sequence 1-3-4-2?", "answer": 316, "tol": 0, "unit": "", "hint": "Find each job's completion time \\(C_j\\) in sequence order, then weight only the jobs that finish after their due date.", "why": "The completion times are 9, 21, 24, 33, so only job 3 (\\(1 \\times 16\\)) and job 2 (\\(12 \\times 25\\)) are late, giving \\(16 + 300 = 316\\)."}, {"type": "mcq", "q": "From 1-3-4-2 (cost 316), SA tries 1-4-3-2 (cost 319) at \\(T = 0.9\\), so \\(p = e^{-3/0.9} \\approx 0.0357\\). The random number is \\(r = 0.01\\). What happens?", "options": [{"t": "SA accepts it, because \\(p \\gt r\\)", "why": "Even a small \\(p\\) wins when the random number is smaller still, which is how SA takes occasional uphill steps."}, {"t": "SA rejects it, because the cost went up", "why": "A cost increase does not rule a move out; it is accepted whenever \\(e^{-\\Delta f/T} \\gt r\\)."}, {"t": "SA rejects it, because \\(p\\) is below 0.5", "why": "There is no 0.5 threshold; \\(p\\) is compared with the random number \\(r\\)."}, {"t": "SA accepts it, because 319 is the optimum", "why": "The optimal weighted tardiness for these jobs is 148, so 319 is not optimal."}], "answer": 0}, {"type": "match", "q": "Match each scheduling objective to its definition.", "pairs": [{"l": "Makespan \\(C_{\\max}\\)", "r": "Time when the last job finishes", "why": "The three-machine example minimizes this, the finishing time of the busiest machine."}, {"l": "Lateness \\(L_i = C_i - d_i\\)", "r": "Completion time minus due date, can be negative", "why": "A job that finishes early has negative lateness."}, {"l": "Tardiness \\(T_i = \\max(0, L_i)\\)", "r": "How late a job is, never negative", "why": "Tardiness counts only lateness past the due date, so early jobs contribute zero."}, {"l": "\\(\\sum w_i C_i\\)", "r": "Total weighted completion time", "why": "It weights each job's completion time by its importance and adds them up."}]}], "more": [{"type": "mcq", "q": "To reuse the Berlin52 SA code for routing a truck to 18 stores on real roads, what mainly has to change?", "options": [{"t": "The distance data, now taken from the road network", "why": "SA only evaluates tour lengths, so new road distances leave the algorithm itself unchanged."}, {"t": "The acceptance rule, since roads are not straight", "why": "The acceptance rule depends only on \\(\\Delta f\\) and \\(T\\), whatever the distances measure."}, {"t": "Nothing, since straight-line distances are good enough", "why": "The case routes on real roads, and straight-line distances would misstate the driving cost."}, {"t": "Each store must now be visited twice per route", "why": "Like any TSP, the route visits each store once."}], "answer": 0}, {"type": "mcq", "q": "The same 20 US cities are solved with the book's SA solver and with the simanneal package. Why might the two tours differ?", "options": [{"t": "SA is stochastic and finds good tours without a guarantee", "why": "Random moves and different settings can stop two runs at different good tours, since SA guarantees no optimum."}, {"t": "One of the two packages must contain a bug", "why": "Different results are normal for a stochastic method and do not point to an error."}, {"t": "simanneal minimizes something other than tour length", "why": "Both minimize the length of a tour through the same cities."}, {"t": "Only one of them uses an acceptance probability", "why": "Both are simulated annealing, so both accept worse moves with a probability that depends on \\(T\\)."}], "answer": 0}, {"type": "classify", "q": "For the truck routing case, sort each item into the problem itself or a choice made when setting up SA.", "cats": ["Problem data", "SA design choice"], "items": [{"t": "The locations of the 18 stores", "cat": 0, "why": "The stores to visit are fixed by the delivery problem, whatever algorithm solves it."}, {"t": "The road distances between stores", "cat": 0, "why": "The road network determines these distances, and they define the route cost."}, {"t": "The initial temperature \\(T_0\\)", "cat": 1, "why": "\\(T_0\\) is a tuning setting of SA that controls how much it explores at the start."}, {"t": "The cooling schedule", "cat": 1, "why": "How fast the temperature falls is part of the annealing schedule, chosen by the user."}, {"t": "The neighborhood move, such as swapping two stores", "cat": 1, "why": "The move that generates neighbors is a design decision of the SA implementation."}]}], "quiz": [{"type": "mcq", "q": "A worse move with \\(\\Delta f \\gt 0\\) is accepted with probability \\(e^{-\\Delta f/T}\\). What happens as the temperature \\(T\\) approaches 0?", "options": [{"t": "Worse moves are almost never accepted, so SA behaves like hill climbing", "why": "As \\(T \\to 0\\), \\(e^{-\\Delta f/T} \\to 0\\) for any worse move, so only improving moves remain."}, {"t": "Almost every move is accepted, so the search becomes a random walk", "why": "That is the behavior at a very high temperature, where \\(e^{-\\Delta f/T} \\to 1\\)."}, {"t": "Only worse moves are accepted", "why": "Improving moves are always accepted at any temperature, with probability 1."}, {"t": "The probability stays the same, but the neighborhood grows", "why": "The neighborhood is fixed by the move type; the temperature changes only the acceptance probability."}], "answer": 0}, {"type": "mcq", "q": "Why does slow cooling (in physical annealing and in SA) tend to reach a lower-energy or lower-cost state than quenching?", "options": [{"t": "It keeps uphill moves possible long enough to escape traps", "why": "Gradual cooling keeps occasional uphill moves alive long enough to leave poor local minima before the system freezes."}, {"t": "It starts from a lower temperature than quenching", "why": "Both start at the same high temperature; they differ only in how fast they cool."}, {"t": "Quenching accepts more uphill moves than slow cooling", "why": "Quenching drops the temperature at once, so it accepts almost no uphill moves and freezes with defects."}, {"t": "Slow cooling uses a different energy function", "why": "The energy or cost function is the same; only the schedule changes."}], "answer": 0}, {"type": "classify", "q": "Sort each problem solved with SA in this chapter by the type of its search space.", "cats": ["Continuous", "Discrete (combinatorial)"], "items": [{"t": "Minimizing \\((x - 6)^2\\) on [0, 31]", "cat": 0, "why": "\\(x\\) can take any real value in the interval, and neighbors are Gaussian steps."}, {"t": "The Bohachevsky function", "cat": 0, "why": "Its two variables are real numbers, explored with Gaussian steps of size 5."}, {"t": "Sudoku", "cat": 1, "why": "A solution places digits in cells, and a move swaps two cells inside a box."}, {"t": "Berlin52 TSP", "cat": 1, "why": "A solution is an ordering of 52 cities, changed by swaps, reversals, inserts or mutations."}, {"t": "Plant layout of six departments", "cat": 1, "why": "A solution assigns departments to grid locations, and a move swaps two of them."}, {"t": "Three-machine makespan scheduling", "cat": 1, "why": "A solution assigns each job to one of three machines, a finite set of choices."}]}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

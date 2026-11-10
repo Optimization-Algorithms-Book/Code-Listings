@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Ant Colony Optimization Lab</title>
 <!-- katex:start -->
@@ -401,6 +470,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       </div>
       <div class="presets" id="fgPresets"></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="inspiration"></div>
   </div>
 </section>
 
@@ -439,6 +509,7 @@ Set parameters, initialize pheromone trails
         <tr><td>\(\alpha\) and \(\beta\)</td><td>Learned knowledge versus greedy local information.</td></tr>
       </tbody></table></div>
     <p class="more">Chapter 10 discusses how to set every parameter, including the initial pheromone \(\tau_0\) and the deposit constant \(Q\).</p>
+    <!-- kc --><div class="kc" data-sec="metaheuristic"></div>
   </div>
 </section>
 
@@ -469,6 +540,7 @@ Set parameters, initialize pheromone trails
       </div>
     </div>
     <div class="note warn">The lab computes 0.24 on the reinforced edges where Figure 10.10 shows 0.59, and the colony converges on 1 → 2 → 5 (length 5) rather than 1 → 3 → 4 → 5.</div>
+    <!-- kc --><div class="kc" data-sec="saco"></div>
   </div>
 </section>
 
@@ -494,6 +566,7 @@ Set parameters, initialize pheromone trails
         <div class="stage"><div class="calc" id="acCalc"></div><canvas id="acCv" class="cv-chart" style="height:150px" aria-label="Decision probabilities"></canvas></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="variants"></div>
   </div>
 </section>
 
@@ -535,6 +608,7 @@ Set parameters, initialize pheromone trails
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2010/ACO_Lab_Companion.ipynb">ACO Lab companion notebook</a>
       <a href="#python" data-tab="tsp">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="tsp"></div>
   </div>
 </section>
 
@@ -559,6 +633,7 @@ Set parameters, initialize pheromone trails
         </div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="continuous"></div>
   </div>
 </section>
 
@@ -678,6 +753,7 @@ Set parameters, initialize pheromone trails
         </div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="adaptive"></div>
   </div>
 </section>
 
@@ -693,6 +769,7 @@ Set parameters, initialize pheromone trails
       <div class="card"><h5>Supply and demand</h5><p>Planning with the ACO-based MIDACO solver.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%2010/Listing%20C.19_Supply_demand_MIDACO.ipynb">Listing C.19</a></p></div>
     </div>
     <p class="more">Chapter 10 also shows ACS planning robot paths on a MAKLINK graph and ants solving quadratic assignment.</p>
+    <!-- kc --><div class="kc" data-sec="applications"></div>
   </div>
 </section>
 
@@ -910,17 +987,8 @@ print(<span class="st">"most reinforced path: x ="</span>, x_best, <span class="
   <div class="wrap">
     <span class="eyebrow">Part 11 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 10. Pick an answer to check it.</p>
-    <div class="mcq" data-a="1">
-      <p class="mcq-q"><b>Q1.</b> In the double-bridge experiment with unequal branches, why does the colony end up on the shorter branch?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Each ant measures both branches and picks the shorter one</span></button><button type="button" class="mcq-o"><b>B</b><span>Ants on the shorter branch return sooner, so it is reinforced sooner and attracts more ants</span></button><button type="button" class="mcq-o"><b>C</b><span>Pheromone evaporates only from the longer branch</span></button><button type="button" class="mcq-o"><b>D</b><span>The heuristic desirability forbids ants from taking the longer branch</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Individual ants have no global view. The shorter branch collects pheromone faster, which raises its choice probability, a positive feedback loop called autocatalytic behavior. Evaporation acts on both branches alike.</template>
-    </div>
-    <div class="mcq" data-a="3">
-      <p class="mcq-q"><b>Q2.</b> What happens to an ACO colony if the evaporation rate \(\rho\) is set to 0?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Trails vanish at once and the ants search at random</span></button><button type="button" class="mcq-o"><b>B</b><span>The algorithm becomes the max-min ant system</span></button><button type="button" class="mcq-o"><b>C</b><span>Ants ignore pheromone and follow only the desirability \(\eta\)</span></button><button type="button" class="mcq-o"><b>D</b><span>Trails never fade, so the colony keeps following early trails even after better ones exist</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>With \(\rho = 0\) the colony never forgets, so early (possibly poor) trails dominate. \(\rho = 1\) is the opposite extreme, where trails vanish and the search becomes random; a moderate rate keeps useful trails while forgetting stale ones.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 10 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2010" target="_blank" rel="noopener">Chapter 10</a>).</p>
   </div>
 </section>
@@ -1852,15 +1920,171 @@ adaPanel("a5", [
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"inspiration": [{"type": "mcq", "q": "What is stigmergy?", "options": [{"t": "Indirect communication by marking the environment", "why": "Ants lay pheromone that others sense later, so the environment carries the message."}, {"t": "Direct signaling between two ants that meet", "why": "Stigmergy needs no meeting: the trail itself carries the information."}, {"t": "A leader ant telling the colony where to go", "why": "No ant is in charge; each one is a simple stimulus-response agent."}, {"t": "Each ant memorizing the full map of the area", "why": "Ants keep no map; the shared memory lives in the pheromone trails."}], "answer": 0}, {"type": "mcq", "q": "In the double bridge panel, you pick the <b>binary bridge (equal lengths)<\/b> and run it with several seeds. Which branch does the colony settle on?", "options": [{"t": "Either branch, decided by early random choices", "why": "With equal lengths neither branch is favored, so whichever gets a few extra ants early is reinforced and wins."}, {"t": "Always branch 1, the first one listed", "why": "Nothing in equation 10.1 favors branch 1; both start with the same pheromone."}, {"t": "Neither: the ants stay split evenly forever", "why": "Positive feedback amplifies small random differences, so an even split does not last."}, {"t": "Always the branch with the slower evaporation", "why": "Evaporation applies the same rate \\(\\rho\\) to both branches."}], "answer": 0}, {"type": "fill", "q": "In the double bridge, both branches start with \\(\\tau = 1\\), branch 1 has length 1 and branch 2 has length 2. With \\(\\rho = 0.2\\) and a deposit of \\(Q/L\\) with \\(Q = 1\\), 6 ants take branch 1 and 4 take branch 2. What is \\(p_1 = \\tau_1 / (\\tau_1 + \\tau_2)\\) for the next iteration? Give 3 decimals.", "answer": 0.708, "tol": 0.003, "unit": "", "hint": "Evaporate both trails first with \\((1 - \\rho)\\), then add \\(1/L\\) for every ant on each branch.", "why": "\\(\\tau_1 = 0.8 + 6 \\times 1 = 6.8\\) and \\(\\tau_2 = 0.8 + 4 \\times 0.5 = 2.8\\), so \\(p_1 = 6.8 / 9.6 \\approx 0.708\\)."}], "metaheuristic": [{"type": "order", "q": "Put one pass of the ACO metaheuristic in order.", "items": ["Set the parameters and initialize the pheromone trails", "Each ant constructs a solution with equation 10.6", "Apply optional local search, such as 2-opt", "Update the pheromones: evaporate, then deposit"], "why": "Trails exist before ants can use them, solutions must be built (and polished) before they can be rewarded, and the update closes each iteration.", "hint": "Ants can only be rewarded after they have built, and optionally improved, their solutions."}, {"type": "match", "q": "The SACO panel offers several pheromone update models. Match each one to how it deposits.", "pairs": [{"l": "Ant cycle", "r": "Q divided by path length, after the path is complete", "why": "Ant cycle is a delayed update that rewards complete paths, so shorter paths earn more."}, {"l": "Ant density", "r": "A constant Q on every edge, while moving", "why": "Ant density ignores length, so the deposit only counts how many ants used an edge."}, {"l": "Ant quantity", "r": "Q divided by edge length, while moving", "why": "Ant quantity uses only local information, which makes shorter edges more attractive."}, {"l": "Iteration-best ant only", "r": "Only the best path of the iteration is reinforced", "why": "Restricting the deposit to the best ant focuses the colony on the best solution found in that iteration."}]}, {"type": "mcq", "q": "In equation 10.6, what happens if you set \\(\\beta = 0\\)?", "options": [{"t": "Ants choose by pheromone alone and ignore edge length", "why": "With \\(\\eta^0 = 1\\) for every edge, the desirability drops out and only \\(\\tau^{\\alpha}\\) remains."}, {"t": "Ants choose by edge length alone and ignore pheromone", "why": "That is the effect of \\(\\alpha = 0\\), which removes the pheromone term instead."}, {"t": "Every feasible edge becomes forbidden", "why": "A zero exponent makes the factor equal to 1, so no edge is excluded."}, {"t": "Pheromone stops evaporating", "why": "Evaporation is set by \\(\\rho\\) in equation 10.2, not by \\(\\beta\\)."}], "answer": 0}], "saco": [{"type": "fill", "q": "In the SACO panel's defaults, every edge starts with \\(\\tau = 0.5\\) and \\(\\alpha = \\beta = 1\\). At node 1 an ant can go to node 2 (length 4) or node 3 (length 3). What is \\(p_{13}\\)? Give 2 decimals.", "answer": 0.57, "tol": 0.005, "unit": "", "hint": "With equal pheromone the choice is proportional to \\(\\eta = 1/d\\) for each edge.", "why": "\\(p_{13} = (0.5 \\cdot 1/3) / (0.5 \\cdot 1/4 + 0.5 \\cdot 1/3) = 0.333/0.583 \\approx 0.57\\)."}, {"type": "fill", "q": "With \\(\\rho = 0.7\\), an edge starting at \\(\\tau = 0.5\\) is used by one ant whose path has length 11, and the deposit is \\(Q/L\\) with \\(Q = 1\\). What is its pheromone after the update? Give 2 decimals.", "answer": 0.24, "tol": 0.006, "unit": "", "hint": "Apply equation 10.2 first, then add the deposit of equation 10.4.", "why": "\\((1 - 0.7) \\times 0.5 + 1/11 = 0.15 + 0.09 \\approx 0.24\\), the value the lab computes on the reinforced edges."}, {"type": "mcq", "q": "Run SACO for 10 iterations. Why does the colony converge on \\(1 \\to 2 \\to 5\\)?", "options": [{"t": "At length 5 it earns the largest \\(Q/L\\) deposit", "why": "Each ant on \\(1 \\to 2 \\to 5\\) deposits \\(1/5\\), more than any longer path, so the trail grows fastest."}, {"t": "It is the path the very first ant took", "why": "With the default seed the first ant takes \\(1 \\to 3 \\to 4 \\to 5\\), yet the colony still leaves that path."}, {"t": "Its edges evaporate more slowly than the others", "why": "Equation 10.2 applies the same rate \\(\\rho\\) to every edge."}, {"t": "Node 2 is the only neighbor of node 1", "why": "Node 1 also links to node 3, which the first ants often choose."}], "answer": 0}], "variants": [{"type": "match", "q": "Match each ACO variant to its defining feature.", "pairs": [{"l": "Ant system (AS)", "r": "Tabu list of visited nodes, and all ants deposit", "why": "AS adds memory to SACO and lets every ant reinforce its path."}, {"l": "Ant colony system (ACS)", "r": "Often takes the best edge greedily, global-best deposits", "why": "ACS exploits with probability \\(r_0\\) and reinforces only the best path found so far."}, {"l": "Max-min ant system (MMAS)", "r": "Iteration-best deposits, trails kept within bounds", "why": "The bounds \\([\\tau_{\\min}, \\tau_{\\max}]\\) stop any trail from dominating, which fights stagnation."}, {"l": "Elitist ant system", "r": "Extra deposit on the best path so far", "why": "The elitist bonus speeds convergence toward the best path found."}]}, {"type": "fill", "q": "In the ACS decision panel, an ant at node 4 chooses between node 2 (length 4) and node 5 (length 6), both with \\(\\tau = 0.5\\), \\(\\beta = 1\\) and \\(r_0 = 0.5\\). What is the overall chance that it moves to node 2? Give 2 decimals.", "answer": 0.8, "tol": 0.005, "unit": "", "hint": "Node 2 wins every exploit move (probability \\(r_0\\)) and wins with probability \\(p_{42}\\) of equation 10.6 on explore moves.", "why": "\\(p_{42} = 0.125 / (0.125 + 0.0833) = 0.6\\), so the chance is \\(0.5 \\times 1 + 0.5 \\times 0.6 = 0.80\\)."}, {"type": "mcq", "q": "In ACS, what does lowering \\(r_0\\) do?", "options": [{"t": "Makes the ants explore more", "why": "A smaller \\(r_0\\) means fewer draws satisfy \\(r \\le r_0\\), so more moves use the roulette wheel of equation 10.6."}, {"t": "Makes the ants take the best edge more often", "why": "Greedy moves happen when \\(r \\le r_0\\), so a smaller \\(r_0\\) makes them rarer."}, {"t": "Makes the pheromone evaporate faster", "why": "Evaporation is controlled by \\(\\rho\\), not by the exploitation threshold."}, {"t": "Makes the ants ignore edge lengths", "why": "Both the greedy rule and equation 10.6 still use \\(\\eta = 1/d\\)."}], "answer": 0}], "tsp": [{"type": "mcq", "q": "What makes the 20-city problem in the colony lab an <i>open<\/i> TSP?", "options": [{"t": "The route never returns to New York City", "why": "An open route ends at the last city visited, so there is no closing edge back home."}, {"t": "Cities may be visited more than once", "why": "Each city is still visited exactly once."}, {"t": "The ants may start in any city", "why": "Every route starts in New York City."}, {"t": "Distances are straight lines on a map", "why": "How distances are measured does not decide whether the route returns home."}], "answer": 0}, {"type": "mcq", "q": "Why does the variant comparison run every variant with the same random seeds?", "options": [{"t": "So differences reflect the variants, not luck", "why": "Shared seeds give every variant the same random starts, which makes the comparison fair."}, {"t": "So every variant finds exactly the same route", "why": "The variants use different rules, so their routes still differ."}, {"t": "So each variant needs fewer iterations", "why": "Seeds affect which random numbers are drawn, not how many iterations run."}, {"t": "Because ACO only works with fixed seeds", "why": "ACO runs with any seed; fixing them only makes the runs repeatable."}], "answer": 0}, {"type": "fill", "q": "With \\(\\rho = 0.5\\), what fraction of an edge's pheromone is left after 3 iterations in which no ant deposits on it?", "answer": 0.125, "tol": 0.001, "unit": "", "hint": "Equation 10.2 multiplies the trail by \\((1 - \\rho)\\) once per iteration.", "why": "\\((1 - 0.5)^3 = 0.125\\), so only one eighth of the trail survives, which is how unused edges fade."}], "continuous": [{"type": "mcq", "q": "In iteration 1 of the discretized ACO panel, all seven paths have equal pheromone. Ant 1 draws \\(r = 0.3122\\). Which value of \\(x\\) does it pick?", "options": [{"t": "\\(x = 1.0\\)", "why": "Each path has probability \\(1/7\\), and 0.3122 falls in the third range, 0.2857 to 0.4286, which is \\(x = 1.0\\)."}, {"t": "\\(x = 0.5\\)", "why": "The second path covers 0.1429 to 0.2857, which is below 0.3122."}, {"t": "\\(x = 1.5\\)", "why": "The fourth path starts at 0.4286, which is above 0.3122."}, {"t": "\\(x = 0.0\\)", "why": "The first path covers only 0 to 0.1429."}], "answer": 0}, {"type": "fill", "q": "In iteration 1, the four ants pick \\(x = 1.0, 3.0, 1.5, 2.0\\), so \\(f_{\\text{best}} = -12\\) and \\(f_{\\text{worst}} = -8\\). With \\(\\rho = 0.5\\) and \\(\\zeta = 2\\), what is the pheromone on the path \\(x = 1.0\\) after the update (it started at 1)?", "answer": 3.5, "tol": 0.01, "unit": "", "hint": "Evaporate first, then add \\(\\Delta\\tau = \\zeta \\cdot f_{\\text{best}} / f_{\\text{worst}}\\) to the best path.", "why": "\\(0.5 \\times 1 + 2 \\times (-12)/(-8) = 0.5 + 3 = 3.5\\)."}, {"type": "fill", "q": "After iteration 1, the path \\(x = 1.0\\) has \\(\\tau = 3.5\\) and the other six paths have \\(\\tau = 0.5\\). What is the probability that an ant picks \\(x = 1.0\\) in iteration 2? Give 3 decimals.", "answer": 0.538, "tol": 0.003, "unit": "", "hint": "Each path's probability is its pheromone divided by the total pheromone.", "why": "\\(3.5 / (3.5 + 6 \\times 0.5) = 3.5/6.5 \\approx 0.538\\), up from \\(1/7 \\approx 0.143\\), so the colony starts to favor the minimum."}], "adaptive": [{"type": "mcq", "q": "In the \\(\\rho(t)\\) and \\(\\beta(t)\\) panel, the ant prefers exit B (strong trail) at \\(t = 0\\) but exit A (shortest edge) near \\(t = T\\). Why?", "options": [{"t": "\\(\\beta(t)\\) grows, so short edges dominate", "why": "As \\(\\beta\\) rises toward \\(\\beta_{\\text{end}}\\), the factor \\((100/d)^{\\beta}\\) rewards the short edge far more than any trail."}, {"t": "Exit B's trail is erased by evaporation", "why": "The panel holds each exit's \\(\\tau\\) fixed; only \\(\\beta(t)\\) changes the choice."}, {"t": "\\(\\alpha\\) grows, so pheromone dominates", "why": "\\(\\alpha\\) stays at 1, and a larger \\(\\alpha\\) would favor the strong trail at B, not A."}, {"t": "\\(\\rho(t)\\) rises late in the run", "why": "\\(\\rho(t)\\) decays over time, and it does not enter the exit probabilities."}], "answer": 0}, {"type": "fill", "q": "In the quality-sensitive deposition panel, the deposit is \\(\\Delta\\tau \\propto 1/\\text{cost}^{k}\\). With \\(k = 2\\), how many times larger is the best ant's deposit (cost 2) than the worst ant's (cost 6)?", "answer": 9, "tol": 0.05, "unit": "times", "hint": "Take the ratio \\((1/2^k)/(1/6^k)\\), which simplifies to \\((6/2)^k\\).", "why": "\\((6/2)^2 = 9\\), while \\(k = 1\\) gives only 3, so a larger \\(k\\) concentrates the deposit on the best ant."}, {"type": "match", "q": "Match each situation in the adaptive panels to the response it triggers.", "pairs": [{"l": "CV of route lengths at or above the threshold", "r": "The iteration-best ant deposits", "why": "A high CV means the colony is still spread out, so it keeps exploring."}, {"l": "CV of route lengths below the threshold", "r": "The best-so-far ant deposits", "why": "A low CV means the colony is converging, so it exploits the best route found."}, {"l": "An improvement under the performance-triggered rule", "r": "r0 rises by delta", "why": "After an improvement, ACS exploits more around the new best route."}, {"l": "Several iterations in a row without improvement", "r": "r0 falls by delta", "why": "Stagnation calls for more exploration, so fewer moves are greedy."}, {"l": "\\(t\\) approaching \\(T\\) with tightening limits", "r": "tau max is squeezed toward tau min", "why": "The upper limit \\(\\tau_{\\max}(t)\\) falls linearly to \\(\\tau_{\\min}\\) at the end of the run."}]}], "applications": [{"type": "match", "q": "Match each application listing to the problem it solves.", "pairs": [{"l": "Listing C.17", "r": "Shortest routes on road networks", "why": "Listing C.17 is the routing application."}, {"l": "Listing C.18", "r": "Maximizing a desalination pump's power", "why": "Listing C.18 optimizes a reverse osmosis pump."}, {"l": "Listing C.19", "r": "Supply and demand planning", "why": "Listing C.19 plans supply and demand with the MIDACO solver."}]}, {"type": "mcq", "q": "What is MIDACO, the solver used in Listing C.19?", "options": [{"t": "An ACO-based solver", "why": "MIDACO builds on ant colony optimization, which is why it appears among the ACO applications."}, {"t": "A genetic algorithm library", "why": "The lab presents MIDACO as ACO-based, not as a genetic algorithm."}, {"t": "An exact linear programming solver", "why": "MIDACO is a metaheuristic solver built on ACO, not an exact LP method."}, {"t": "A road network database", "why": "The road networks belong to the routing example, Listing C.17."}], "answer": 0}, {"type": "mcq", "q": "Which ingredient does the chapter say makes ACO especially strong on combinatorial problems?", "options": [{"t": "Combining it with local search", "why": "The optional ApplyLocalSearch step, such as 2-opt, polishes each ant's solution before the pheromone update."}, {"t": "Removing evaporation entirely", "why": "With \\(\\rho = 0\\) the colony never forgets early trails, which hurts the search."}, {"t": "Using a single ant per iteration", "why": "One ant gives little exploration; the colony's strength comes from many ants sharing trails."}, {"t": "Setting \\(\\alpha\\) and \\(\\beta\\) to zero", "why": "Then equation 10.6 ignores both the trails and the distances, and the search is random."}], "answer": 0}], "quiz": [{"type": "mcq", "q": "In the double-bridge experiment with unequal branches, why does the colony end up on the shorter branch?", "options": [{"t": "Ants on it return sooner, so it is reinforced sooner", "why": "The shorter branch collects pheromone faster, which raises its choice probability, a positive feedback loop."}, {"t": "Each ant measures both branches and picks the shorter", "why": "Individual ants have no global view; the choice emerges from the trails."}, {"t": "Pheromone evaporates only from the longer branch", "why": "Evaporation acts on both branches alike, at the same rate \\(\\rho\\)."}, {"t": "The desirability forbids the longer branch", "why": "No branch is forbidden; the longer one simply becomes less likely."}], "answer": 0}, {"type": "mcq", "q": "What happens to an ACO colony if the evaporation rate \\(\\rho\\) is set to 0?", "options": [{"t": "Trails never fade, so early trails keep winning", "why": "With \\(\\rho = 0\\) the colony never forgets, so early (possibly poor) trails dominate even after better ones exist."}, {"t": "Trails vanish at once and ants search at random", "why": "That is the opposite extreme, \\(\\rho = 1\\)."}, {"t": "The algorithm becomes the max-min ant system", "why": "MMAS is defined by its deposit rule and trail bounds, not by \\(\\rho = 0\\)."}, {"t": "Ants ignore pheromone and follow only \\(\\eta\\)", "why": "The pheromone term stays in equation 10.6; it just never decays."}], "answer": 0}, {"type": "classify", "q": "Does each choice push an ACO colony toward exploration or exploitation?", "cats": ["Exploration", "Exploitation"], "items": [{"t": "Strong evaporation early in the run", "cat": 0, "why": "Trails fade quickly, so the colony does not lock onto its first routes."}, {"t": "A lower \\(r_0\\) in ACS", "cat": 0, "why": "Fewer moves are greedy, so more of them sample equation 10.6."}, {"t": "The iteration-best ant deposits while the CV is high", "cat": 0, "why": "Rewarding each iteration's best keeps several route families alive."}, {"t": "Raising \\(\\beta\\) late in the run", "cat": 1, "why": "A larger heuristic weight makes ants greedier for short edges."}, {"t": "A higher \\(r_0\\) in ACS", "cat": 1, "why": "More moves take the best edge directly."}, {"t": "A large exponent \\(k\\) in quality-sensitive deposition", "cat": 1, "why": "Almost all of the deposit goes to the best ant, which concentrates the trails."}]}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

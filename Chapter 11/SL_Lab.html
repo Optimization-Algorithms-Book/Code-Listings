@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Supervised Learning Lab</title>
 <!-- katex:start -->
@@ -357,6 +426,7 @@ tr.dim td{color:var(--muted)}
       <p>Supervised learning maps data to known labels: <b>classification</b> predicts classes, <b>regression</b> continuous values.</p>
       <p class="more">Section 11.2 of the book frames one predictive-maintenance dataset as classification, regression and forecasting, and introduces geometric deep learning.</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="supervised"></div>
   </div>
 </section>
 
@@ -372,6 +442,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="nnCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Decision boundary"></canvas><div class="legend-row"><span><i style="background:var(--accent)"></i>class 0</span><span><i style="background:var(--gold)"></i>class 1</span><span>ringed: test points</span></div><canvas id="nnChart" class="cv-chart" style="height:150px" aria-label="Loss per epoch"></canvas></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="nn"></div>
   </div>
 </section>
 
@@ -407,6 +478,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><div class="stage-grid"><div><canvas id="kcCv" class="cv-sq" aria-label="Karate club graph"></canvas></div><div><canvas id="kcEmb" class="cv-sq" aria-label="Output embedding"></canvas></div></div><p class="cap" id="kcNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="graphs"></div>
   </div>
 </section>
 
@@ -426,6 +498,7 @@ tr.dim td{color:var(--muted)}
       <div class="bench-head"><h4>Which words does “bank” attend to?</h4><span class="eyebrow">Illustrative 2D word vectors, not a trained model</span></div>
       <div class="stage"><div class="tokens" id="sqTok"></div><canvas id="sqCv" class="cv-chart" style="height:180px" aria-label="Attention weights over the sentence"></canvas><p class="cap" id="sqNote"></p></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="attention"></div>
   </div>
 </section>
 
@@ -444,6 +517,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="phCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Points and hull"></canvas><canvas id="phBar" class="cv-chart" style="height:150px" aria-label="Pointer distribution"></canvas><p class="cap" id="phNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="pointer"></div>
   </div>
 </section>
 
@@ -460,6 +534,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="tsCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Edge probabilities and tours"></canvas><div class="legend-row"><span><i style="background:var(--muted)"></i>edge probabilities</span><span><i style="background:var(--gold)"></i>decoded tour</span><span><i style="background:var(--good)"></i>optimal tour (dashed)</span></div><div class="tbl-wrap"><table class="ttab" id="tsTbl"></table></div></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="tsp"></div>
   </div>
 </section>
 
@@ -475,6 +550,7 @@ tr.dim td{color:var(--muted)}
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Predicting minimizers on the circle</h4></div>
         <div class="stage"><div id="amCtl"></div><div class="btns"><button id="amTrain" class="primary small">Train</button><button id="amReset" class="small">Reset</button></div><canvas id="amCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Function on the circle"></canvas><div class="stats" id="amStats"></div><p class="cap" id="amNote"></p></div></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="amortized"></div>
   </div>
 </section>
 
@@ -780,17 +856,8 @@ print(f<span class="st">"   trained problems {gap(train[:16], pred):.3f}, unseen
   <div class="wrap">
     <span class="eyebrow">Part 10 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 11. Pick an answer to check it.</p>
-    <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> After \(k\) layers of a graph convolutional network, what information does a node’s embedding encode?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Only the node’s own input features</span></button><button type="button" class="mcq-o"><b>B</b><span>Every node in the graph, whatever the value of \(k\)</span></button><button type="button" class="mcq-o"><b>C</b><span>Its \(k\)-hop neighborhood</span></button><button type="button" class="mcq-o"><b>D</b><span>Only the labeled nodes of the graph</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Each layer aggregates messages from direct neighbors, so information spreads one hop per layer: after \(k\) layers a node has heard from everything within \(k\) hops.</template>
-    </div>
-    <div class="mcq" data-a="3">
-      <p class="mcq-q"><b>Q2.</b> Why is a pointer network, rather than a standard sequence-to-sequence model, a natural fit for the convex hull problem?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>It needs no training data</span></button><button type="button" class="mcq-o"><b>B</b><span>It is guaranteed to find the optimal hull</span></button><button type="button" class="mcq-o"><b>C</b><span>It uses convolution over a fixed grid of points</span></button><button type="button" class="mcq-o"><b>D</b><span>Its outputs are positions in the input, so the output dictionary grows with the number of input points</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>A standard seq2seq model has a fixed output vocabulary; a pointer network uses attention over the inputs to pick one of them at each step, so it handles any number of points.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 11 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2011" target="_blank" rel="noopener">Chapter 11</a>).</p>
   </div>
 </section>
@@ -1300,15 +1367,171 @@ codeTabs({ n: "A multilayer perceptron trained by backpropagation on two moons, 
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"supervised": [{"type": "match", "q": "One predictive-maintenance dataset (vibration, temperature, pressure and other readings) can be framed in several ways. Match each question to its task.", "pairs": [{"l": "Will the machine fail within a week? (1 or 0)", "r": "Classification", "why": "The answer is one of two discrete classes, so a classifier such as logistic regression or a random forest fits."}, {"l": "How much useful life does the machine have left?", "r": "Regression", "why": "Remaining useful life is a continuous quantity, so the model predicts a number rather than a class."}, {"l": "What will the readings be over the next 24 hours?", "r": "Forecasting", "why": "Predicting future values of a time series is forecasting, with methods such as ARIMA, Prophet or neural networks."}]}, {"type": "mcq", "q": "A classifier uses a scoring function \\(f(x, c)\\) and predicts \\(c(x) = \\arg\\max_c f(x, c)\\). What does this rule do?", "options": [{"t": "It returns the highest-scoring class for \\(x\\)", "why": "The argmax runs over the classes, so the prediction is whichever class \\(f\\) rates highest for this input."}, {"t": "It returns the largest score as a continuous prediction", "why": "The argmax returns the maximizing class, not the maximum value, which would be a regression-style output."}, {"t": "It returns the input \\(x\\) that maximizes the score", "why": "The maximization is over classes \\(c\\) with \\(x\\) held fixed, not over inputs."}, {"t": "It averages the scores of all classes", "why": "Averaging would blur the classes together instead of choosing one."}], "answer": 0}, {"type": "mcq", "q": "What makes a learning problem supervised?", "options": [{"t": "Each example comes with its known label", "why": "Supervised learning maps data to known labels, whether the labels are classes or continuous values."}, {"t": "The model is trained by a human in real time", "why": "A person may label the data in advance, but training itself is an automatic optimization."}, {"t": "The model receives a reward after each action", "why": "Rewards are the feedback of reinforcement learning, not of supervised learning."}, {"t": "The data has no structure for the model to find", "why": "Without structure there is nothing to learn, whatever the paradigm."}], "answer": 0}], "nn": [{"type": "order", "q": "Put one gradient-based training step of the neural network playground in order.", "items": ["Run the inputs forward through the layers to get predictions", "Compute the cross-entropy loss against the labels", "Backpropagate to get the gradient of the loss for every weight", "Let Adam move the weights downhill"], "why": "The loss needs predictions, backpropagation needs the loss, and the optimizer needs the gradient, so each step feeds the next.", "hint": "Ask what each step needs as its input: you cannot differentiate a loss you have not computed yet."}, {"type": "mcq", "q": "Some points in the playground are ringed and never used for training. Why hold them out?", "options": [{"t": "To measure how well it does on unseen data", "why": "A low loss on training points alone could come from memorization, so held-out test points reveal whether the boundary generalizes."}, {"t": "To speed up backpropagation on every epoch", "why": "Holding points out does shorten each epoch slightly, but that is not why they are kept aside."}, {"t": "Because their labels are unknown", "why": "The ringed points have labels; they are simply reserved for testing."}, {"t": "To provide the rewards that Adam needs", "why": "Adam uses gradients of the loss, not rewards."}], "answer": 0}, {"type": "mcq", "q": "On the two spirals data, a network with 1 hidden layer of 1 unit cannot separate the classes however long it trains. What should you change?", "options": [{"t": "Add hidden units or layers to the network", "why": "More units and layers enlarge the model class, so the optimizer can find a boundary that winds with the spirals."}, {"t": "Train for more epochs with the same tiny network", "why": "Longer training cannot reach a boundary the model class is too small to represent."}, {"t": "Use the ringed test points for training as well", "why": "Moving test points into training removes the check on generalization without adding capacity."}, {"t": "Switch the loss off and let Adam run freely", "why": "Adam needs the gradient of the loss; without a loss there is nothing to move downhill."}], "answer": 0}], "graphs": [{"type": "match", "q": "The message-passing panel shows the matrices behind the GCN layer \\(H^{(t+1)} = \\sigma(\\hat{A}\\, H^{(t)} W^{(t)})\\). Match each one to what it holds.", "pairs": [{"l": "\\(A\\)", "r": "A 1 wherever two nodes share an edge", "why": "The adjacency matrix records which nodes are linked, so it decides who sends messages to whom."}, {"l": "\\(D\\)", "r": "The number of neighbors of each node", "why": "The degree matrix is diagonal, and its entries are used to scale the messages."}, {"l": "\\(\\hat{A}\\)", "r": "Normalized weights used to mix neighbors", "why": "Multiplying by \\(\\hat{A}\\) once spreads a signal by one hop, as the Apply one layer button shows."}, {"l": "\\(W^{(t)}\\)", "r": "Learned weights that transform features", "why": "The weight matrix is what training adjusts, while \\(\\hat{A}\\) is fixed by the graph."}]}, {"type": "fill", "q": "In the 6-node road graph, nodes \\(x_1\\) and \\(x_2\\) are linked and each has 3 neighbors. With self-loops, \\(\\hat{A}_{12} = 1 / \\sqrt{(d_1 + 1)(d_2 + 1)}\\). What is \\(\\hat{A}_{12}\\)? Give 2 decimals.", "answer": 0.25, "tol": 0.005, "unit": "", "hint": "Add 1 to each degree for the self-loop before multiplying.", "why": "\\(1 / \\sqrt{(3 + 1)(3 + 1)} = 1 / \\sqrt{16} = 0.25\\), the value shown in the panel's \\(\\hat{A}\\) matrix."}, {"type": "mcq", "q": "The two-layer GCN learns the side of all 34 karate club members from only 4 labels. Why is that possible?", "options": [{"t": "Message passing spreads the 4 labels along the friendship edges", "why": "The graph structure carries the signal, so a few labels plus the edges are enough for semi-supervised node classification."}, {"t": "Each member's input features describe which side they prefer", "why": "Each member starts with only a one-hot identity vector, so the features carry no side information."}, {"t": "The GCN is trained on all 34 labels and only tested on 4", "why": "It is the other way around: 4 labels are used in training and the rest are predicted."}, {"t": "A GCN ignores the edges and clusters the members by their names", "why": "The edges are the core of a GCN; without them it would have nothing to propagate."}], "answer": 0}], "attention": [{"type": "mcq", "q": "In the panel, node 5 combines itself and its neighbors 2 and 4. What changes when you switch from GCN to GAT?", "options": [{"t": "GAT weighs each neighbor by a learned score", "why": "The GCN mixes the three nodes at 1/3 each, while GAT scores each neighbor and normalizes the scores with a softmax."}, {"t": "GAT ignores node 5's own features", "why": "Node 5 attends to itself as well, as the self-loop coefficient \\(\\alpha_{55}\\) shows."}, {"t": "GAT adds new edges to every node in the graph", "why": "Attention is computed only over the existing neighborhood \\(N(v)\\), so the graph is unchanged."}, {"t": "GAT makes the coefficients sum to more than 1", "why": "The softmax makes each head's coefficients sum to exactly 1."}], "answer": 0}, {"type": "fill", "q": "Suppose one head gives node 5 the scores \\(e_{52} = 1\\), \\(e_{54} = 0\\) and \\(e_{55} = 0\\). With \\(\\alpha_{vu} = \\exp(e_{vu}) / \\sum_{k} \\exp(e_{vk})\\), what is \\(\\alpha_{52}\\)? Give 3 decimals.", "answer": 0.576, "tol": 0.002, "unit": "", "hint": "Exponentiate each score, then divide the one for node 2 by the sum of all three.", "why": "\\(\\alpha_{52} = e^{1} / (e^{1} + e^{0} + e^{0}) = 2.718 / 4.718 \\approx 0.576\\), and \\(\\alpha_{54} = \\alpha_{55} \\approx 0.212\\), so the three sum to 1."}, {"type": "match", "q": "In the \"bank\" example, attention computes \\(\\alpha = \\mathrm{softmax}(\\mathbf{q} \\cdot \\mathbf{k} / \\sqrt{d})\\) and outputs \\(\\sum_i \\alpha_i \\mathbf{v}_i\\). Match each symbol to its role.", "pairs": [{"l": "\\(\\mathbf{q}\\)", "r": "The query from the word that is looking", "why": "Here the query comes from \"bank,\" the word whose meaning attention is trying to pin down."}, {"l": "\\(\\mathbf{k}_i\\)", "r": "Keys compared with the query to score relevance", "why": "The dot product of the query with each key says how relevant that word is to the query."}, {"l": "\\(\\mathbf{v}_i\\)", "r": "Values that are mixed to form the output", "why": "The output is the attention-weighted sum of the values, so relevant words contribute most."}, {"l": "\\(\\alpha_i\\)", "r": "Weights that are positive and sum to 1", "why": "The softmax turns raw scores into weights, which is why \"river\" and \"flooded\" can take most of the weight."}]}], "pointer": [{"type": "order", "q": "Put the steps of decoding a hull with the pointer panel in order.", "items": ["Score every input point for the next step", "Turn the scores into a softmax distribution over the points", "Point to the most likely point and add it to the sequence", "Emit the end token once the sequence returns to its first point"], "why": "Each pointer is a choice from a softmax over the inputs, and decoding stops with the end token when the hull closes.", "hint": "The end token can only come after points have been pointed to."}, {"type": "mcq", "q": "In the panel the pointer scores come from geometry (the smallest left turn), so the argmax always traces the true hull. Why does a trained pointer network score below 100% accuracy?", "options": [{"t": "It must learn the scores from examples", "why": "A trained network never gets the gift-wrapping rule; it approximates it from data, so some pointers go to the wrong point."}, {"t": "Pointer networks cannot output an end token", "why": "Decoding stops with an end token, as the panel shows when the sequence returns to its first point."}, {"t": "The convex hull has no unique answer", "why": "For points in general position the hull is unique, which is why classic algorithms can provide training targets."}, {"t": "The softmax forces it to choose interior points", "why": "The softmax only produces probabilities; nothing forces interior points to be chosen."}], "answer": 0}, {"type": "mcq", "q": "What happens when you lower the softness \\(\\tau\\) of the pointer?", "options": [{"t": "The distribution over the points gets sharper", "why": "Dividing the scores by a smaller \\(\\tau\\) before the softmax magnifies their differences."}, {"t": "Every point gets the same probability of being chosen", "why": "Equal probabilities appear as \\(\\tau\\) grows large, not as it shrinks."}, {"t": "The hull gains extra vertices", "why": "\\(\\tau\\) changes how confident the distribution looks, not which point has the highest score."}, {"t": "The number of input points falls", "why": "The number of points is set by its own slider and does not depend on \\(\\tau\\)."}], "answer": 0}], "tsp": [{"type": "order", "q": "Put the steps of the TSP panel, from cities to a scored tour, in order.", "items": ["Describe the cities as a graph", "Let the graph network score each edge's chance of being in the optimal tour", "Decode a tour from the edge probabilities by greedy or beam search", "Compare the decoded tour with the optimum to get the gap"], "why": "The network needs a graph to score, the search needs the scores, and the gap can only be measured once a tour exists.", "hint": "The search step works on numbers that an earlier step produced."}, {"type": "fill", "q": "The panel reports the gap to optimal as tour length divided by the optimal length, minus 1. If greedy decoding gives 3.30 and Held-Karp gives 3.00, what is the gap?", "answer": 10, "tol": 0.1, "unit": "%", "hint": "Divide the two lengths first, then subtract 1 and convert to a percentage.", "why": "\\(3.30 / 3.00 - 1 = 0.10\\), so the greedy tour is 10% longer than the optimal one."}, {"type": "mcq", "q": "What does setting the beam width to 1 do?", "options": [{"t": "It turns beam search into greedy decoding", "why": "With width 1 a single partial tour survives each step, which is exactly the greedy rule."}, {"t": "It finds the optimal tour, like Held-Karp", "why": "Held-Karp is the exact method in the panel; width 1 is the least thorough search."}, {"t": "It keeps every possible partial tour", "why": "Keeping every partial tour would be exhaustive search; the width caps how many survive."}, {"t": "It skips the edge probabilities and picks cities at random", "why": "The search still follows the edge probabilities, only with the narrowest possible beam."}], "answer": 0}], "amortized": [{"type": "mcq", "q": "Why is this called amortized optimization?", "options": [{"t": "One costly training run serves many fast solves", "why": "The upfront training cost is paid once and shared by every instance the model later solves."}, {"t": "Each problem is solved many times and the answers are averaged", "why": "The model predicts each minimizer once, in a single forward pass."}, {"t": "The network is retrained from scratch for each new problem", "why": "Retraining for every problem would remove the whole benefit of amortization."}, {"t": "It only works on problems it was trained on", "why": "The point is to generalize, which is why the panel reports the gap on unseen problems."}], "answer": 0}, {"type": "mcq", "q": "The model is trained with \\(f(\\mathrm{model}(p))\\) as its loss. What does that buy?", "options": [{"t": "Training needs no solved examples", "why": "Minimizing the objective at the predicted point pushes the network toward minimizers without ever being shown one."}, {"t": "It guarantees the global minimizer for every single problem", "why": "The network can still land in a worse valley, which is why the panel reports a nonzero gap."}, {"t": "It turns the problem into classification", "why": "The output is a point on the circle, a continuous prediction, not a class."}, {"t": "It lets the model skip training", "why": "The loss defines what training minimizes; training is still required."}], "answer": 0}, {"type": "classify", "q": "Sort each cost in the amortized setup by when it is paid.", "cats": ["Paid once, during training", "Paid again for every new problem"], "items": [{"t": "Running thousands of training steps on the 64 training problems", "cat": 0, "why": "Training happens once, and its cost is shared by all later problems."}, {"t": "Choosing the network and its input parameterization", "cat": 0, "why": "This design work is done once, before the model is used."}, {"t": "One forward pass that predicts the minimizer of an unseen problem", "cat": 1, "why": "Each new problem needs its own forward pass, but that pass is very fast."}, {"t": "Searching 2,000 angles to solve a problem from scratch", "cat": 1, "why": "A classic solver repeats its full search for every instance, which is the cost amortization avoids."}]}], "quiz": [{"type": "mcq", "q": "After \\(k\\) layers of a graph convolutional network, what information does a node's embedding encode?", "options": [{"t": "Its \\(k\\)-hop neighborhood", "why": "Each layer aggregates messages from direct neighbors, so after \\(k\\) layers a node has heard from everything within \\(k\\) hops."}, {"t": "Only the node's own input features", "why": "The self-loop keeps the node's features, but each layer also mixes in its neighbors."}, {"t": "Every node in the graph, whatever the value of \\(k\\)", "why": "Information spreads one hop per layer, so distant nodes are reached only once \\(k\\) is large enough."}, {"t": "Only the labeled nodes of the graph", "why": "Messages flow along all edges, labeled or not, which is what makes semi-supervised learning work."}], "answer": 0}, {"type": "mcq", "q": "Why is a pointer network, rather than a standard sequence-to-sequence model, a natural fit for the convex hull problem?", "options": [{"t": "Its outputs are positions in the input", "why": "A pointer network uses attention over the inputs to pick one of them at each step, so it handles any number of points."}, {"t": "It needs no training data", "why": "A pointer network is trained on targets produced by classic hull algorithms."}, {"t": "It is guaranteed to find the optimal hull", "why": "A trained ConvexNet makes mistakes, and its accuracy varies with the number of points."}, {"t": "It uses convolution over a fixed grid of points", "why": "Pointer networks use attention, and the input points do not lie on a grid."}], "answer": 0}, {"type": "match", "q": "Match each model from the chapter to what it outputs.", "pairs": [{"l": "Two-layer GCN on the karate club", "r": "The side each member joined", "why": "It does node classification, giving every member a class from a few labels and the friendship graph."}, {"l": "Pointer network", "r": "One input position per decoding step", "why": "Its attention distribution over the inputs points to the next element of the answer."}, {"l": "Graph network for the TSP", "r": "A probability for each edge", "why": "The edge probabilities are then decoded into a tour by greedy or beam search."}, {"l": "Amortized optimization model", "r": "The minimizer of a new problem", "why": "It maps the problem's parameters straight to a solution in one forward pass."}]}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

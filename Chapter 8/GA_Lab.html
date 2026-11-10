@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Genetic Algorithm Lab</title>
 <!-- katex:start -->
@@ -407,6 +476,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <p>Population-based metaheuristics repeatedly generate a new population and replace the old one; GAs build new solutions directly from existing ones.</p>
       <p class="more">Chapter 7 compares the main population-based metaheuristics and the search memory each one keeps.</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="inspiration"></div>
   </div>
 </section>
 
@@ -447,6 +517,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <div class="bench-head"><h4>How many bits?</h4><span class="eyebrow">Binary encoding</span></div>
       <div class="bench-body"><div class="side" id="bitsCtl"></div><div class="stage"><div class="calc" id="bitsCalc"></div><div id="bitsDemo"></div></div></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="algorithm"></div>
   </div>
 </section>
 
@@ -519,6 +590,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%207/Listing%207.1_Generating_initial_populations.ipynb">Listing 7.1 Initial populations</a>
       <a href="#python" data-tab="bin">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="ticket"></div>
   </div>
 </section>
 
@@ -538,6 +610,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       </div>
     </div>
     <div class="tbl-wrap" style="max-width:520px"><table id="grTbl"></table></div>
+    <!-- kc --><div class="kc" data-sec="gray"></div>
   </div>
 </section>
 
@@ -580,6 +653,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%207/Listing%20C.8_Ackley.ipynb">Listing C.8 Ackley function</a>
       <a href="#python" data-tab="real">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="real"></div>
   </div>
 </section>
 
@@ -615,6 +689,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.4_TSP.ipynb">Listing 8.4 TSP</a>
       <a href="#python" data-tab="perm">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="perm"></div>
   </div>
 </section>
 
@@ -658,6 +733,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.3_Manufacturing.ipynb">Listing 8.3 Manufacturing with NSGA-II</a>
       <a href="#python" data-tab="moo">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="moo"></div>
   </div>
 </section>
 
@@ -680,6 +756,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/GA_Lab_Companion.ipynb">GA Lab companion notebook</a>
       <a href="#python" data-tab="real">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="adaptive"></div>
   </div>
 </section>
 
@@ -703,6 +780,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%208/Listing%208.5_PID.ipynb">Listing 8.5 PID tuning</a>
       <a href="#python" data-tab="pid">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="pid"></div>
   </div>
 </section>
 
@@ -718,6 +796,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <div class="card"><h5>Cargo bike loading</h5><p>Load a cargo bike with the most valuable set of items within its capacity.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%208/Listing%20C.11_Cargo_bike.ipynb">Listing C.11</a></p></div>
       <div class="card"><h5>Opencast mining</h5><p>Plan which blocks of an opencast mine to extract.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%208/Listing%20C.12_Opencast_mining.ipynb">Listing C.12</a></p></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="more"></div>
   </div>
 </section>
 
@@ -1210,17 +1289,8 @@ plt.plot(t, y); plt.axhline(<span class="nm">1</span>, ls=<span class="st">"--"<
   <div class="wrap">
     <span class="eyebrow">Part 13 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapters 7 and 8. Pick an answer to check it.</p>
-    <div class="mcq" data-a="0">
-      <p class="mcq-q"><b>Q1.</b> What is the main risk of a parent selection operator with very high selective pressure?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>The population loses diversity and may converge prematurely to a poor solution</span></button><button type="button" class="mcq-o"><b>B</b><span>Infeasible children are produced more often</span></button><button type="button" class="mcq-o"><b>C</b><span>The GA can no longer be used for minimization problems</span></button><button type="button" class="mcq-o"><b>D</b><span>Convergence becomes much slower</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>High selective pressure picks the best individuals far more often than average ones, which speeds convergence but erodes diversity and can cause premature convergence. Slower convergence is the effect of low pressure.</template>
-    </div>
-    <div class="mcq" data-a="3">
-      <p class="mcq-q"><b>Q2.</b> Why does a permutation-based GA for the TSP need special crossover operators such as order crossover instead of ordinary 1-point crossover?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Ordinary crossover is too slow for 20 cities</span></button><button type="button" class="mcq-o"><b>B</b><span>Permutations cannot be mutated, so crossover must do all the work</span></button><button type="button" class="mcq-o"><b>C</b><span>Ordinary crossover would make every child identical to a parent</span></button><button type="button" class="mcq-o"><b>D</b><span>Ordinary crossover can duplicate some cities and drop others, so the child is not a valid tour</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>In a permutation each city must appear exactly once. Swapping tails between two tours generally duplicates some cities and loses others, so permutation GAs use order-preserving operators.</template>
-    </div>
+    <p class="prose">Three questions on Chapters 7 and 8 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%207" target="_blank" rel="noopener">Chapter 7</a> and <a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%208" target="_blank" rel="noopener">Chapter 8</a>).</p>
   </div>
 </section>
@@ -2276,15 +2346,171 @@ function pidCost(y, crit, beta) {
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"inspiration": [{"type": "match", "q": "Match each GA term to its meaning.", "pairs": [{"l": "Chromosome", "r": "A candidate solution", "why": "In a GA the whole string, such as an 8-bit ticket price, plays the role of a chromosome."}, {"l": "Gene", "r": "A position in the chromosome", "why": "Each position encodes one part of the solution, like one trait of the creature."}, {"l": "Allele", "r": "The value at a position", "why": "An allele is the variant a gene takes, such as one choice of skin for the creature."}, {"l": "Genotype", "r": "The combination of alleles", "why": "The genotype is the full set of chosen alleles, the vector shown left of the arrow in the panel."}, {"l": "Phenotype", "r": "What the genotype produces", "why": "The phenotype is the result of decoding, such as the class of animal the creature belongs to."}]}, {"type": "fill", "q": "The creature has 4 genes with 3, 4, 4 and 3 alleles, giving \\(3 \\times 4 \\times 4 \\times 3 = 144\\) genotypes. If the second gene gained one more allele, how many genotypes would there be?", "answer": 180, "tol": 0, "unit": "", "hint": "Multiply the number of alleles of every gene, using 5 for the second gene.", "why": "\\(3 \\times 5 \\times 4 \\times 3 = 180\\), so the search space grows multiplicatively with each new allele."}, {"type": "mcq", "q": "In the creature panel, some allele combinations are marked <i>Not viable<\/i>. How does a GA treat such a chromosome?", "options": [{"t": "As an infeasible solution to reject or repair", "why": "A chromosome that decodes to an impossible solution is infeasible, so the GA rejects or repairs it."}, {"t": "As the best solution, since it is so unusual", "why": "Being unusual gives no fitness advantage; an infeasible solution is not a valid answer at all."}, {"t": "As a new species added to the whole population", "why": "The GA does not invent new classes; it only keeps or discards chromosomes based on feasibility and fitness."}, {"t": "As a valid solution with an average fitness", "why": "Infeasible solutions are not scored like valid ones; they are rejected or repaired."}], "answer": 0}], "algorithm": [{"type": "order", "q": "Put the steps of one run of Algorithm 7.1 in order, starting from the initial population.", "items": ["Randomly generate an initial population", "Select parents", "Apply crossover", "Apply mutation", "Check feasibility and repair", "Evaluate the new individuals", "Select survivors"], "why": "After initialization the loop selects parents, creates and mutates offspring, repairs and evaluates them, then chooses the survivors of the next generation.", "hint": "Offspring must exist before they can be mutated, and they must be evaluated before survivors are chosen."}, {"type": "mcq", "q": "A GA maximizes fitness, but the task is to minimize an objective \\(O(x)\\). Which fitness lets the GA solve it?", "options": [{"t": "\\(f(x) = -O(x)\\)", "why": "Negating the objective turns the smallest \\(O\\) into the largest fitness, without moving the optimum."}, {"t": "\\(f(x) = O(x)\\)", "why": "Maximizing \\(O\\) itself would search for the worst solution, not the best."}, {"t": "\\(f(x) = O(x)^2\\)", "why": "Squaring keeps large objectives large, so the GA would still favor bad solutions."}, {"t": "\\(f(x) = 2\\,O(x)\\)", "why": "Scaling by a positive number keeps the same ranking, so the GA would still maximize \\(O\\)."}], "answer": 0}, {"type": "fill", "q": "A binary gene must cover the range LB = 0 to UB = 10 with precision \\(P = 0.01\\). How many bits does it need?", "answer": 10, "tol": 0, "unit": "bits", "hint": "First count the steps \\(\\lceil (\\mathrm{UB} - \\mathrm{LB}) / P \\rceil\\), then take the base-2 logarithm and round up.", "why": "There are \\(\\lceil 10 / 0.01 \\rceil = 1000\\) steps and \\(\\lceil \\log_2 1000 \\rceil = \\lceil 9.97 \\rceil = 10\\) bits."}], "ticket": [{"type": "fill", "q": "The Table 7.2 population has prices 77, 203, 110, 145 and 230 with profits $8,820, $84,420, $90,000, $128,500 and $18,000. Under fitness-proportionate selection, what is the probability of picking 145? Give 3 decimals.", "answer": 0.39, "tol": 0.002, "unit": "", "hint": "A slice of the roulette wheel is the individual's share of the total fitness.", "why": "The total is $329,740, so \\(p = 128{,}500 / 329{,}740 \\approx 0.390\\)."}, {"type": "fill", "q": "Apply 1-point crossover after bit 3 to parent 1 = 77 (01001101) and parent 2 = 145 (10010001). Child 1 keeps the first 3 bits of parent 1. What price does child 1 decode to?", "answer": 81, "tol": 0, "unit": "", "hint": "Join the first 3 bits of parent 1 to the last 5 bits of parent 2, then read the result as a binary number.", "why": "Child 1 is 010 followed by 10001, which is 01010001 = 64 + 16 + 1 = 81."}, {"type": "classify", "q": "Table 7.7 applies elitist survivor selection to the old population (77, 203, 110, 145, 230) plus offspring 81, 77 and 103, keeping 5 distinct individuals. Sort each price.", "cats": ["Survives", "Removed"], "items": [{"t": "145 ($128,500)", "cat": 0, "why": "It has the highest profit of all eight candidates, so elitism keeps it."}, {"t": "110 ($90,000)", "cat": 0, "why": "It ranks second, well inside the top five."}, {"t": "203 ($84,420)", "cat": 0, "why": "It ranks third, so it stays in the next generation."}, {"t": "103 ($76,420)", "cat": 0, "why": "The mutant of 77 ranks fourth, so mutation produced a survivor."}, {"t": "81 ($20,980)", "cat": 0, "why": "With $20,980 it just beats 230 for fifth place."}, {"t": "230 ($18,000)", "cat": 1, "why": "It ranks sixth, just below 81, so it is dropped."}, {"t": "77 ($8,820)", "cat": 1, "why": "It has the lowest profit, and its copy from crossover is a duplicate as well."}]}], "gray": [{"type": "fill", "q": "In 8-bit plain binary, how many bits differ between 15 (00001111) and 16 (00010000)?", "answer": 5, "tol": 0, "unit": "bits", "hint": "Compare the two strings position by position and count the mismatches.", "why": "The last five bits all change (01111 becomes 10000), a Hamming cliff of 5 for a step of one, while Gray code would change just one bit."}, {"type": "mcq", "q": "Using \\(g_1 = b_1\\) and \\(g_i = b_{i-1} \\oplus b_i\\), what is the Gray code of the binary string 1101?", "options": [{"t": "1011", "why": "Copy 1, then \\(1 \\oplus 1 = 0\\), \\(1 \\oplus 0 = 1\\) and \\(0 \\oplus 1 = 1\\), giving 1011."}, {"t": "1110", "why": "This would need \\(0 \\oplus 1 = 0\\) for the last bit, but the XOR of different bits is 1."}, {"t": "0010", "why": "This simply inverts every bit, but Gray coding copies the most significant bit unchanged."}, {"t": "1001", "why": "This gets the third bit wrong, since \\(1 \\oplus 0 = 1\\), not 0."}], "answer": 0}, {"type": "mcq", "q": "Why can the Hamming cliff slow down a binary GA?", "options": [{"t": "A one-step change in value can flip many bits", "why": "Neighbors such as 7 = 0111 and 8 = 1000 differ in every bit, so mutation rarely makes that small move."}, {"t": "Binary strings cannot represent neighboring values", "why": "Binary represents every value in range; the problem is how many bits separate neighbors."}, {"t": "It makes every mutation produce an infeasible child", "why": "Feasibility depends on the decoded range, not on the Hamming distance between neighbors."}, {"t": "It only matters when Gray coding is used", "why": "Gray coding is the remedy, since its neighboring values always differ by exactly one bit."}], "answer": 0}], "real": [{"type": "fill", "q": "Single arithmetic crossover recombines only gene \\(k\\). With \\(k = 6\\), \\(\\alpha = 0.3\\), \\(x_6 = 0.6\\) in parent 1 and \\(y_6 = 2.2\\) in parent 2, what is gene 6 of child 1?", "answer": 1.72, "tol": 0.005, "unit": "", "hint": "Child 1 takes \\(\\alpha\\) of parent 1's gene and \\(1 - \\alpha\\) of parent 2's gene.", "why": "\\(0.3 \\cdot 0.6 + 0.7 \\cdot 2.2 = 0.18 + 1.54 = 1.72\\)."}, {"type": "mcq", "q": "Whole arithmetic crossover sets child 1 = \\(\\alpha\\) parent 1 + \\((1 - \\alpha)\\) parent 2 and child 2 with the weights swapped. What happens with \\(\\alpha = 0.5\\)?", "options": [{"t": "Both children equal the parents’ midpoint", "why": "With equal weights, swapping them changes nothing, so both children are the average of the parents."}, {"t": "The children are copies of the parents", "why": "That happens at \\(\\alpha = 1\\) or \\(\\alpha = 0\\), where one parent gets all the weight."}, {"t": "Only half of the genes are recombined", "why": "Whole arithmetic crossover averages every gene; recombining only some genes is single or simple arithmetic."}, {"t": "The children land outside the parents' range", "why": "A weighted average with weights between 0 and 1 always lies between the two parents."}], "answer": 0}, {"type": "match", "q": "Match each real-valued mutation method to how it changes a gene \\(x\\).", "pairs": [{"l": "Gaussian", "r": "Small steps around the current value", "why": "It adds \\(N(0, \\sigma)\\), so most mutants stay near \\(x\\) and \\(\\sigma\\) sets the typical step."}, {"l": "Cauchy", "r": "Mostly small steps with occasional long jumps", "why": "Its heavier tails produce rare long jumps that help escape local optima."}, {"l": "Uniform", "r": "A random value anywhere in the range", "why": "The new value ignores \\(x\\), giving maximum exploration."}, {"l": "Boundary", "r": "Jumps to the lower or upper bound", "why": "It sets the gene to LB or UB, which helps when the optimum lies on a constraint."}]}], "perm": [{"type": "mcq", "q": "Why does inversion mutation work so well for the TSP compared with swap mutation?", "options": [{"t": "Reversing a segment breaks only two edges", "why": "Inversion is a 2-opt move, so the tour keeps almost all its adjacencies, while a swap breaks four edges."}, {"t": "Inversion never makes the tour longer", "why": "Like any mutation, inversion can make a tour worse; selection removes the bad ones."}, {"t": "Swap mutation can duplicate cities", "why": "A swap only exchanges two cities, so the result is still a valid permutation."}, {"t": "Inversion keeps every city in its absolute position", "why": "Reversing a segment moves the cities inside it; it is the edges that are mostly preserved."}], "answer": 0}, {"type": "match", "q": "Match each permutation crossover to what it preserves or how it works.", "pairs": [{"l": "Partially mapped (PMX)", "r": "Copies a segment and resolves conflicts through a mapping", "why": "A gene whose position is taken follows the mapping inside the segment until it reaches a free position."}, {"l": "Edge crossover", "r": "Preserves the parents' adjacencies", "why": "Its edge table lists each city's neighbors in either parent, the adjacency information that matters for the TSP."}, {"l": "Order 1 (OX1)", "r": "Keeps the relative order of parent 2 outside the segment", "why": "After copying parent 1's segment, it fills the rest with parent 2's genes in the order they appear."}, {"l": "Cycle crossover (CX)", "r": "Preserves absolute positions using cycles", "why": "Children take alternate cycles from alternate parents, so every gene keeps a position it had in a parent."}]}, {"type": "order", "q": "Put the steps of order 1 crossover (OX1) in order.", "items": ["Choose a segment of positions", "Copy parent 1's segment into the child", "Read parent 2's genes from just after the segment, wrapping around, skipping genes already in the child", "Place those genes in the empty positions, starting after the segment and wrapping around"], "why": "OX1 keeps a block of parent 1 intact and fills the rest with parent 2's genes in their original relative order, so the child is a valid permutation.", "hint": "The child must already hold parent 1's segment before you can tell which of parent 2's genes to skip."}], "moo": [{"type": "classify", "q": "Both objectives are minimized. Compare each point with A = (3, 4).", "cats": ["Dominates A", "Dominated by A", "Neither"], "items": [{"t": "(2, 3)", "cat": 0, "why": "It is better than A in both objectives."}, {"t": "(3, 3)", "cat": 0, "why": "It ties A in the first objective and is better in the second, which is enough to dominate."}, {"t": "(4, 5)", "cat": 1, "why": "It is worse than A in both objectives."}, {"t": "(3, 6)", "cat": 1, "why": "It ties A in the first objective and is worse in the second."}, {"t": "(2, 6)", "cat": 2, "why": "It is better in the first objective but worse in the second, so it is a trade-off with A."}, {"t": "(5, 1)", "cat": 2, "why": "It is worse in the first objective but better in the second, so neither point dominates the other."}]}, {"type": "fill", "q": "In the manufacturing problem, a plan makes all 80 units of P1 on M1 (\\(x_1 = 80\\), \\(x_2 = 0\\)) and all 300 units of P2 on M2 (\\(y_1 = 0\\), \\(y_2 = 300\\)). What is the time imbalance \\(f_2 = \\lvert (2x_1 + 4y_1) - (3x_2 + y_2) \\rvert\\)?", "answer": 140, "tol": 0.5, "unit": "h", "hint": "Compute the hours on M1 and the hours on M2 separately, then take the absolute difference.", "why": "M1 works \\(2 \\cdot 80 = 160\\) h and M2 works \\(300\\) h, so \\(f_2 = \\lvert 160 - 300 \\rvert = 140\\) h."}, {"type": "mcq", "q": "What is the role of the crowding distance in NSGA-II?", "options": [{"t": "It favors solutions in less crowded parts of a front", "why": "Among solutions in the same front, NSGA-II prefers those with larger crowding distance, which spreads the front out."}, {"t": "It sorts the population into non-dominated fronts", "why": "That is non-dominated sorting; crowding distance breaks ties within a front."}, {"t": "It combines the objectives with weights to pick one trade-off", "why": "Picking one trade-off with weights is the job of the augmented scalarization function after the run."}, {"t": "It measures how badly a solution violates the constraints", "why": "Constraint violation is handled separately; crowding distance looks at spacing in objective space."}], "answer": 0}], "adaptive": [{"type": "match", "q": "Match each step size control mode in the comparison panel to how it sets \\(\\sigma\\).", "pairs": [{"l": "Fixed \\(\\sigma\\)", "r": "Same step size for the whole run", "why": "Without parameter control the step stays at its initial value from start to finish."}, {"l": "Deterministic", "r": "Shrinks on a preset schedule", "why": "\\(\\sigma = \\sigma_0 (1 - 0.9\\, i/N)\\) depends only on the generation, not on how the search is going."}, {"l": "Adaptive (1/5 success rule)", "r": "Reacts to how often mutations succeed", "why": "The rule uses feedback from the search, the success rate of mutations, to rescale the step by the factor c."}, {"l": "Self-adaptive", "r": "Each individual carries its own step size", "why": "The step size evolves along with each solution instead of being set for the whole population."}]}, {"type": "fill", "q": "With the deterministic schedule \\(\\sigma = \\sigma_0 (1 - 0.9\\, i/N)\\), \\(\\sigma_0 = 1\\) and \\(N = 300\\) generations, what is \\(\\sigma\\) at generation \\(i = 200\\)?", "answer": 0.4, "tol": 0.005, "unit": "", "hint": "Find the fraction of the run completed, \\(i / N\\), and plug it in.", "why": "\\(1 \\cdot (1 - 0.9 \\cdot 200 / 300) = 1 - 0.6 = 0.4\\)."}, {"type": "mcq", "q": "Why does a schedule that shrinks the mutation step \\(\\sigma\\) during the run often help?", "options": [{"t": "It moves the search from exploration to exploitation", "why": "Large early steps explore the space, and small late steps fine-tune the best solutions found."}, {"t": "It guarantees that the global optimum is always found", "why": "No step size schedule guarantees the optimum; it only improves the balance of the search."}, {"t": "It removes the need for crossover in the algorithm", "why": "Crossover still recombines good solutions; the schedule only controls mutation."}, {"t": "It keeps the diversity high until the very last generation", "why": "Shrinking steps does the opposite late in the run, focusing the population near the best solutions."}], "answer": 0}], "pid": [{"type": "classify", "q": "Sort the GA performance criteria offered in the step response lab by how they treat the error \\(e\\).", "cats": ["Absolute error", "Squared error"], "items": [{"t": "IAE", "cat": 0, "why": "IAE integrates \\(\\lvert e \\rvert\\), so every unit of error counts equally."}, {"t": "ITAE", "cat": 0, "why": "ITAE integrates \\(t\\lvert e \\rvert\\), the absolute error weighted by time."}, {"t": "ISE", "cat": 1, "why": "ISE integrates \\(e^2\\), so large errors are penalized much more than small ones."}, {"t": "ITSE", "cat": 1, "why": "ITSE integrates \\(t e^2\\), the squared error weighted by time."}]}, {"type": "fill", "q": "With \\(u(t) = K_p e + K_i \\int e\\,dt + K_d \\frac{de}{dt}\\), \\(K_p = 20\\), \\(K_i = 10\\), \\(K_d = 0\\), a current error \\(e = 0.5\\) and an accumulated error \\(\\int e\\,dt = 0.2\\), what is the control signal \\(u\\)?", "answer": 12, "tol": 0.01, "unit": "", "hint": "Add the proportional and integral terms; the derivative term vanishes because \\(K_d = 0\\).", "why": "\\(u = 20 \\cdot 0.5 + 10 \\cdot 0.2 + 0 = 10 + 2 = 12\\)."}, {"type": "mcq", "q": "How does ITAE \\(= \\int t\\lvert e \\rvert\\, dt\\) differ from IAE \\(= \\int \\lvert e \\rvert\\, dt\\) as a GA objective?", "options": [{"t": "Errors are weighted by time, so late errors cost more", "why": "Multiplying by \\(t\\) penalizes slow settling and lingering error more than the unavoidable error at the start."}, {"t": "It squares the error, so the largest errors cost the most", "why": "Squaring the error is what ISE and ITSE do; ITAE uses the absolute value."}, {"t": "It ignores errors after the settling time", "why": "The integral covers the whole response, and late errors actually get a larger weight."}, {"t": "It combines overshoot, rise time and settling time", "why": "That describes the combined criterion \\(W\\), not ITAE."}], "answer": 0}], "more": [{"type": "match", "q": "Match each GA application to its goal.", "pairs": [{"l": "Political districting", "r": "Group neighborhoods into balanced districts", "why": "Listing 8.6 groups Toronto neighborhoods into balanced electoral districts."}, {"l": "Facility allocation", "r": "Choose locations and assignments", "why": "The GA decides where facilities go and how they are assigned."}, {"l": "All ones", "r": "Evolve a string of 1s", "why": "It is the classic warm-up for binary GAs because the target string is simple to check."}, {"l": "Cargo bike loading", "r": "Pick the most valuable load within capacity", "why": "The GA selects the set of items with the highest value that still fits the bike's capacity."}, {"l": "Opencast mining", "r": "Decide which blocks to extract", "why": "The GA plans which blocks of the mine to remove."}]}, {"type": "classify", "q": "Sort each problem from the lab by the encoding the GA uses for it.", "cats": ["Binary", "Real-valued", "Permutation"], "items": [{"t": "Ticket pricing (Listing 7.2)", "cat": 0, "why": "Each integer price from 75 to 235 is stored as an 8-bit chromosome."}, {"t": "All ones", "cat": 0, "why": "It is the classic warm-up for binary GAs, evolving a bit string toward all 1s."}, {"t": "Curve fitting coefficients a, b, c, d", "cat": 1, "why": "The four coefficients are continuous, so real-valued genes with arithmetic crossover suit them."}, {"t": "PID gains Kp, Ki, Kd", "cat": 1, "why": "The three gains are continuous values in [0, 100], a 3-variable real-valued problem."}, {"t": "Manufacturing plan with NSGA-II", "cat": 1, "why": "The production quantities are evolved as real numbers with SBX and polynomial mutation."}, {"t": "20-city TSP", "cat": 2, "why": "A tour is an order of cities in which each city appears exactly once."}]}, {"type": "mcq", "q": "In cargo bike loading, which candidate solution is infeasible?", "options": [{"t": "A set of items that exceeds the capacity", "why": "The capacity is a hard constraint, so an overloaded bike is infeasible no matter how valuable the load."}, {"t": "A set of items with a low total value", "why": "A low value makes a solution poor, but it is still feasible if it fits."}, {"t": "An empty bike with no items loaded at all", "why": "An empty load respects the capacity, so it is feasible, just worthless."}, {"t": "A load that uses exactly the full capacity", "why": "Filling the capacity exactly still satisfies the constraint."}], "answer": 0}], "quiz": [{"type": "mcq", "q": "What is the main risk of a parent selection operator with very high selective pressure?", "options": [{"t": "Loss of diversity and premature convergence", "why": "Picking the best far more often than average individuals speeds convergence but erodes diversity, which can trap the GA at a poor solution."}, {"t": "Infeasible children are produced more often", "why": "Feasibility depends on crossover, mutation and the bounds, not on how strongly parents are favored."}, {"t": "The GA can no longer solve minimization problems", "why": "Minimization is handled by transforming the objective into a fitness, whatever selection operator is used."}, {"t": "Convergence becomes much slower", "why": "Slow convergence is the effect of low selective pressure, such as random selection."}], "answer": 0}, {"type": "mcq", "q": "Why does a permutation-based GA for the TSP need special crossover operators such as order crossover instead of ordinary 1-point crossover?", "options": [{"t": "Ordinary crossover can duplicate some cities and drop others", "why": "Each city must appear exactly once, and swapping tails between two tours generally breaks that, so the child is not a valid tour."}, {"t": "Ordinary crossover is too slow for 20 cities", "why": "Swapping tails is very fast; the issue is the validity of the child, not speed."}, {"t": "Permutations cannot be mutated, so crossover does all the work", "why": "Permutations have their own mutations, such as swap, insert, inversion and scramble."}, {"t": "Ordinary crossover makes every child identical to a parent", "why": "1-point crossover mixes genes from both parents; the trouble is that the mix repeats and loses cities."}], "answer": 0}, {"type": "mcq", "q": "In the ticket pricing lab, the <i>No mutation<\/i> preset runs the GA with crossover only (\\(p_m = 0\\)). What typically happens?", "options": [{"t": "Diversity is lost and the search can stall", "why": "Crossover only recombines alleles already present, so once they are lost nothing brings them back; mutation keeps every allele reachable."}, {"t": "The offspring become almost random", "why": "Near-random offspring are the symptom of too much mutation, as in the preset with \\(p_m = 0.4\\)."}, {"t": "The GA always finds the optimum faster", "why": "Without mutation the search can get stuck before reaching $155, so it is not reliably faster."}, {"t": "Every child falls outside the 75 to 235 range", "why": "Crossover of feasible parents can still give feasible prices; infeasible children are simply rejected."}], "answer": 0}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

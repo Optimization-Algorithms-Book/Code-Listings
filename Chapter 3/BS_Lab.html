@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Blind Search Lab</title>
 <!-- katex:start -->
@@ -370,6 +439,7 @@ td.del{color:var(--muted);text-decoration:line-through}
         <div class="stage"><div id="gtCtl"></div><canvas id="gtCv" class="cv-sq" aria-label="Example graph"></canvas><p class="cap" id="gtNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="graphs"></div>
   </div>
 </section>
 
@@ -394,6 +464,7 @@ td.del{color:var(--muted);text-decoration:line-through}
         <p class="cap">Costs are in parentheses; the outlined chip is the next one popped.</p>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="search"></div>
   </div>
 </section>
 
@@ -464,6 +535,7 @@ td.del{color:var(--muted);text-decoration:line-through}
         </div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="traversal"></div>
   </div>
 </section>
 
@@ -496,6 +568,7 @@ td.del{color:var(--muted);text-decoration:line-through}
         <div class="stage"><canvas id="biCv" class="cv-sq" style="aspect-ratio:16/9" aria-label="Explored cells for one and two searches"></canvas><div class="btns"><button id="biRun" class="primary small">Run both</button><button id="biNew" class="small">New endpoints</button></div><p class="cap" id="biNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="shortest"></div>
   </div>
 </section>
 
@@ -525,6 +598,7 @@ td.del{color:var(--muted);text-decoration:line-through}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%203/Listing%203.8_folium.ipynb">Listing 3.8 folium</a>
       <a href="#python" data-tab="r">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="routing"></div>
   </div>
 </section>
 
@@ -941,17 +1015,8 @@ b = <span class="nm">5</span>
   <div class="wrap">
     <span class="eyebrow">Part 8 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 3. Pick an answer to check it.</p>
-    <div class="mcq" data-a="1">
-      <p class="mcq-q"><b>Q1.</b> On a graph where every edge counts the same, which blind search is guaranteed to return a path with the fewest edges, and what does it pay for that guarantee?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>DFS, because its stack always explores the shortest branch first</span></button><button type="button" class="mcq-o"><b>B</b><span>BFS, at the cost of keeping every generated node in memory</span></button><button type="button" class="mcq-o"><b>C</b><span>DFS, at the cost of exploring every node before stopping</span></button><button type="button" class="mcq-o"><b>D</b><span>BFS, at the cost of possibly looping forever in an infinite tree</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>BFS uses a FIFO queue and explores layer by layer, so the first time it reaches the goal it has used the fewest edges, but all generated nodes stay in memory. DFS saves memory yet can wander down a long branch and return a longer path.</template>
-    </div>
-    <div class="mcq" data-a="3">
-      <p class="mcq-q"><b>Q2.</b> In bidirectional Dijkstra, when is it safe to stop and report the shortest path?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>As soon as some node has been reached by both searches</span></button><button type="button" class="mcq-o"><b>B</b><span>When one of the two frontiers becomes empty</span></button><button type="button" class="mcq-o"><b>C</b><span>After each search has settled half of the nodes</span></button><button type="button" class="mcq-o"><b>D</b><span>When the two smallest frontier distances add up to at least the best meeting cost found so far</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>The first node where the two searches meet is not always on the shortest path. Only when no unsettled node could still give a cheaper connection, that is, when the smallest forward and backward frontier distances sum to at least the best meeting cost, is the result guaranteed optimal.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 3 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>.</p>
   </div>
 </section>
@@ -1626,15 +1691,171 @@ const RB_W = 16, RB_H = 10, RB_COMPASS = [["S", 1, 0], ["SE", 1, 1], ["E", 0, 1]
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"graphs": [{"type": "mcq", "q": "In the graph types panel, Listing 3.2 (<code>nx.DiGraph()<\/code>) uses the same edges as Listing 3.1 (<code>nx.Graph()<\/code>). What changes?", "options": [{"t": "Each edge can now be traveled only one way", "why": "A directed graph gives every edge a direction, like a one-way street."}, {"t": "Each edge now carries a numeric weight", "why": "Weights belong to the weighted graph of Listing 3.6, not to a plain directed graph."}, {"t": "Pairs of nodes can now share parallel edges", "why": "Parallel edges are the mark of the multigraph in Listing 3.3."}, {"t": "One edge can now join more than two nodes", "why": "Edges that join any number of nodes are the hyperedges of Listing 3.5."}], "answer": 0}, {"type": "match", "q": "Match each graph type from the lab's panel to what it captures.", "pairs": [{"l": "Directed graph", "r": "One-way streets and task dependencies", "why": "In a directed graph every edge points one way, like a one-way street."}, {"l": "Multigraph", "r": "Several parallel edges between the same two nodes", "why": "A multigraph allows parallel roads or multiple relationships between one pair of nodes."}, {"l": "Directed acyclic graph", "r": "No path ever leads back to where it started", "why": "Acyclic means no directed cycle exists, as in task precedence."}, {"l": "Hypergraph", "r": "One edge can join any number of nodes", "why": "A hyperedge such as \\(\\{A, C, D, E, F\\}\\) links more than two nodes at once."}, {"l": "Weighted graph", "r": "Edges carry values such as connection speed", "why": "In the telecommunication example, each edge weight is a connection speed in Mbps."}]}, {"type": "classify", "q": "The lab models puzzles, devices and roads as graphs. Is each element a vertex or an edge?", "cats": ["Vertex", "Edge"], "items": [{"t": "One board arrangement of the 8-puzzle", "cat": 0, "why": "Each puzzle state is a node of the state graph that BFS and DFS search."}, {"t": "Sliding the blank one square to the left", "cat": 1, "why": "A move turns one board into another, so it joins two states as an edge."}, {"t": "A telecommunication device in Listing 3.6", "cat": 0, "why": "The devices are the nodes, and the connections between them carry the weights."}, {"t": "The connection between two devices", "cat": 1, "why": "A connection joins two devices, and its weight is the speed in Mbps."}, {"t": "The King Edward VII statue on the campus map", "cat": 0, "why": "The routing lab snaps the statue to its nearest road node and starts the search there."}, {"t": "A road segment between two intersections", "cat": 1, "why": "Road segments join intersections and carry the lengths that Dijkstra adds up."}]}], "search": [{"type": "mcq", "q": "In the stacks-and-queues panel, you push A (5), then B (2), then C (7), where the numbers are costs. What do the stack, the queue and the priority queue pop first?", "options": [{"t": "Stack C, queue A, priority queue B", "why": "The stack is LIFO (last in, C), the queue is FIFO (first in, A) and the priority queue pops the lowest cost (B)."}, {"t": "Stack A, queue C, priority queue B", "why": "This swaps LIFO and FIFO: a stack returns the last item pushed, not the first."}, {"t": "Stack C, queue A, priority queue C", "why": "A priority queue pops the lowest cost first, and C has the highest cost."}, {"t": "All three pop B, the cheapest item", "why": "Only the priority queue looks at cost; the stack and queue use insertion order."}], "answer": 0}, {"type": "classify", "q": "Sort each blind search by the container that holds its frontier.", "cats": ["Stack (LIFO)", "Queue (FIFO)", "Priority queue"], "items": [{"t": "Depth-first search", "cat": 0, "why": "DFS always takes the newest node, so it dives deep before it backtracks."}, {"t": "Breadth-first search", "cat": 1, "why": "BFS always takes the oldest node, so it explores layer by layer."}, {"t": "Depth-limited search", "cat": 0, "why": "DLS visits states in depth-first order, only with a cap on how deep it may go."}, {"t": "Uniform-cost search", "cat": 2, "why": "UCS always pops the node with the lowest cost so far."}, {"t": "Dijkstra's algorithm", "cat": 2, "why": "Dijkstra keeps unsettled nodes ordered by distance and settles the closest one next."}]}, {"type": "mcq", "q": "The lab's from-scratch <code>graph_search<\/code> runs BFS. If you change only its frontier from a FIFO queue to a LIFO stack, what do you get?", "options": [{"t": "Depth-first search", "why": "Popping the newest node sends the search deep down one branch, which is exactly DFS."}, {"t": "Uniform-cost search", "why": "UCS needs a priority queue ordered by path cost, not a stack."}, {"t": "Dijkstra's algorithm", "why": "Dijkstra settles the closest node, so it also needs a priority queue keyed by distance."}, {"t": "Bidirectional search", "why": "Bidirectional search runs two searches from both ends, which a change of container does not create."}], "answer": 0}], "traversal": [{"type": "order", "q": "Put the steps of BFS (Algorithm 3.1) in order, from setup to adding a new child.", "items": ["Put the source in a FIFO queue (the frontier)", "Dequeue the node at the front of the frontier", "Add that node to the explored set", "Expand the node to generate its children", "Skip any child already explored or in the frontier", "Check whether the new child is the destination", "Add the child to the back of the frontier"], "why": "BFS pops from the front of a FIFO queue, expands, tests each new child for the goal on generation, and appends the rest, so nodes leave in layer order.", "hint": "The goal test happens on each newly generated child, after the repeated-state check and before it joins the frontier."}, {"type": "fill", "q": "The book's 8-puzzle board, read row by row, is 1 4 2 / 3 7 5 / 6 _ 8 (the blank is _). Ignoring the blank, how many <b>inversions<\/b> (pairs of tiles in the wrong relative order) does it have?", "answer": 4, "tol": 0, "unit": "", "hint": "List the tiles as 1, 4, 2, 3, 7, 5, 6, 8 and count each pair where a larger tile comes before a smaller one.", "why": "The inversions are (4, 2), (4, 3), (7, 5) and (7, 6), so there are 4, an even number, which means the board is solvable."}, {"type": "mcq", "q": "In the 8-puzzle lab, iterative deepening (IDS) returns a solution as short as the one BFS finds, while plain DFS does not. Why?", "options": [{"t": "It tries depth limits 0, 1, 2, ... and stops at its first success", "why": "No solution exists below the first depth that succeeds, so the first one IDS finds is the shortest."}, {"t": "It visits every state exactly once, summed over all of its passes", "why": "Each new pass repeats the shallower levels, so IDS does revisit states."}, {"t": "It orders the boards by how many of their tiles are misplaced", "why": "IDS is blind: it uses only a depth limit, not an estimate of the distance to the goal."}, {"t": "It switches to a FIFO queue whenever the depth limit is reached", "why": "Each IDS pass is a depth-limited search in depth-first order, never a queue."}], "answer": 0}], "shortest": [{"type": "fill", "q": "In the Dijkstra stepper, the edges are S-A 11, S-C 3, S-D 6, C-A 6, C-B 8, C-D 2, A-B 3 and D-B 5. What is the shortest distance from S to B?", "answer": 10, "tol": 0, "unit": "", "hint": "Settle C first, then see whether going through C improves the distances to D and B.", "why": "The route S-C-D-B costs \\(3 + 2 + 5 = 10\\), which beats S-C-B (11), S-D-B (11) and S-C-A-B (12)."}, {"type": "order", "q": "On the same graph, in what order does Dijkstra's algorithm from S settle (relax) the five nodes?", "items": ["S (distance 0)", "C (distance 3)", "D (distance 5)", "A (distance 9)", "B (distance 10)"], "why": "Dijkstra always settles the closest unsettled node: S at 0, C at 3, D at 5 via C, A at 9 via C, and B at 10 via D.", "hint": "After settling C, the distances to A and D both improve, so recheck which unsettled node is now closest."}, {"type": "mcq", "q": "How does uniform-cost search (UCS) differ from the original Dijkstra's algorithm?", "options": [{"t": "It starts with only the source and stops once the target is popped", "why": "UCS adds nodes only as it discovers them, which is why the stepper shows it settling fewer nodes than Dijkstra."}, {"t": "It ignores edge costs and expands nodes one layer at a time", "why": "UCS orders nodes by path cost; it matches BFS only when every move costs the same, as in the 8-puzzle."}, {"t": "It is designed for graphs that have negative edge costs", "why": "Like Dijkstra, UCS relies on non-negative edge costs to return optimal routes."}, {"t": "It puts every node in the queue at the start, at infinite distance", "why": "That describes the original Dijkstra; UCS fills its queue as it discovers nodes."}], "answer": 0}], "routing": [{"type": "mcq", "q": "In the book's campus run (Table 3.7), Dijkstra returned a shorter route than BFS (806.892 m versus 955.962 m). Why?", "options": [{"t": "Dijkstra adds up road lengths; BFS only counts edges", "why": "BFS finds the route with the fewest road segments, which need not have the fewest meters."}, {"t": "Dijkstra explored fewer road nodes than BFS did", "why": "Dijkstra actually explored more nodes in the book's run (393 versus 278)."}, {"t": "BFS got caught in a cycle and had to stop early", "why": "BFS tracks explored nodes, so it does not loop; it simply ignores edge lengths."}, {"t": "Dijkstra searched from both ends of the route at once", "why": "That describes bidirectional search; plain Dijkstra searches from the source only."}], "answer": 0}, {"type": "classify", "q": "On the campus road network, which algorithms are guaranteed to return the route with the smallest total length?", "cats": ["Guaranteed shortest length", "Not guaranteed"], "items": [{"t": "Dijkstra's algorithm", "cat": 0, "why": "With non-negative road lengths, settling nodes in order of distance gives the optimal route."}, {"t": "Uniform-cost search", "cat": 0, "why": "UCS is Dijkstra for one destination, so the route it returns when the destination is popped is optimal."}, {"t": "Bidirectional Dijkstra with the correct stopping rule", "cat": 0, "why": "Stopping only when the two smallest frontier distances reach the best meeting cost keeps the result optimal."}, {"t": "Breadth-first search", "cat": 1, "why": "BFS minimizes the number of edges, not meters, so its route can be longer."}, {"t": "Depth-first search", "cat": 1, "why": "DFS dives down one branch and returned a 3,347 m route in the book's run."}]}, {"type": "match", "q": "Press <b>Compare all<\/b> in the campus routing lab. Match each algorithm to what the comparison shows about it.", "pairs": [{"l": "Dijkstra's algorithm", "r": "Holds every node in its queue from the start", "why": "The original Dijkstra loads all nodes at an infinite distance before it begins."}, {"l": "Uniform-cost search", "r": "Holds only the nodes it has discovered", "why": "UCS settles the same nodes as Dijkstra but adds them to its queue as it finds them."}, {"l": "Bidirectional Dijkstra (correct stop)", "r": "Optimal while exploring fewer nodes", "why": "Two searches that meet in the middle sweep less of the map and still return the shortest route."}, {"l": "Bidirectional Dijkstra (stop at first meeting)", "r": "Can return a longer route", "why": "The first node where the searches meet is not always on the shortest path."}]}], "quiz": [{"type": "mcq", "q": "On a graph where every edge counts the same, which blind search is guaranteed to return a path with the fewest edges, and what does it pay for that guarantee?", "options": [{"t": "DFS, because its stack always explores the shortest branch first", "why": "A stack sends DFS down the newest branch, which may be long, so it can return a path with extra edges."}, {"t": "BFS, at the cost of keeping every generated node in memory", "why": "BFS explores layer by layer, so it first reaches the goal with the fewest edges, but its frontier grows as \\(O(b^d)\\)."}, {"t": "DFS, at the cost of exploring every node before stopping", "why": "DFS stops at the first goal it meets, and that path is not guaranteed to be the shortest."}, {"t": "BFS, at the cost of possibly looping forever in an infinite tree", "why": "Wandering down a long branch is the risk of DFS, while BFS finishes each layer before going deeper."}], "answer": 1}, {"type": "mcq", "q": "In bidirectional Dijkstra, when is it safe to stop and report the shortest path?", "options": [{"t": "As soon as any node has been reached by both the forward and backward searches", "why": "The first meeting node is not always on the shortest path, so stopping there can return a longer route."}, {"t": "When one of the two frontiers has become completely empty of nodes", "why": "Waiting for an empty frontier is safe but wastes the speedup, because the answer is usually known much earlier."}, {"t": "After each of the two searches has settled half of all the nodes", "why": "The number of settled nodes says nothing about whether a cheaper connection could still appear."}, {"t": "When the two smallest frontier keys sum to at least the best meeting cost", "why": "At that point no unsettled node can still give a cheaper connection, so the best meeting cost is optimal."}], "answer": 3}, {"type": "match", "q": "Match each situation to the blind search that suits it best.", "pairs": [{"l": "Fewest edges to the goal, with memory to spare", "r": "Breadth-first search", "why": "BFS finds the shallowest goal first but keeps every generated node in memory."}, {"l": "Any valid path using as little memory as possible", "r": "Depth-first search", "why": "DFS dives deep and backtracks, using little memory, though its path may be long."}, {"l": "Shortest distances from one source to every node", "r": "Dijkstra's algorithm", "why": "The original Dijkstra settles every node, so it yields the distance from the source to all of them."}, {"l": "Cheapest route to one target, adding nodes only as they are found", "r": "Uniform-cost search", "why": "UCS starts with only the source and stops as soon as the target is popped."}]}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

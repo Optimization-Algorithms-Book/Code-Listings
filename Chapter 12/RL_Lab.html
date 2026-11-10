@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Reinforcement Learning Lab</title>
 <!-- katex:start -->
@@ -445,6 +514,7 @@ tr.dim td{color:var(--muted)}
       <p>An agent observes a state, takes an action from its policy \(\pi\), collects a reward and moves on, learning by trial and error. In <b>Markov decision processes</b> (MDPs) actions change future states; in <b>multi-armed bandits</b> the agent only chooses among actions.</p>
       <p class="more">Section 12.1 explains the agent-environment loop (Figure 12.3) and maps the RL algorithm families in Figure 12.1.</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="rl"></div>
   </div>
 </section>
 
@@ -491,6 +561,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="qlCv" class="cv-sq" style="aspect-ratio:1/1;max-height:520px;cursor:pointer" aria-label="Gridworld"></canvas><canvas id="qlChart" class="cv-chart" style="height:150px" aria-label="Steps per episode"></canvas><p class="cap" id="qlNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="mdp"></div>
   </div>
 </section>
 
@@ -502,6 +573,7 @@ tr.dim td{color:var(--muted)}
       <p><b>Policy gradient</b> methods make actions with a positive <b>advantage</b> \(\hat{A} = Q(s, a) - V(s)\) more likely; in <b>actor-critic</b> methods such as A2C, a critic network estimates \(V(s)\) for the actor.</p>
       <p class="more">Sections 12.1.2 to 12.1.4 build up equations 12.1 to 12.4, compare model-based, model-free, on-policy and off-policy methods (Tables 12.1 and 12.2), and draw A2C in Figure 12.5.</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="values"></div>
   </div>
 </section>
 
@@ -520,6 +592,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="cpCv" class="cv-sq" style="aspect-ratio:16/7" aria-label="Cart and pole"></canvas><canvas id="cpChart" class="cv-chart" style="height:170px" aria-label="Return per episode"></canvas><p class="cap" id="cpNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="cartpole"></div>
   </div>
 </section>
 
@@ -548,6 +621,7 @@ tr.dim td{color:var(--muted)}
       <div class="prose"><p>The <b>KL divergence</b> measures how different two distributions are; it is not symmetric. Move the sliders to see it change.</p><p class="more">Section 12.1.5 defines it and shows its role in PPO.</p></div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>KL divergence between two Gaussians</h4></div><div class="stage"><div id="klCtl"></div><canvas id="klCv" class="cv-chart" style="height:180px" aria-label="Two Gaussian densities"></canvas><div class="stats" id="klStats"></div></div></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="ppo"></div>
   </div>
 </section>
 
@@ -567,6 +641,7 @@ tr.dim td{color:var(--muted)}
     </div></div>
     <div class="tbl-wrap"><table class="ttab" id="mbTbl"></table></div>
     <p class="cap" id="mbNote"></p>
+    <!-- kc --><div class="kc" data-sec="mab"></div>
   </div>
 </section>
 
@@ -585,6 +660,7 @@ tr.dim td{color:var(--muted)}
         <div class="stage"><canvas id="cbChart" class="cv-chart" style="height:170px" aria-label="Reward per iteration"></canvas><div class="tbl-wrap"><table class="ttab" id="cbTbl"></table></div><p class="cap" id="cbNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="cmab"></div>
   </div>
 </section>
 
@@ -596,6 +672,7 @@ tr.dim td{color:var(--muted)}
       <p>Framed as an MDP, a combinatorial problem can be solved by a learned policy.</p>
       <p class="more">Sections 12.2 and 12.4 survey routing, dispatch and traffic applications, and Listing 12.4 coordinates a mobile network with PPO.</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="rlopt"></div>
   </div>
 </section>
 
@@ -943,17 +1020,8 @@ print(<span class="st">"best noise-free book reward: medium, electric, performan
   <div class="wrap">
     <span class="eyebrow">Part 11 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 12. Pick an answer to check it.</p>
-    <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> In PPO-clip, the advantage \(\hat{A}\) of an action is positive and the probability ratio \(r(\theta)\) has already risen above \(1 + \varepsilon\). What does the clipped objective \(L^{\text{CLIP}}\) do?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>It keeps rewarding further increases of \(r(\theta)\) in proportion to \(\hat{A}\)</span></button><button type="button" class="mcq-o"><b>B</b><span>It reverses the update and pushes \(r(\theta)\) back below 1</span></button><button type="button" class="mcq-o"><b>C</b><span>It goes flat, so there is no gain from making the action even more likely</span></button><button type="button" class="mcq-o"><b>D</b><span>It adds a KL penalty that grows with \(r(\theta)\)</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Above \(1 + \varepsilon\) the clipped term caps the objective at \((1 + \varepsilon)\hat{A}\), so the gradient is zero and the update has no incentive to move the policy further from the old one. A KL penalty belongs to the separate PPO-penalty variant.</template>
-    </div>
-    <div class="mcq" data-a="1">
-      <p class="mcq-q"><b>Q2.</b> Why can the purely greedy (exploit-only) bandit strategy get stuck on a worse slot machine, while UCB does not?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Greedy uses a larger discount factor \(\gamma\) than UCB</span></button><button type="button" class="mcq-o"><b>B</b><span>Greedy trusts early, noisy averages and never retries the other machines, while UCB adds an uncertainty bonus that grows for rarely played machines</span></button><button type="button" class="mcq-o"><b>C</b><span>UCB knows the true payoff distributions in advance</span></button><button type="button" class="mcq-o"><b>D</b><span>Greedy explores at random with probability \(\varepsilon\), which wastes pulls</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>After one unlucky payoff, a greedy player never pulls the best machine again. UCB plays \(\arg\max_a \left[Q(a) + c\sqrt{\ln t / N(a)}\right]\), so a machine pulled only a few times keeps a large bonus and gets retried.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 12 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2012" target="_blank" rel="noopener">Chapter 12</a>).</p>
   </div>
 </section>
@@ -1774,15 +1842,171 @@ codeTabs({ m: "The commute of Figure 12.2, Reach the Treasure by value iteration
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"rl": [{"type": "order", "q": "Put one turn of the agent-environment loop in order.", "items": ["Observe the current state", "Choose an action from the policy \\(\\pi\\)", "Collect the reward for that action", "Move on to the next state and repeat"], "why": "The agent acts on what it observes, the policy turns that state into an action, and the reward and next state follow from the action.", "hint": "The policy needs a state to act on, and the reward can only come after an action."}, {"type": "classify", "q": "Sort each problem from this lab by the kind of RL problem it is.", "cats": ["Markov decision process", "Bandit"], "items": [{"t": "The commute, with its chance nodes", "cat": 0, "why": "The first choice leads to further states, such as the waiting room, where more happens before the goal."}, {"t": "Reach the Treasure", "cat": 0, "why": "Each move changes the cell the agent is in, and so which rewards it can still reach."}, {"t": "Balancing CartPole", "cat": 0, "why": "Every push changes the cart and pole state that the next decision faces."}, {"t": "Choosing among three slot machines", "cat": 1, "why": "Pulling an arm never changes the machines, so the agent only chooses among actions."}, {"t": "Choosing a truck for each route type", "cat": 1, "why": "It is a contextual bandit: the route is side information, and the choice does not change the next route."}]}, {"type": "mcq", "q": "How does an RL agent find out which actions are good?", "options": [{"t": "By trial and error, from the rewards", "why": "The agent tries actions, collects rewards and adjusts its policy toward actions that paid off."}, {"t": "From examples labeled with the right action", "why": "Labeled examples belong to supervised learning; an RL agent only sees rewards for what it did."}, {"t": "By clustering similar states together", "why": "Clustering groups unlabeled data, but it does not tell the agent which action earns more reward."}], "answer": 0}], "mdp": [{"type": "fill", "q": "In the nondeterministic commute, the car takes 50 min with probability 30%, 1 h 7 min with 50% and 2 h with 20%. What is the expected driving time?", "answer": 72.5, "tol": 0.3, "unit": "min", "hint": "Convert each time to minutes, weight it by its probability and add.", "why": "\\(0.3 \\cdot 50 + 0.5 \\cdot 67 + 0.2 \\cdot 120 = 15 + 33.5 + 24 = 72.5\\) min, longer than the 67 min of the deterministic model."}, {"type": "mcq", "q": "With the book's policy, the expected return of Reach the Treasure contains the term \\(0.4 \\cdot 0.2 \\cdot (-10)\\). What does it stand for?", "options": [{"t": "Going left to the treasure, then into the fire", "why": "The agent goes left with probability 0.4, then left into the fire pit with 0.2, and that path's reward of \\(-10\\) is weighted by \\(0.4 \\cdot 0.2\\)."}, {"t": "Going right to the exit after the treasure", "why": "Reaching the exit pays \\(+4\\), not \\(-10\\), so it cannot be this term."}, {"t": "Walking into the fire pit at the very first move", "why": "From the start, the fire pit is not one move away; the agent first reaches the treasure cell."}], "answer": 0}, {"type": "mcq", "q": "In the Q-learning gridworld, \\(Q\\) starts at zero everywhere. How does the value of the treasure reach the start cell?", "options": [{"t": "It spreads backward a step per visit", "why": "Each update moves \\(Q(s, a)\\) toward the reward plus the best value of the next cell, so the treasure's value travels back one step at a time."}, {"t": "The agent is told the map in advance", "why": "Q-learning is model-free: it learns only from the rewards and next states it actually experiences."}, {"t": "All cells are updated at once after each episode", "why": "Only the cells the agent visits are updated, one step at a time, which is why early episodes wander."}], "answer": 0}], "values": [{"type": "mcq", "q": "A policy gradient update finds that an action had a negative advantage \\(\\hat{A}\\). What happens to that action?", "options": [{"t": "It becomes less likely", "why": "A negative \\(\\hat{A}\\) means the action did worse than expected, so the update lowers its probability."}, {"t": "It becomes more likely", "why": "Only actions with a positive advantage are made more likely."}, {"t": "Its probability stays the same", "why": "That is the case only when \\(\\hat{A} = 0\\), meaning the action did exactly as well as expected."}], "answer": 0}, {"type": "match", "q": "Match each actor-critic term to its role.", "pairs": [{"l": "\\(Q(s, a)\\)", "r": "Return of taking an action in a state", "why": "It rates a specific action in a specific state, as Q-learning learns it."}, {"l": "\\(V(s)\\)", "r": "Expected return of the state itself", "why": "It rates the state without fixing the action, which makes it the baseline for the advantage."}, {"l": "\\(\\hat{A}\\)", "r": "How much better an action did than expected", "why": "\\(\\hat{A} = Q(s, a) - V(s)\\) compares the action with the state's value."}, {"l": "Critic", "r": "Network that estimates V(s)", "why": "In A2C the critic learns \\(V(s)\\) so the actor can compute advantages."}, {"l": "Actor", "r": "Network that outputs the policy", "why": "The actor picks actions, and the advantage tells it which ones to reinforce."}]}, {"type": "fill", "q": "In some state, \\(Q(s, a) = 4.2\\) and \\(V(s) = 5.0\\). What is the advantage \\(\\hat{A}\\) of that action?", "answer": -0.8, "tol": 0.01, "unit": "", "hint": "Subtract the value of the state from the value of the action.", "why": "\\(\\hat{A} = 4.2 - 5.0 = -0.8\\), so the action did worse than the state's average and the update makes it less likely."}], "cartpole": [{"type": "classify", "q": "Sort each event in the CartPole panel by whether it ends the episode.", "cats": ["Ends the episode", "Does not end it"], "items": [{"t": "The pole tips past 12°", "cat": 0, "why": "Past 12° the pole counts as fallen, which is the usual way an untrained agent's episode ends."}, {"t": "The cart crosses a red dashed boundary", "cat": 0, "why": "The dashed lines mark the edge of the track, and leaving it stops the episode."}, {"t": "The agent has balanced for 500 steps", "cat": 0, "why": "500 steps is the maximum return, so the episode stops at that limit."}, {"t": "The agent pushes the cart left", "cat": 1, "why": "A push is just the action for this step, and the episode goes on if the pole stays up."}, {"t": "The pole leans 5° while the cart moves", "cat": 1, "why": "A small lean is still within the limit, so the agent keeps earning +1 per step."}]}, {"type": "mcq", "q": "What is the return of one CartPole episode?", "options": [{"t": "The number of steps the pole stayed up", "why": "Each step upright earns +1, so the return equals the steps balanced, at most 500."}, {"t": "The final distance of the cart from the center", "why": "The cart position only matters through the track boundary; it is not the reward."}, {"t": "The pole angle when the episode ends", "why": "The angle decides when the episode ends, but the reward is +1 for every step survived."}], "answer": 0}, {"type": "mcq", "q": "After training, the returns per episode rise but fluctuate and can collapse for a while. Why?", "options": [{"t": "On-policy single-step updates are noisy", "why": "Each update uses only the latest step of the current policy, so one bad update can undo progress, the instability PPO was designed to reduce."}, {"t": "The step limit changes between episodes", "why": "The limit stays at 500 for every episode, as the chart's reference line shows."}, {"t": "The critic is switched off during training", "why": "The critic is trained alongside the actor at every step; it estimates \\(V(s)\\) for the advantage."}], "answer": 0}], "ppo": [{"type": "classify", "q": "With \\(\\varepsilon = 0.2\\), sort each case by whether \\(L^{\\text{CLIP}}\\) is flat there (zero gradient).", "cats": ["Flat: clipped", "Not flat: still pushes r(θ)"], "items": [{"t": "\\(\\hat{A} \\gt 0\\), \\(r(\\theta) = 1.5\\)", "cat": 0, "why": "Above \\(1 + \\varepsilon = 1.2\\) the objective is capped at \\((1 + \\varepsilon)\\hat{A}\\), so making the action more likely gains nothing."}, {"t": "\\(\\hat{A} \\lt 0\\), \\(r(\\theta) = 0.7\\)", "cat": 0, "why": "Below \\(1 - \\varepsilon = 0.8\\) the objective stays at \\((1 - \\varepsilon)\\hat{A}\\), so making a bad action even rarer gains nothing."}, {"t": "\\(\\hat{A} \\gt 0\\), \\(r(\\theta) = 0.7\\)", "cat": 1, "why": "Here \\(r(\\theta)\\hat{A}\\) is the smaller term, so the objective still rewards making the good action more likely."}, {"t": "\\(\\hat{A} \\gt 0\\), \\(r(\\theta) = 1.1\\)", "cat": 1, "why": "Inside the clip range the objective equals \\(r(\\theta)\\hat{A}\\), so the gradient is nonzero."}, {"t": "\\(\\hat{A} \\lt 0\\), \\(r(\\theta) = 1.5\\)", "cat": 1, "why": "With a negative advantage, \\(r(\\theta)\\hat{A}\\) is the minimum above 1, so the update still pushes \\(r(\\theta)\\) down."}]}, {"type": "fill", "q": "With \\(\\hat{A} = 2\\), \\(r(\\theta) = 1.4\\) and \\(\\varepsilon = 0.2\\), what is \\(L^{\\text{CLIP}}\\)?", "answer": 2.4, "tol": 0.01, "unit": "", "hint": "Compute both terms inside the min, clipping \\(r(\\theta)\\) to \\([1 - \\varepsilon, 1 + \\varepsilon]\\) for the second one.", "why": "\\(\\min(1.4 \\cdot 2,\\ 1.2 \\cdot 2) = \\min(2.8, 2.4) = 2.4\\), so the objective is capped and flat at this ratio."}, {"type": "mcq", "q": "In the KL divergence panel with its default Gaussians, \\(\\mathrm{KL}(P \\Vert Q)\\) and \\(\\mathrm{KL}(Q \\Vert P)\\) come out different. What does that show?", "options": [{"t": "KL divergence is not symmetric", "why": "It measures how different \\(Q\\) is from \\(P\\) as seen from \\(P\\), so swapping the two generally changes the value."}, {"t": "One of the two values is a rounding error", "why": "The gap is far larger than rounding; the two directions are different quantities."}, {"t": "The two distributions are identical", "why": "Identical distributions give zero in both directions, not two different values."}], "answer": 0}], "mab": [{"type": "fill", "q": "UCB scores a machine as \\(Q(a) + c\\sqrt{\\ln t / N(a)}\\). With \\(Q(a) = 8.2\\), \\(c = 2\\), \\(t = 10\\) and \\(N(a) = 2\\), what is its score? Give 2 decimals.", "answer": 10.35, "tol": 0.01, "unit": "", "hint": "Compute the bonus \\(2\\sqrt{\\ln 10 / 2}\\) first, then add it to the estimate.", "why": "\\(\\ln 10 \\approx 2.303\\), so the bonus is \\(2\\sqrt{1.151} \\approx 2.15\\) and the score is about 10.35, high enough to retry a rarely pulled machine."}, {"type": "mcq", "q": "The machines pay on average 8, 10 and 5. Why does the explore-only strategy have a regret of about 2.33 per pull?", "options": [{"t": "Its random pulls average 7.67, not 10", "why": "Pulling each machine a third of the time earns \\((8 + 10 + 5)/3 \\approx 7.67\\) per pull, \\(2.33\\) less than always playing machine 2."}, {"t": "It never pulls the best machine", "why": "Random pulls hit machine 2 about a third of the time; the loss comes from the other two thirds."}, {"t": "It gets stuck on machine 3 after one bad payoff", "why": "Getting stuck is the greedy trap; explore-only never commits to any machine."}], "answer": 0}, {"type": "match", "q": "Match each bandit strategy to how it picks the next pull.", "pairs": [{"l": "Explore only", "r": "Pulls a machine at random every time", "why": "It never uses what it has learned, so it wastes many pulls on worse machines."}, {"l": "Exploit only (greedy)", "r": "Always plays the best estimate so far", "why": "It trusts early, noisy averages, which is how it falls into the greedy trap."}, {"l": "\\(\\varepsilon\\)-greedy", "r": "Explores at random now and then", "why": "With probability \\(\\varepsilon\\) it explores, otherwise it plays the best estimate."}, {"l": "UCB", "r": "Adds an uncertainty bonus to each estimate", "why": "The bonus is large for rarely pulled machines, so they keep getting retried."}]}], "cmab": [{"type": "mcq", "q": "In the delivery-truck problem, what are the arms and what is the context?", "options": [{"t": "Arms: trucks; context: the route type", "why": "Each truck is an arm the learner can pick, and the route type is side information that can change which truck is best."}, {"t": "Arms: route types; context: the trucks", "why": "The learner chooses trucks, not routes; the route arrives first and the truck is picked for it."}, {"t": "Arms: tire types; context: engines", "why": "Size, engine and tires together define one truck, so a whole truck is one arm."}], "answer": 0}, {"type": "fill", "q": "The learner explores with \\(\\varepsilon = 0.2\\) over 2,500 iterations. About how many iterations pick a truck at random?", "answer": 500, "tol": 1, "unit": "iterations", "hint": "Each iteration explores with probability \\(\\varepsilon\\).", "why": "\\(0.2 \\times 2500 = 500\\) exploratory picks on average, and the other 2,000 play the best truck found so far."}, {"type": "mcq", "q": "With the Listing 12.5 reward, the learner finds the same best truck for city and interstate routes. Why?", "options": [{"t": "Its reward never uses the route", "why": "The reward function receives the route but ignores it, so both contexts share one best truck and the context adds nothing."}, {"t": "The learner has not explored enough", "why": "Even with more exploration both routes share one best truck, because their rewards are identical."}, {"t": "City and interstate routes are randomly mixed", "why": "Contexts arrive at random in both settings, and the route-dependent variant still learns different trucks per route."}], "answer": 0}], "rlopt": [{"type": "mcq", "q": "When a combinatorial problem is framed as an MDP, what does reinforcement learning learn?", "options": [{"t": "A policy that builds solutions step by step", "why": "The learned policy picks each next decision from the current state, so it can solve new instances without a fresh search."}, {"t": "One fixed solution for a single instance only", "why": "A single solution would not generalize; the point of RL is a policy that maps states to good actions."}, {"t": "A table of labeled optimal solutions to copy", "why": "RL learns from rewards by trial and error, not from labeled optimal answers."}], "answer": 0}, {"type": "match", "q": "Framing a vehicle routing problem as an MDP, match each MDP element to its meaning.", "pairs": [{"l": "State", "r": "The partial route built so far", "why": "The state must describe what has been decided, so the policy knows which customers remain."}, {"l": "Action", "r": "The next customer to visit", "why": "Each step extends the route by one decision, which is the action."}, {"l": "Reward", "r": "Minus the length of the added leg", "why": "Rewarding short legs makes maximizing the return the same as minimizing the route length."}, {"l": "Policy \\(\\pi\\)", "r": "The rule that picks the next customer", "why": "The policy maps each partial route to a choice, and it is what RL learns."}]}, {"type": "mcq", "q": "Why is building a route one stop at a time an MDP rather than a bandit?", "options": [{"t": "Each choice changes the options that follow", "why": "Visiting a customer removes it from the remaining options, so actions change future states, which bandits never do."}, {"t": "It has exactly one state and many arms to pull", "why": "That describes a bandit; routing moves through many states as the route grows."}, {"t": "Its rewards are always fixed, never random", "why": "Both MDPs and bandits can have random or fixed rewards; the difference is whether actions change future states."}], "answer": 0}], "quiz": [{"type": "mcq", "q": "In PPO-clip, the advantage \\(\\hat{A}\\) of an action is positive and the probability ratio \\(r(\\theta)\\) has already risen above \\(1 + \\varepsilon\\). What does the clipped objective \\(L^{\\text{CLIP}}\\) do?", "options": [{"t": "It goes flat, so there is no gain from going further", "why": "Above \\(1 + \\varepsilon\\) the objective is capped at \\((1 + \\varepsilon)\\hat{A}\\), so the gradient is zero and the update stops moving the policy away from the old one."}, {"t": "It keeps rewarding increases of \\(r(\\theta)\\) in proportion to \\(\\hat{A}\\)", "why": "That is the unclipped \\(r(\\theta)\\hat{A}\\), which clipping replaces once \\(r(\\theta)\\) passes \\(1 + \\varepsilon\\)."}, {"t": "It reverses the update and pushes \\(r(\\theta)\\) back below 1", "why": "Clipping only removes the incentive to go further; it does not create a push in the opposite direction."}, {"t": "It adds a KL penalty that grows with \\(r(\\theta)\\)", "why": "A KL penalty belongs to the separate PPO-penalty variant, not to PPO-clip."}], "answer": 0}, {"type": "mcq", "q": "Why can the purely greedy (exploit-only) bandit strategy get stuck on a worse slot machine, while UCB does not?", "options": [{"t": "Greedy trusts early averages; UCB adds a bonus for rarely played machines", "why": "After one unlucky payoff greedy never retries the best machine, while UCB's bonus \\(c\\sqrt{\\ln t / N(a)}\\) stays large for machines pulled only a few times."}, {"t": "Greedy uses a larger discount factor \\(\\gamma\\) than UCB", "why": "Bandits have a single state, so no discount factor separates the two strategies."}, {"t": "UCB knows the true payoff distributions in advance", "why": "UCB, like greedy, learns only from the payoffs it observes; its advantage is the uncertainty bonus."}, {"t": "Greedy explores at random with probability \\(\\varepsilon\\), wasting pulls on bad machines", "why": "Random exploration with probability \\(\\varepsilon\\) is the \\(\\varepsilon\\)-greedy strategy; pure greedy never explores."}], "answer": 0}, {"type": "mcq", "q": "What is the key difference between a Markov decision process and a multi-armed bandit?", "options": [{"t": "MDP actions change future states", "why": "In an MDP each action shapes the states that follow, while a bandit agent only trades off exploring and exploiting its arms."}, {"t": "Bandits have no rewards at all", "why": "Bandit arms pay rewards, as the slot machines do; that is what the agent learns from."}, {"t": "Only MDPs need exploration", "why": "Exploration is central to bandits too, as the greedy trap shows."}, {"t": "Bandits always have exactly two arms", "why": "The lab's bandits have three slot machines and dozens of trucks, so arms are not limited to two."}], "answer": 0}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

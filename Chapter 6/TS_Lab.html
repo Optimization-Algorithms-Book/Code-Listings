@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Tabu Search Lab</title>
 <!-- katex:start -->
@@ -392,6 +461,7 @@ tr.tabu td{color:var(--muted)}
         <div class="stage"><canvas id="lvCv" class="cv-land" aria-label="Landscape with local search and tabu search positions"></canvas><div class="stats" id="lvStats"></div><p class="cap" id="lvNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="inspiration"></div>
   </div>
 </section>
 
@@ -422,6 +492,7 @@ tr.tabu td{color:var(--muted)}
         <p class="more">Figure 6.1 in Section 6.2 walks through this loop, with stopping rules and a small TSP neighborhood example.</p>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="algorithm"></div>
   </div>
 </section>
 
@@ -454,6 +525,7 @@ tr.tabu td{color:var(--muted)}
       <p>An <b>aspiration criterion</b> lifts the tabu status of a move that would beat the best solution found so far. The tenure matters most: too short risks <b>cycling</b>, too long risks <b>stagnation</b> (try the experiment in Part 9).</p>
       <p class="more">Figure 6.6 and Section 6.2.1 explain the tenure trade-off and list every TS parameter you can tune or adapt during a run.</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="memory"></div>
   </div>
 </section>
 
@@ -483,6 +555,7 @@ tr.tabu td{color:var(--muted)}
       <a href="#python" data-tab="q">From-scratch code ↓</a>
     </div>
     <p class="cap">Listing 6.1 uses a different neighborhood (single-queen moves) from the swap moves above.</p>
+    <!-- kc --><div class="kc" data-sec="queens"></div>
   </div>
 </section>
 
@@ -506,6 +579,7 @@ tr.tabu td{color:var(--muted)}
         <div class="stage"><div class="stats" id="ksStats"></div><div class="tbl-wrap"><table class="ttab" id="ksTbl"></table></div><p class="cap" id="ksNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="knapsack"></div>
   </div>
 </section>
 
@@ -522,6 +596,7 @@ tr.tabu td{color:var(--muted)}
         <div class="stage"><div class="stage-grid"><div><canvas id="cbCv" class="cv-sq" aria-label="Factory units and cable paths"></canvas></div><div><div class="stats" id="cbStats"></div><div class="tbl-wrap"><table class="ttab" id="cbTbl"></table></div></div></div><p class="cap" id="cbNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="cable"></div>
   </div>
 </section>
 
@@ -547,6 +622,7 @@ tr.tabu td{color:var(--muted)}
           <p class="cap" id="qpNote"></p></div>
       </div>
     </div>
+    <!-- kc --><div class="kc" data-sec="qap"></div>
   </div>
 </section>
 
@@ -579,6 +655,7 @@ tr.tabu td{color:var(--muted)}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.4_Schwefel_TS.ipynb">Listing C.4 Schwefel</a>
       <a href="#python" data-tab="c">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="continuous"></div>
   </div>
 </section>
 
@@ -616,6 +693,7 @@ tr.tabu td{color:var(--muted)}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.4_Walmart.ipynb">Listing 6.4 Delivery semi-truck</a>
       <a href="#python" data-tab="t">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="tsp"></div>
   </div>
 </section>
 
@@ -658,6 +736,7 @@ tr.tabu td{color:var(--muted)}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%206/Listing%206.6_ALBP_Benchmarks.ipynb">Listing 6.6 Benchmarks</a>
       <a href="#python" data-tab="a">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="albp"></div>
   </div>
 </section>
 
@@ -672,6 +751,7 @@ tr.tabu td{color:var(--muted)}
       <div class="card"><h5>Composite laminate design</h5><p>The problem behind the Part 3 demo.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.5_Laminate_TS.ipynb">Listing C.5</a></p></div>
       <div class="card"><h5>Assembly line balancing</h5><p>Another SALBP solved with tabu search.</p><p style="margin-top:.4rem"><a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Appendix%20C/Chapter%206/Listing%20C.6_SALBP_TS.ipynb">Listing C.6</a></p></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="more"></div>
   </div>
 </section>
 
@@ -1068,17 +1148,8 @@ print(<span class="st">"MANSOOR:"</span>, best, <span class="st">"loads:"</span>
   <div class="wrap">
     <span class="eyebrow">Part 14 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 6. Pick an answer to check it.</p>
-    <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> Every neighbor of the current solution is worse, and the only improving move is tabu but would give a solution better than the best found so far. What does tabu search do?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Stops, because it has reached a local optimum</span></button><button type="button" class="mcq-o"><b>B</b><span>Moves to the best non-tabu neighbor, since tabu moves are never allowed</span></button><button type="button" class="mcq-o"><b>C</b><span>Accepts the tabu move, because it satisfies the aspiration criterion</span></button><button type="button" class="mcq-o"><b>D</b><span>Restarts from a random solution to diversify</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>The aspiration criterion lifts the tabu status of a move that would beat the incumbent (best-so-far) solution, so the move is admissible. Tabu search never stops just because neighbors are worse; it would otherwise take the best non-tabu move.</template>
-    </div>
-    <div class="mcq" data-a="1">
-      <p class="mcq-q"><b>Q2.</b> In the tenure experiment on Berlin52, what typically goes wrong when the tabu tenure is very long?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>The search cycles back into the same local optimum</span></button><button type="button" class="mcq-o"><b>B</b><span>So many moves are forbidden that the search stagnates and cannot reach better solutions</span></button><button type="button" class="mcq-o"><b>C</b><span>The search reverts to pure local search and stops at the first valley</span></button><button type="button" class="mcq-o"><b>D</b><span>The aspiration criterion can no longer be applied</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>A long tenure forbids too many moves, causing stagnation (and a larger memory footprint). Cycling is the risk of too short a tenure.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 6 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%206" target="_blank" rel="noopener">Chapter 6</a>).</p>
   </div>
 </section>
@@ -1859,15 +1930,171 @@ function drawLoads(cv, seq, P, o = {}) {
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"inspiration": [{"type": "mcq", "q": "In the landscape panel, local search and tabu search start at the same point and reach a valley where every neighbor is worse. What does each one do next?", "options": [{"t": "Local search stops; tabu search takes its best allowed move", "why": "Local search moves only on improvement, while tabu search accepts the best admissible neighbor even when it is worse."}, {"t": "Both stop, since the valley is a local optimum", "why": "Only local search stops there; tabu search is built to keep moving out of local optima."}, {"t": "Both move to the best neighbor, even if it is worse", "why": "Local search never accepts a worse neighbor, which is exactly why it gets stuck."}, {"t": "Tabu search restarts from a random point", "why": "Tabu search escapes by moving to a worse neighbor and forbidding the way back, not by restarting."}], "answer": 0}, {"type": "classify", "q": "Sort each behavior by the search that shows it.", "cats": ["Local search only", "Tabu search only", "Both"], "items": [{"t": "Stops at the first local optimum", "cat": 0, "why": "With no memory and improving moves only, local search has nowhere to go once every neighbor is worse."}, {"t": "Moves only when a neighbor improves the current solution", "cat": 0, "why": "That is the acceptance rule of plain local search."}, {"t": "Accepts the best neighbor even when it is worse", "cat": 1, "why": "Accepting a worsening move is how tabu search walks out of a valley."}, {"t": "Marks recently visited positions as tabu", "cat": 1, "why": "This memory (the red bars in the panel) is what local search lacks."}, {"t": "Evaluates the neighbors of the current solution", "cat": 2, "why": "Both methods are neighborhood searches; they differ in which neighbor they accept."}]}, {"type": "mcq", "q": "In the landscape panel you set the tabu tenure to \\(T = 0\\). What does tabu search do?", "options": [{"t": "It bounces between two points, which is cycling", "why": "With nothing ever tabu, the best neighbor of the next point is often the previous point, so the search goes back and forth."}, {"t": "It finds the global minimum faster", "why": "Without memory there is nothing to stop it from returning to where it just was, so it does not progress."}, {"t": "It stops at once, like local search", "why": "It still accepts worse neighbors, so it keeps moving, just not anywhere useful."}, {"t": "It refuses every move until aspiration applies", "why": "With \\(T = 0\\) no move is tabu, so aspiration is never needed."}], "answer": 0}], "algorithm": [{"type": "order", "q": "Put the steps of one tabu search iteration in order.", "items": ["Build a candidate list of moves from the current solution", "Evaluate each candidate", "Discard tabu candidates unless they pass the aspiration criterion", "Make the best admissible move, even a worsening one", "Update the tabu list and the aspiration set"], "why": "Candidates are generated and scored first, tabu status filters them, the best admissible one is taken, and then the memory is updated for the next iteration.", "hint": "A move must be scored before you can tell whether aspiration overrides its tabu status."}, {"type": "mcq", "q": "In Algorithm 6.2, the next solution is the best \\(s' \\in N(s) - T(s) + A(s)\\). What does this set contain?", "options": [{"t": "Neighbors minus tabu moves, plus those aspiration allows", "why": "\\(N(s)\\) is the neighborhood, \\(T(s)\\) removes tabu moves, and \\(A(s)\\) adds back those allowed by the aspiration criterion."}, {"t": "Only the neighbors that improve on the current solution", "why": "That is the local search rule; tabu search may pick a worse neighbor."}, {"t": "All neighbors, with tabu moves ranked last", "why": "Tabu moves are removed, not just ranked lower, unless aspiration lets them back in."}, {"t": "The tabu moves plus the aspiration moves only", "why": "The set starts from the whole neighborhood \\(N(s)\\), not from the tabu list."}], "answer": 0}, {"type": "mcq", "q": "Why does Algorithm 6.2 memorize \\(s'\\) separately when it improves the best known solution?", "options": [{"t": "Because the current solution may later get worse", "why": "Since \\(s \\leftarrow s'\\) happens even for worse moves, the best solution must be stored apart or it would be lost."}, {"t": "Because the tabu list needs it to compute tenures", "why": "Tenures are attached to moves; the stored best is used for the aspiration test and as the final answer."}, {"t": "Because the search stops as soon as it improves", "why": "Tabu search keeps going after an improvement until a termination criterion is met."}, {"t": "Because only improving moves are accepted", "why": "Tabu search accepts worsening moves too, which is the very reason it needs a separate record of the best."}], "answer": 0}], "memory": [{"type": "classify", "q": "Sort each statement by the memory it describes.", "cats": ["Recency (short-term) memory", "Frequency (long-term) memory"], "items": [{"t": "Forbids a recent move for a number of iterations", "cat": 0, "why": "Recency memory keeps a move tabu for the tabu tenure."}, {"t": "Stored in the upper triangle of the tabu structure", "cat": 0, "why": "The red upper-triangle cells show how many iterations each swap stays tabu."}, {"t": "Counts how often each swap has been made", "cat": 1, "why": "Frequency memory keeps a running count of every move."}, {"t": "Stored in the lower triangle of the tabu structure", "cat": 1, "why": "The lower-triangle cells show how many times each swap has been made."}, {"t": "Penalizes frequent moves to diversify the search", "cat": 1, "why": "The frequency penalty pushes the search toward swaps it has rarely tried."}]}, {"type": "mcq", "q": "In the tabu structure panel, row 2, column 5 shows 3 and row 5, column 2 shows 4. What does this tell you about swap (2, 5)?", "options": [{"t": "It stays tabu for 3 more iterations and has been made 4 times", "why": "Above the diagonal is the remaining tenure and below it is the swap count, both read for the same pair."}, {"t": "It has been made 3 times and stays tabu for 4 iterations", "why": "This swaps the two halves: the upper triangle holds tenure, the lower holds counts."}, {"t": "It improves strength by 3 and has been tried 4 times", "why": "Strength gains appear in the candidate table, not in the triangle."}, {"t": "Sheets 2 and 5 are 3 positions apart in 4 orders", "why": "The triangle is indexed by swap pair and stores memory values, not positions."}], "answer": 0}, {"type": "fill", "q": "The laminate panel lists 21 swap neighbors for seven sheets. Using the same move (swap any two sheets), how many neighbors would a ten-sheet laminate have?", "answer": 45, "tol": 0, "unit": "neighbors", "hint": "Count the unordered pairs of sheets, as you would to get 21 from seven sheets.", "why": "Each swap picks 2 of the 10 sheets, so there are \\(\\binom{10}{2} = 10 \\cdot 9 / 2 = 45\\) neighbors, just as \\(\\binom{7}{2} = 21\\)."}], "queens": [{"type": "mcq", "q": "Why does writing the n-queens board as a permutation leave only diagonal collisions to minimize?", "options": [{"t": "Each row has one queen and each column is used once", "why": "Queen i sits in row i and the columns form a permutation, so row and column clashes cannot occur."}, {"t": "The swap move never creates diagonal attacks", "why": "Swaps can create or remove diagonal attacks; that is what the search evaluates."}, {"t": "Diagonal attacks are the only rule of the puzzle", "why": "Queens also attack along rows and columns; the encoding simply rules those out."}, {"t": "Tabu moves block every row and column clash", "why": "The tabu list forbids recent swaps; the encoding, not the memory, removes row and column clashes."}], "answer": 0}, {"type": "fill", "q": "The book's board places Q1 to Q7 in columns 4, 5, 3, 6, 7, 1, 2. How many pairs of queens attack each other along a diagonal?", "answer": 4, "tol": 0, "unit": "collisions", "hint": "Two queens collide when the difference of their columns equals the difference of their rows.", "why": "The colliding pairs are Q1 and Q2, Q2 and Q6, Q4 and Q5, and Q6 and Q7, so the board starts with 4 collisions."}, {"type": "mcq", "q": "In the n-queens panel, the search swaps the columns of Q1 and Q7. With tenure 3 and aspiration on, when can it swap Q1 and Q7 again?", "options": [{"t": "After 3 iterations, or earlier if it beats the best so far", "why": "The swap is tabu for the tenure, but aspiration admits it sooner if it yields fewer collisions than the best board found."}, {"t": "Never again in this run", "why": "Tabu status is temporary; it expires when the tenure runs out."}, {"t": "Only after every other swap has been made", "why": "Tabu search tracks recent swaps, not whether all swaps have been tried."}, {"t": "Right away, since a swap is only tabu for a single move", "why": "The tenure slider sets how many iterations a swap stays tabu, here 3."}], "answer": 0}], "knapsack": [{"type": "fill", "q": "The knapsack panel starts with items 1, 3, 6 and 7 packed (weights 10, 15, 20 and 7 kg; utilities 2, 3, 3 and 1). With \\(f = f_1 - f_2\\) and the overload penalty of 50, what is \\(f\\)?", "answer": 43, "tol": 0, "unit": "", "hint": "Check first whether the total weight exceeds 50 kg, because that adds the penalty to \\(f_1\\).", "why": "The load is 52 kg, so \\(f_1 = |52 - 50| + 50 = 52\\), \\(f_2 = 9\\), and \\(f = 52 - 9 = 43\\)."}, {"type": "mcq", "q": "From that start (items 1, 3, 6, 7 packed), which single-item move does tabu search make first?", "options": [{"t": "Delete item 7, giving \\(f = -3\\)", "why": "The load drops to 45 kg with no penalty, so \\(f = 5 - 8 = -3\\), the lowest of the seven neighbors."}, {"t": "Delete item 1, giving \\(f = 1\\)", "why": "That gives 42 kg, \\(f = 8 - 7 = 1\\), which is good but not the best neighbor."}, {"t": "Delete item 3, giving \\(f = 7\\)", "why": "That leaves 37 kg, \\(f = 13 - 6 = 7\\), further from a full knapsack."}, {"t": "Add item 2, giving \\(f = 54\\)", "why": "Adding weight to an overloaded knapsack keeps the penalty, so this neighbor is much worse."}], "answer": 0}, {"type": "mcq", "q": "The panel can also \"add one item and delete another\" in a single move. What does such a move let the search do?", "options": [{"t": "Exchange items while keeping the load near 50 kg", "why": "One combined move trades an item without passing through an underfilled or overloaded state, so better packings are reached in fewer steps."}, {"t": "Ignore the tabu status of both items", "why": "Both changed items become tabu after the move, and tabu items still block it unless aspiration applies."}, {"t": "Remove the overload penalty from \\(f\\)", "why": "The penalty is part of \\(f\\) and applies whatever move is used."}, {"t": "Pack more than seven items at once", "why": "There are only seven items; the move changes two bits of the same string."}], "answer": 0}], "cable": [{"type": "mcq", "q": "In the cable network, what exactly becomes tabu after a move, and for how long?", "options": [{"t": "The edge just added cannot be removed for 2 iterations", "why": "With \\(T = 2\\), the newly added edge is protected so the search cannot immediately undo the swap."}, {"t": "The edge just removed cannot be added for 2 iterations", "why": "That is the rule used in the Berlin52 lab; here the tabu attribute is the added edge."}, {"t": "Both units at the ends of the new edge for 2 iterations", "why": "Tabu status attaches to an edge, not to the factory units."}, {"t": "The whole tree is tabu for 2 iterations", "why": "Storing whole solutions is possible, but this lab forbids removing the newly added edge."}], "answer": 0}, {"type": "fill", "q": "The starting tree uses edges E12, E13, E14 and E35 with costs 7, 4, 4 and 8. The first move removes E35 and adds E45 (cost 5). What is the new total cable cost?", "answer": 20, "tol": 0, "unit": "", "hint": "Start from the cost of the initial tree, then subtract the removed edge and add the new one.", "why": "The initial tree costs \\(7 + 4 + 4 + 8 = 23\\), and the swap gives \\(23 - 8 + 5 = 20\\)."}, {"type": "mcq", "q": "After iteration 2 the tree costs 18, the minimum. What does the search do at iteration 3?", "options": [{"t": "It accepts a worse tree, since no admissible move improves", "why": "Every improving move is tabu and none beats the best of 18, so the best admissible move is a worse tree."}, {"t": "It stops, because it knows 18 is optimal", "why": "Tabu search cannot tell that a solution is optimal; it runs until its stopping rule."}, {"t": "It uses aspiration to take a tabu move back to 20", "why": "Aspiration only admits a tabu move that beats the best so far, and 20 does not beat 18."}, {"t": "It stays on the cost-18 tree and waits", "why": "Tabu search always makes the best admissible move, even a worsening one."}], "answer": 0}], "qap": [{"type": "match", "q": "Match each element of the QAP model and panel to its meaning.", "pairs": [{"l": "\\(f_{p_i p_j}\\)", "r": "Flow between the objects on sites i and j", "why": "The flow matrix is indexed by objects, so it is looked up through the assignment \\(p\\)."}, {"l": "\\(d_{ij}\\)", "r": "Distance between sites i and j", "why": "Distances belong to sites, so they are indexed directly by \\(i\\) and \\(j\\)."}, {"l": "\\(p_i\\)", "r": "The object placed on site i", "why": "In \\(p = (2, 4, 1, 5, 3)\\), object 2 is on site 1, object 4 on site 2, and so on."}, {"l": "A red cell in the tabu matrix", "r": "Iterations before an object may return to a site", "why": "The tabu matrix stores, per object and site, how long that return is forbidden."}]}, {"type": "mcq", "q": "In the NUG5 code, when is a site exchange tabu?", "options": [{"t": "When both objects would return to sites they recently left", "why": "The code marks a move tabu only if both objects would go back, so partly new placements stay allowed."}, {"t": "When either object would return to a site it recently left", "why": "That stricter rule is not what the code checks; it requires both objects to return."}, {"t": "When the same pair of sites was swapped at any earlier time", "why": "Tabu status expires after the tenure; it is not a permanent ban."}, {"t": "Whenever the exchange would increase the cost", "why": "Tabu search accepts cost increases; tabu status depends on memory, not on the cost change."}], "answer": 0}, {"type": "fill", "q": "The panel starts at \\(p = (2, 4, 1, 5, 3)\\) with cost 72, and three exchanges reduce the cost by 12. What is the cost after the first move?", "answer": 60, "tol": 0, "unit": "", "hint": "Apply the reduction of the retained move to the starting cost.", "why": "The retained exchange of sites (1, 3) lowers the cost from 72 to \\(72 - 12 = 60\\)."}], "continuous": [{"type": "mcq", "q": "Why does the continuous lab declare a candidate tabu when it falls within a tabu radius of a recent point?", "options": [{"t": "A real-valued search almost never revisits a point exactly", "why": "Exact matches would never trigger, so the radius forbids a whole region around each recent point."}, {"t": "The radius keeps candidates inside the bounds", "why": "Bounds are enforced by clipping the candidates; the radius serves memory."}, {"t": "It lets the search skip computing \\(f(x, y)\\)", "why": "Every candidate is still evaluated, because aspiration needs its value."}, {"t": "It replaces the aspiration criterion", "why": "Aspiration still admits a candidate inside the radius if it beats the best so far."}], "answer": 0}, {"type": "match", "q": "Match each preset of the continuous lab to what you see when you run it.", "pairs": [{"l": "Schwefel: local search", "r": "Stalls in the first basin", "why": "Improving moves only cannot climb out of the first basin of this deceptive function."}, {"l": "Schwefel: tabu search", "r": "Keeps exploring other basins", "why": "Tabu regions around recent points push the search away from where it has been."}, {"l": "Mishra's Bird", "r": "Discards neighbors outside a disk", "why": "This function is constrained, so infeasible candidates outside the dashed disk are dropped."}, {"l": "Tenure too short", "r": "Circles near the same points", "why": "With a tenure of 1 the search remembers almost nothing, so it keeps returning."}]}, {"type": "mcq", "q": "In the continuous lab, you raise the tabu radius a lot while keeping the step size fixed. What is the most likely effect?", "options": [{"t": "Nearby candidates become tabu, pushing the search away", "why": "A large radius forbids a wide region around each recent point, so only distant or aspirating candidates stay admissible."}, {"t": "The search becomes plain local search", "why": "Local search comes from accepting only improving moves, not from a large radius."}, {"t": "The tenure in points automatically shrinks", "why": "Tenure and radius are separate controls."}, {"t": "Candidates are no longer generated near the current point", "why": "Candidates are still Gaussian steps around the current point; the radius only filters them."}], "answer": 0}], "tsp": [{"type": "mcq", "q": "In the Berlin52 lab, a 2-opt move reverses a segment of the tour. What becomes tabu?", "options": [{"t": "Adding back either of the two edges the move removed", "why": "Forbidding the removed edges stops the next moves from simply undoing the reversal."}, {"t": "Reversing any segment that contains city 1", "why": "Tabu status attaches to the removed edges, not to segments or a home city."}, {"t": "Removing the two edges the move just added", "why": "That is the rule of the cable network lab; here the removed edges are the tabu attribute."}, {"t": "Visiting the two reversed cities again", "why": "Every tour visits every city, so cities cannot be forbidden."}], "answer": 0}, {"type": "fill", "q": "The Berlin52 chart marks OR-Tools at 7,884 against the optimum 7,542. Using the panel's \"Gap to 7,542\" formula, what is the OR-Tools gap? Give 2 decimals.", "answer": 4.53, "tol": 0.02, "unit": "%", "hint": "Divide the excess over the optimum by the optimum and multiply by 100.", "why": "The gap is \\((7884 - 7542) / 7542 \\times 100 = 342 / 7542 \\times 100 \\approx 4.53\\%\\)."}, {"type": "classify", "q": "Sort each observation from the Berlin52 lab by the tenure setting that causes it.", "cats": ["Tenure too short", "Tenure too long"], "items": [{"t": "The search slips back into the same local optimum", "cat": 0, "why": "Too little memory lets recent moves be undone, which is cycling."}, {"t": "Tenure 0: the search falls into a 2-opt local optimum and cycles", "cat": 0, "why": "With nothing tabu, tabu search behaves like local search and repeats itself."}, {"t": "So many edges are forbidden that the search cannot improve", "cat": 1, "why": "A very long tenure blocks good moves for too long, which is stagnation."}, {"t": "Good edges stay forbidden long after they could help", "cat": 1, "why": "A tenure that is too long keeps blocking promising moves, so the best tour stops improving."}]}], "albp": [{"type": "fill", "q": "The initial sequence 1, 2, 3, 4, 5, 6 with \\(\\mathrm{CT} = 4\\) gives station loads 2, 3, 4, 3 and 3. What is the smoothing index \\(\\mathrm{SI}\\)? Give 3 decimals.", "answer": 1.183, "tol": 0.003, "unit": "", "hint": "Use \\(\\mathrm{WL}_{\\max} = 4\\), square each station's shortfall from it, average over the 5 stations, then take the square root.", "why": "The squared shortfalls are 4, 1, 0, 1 and 1, so \\(\\mathrm{SI} = \\sqrt{7/5} \\approx 1.183\\)."}, {"type": "mcq", "q": "In the 6-task example, task 3 needs task 1, task 4 needs task 2, task 5 needs tasks 3 and 4, and task 6 needs task 4. Which swap of sequence 1, 2, 3, 4, 5, 6 is discarded?", "options": [{"t": "Swap tasks 4 and 5", "why": "Task 5 would come before its predecessor task 4, so the sequence is infeasible."}, {"t": "Swap tasks 1 and 2", "why": "Neither task has a predecessor, so 2, 1, 3, 4, 5, 6 is still feasible."}, {"t": "Swap tasks 3 and 4", "why": "Task 4 still follows task 2 and task 3 still follows task 1, so this order is feasible."}, {"t": "Swap tasks 5 and 6", "why": "Both tasks still come after all their predecessors, so this order is feasible."}], "answer": 0}, {"type": "mcq", "q": "In the SALBP-1 benchmark lab, how does tabu search rank two task sequences?", "options": [{"t": "Fewer stations first, then a lower SI to break ties", "why": "SALBP-1 minimizes the number of stations, and the smoothing index refines the balance among equal counts."}, {"t": "Lower SI first, then fewer stations to break ties", "why": "The station count comes first; a perfectly balanced line with extra stations is worse."}, {"t": "Shorter cycle time first, then fewer stations", "why": "In SALBP-1 the cycle time is fixed; only stations and balance are optimized."}, {"t": "Fewer precedence violations first, then fewer stations", "why": "Infeasible sequences are discarded, so violations are never traded off."}], "answer": 0}], "more": [{"type": "match", "q": "Match each further application to what it optimizes.", "pairs": [{"l": "Delivery semi-truck routing", "r": "A route through 18 stores", "why": "Listing 6.4 routes a truck through 18 stores in the Greater Toronto Area."}, {"l": "Schwefel function", "r": "A deceptive multimodal test function", "why": "Listing C.4 shows how misleading basins trap local search on this function."}, {"l": "Composite laminate design", "r": "The order of seven sheets", "why": "Listing C.5 orders laminate sheets for maximum strength, the problem behind the Part 3 demo."}, {"l": "Assembly line balancing", "r": "Assigning tasks to workstations", "why": "Listing C.6 solves another SALBP with tabu search."}]}, {"type": "classify", "q": "Sort the chapter's problems by how a solution is represented.", "cats": ["Permutation or sequence", "Bit string", "Real-valued point"], "items": [{"t": "n-queens", "cat": 0, "why": "Each queen's column forms a permutation, and a move swaps two entries."}, {"t": "Berlin52 TSP", "cat": 0, "why": "A tour is an ordering of the 52 locations."}, {"t": "Composite laminate design", "cat": 0, "why": "A solution is an order of the seven sheets."}, {"t": "Quadratic assignment", "cat": 0, "why": "The assignment \\(p\\) puts each object on exactly one site, which is a permutation."}, {"t": "0/1 knapsack", "cat": 1, "why": "Bit i says whether item i is packed, and a move flips one bit."}, {"t": "Himmelblau's function", "cat": 2, "why": "A solution is a point \\((x, y)\\), and neighbors are Gaussian steps around it."}]}, {"type": "mcq", "q": "The laminate problem maximizes strength instead of minimizing a cost. How does the aspiration criterion read there?", "options": [{"t": "A tabu swap is allowed if it gives more strength than the best so far", "why": "For maximization, beating the incumbent means a higher value, so aspiration compares against the best strength found."}, {"t": "A tabu swap is allowed if it gives less strength than the best so far", "why": "That would admit worse moves; aspiration only frees moves that set a new best."}, {"t": "A tabu swap is allowed if it has been made fewer times than others", "why": "Swap counts drive the frequency penalty, not the aspiration test."}, {"t": "Aspiration is not used when the goal is to maximize", "why": "The laminate panel has an aspiration option; only the direction of the comparison changes."}], "answer": 0}], "quiz": [{"type": "mcq", "q": "Every neighbor of the current solution is worse, and the only improving move is tabu but would give a solution better than the best found so far. What does tabu search do?", "options": [{"t": "Stops, since it has reached a local optimum", "why": "Tabu search never stops just because all neighbors are worse; that is local search behavior."}, {"t": "Takes the best non-tabu neighbor, since tabu is absolute", "why": "Tabu moves are allowed when they pass the aspiration criterion, so this one is not blocked."}, {"t": "Accepts the tabu move, since it passes aspiration", "why": "The aspiration criterion lifts the tabu status of a move that beats the incumbent, so the move is admissible."}, {"t": "Restarts from a random solution to diversify", "why": "Tabu search diversifies through its memory structures, not by random restarts."}], "answer": 2}, {"type": "mcq", "q": "In the tenure experiment on Berlin52, what typically goes wrong when the tabu tenure is very long?", "options": [{"t": "The search keeps cycling back into one local optimum", "why": "Cycling is the risk of too short a tenure, when recent moves are undone too soon."}, {"t": "So many moves are forbidden that the search stagnates", "why": "A long tenure blocks too many edges for too long, so the search cannot move toward better tours."}, {"t": "The search reverts to local search and stops early", "why": "Tabu search reduces to local search at tenure 0, not at long tenures."}, {"t": "The aspiration criterion can no longer be applied", "why": "Aspiration still works at any tenure; it simply cannot free enough moves to prevent stagnation."}], "answer": 1}, {"type": "match", "q": "Match each move used in this chapter's labs to its problem.", "pairs": [{"l": "Swap the columns of two queens", "r": "n-queens", "why": "Swapping keeps the board a permutation, so rows and columns stay conflict free."}, {"l": "Flip one item in or out", "r": "0/1 knapsack", "why": "Flipping one bit adds or deletes a single item."}, {"l": "Exchange one tree edge for another", "r": "Cable network", "why": "Removing one edge and adding another keeps the network a spanning tree."}, {"l": "Exchange the objects on two sites", "r": "Quadratic assignment", "why": "Swapping two sites' objects keeps every object on exactly one site."}, {"l": "Reverse a segment of the tour", "r": "Berlin52 TSP", "why": "A 2-opt move reverses a segment, replacing two edges of the tour."}]}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>

@@ -22,6 +22,75 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 .mcq-fb .ok{color:var(--good);font-weight:600}
 .mcq-fb .no{color:var(--bad);font-weight:600}
 /* quiz:css-end */
+/* kc:css */
+.kc{margin:1.8rem 0 .4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--sunk);border-bottom:1px solid var(--line)}
+.kc-head h4{margin:0;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+.kc-head h4::before{content:"\2713";display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8rem}
+.kc-score{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.kc-list{list-style:none;margin:0;padding:0;counter-reset:kcq}
+.kc-q{padding:1rem 1.1rem;border-top:1px solid var(--line);counter-increment:kcq}
+.kc-q:first-child{border-top:0}
+.kc-q>.kc-stem{margin:0 0 .7rem;line-height:1.5}
+.kc-q>.kc-stem::before{content:"Q" counter(kcq) ". ";font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.kc-kind{display:inline-block;margin-left:.4rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 .45rem;vertical-align:.1em}
+.kc-q.solved .kc-kind{border-color:var(--good);color:var(--good)}
+.kc-fb{margin:.65rem 0 0;font-size:.9rem;line-height:1.5;min-height:1.35em}
+.kc-fb .ok{color:var(--good);font-weight:600}
+.kc-fb .no{color:var(--bad);font-weight:600}
+.kc-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+/* multiple choice */
+.kc-opts{display:grid;gap:.45rem}
+button.kc-opt{display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;font-size:.92rem;font-weight:400;line-height:1.45;padding:.55rem .8rem;background:var(--bg)}
+button.kc-opt b{font-family:var(--f-mono);color:var(--muted);flex:none}
+button.kc-opt:disabled{cursor:default;opacity:1}
+button.kc-opt.right,button.kc-opt.right:hover{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
+button.kc-opt.wrong,button.kc-opt.wrong:hover{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+/* ordering */
+.kc-order{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.kc-card{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.4;touch-action:none;user-select:none;cursor:grab}
+.kc-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kc-card.drag{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--accent);position:relative;z-index:2}
+.kc-card .kc-grip{font-family:var(--f-mono);color:var(--muted);flex:none;letter-spacing:-.15em}
+.kc-card .kc-txt{flex:1;min-width:0}
+.kc-card .kc-mv{display:flex;gap:.25rem;flex:none}
+.kc-card .kc-mv button{padding:.1rem .45rem;font-size:.78rem;line-height:1.2}
+.kc-card.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-card.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-q.solved .kc-card{cursor:default}
+/* matching */
+.kc-match{display:grid;gap:.5rem}
+.kc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .8rem;align-items:center;padding:.45rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.kc-pair .kc-term{font-size:.92rem;font-weight:500}
+.kc-pair select{width:100%;font:inherit;font-size:.86rem;padding:.35rem .4rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-pair.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.kc-pair.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.kc-pair .kc-pfb{grid-column:1 / -1;font-size:.84rem;line-height:1.45}
+.kc-pair .kc-pfb:empty{display:none}
+/* classification */
+.kc-pool{display:flex;flex-wrap:wrap;gap:.45rem;min-height:2.6rem;padding:.5rem;border:1px dashed var(--line);border-radius:8px;background:var(--bg)}
+.kc-pool:empty::after{content:"All items placed.";color:var(--muted);font-size:.84rem;align-self:center}
+button.kc-chip{font-size:.86rem;font-weight:500;padding:.35rem .7rem;border-radius:999px;background:var(--surface);touch-action:none;cursor:grab}
+button.kc-chip.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+button.kc-chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:grabbing}
+button.kc-chip.shake{animation:kcShake .35s;border-color:var(--bad)}
+button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));cursor:default}
+@keyframes kcShake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kc-bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem;margin-top:.6rem}
+.kc-bin{display:flex;flex-direction:column;gap:.4rem;min-height:5.2rem;padding:.55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.kc-bin>b{font-size:.84rem;font-family:var(--f-mono);color:var(--muted);text-transform:none}
+.kc-bin .kc-in{display:flex;flex-wrap:wrap;gap:.35rem}
+.kc-bin.hot{border-color:var(--accent);background:var(--accent-soft)}
+.kc-hint{font-size:.78rem;color:var(--muted);margin:.45rem 0 0}
+/* fill in the value */
+.kc-fill{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.kc .kc-fill input[type=text]{flex:none;width:9rem;max-width:100%;margin:0;font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:.4rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.kc-fill input.right{border-color:var(--good)}
+.kc-fill input.wrong{border-color:var(--bad)}
+.kc-fill .kc-unit{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.kc-chip.shake{animation:none}}
+@media (max-width:600px){.kc-pair{grid-template-columns:minmax(0,1fr)}}
+/* kc:css-end */
 </style>
 <title>Informed Search Lab</title>
 <!-- katex:start -->
@@ -356,6 +425,7 @@ tr.dim td{color:var(--muted)}
       <p>A <b>heuristic function</b> \(h(n)\) estimates the remaining cost from node \(n\) and steers the search.</p>
       <p class="more">Figure 4.1 in Section 4.1 maps the whole family of informed search algorithms.</p>
     </div>
+    <!-- kc --><div class="kc" data-sec="informed"></div>
   </div>
 </section>
 
@@ -386,6 +456,7 @@ tr.dim td{color:var(--muted)}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%204/Listing%204.2_MST_UofT.ipynb">Listing 4.2 Campus MST</a>
       <a href="#python" data-tab="m">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="mst"></div>
   </div>
 </section>
 
@@ -421,6 +492,7 @@ tr.dim td{color:var(--muted)}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%204/Listing%204.3_puzzle_HC.ipynb">Listing 4.3 8-puzzle hill climbing</a>
       <a href="#python" data-tab="h">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="hc"></div>
   </div>
 </section>
 
@@ -448,6 +520,7 @@ tr.dim td{color:var(--muted)}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%204/Listing%204.5_routing_Astar.ipynb">Listing 4.5 A*</a>
       <a href="#python" data-tab="p">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="poi"></div>
   </div>
 </section>
 
@@ -477,6 +550,7 @@ tr.dim td{color:var(--muted)}
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Great-circle distance</h4></div><div class="stage"><div id="hvCtl"></div><div class="calc" id="hvOut"></div></div></div>
     </div>
+    <!-- kc --><div class="kc" data-sec="astar"></div>
   </div>
 </section>
 
@@ -501,6 +575,7 @@ tr.dim td{color:var(--muted)}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%204/Listing%204.11_CH_pyrosm.ipynb">Listing 4.11 CH with Pandana</a>
       <a href="#python" data-tab="c">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="ch"></div>
   </div>
 </section>
 
@@ -532,6 +607,7 @@ tr.dim td{color:var(--muted)}
       <a class="colab-btn" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%204/Listing%204.10_UofT_CH.ipynb">Listing 4.10 CH</a>
       <a href="#python" data-tab="r">From-scratch code ↓</a>
     </div>
+    <!-- kc --><div class="kc" data-sec="routing"></div>
   </div>
 </section>
 
@@ -1032,17 +1108,8 @@ length = <span class="kw">lambda</span> r: sum(adj[a][b] <span class="kw">for</s
   <div class="wrap">
     <span class="eyebrow">Part 10 · Quiz</span>
     <h2>Check your understanding</h2>
-    <p class="prose">Two quick questions on Chapter 4. Pick an answer to check it.</p>
-    <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> A* ranks nodes by \(f(n) = g(n) + h(n)\). Under which condition is A* guaranteed to return an optimal path?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>When \(h(n) = 0\) for every node, and only then</span></button><button type="button" class="mcq-o"><b>B</b><span>When \(h(n)\) always overestimates the remaining cost, so the search rushes to the goal</span></button><button type="button" class="mcq-o"><b>C</b><span>When \(h(n)\) never overestimates the true remaining cost (\(h\) is admissible)</span></button><button type="button" class="mcq-o"><b>D</b><span>When the beam width \(w\) is at least the branching factor</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>An admissible heuristic never overestimates the remaining cost, which is what makes A* optimal. An overestimating heuristic (as in weighted A*) reaches the goal faster but may return a longer path.</template>
-    </div>
-    <div class="mcq" data-a="0">
-      <p class="mcq-q"><b>Q2.</b> Why can hill climbing fail on the 8-puzzle while A* with the same misplaced-tiles heuristic solves it?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Hill climbing moves only to a neighbor that improves \(h(n)\), so it stops when no neighbor is better, while A* also counts the moves already made and keeps a frontier of alternatives</span></button><button type="button" class="mcq-o"><b>B</b><span>Hill climbing cannot evaluate the misplaced-tiles heuristic</span></button><button type="button" class="mcq-o"><b>C</b><span>A* explores every possible board before choosing a move</span></button><button type="button" class="mcq-o"><b>D</b><span>Hill climbing is a form of blind search and ignores the heuristic</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Hill climbing is greedy and keeps no alternatives, so it gets stuck on a local optimum or plateau. A* ranks boards by \(g + h\) and can back up to other promising boards, so it finds the shortest solution.</template>
-    </div>
+    <p class="prose">Three questions on Chapter 4 to review the whole chapter.</p>
+    <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>.</p>
   </div>
 </section>
@@ -1850,15 +1917,171 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
 })();
 
 </script>
-<script>/* quiz:js */
-document.addEventListener("click", e => {
-  const o = e.target.closest(".mcq-o"); if (!o) return;
-  const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
-  const ok = opts.indexOf(o) === +q.dataset.a;
-  o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
-  else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
-});
-/* quiz:js-end */</script>
+<script type="application/json" id="kc-data">{"informed": [{"type": "mcq", "q": "What does a heuristic function \\(h(n)\\) give an informed search?", "options": [{"t": "An estimate of the cost left from \\(n\\) to the goal", "why": "The heuristic looks ahead, so the search can favor nodes that seem close to the goal."}, {"t": "The exact cost already paid to reach node \\(n\\)", "why": "That is the path cost \\(g(n)\\), which looks back, not ahead."}, {"t": "The number of neighbors that node \\(n\\) has", "why": "The branching at a node says nothing about how far the goal is."}, {"t": "A guarantee that node \\(n\\) lies on the optimal path", "why": "A heuristic is only an estimate, and it can rank an off-route node highly."}], "answer": 0}, {"type": "classify", "q": "Sort each informed search algorithm in the lab by the problem it solves.", "cats": ["Minimum spanning tree", "Shortest path"], "items": [{"t": "Kruskal's algorithm", "cat": 0, "why": "Kruskal builds a minimum spanning tree by adding the cheapest edge that closes no cycle."}, {"t": "Jarník-Prim algorithm", "cat": 0, "why": "Prim grows one minimum spanning tree outward from a starting vertex."}, {"t": "Borůvka's algorithm", "cat": 0, "why": "Borůvka lets every component grab its cheapest outgoing edge to form a minimum spanning tree."}, {"t": "Hill climbing", "cat": 1, "why": "Hill climbing improves a route between two points, so it belongs to the shortest path family."}, {"t": "Beam search", "cat": 1, "why": "Beam search keeps the best partial routes toward a goal, a shortest path method."}, {"t": "A*", "cat": 1, "why": "A* searches for the cheapest route from a start to a goal."}, {"t": "Contraction hierarchies", "cat": 1, "why": "Contraction hierarchies are a hierarchical method for fast shortest path queries."}]}, {"type": "mcq", "q": "Which of these is a heuristic for routing on a map?", "options": [{"t": "The straight-line distance to the destination", "why": "It estimates the remaining cost, just as misplaced tiles do on the 8-puzzle."}, {"t": "The road distance already traveled from the origin", "why": "That is the known cost so far, \\(g(n)\\), not an estimate of what remains."}, {"t": "The total length of all roads in the whole network", "why": "This is the same for every node, so it cannot steer the search."}, {"t": "The number of nodes the search has explored so far", "why": "This measures the search effort, not how far a node is from the goal."}], "answer": 0}], "mst": [{"type": "fill", "q": "Run Kruskal's algorithm to completion on the muddy city (10 places, 20 roads). What is the total cost of the paved roads?", "answer": 22, "tol": 0, "unit": "", "hint": "Take the roads from cheapest up, skip any that would close a cycle, and stop once 9 roads are paved.", "why": "Kruskal paves E-H (1), B-C, C-G, F-G, I-J (2 each), A-D, D-E, G-I (3 each) and G-H (4), for a total of \\(1 + 8 + 9 + 4 = 22\\)."}, {"type": "match", "q": "Match each minimum spanning tree algorithm to how it grows the tree.", "pairs": [{"l": "Kruskal", "r": "Adds the cheapest remaining road that closes no cycle", "why": "Kruskal sorts all roads by cost and checks each one for a cycle."}, {"l": "Jarník-Prim", "r": "Grows a single tree outward from one start", "why": "Prim adds the cheapest road leaving the tree it has built so far."}, {"l": "Borůvka", "r": "Lets every component take its cheapest outgoing road at once", "why": "Borůvka merges many components in each round, starting from one-node components."}]}, {"type": "mcq", "q": "Kruskal reaches road C-F (cost 3) after paving E-H, B-C, C-G, F-G and I-J. Why does it skip C-F?", "options": [{"t": "C and F are already joined through G, so C-F closes a cycle", "why": "C-G and F-G (cost 2 each) already join C and F, so adding C-F creates a loop."}, {"t": "C-F is the most expensive road in the whole muddy city", "why": "C-F costs only 3; the most expensive road is F-J at 13."}, {"t": "Kruskal only adds the roads that touch the start node A", "why": "Growing from a start node is Prim's approach, not Kruskal's."}, {"t": "The tree already holds its full set of 9 roads at that point", "why": "Only 5 roads are paved at that point, so the tree is not yet complete."}], "answer": 0}], "hc": [{"type": "match", "q": "Match each hill climbing variant (Figure 4.13) to how it picks its next move.", "pairs": [{"l": "Simple", "r": "The first neighbor that improves", "why": "Simple hill climbing takes the first better neighbor it finds without checking the rest."}, {"l": "Steepest-ascent", "r": "The best of all neighbors", "why": "Steepest-ascent compares every neighbor and moves to the best one."}, {"l": "Stochastic", "r": "A random neighbor, kept only if it improves", "why": "Stochastic hill climbing samples neighbors at random and accepts improvements."}, {"l": "Random-restart", "r": "Restarts from random states and keeps the best peak", "why": "Several climbs from different starts raise the chance of reaching the global peak."}]}, {"type": "mcq", "q": "In the \"Climb in the fog\" panel, steepest-ascent hill climbing reaches the lower peak from one start and the higher peak from another. What does this show?", "options": [{"t": "It stops where no neighbor is higher, so the start picks the peak", "why": "Hill climbing is greedy, so it halts at whichever local optimum lies uphill from its start."}, {"t": "The step size is far too large for the method to work at all", "why": "Changing the step size affects how finely it climbs, but local peaks trap any step size."}, {"t": "Hill climbing needs the derivative of the function in order to climb", "why": "Hill climbing only compares neighbors, which is why it also works on discrete problems."}, {"t": "The lower peak is the true global optimum of the whole function", "why": "The global optimum is the highest peak, and a greedy climb can miss it."}], "answer": 0}, {"type": "fill", "q": "The book's 8-puzzle board, read row by row, is 1 4 2 / 3 7 5 / 6 _ 8, and the goal is _ 1 2 / 3 4 5 / 6 7 8. What is \\(h(n)\\), the number of misplaced tiles (not counting the blank)?", "answer": 3, "tol": 0, "unit": "", "hint": "Compare the board with the goal square by square and count only the numbered tiles that differ.", "why": "Tiles 1, 4 and 7 are out of place while 2, 3, 5, 6 and 8 are home, so \\(h(n) = 3\\), a low value that hill climbing can drive down move by move."}], "poi": [{"type": "fill", "q": "On the points-of-interest graph, S-A costs 2, A-C costs 3, and the heuristic gives \\(h(C) = 5.6\\). What is A*'s priority \\(f = g + h\\) for the partial route S-A-C?", "answer": 10.6, "tol": 0.05, "unit": "", "hint": "Add the road costs along S-A-C to get \\(g\\), then add the heuristic of the last node.", "why": "\\(g = 2 + 3 = 5\\), so \\(f = 5 + 5.6 = 10.6\\), one of the values the stepper shows."}, {"type": "classify", "q": "The lab's table lists the straight-line heuristic \\(h(n)\\) and the true remaining road distance \\(h^*(n)\\). Is \\(h\\) admissible at each node?", "cats": ["Admissible here", "Overestimates"], "items": [{"t": "S: \\(h = 11.3\\), \\(h^* = 12\\)", "cat": 0, "why": "11.3 does not exceed the true cost of 12, so the estimate is admissible at S."}, {"t": "A: \\(h = 9.5\\), \\(h^* = 10\\)", "cat": 0, "why": "9.5 is at most 10, so the estimate does not overestimate at A."}, {"t": "C: \\(h = 5.6\\), \\(h^* = 7\\)", "cat": 0, "why": "5.6 is below the true cost of 7, so the estimate is admissible at C."}, {"t": "D: \\(h = 6.2\\), \\(h^* = 8\\)", "cat": 0, "why": "6.2 is below the true cost of 8, so the estimate is admissible at D."}, {"t": "E: \\(h = 4.4\\), \\(h^* = 3\\)", "cat": 1, "why": "4.4 exceeds the true road distance of 3, so the estimate overestimates at E."}, {"t": "F: \\(h = 3.8\\), \\(h^* = 3\\)", "cat": 1, "why": "3.8 exceeds the true road distance of 3, so the estimate overestimates at F."}]}, {"type": "match", "q": "Match each method in the points-of-interest stepper to what its priority uses.", "pairs": [{"l": "Uniform-cost search, \\(f = g\\)", "r": "Only the cost paid so far", "why": "With \\(h = 0\\), A* reduces to uniform-cost search."}, {"l": "Greedy best-first, \\(f = h\\)", "r": "Only the estimated cost to go", "why": "Greedy best-first rushes toward nodes that look closest to the goal."}, {"l": "A*, \\(f = g + h\\)", "r": "Cost so far plus the estimate", "why": "Combining both terms makes A* optimal when \\(h\\) is admissible."}, {"l": "Weighted A*, \\(f = g + w\\,h\\) with \\(w > 1\\)", "r": "Cost so far plus an inflated estimate", "why": "Inflating \\(h\\) means fewer expansions but no optimality guarantee."}]}], "astar": [{"type": "mcq", "q": "Press <b>Compare all<\/b> on the grid. Dijkstra / UCS and A* with the octile heuristic find paths of the same cost, yet UCS expands far more cells. Why?", "options": [{"t": "UCS has \\(h = 0\\), so it spreads in all directions", "why": "Without a heuristic, UCS expands every cell cheaper than the goal, while A* favors cells that lead toward it."}, {"t": "UCS does not track which cells it has already expanded", "why": "UCS keeps an explored set like A*; the extra cells come from the missing heuristic."}, {"t": "A* is allowed to pass through some of the walls", "why": "Both searches respect the same walls; only the priority differs between them."}, {"t": "A* returns a longer path to save expansions", "why": "With the octile heuristic, A* finds a path of the same cost as UCS, as the table shows."}], "answer": 0}, {"type": "classify", "q": "Sort these searches from the grid comparison by what their priority \\(f\\) uses.", "cats": ["Only the cost so far g", "Both g and h", "Only the heuristic h"], "items": [{"t": "Dijkstra / UCS", "cat": 0, "why": "Its priority is \\(f = g\\), the cost paid so far, with no heuristic."}, {"t": "A* with the Euclidean distance", "cat": 1, "why": "A* adds the straight-line estimate to the cost so far, \\(f = g + h\\)."}, {"t": "A* with the octile distance", "cat": 1, "why": "Only the heuristic changes, and the priority is still \\(f = g + h\\)."}, {"t": "Weighted A* with the octile distance", "cat": 1, "why": "It uses \\(f = g + w\\,h\\), both terms with the heuristic inflated by \\(w\\)."}, {"t": "Greedy best-first with the octile distance", "cat": 2, "why": "Greedy best-first ranks cells by \\(f = h\\) and ignores the cost already paid."}]}, {"type": "mcq", "q": "In the great-circle calculator, the haversine and flat-earth distances almost agree from the statue to the Bahen Centre but differ more from New York to London. Why?", "options": [{"t": "The earth's curvature matters more over long distances", "why": "Over a few city blocks the earth is nearly flat, but across an ocean the curvature adds a real error."}, {"t": "The haversine formula only works well for short distances", "why": "The haversine formula gives the great-circle distance at any scale, which is why it is the reference."}, {"t": "The flat-earth distance follows the roads instead of a line", "why": "Both are straight-line estimates, and neither follows the road network."}, {"t": "New York and London lie at exactly the same latitude", "why": "Their latitudes differ (about 40.7 and 51.5 degrees), and that is not what drives the gap."}], "answer": 0}], "ch": [{"type": "order", "q": "Put the stages of a contraction hierarchies (CH) route query in order, from preprocessing to the final route.", "items": ["Choose a contraction order (rank) for the nodes", "Contract the nodes in that order, adding shortcuts where no witness path exists", "Search upward from the source and from the target", "Pick the best meeting node of the two searches", "Unpack the shortcuts into the original edges"], "why": "CH does the heavy work in preprocessing, so the query only climbs the hierarchy from both ends and then expands the shortcuts on the route.", "hint": "Ordering and contraction happen once, before any query; unpacking is the very last step."}, {"type": "mcq", "q": "While contracting node \\(v\\), when is <b>no<\/b> shortcut needed between two of its neighbors \\(u\\) and \\(w\\)?", "options": [{"t": "When a witness path avoiding \\(v\\) is just as short", "why": "The shortest distance from \\(u\\) to \\(w\\) survives without \\(v\\), so a shortcut would add nothing."}, {"t": "When \\(v\\) has more than two neighbors", "why": "The number of neighbors decides how many pairs to check, not whether a shortcut is needed."}, {"t": "When the path \\(u\\)-\\(v\\)-\\(w\\) is the only shortest path", "why": "That is exactly the case that does need a shortcut with the same cost."}, {"t": "When \\(u\\) and \\(w\\) have already been contracted", "why": "Shortcuts are only added between neighbors that remain in the graph."}], "answer": 0}, {"type": "fill", "q": "With node ordering by edge difference, \\(\\mathrm{ED}(v)\\) = shortcuts added minus edges removed. If contracting a node with 4 edges adds 2 shortcuts, what is its \\(\\mathrm{ED}(v)\\)?", "answer": -2, "tol": 0, "unit": "", "hint": "Contracting a node removes all of its edges.", "why": "\\(\\mathrm{ED}(v) = 2 - 4 = -2\\), and a low edge difference means the node can be contracted early without bloating the graph."}], "routing": [{"type": "mcq", "q": "In the campus lab, how do hill climbing and beam search create a <b>child route<\/b> from a current route?", "options": [{"t": "Drop a stretch of the route and rejoin its ends by a detour", "why": "The detour avoids the rest of the route, so every child is still a valid path from the statue to the Bahen Centre."}, {"t": "Swap two random intersections anywhere in the road network", "why": "Swapping arbitrary nodes would usually break the route, since they need not be connected."}, {"t": "Run A* again from a randomly chosen intersection on the map", "why": "Child routes reuse most of the current route rather than searching from scratch."}, {"t": "Reverse the order of the whole route", "why": "A reversed route would run from the Bahen Centre to the statue and have the same length."}], "answer": 0}, {"type": "classify", "q": "On the campus network, which settings are guaranteed to return the shortest route?", "cats": ["Guaranteed shortest", "Not guaranteed"], "items": [{"t": "A* with \\(f = g + h\\) and the straight-line distance", "cat": 0, "why": "A straight line never exceeds the road distance, so this admissible heuristic keeps A* optimal."}, {"t": "Contraction hierarchies", "cat": 0, "why": "CH answers queries exactly, which is why the book reports the same 806.892 m as hill climbing's best run."}, {"t": "The book's A* scoring without \\(g(n)\\)", "cat": 1, "why": "Ignoring the distance already traveled turns it into a greedy search that returned 846.92 m."}, {"t": "Hill climbing on child routes", "cat": 1, "why": "Hill climbing can stop at a local optimum, even though it happened to find 806.892 m in the book."}, {"t": "Beam search with a small beam", "cat": 1, "why": "Beam search can prune the route to the optimum, and it returned 825.929 m in the book."}]}, {"type": "mcq", "q": "Why does the book's A* routing code (Listing 4.9) report a non-optimal 846.92 m?", "options": [{"t": "It ignores the road distance already traveled, \\(g(n)\\)", "why": "Without \\(g(n)\\) the search hugs the straight line, which makes it a greedy best-first search."}, {"t": "Its haversine heuristic overestimates the remaining distance", "why": "A straight-line distance, haversine or flat, never exceeds the road distance."}, {"t": "It searches from both ends and stops at the first meeting", "why": "That flaw belongs to bidirectional search, not to the book's A* code."}, {"t": "It contracts the road network before it starts searching", "why": "Contraction is the preprocessing step of CH, not of A*."}], "answer": 0}], "quiz": [{"type": "mcq", "q": "A* ranks nodes by \\(f(n) = g(n) + h(n)\\). Under which condition is A* guaranteed to return an optimal path?", "options": [{"t": "When \\(h(n) = 0\\) for every node, and only then", "why": "\\(h = 0\\) does give an optimal search (uniform-cost search), but any admissible heuristic also works."}, {"t": "When \\(h(n)\\) always overestimates the remaining cost", "why": "Overestimating, as in weighted A*, reaches the goal faster but may return a longer path."}, {"t": "When \\(h(n)\\) never overestimates the true remaining cost", "why": "An admissible heuristic never hides a cheaper route, which is what makes A* optimal."}, {"t": "When the beam width \\(w\\) is at least the branching factor", "why": "Beam width is a beam search setting; A* keeps its whole frontier."}], "answer": 2}, {"type": "mcq", "q": "Why can hill climbing fail on the 8-puzzle while A* with the same misplaced-tiles heuristic solves it?", "options": [{"t": "Hill climbing keeps no alternatives; A* keeps a frontier ranked by \\(g + h\\)", "why": "Keeping alternatives lets A* back up from a dead end, so it finds the shortest solution."}, {"t": "Hill climbing has no way at all to evaluate the misplaced-tiles heuristic", "why": "Hill climbing uses exactly this heuristic to choose its next board."}, {"t": "A* explores every possible board of the puzzle before it chooses a move", "why": "A* expands only the boards with the lowest \\(f = g + h\\), not the whole state space."}, {"t": "Hill climbing is a blind search method that ignores the heuristic entirely", "why": "Hill climbing is informed: it is a greedy, heuristic-guided version of depth-first search."}], "answer": 0}, {"type": "match", "q": "Match each task from the chapter to the algorithm that fits it best.", "pairs": [{"l": "Lay cable that reaches every campus intersection at least cost", "r": "Kruskal's minimum spanning tree", "why": "Connecting every node at minimum total weight is the minimum spanning tree problem."}, {"l": "Answer many route queries in milliseconds on a fixed road map", "r": "Contraction hierarchies", "why": "CH trades heavy preprocessing for very fast exact queries."}, {"l": "Find an optimal route guided by a straight-line estimate", "r": "A* search", "why": "A* with an admissible heuristic is optimal and explores less than blind search."}, {"l": "Find a good route quickly with a fixed memory budget", "r": "Beam search", "why": "Beam search keeps only the best few routes per level, at the risk of missing the optimum."}]}]}</script>
+<script>/* kc:js */
+/* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
+   classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
+(function knowledgeChecks() {
+  const src = document.getElementById("kc-data"); if (!src) return;
+  const DATA = JSON.parse(src.textContent);
+  const KIND = { mcq: "Multiple choice", order: "Put in order", match: "Match", classify: "Sort into groups", fill: "Fill in the value" };
+  const shuffle = (a, notSame) => {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return notSame && b.length > 1 && b.every((v, i) => v === a[i]) ? shuffle(a, notSame) : b;
+  };
+  const typeset = el => { if (typeof renderTex === "function") renderTex(el); };
+  const plain = s => s.replace(/<[^>]+>/g, "").replace(/\\[()[\]]/g, "");
+  const say = (fb, ok, msg) => { fb.innerHTML = `<span class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Not quite."}</span> ${msg}`; typeset(fb); };
+  const fmtNum = v => v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+  const BUILD = {
+    mcq(q, body, fb, done) {
+      const opts = shuffle(q.options.map((o, i) => Object.assign({ ok: i === q.answer }, o)));
+      body.innerHTML = `<div class="kc-opts" role="group" aria-label="Answers">${opts.map((o, i) => `<button type="button" class="kc-opt"><b>${"ABCDE"[i]}</b><span>${o.t}</span></button>`).join("")}</div>`;
+      const bs = [...body.querySelectorAll(".kc-opt")];
+      bs.forEach((b, i) => b.addEventListener("click", () => {
+        const o = opts[i]; b.classList.add(o.ok ? "right" : "wrong"); b.disabled = true; say(fb, o.ok, o.why);
+        if (o.ok) { bs.forEach(x => x.disabled = true); done(); }
+      }));
+    },
+
+    order(q, body, fb, done) {
+      const items = shuffle(q.items.map((t, i) => ({ t, i })), true);
+      body.innerHTML = `<ol class="kc-order"></ol><div class="kc-btns"><button type="button" class="primary small kc-check">Check the order</button></div><p class="kc-hint">Drag the cards, or focus a card and press ↑ or ↓ (or use its arrow buttons).</p>`;
+      const ol = body.querySelector(".kc-order"), chk = body.querySelector(".kc-check");
+      items.forEach(it => {
+        const c = document.createElement("li"); c.className = "kc-card"; c.tabIndex = 0; c.dataset.i = it.i; c.setAttribute("aria-label", plain(it.t));
+        c.innerHTML = `<span class="kc-grip" aria-hidden="true">⋮⋮</span><span class="kc-txt">${it.t}</span><span class="kc-mv"><button type="button" class="small" data-d="-1" aria-label="Move up">▲</button><button type="button" class="small" data-d="1" aria-label="Move down">▼</button></span>`;
+        ol.appendChild(c);
+      });
+      let locked = false;
+      const clear = () => ol.querySelectorAll(".kc-card").forEach(c => c.classList.remove("right", "wrong"));
+      const move = (c, d) => {
+        if (locked) return; const s = d < 0 ? c.previousElementSibling : c.nextElementSibling; if (!s) return;
+        if (d < 0) ol.insertBefore(c, s); else ol.insertBefore(s, c); clear(); c.focus();
+      };
+      ol.addEventListener("click", e => { const b = e.target.closest(".kc-mv button"); if (b) move(b.closest(".kc-card"), +b.dataset.d); });
+      ol.addEventListener("keydown", e => {
+        const c = e.target; if (!c.classList || !c.classList.contains("kc-card")) return;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); move(c, e.key === "ArrowUp" ? -1 : 1); }
+      });
+      ol.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+        const c = e.target.closest(".kc-card"); if (!c || locked || e.target.closest("button") || e.button > 0) return;
+        e.preventDefault(); c.setPointerCapture(e.pointerId); c.classList.add("drag"); c.focus({ preventScroll: true });
+        let y0 = e.clientY; const gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+        const mv = ev => {
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+          for (let moved = true; moved;) {   // a fast drag can pass several cards between two events
+            moved = false; c.style.transform = `translateY(${ev.clientY - y0}px)`;
+            const r = c.getBoundingClientRect(), mid = r.top + r.height / 2, p = c.previousElementSibling, n = c.nextElementSibling;
+            if (p) { const pr = p.getBoundingClientRect(); if (mid < pr.top + pr.height / 2) { c.after(p); y0 -= pr.height + gap; moved = true; continue; } }   // move the neighbor, not the card, so the pointer capture holds
+            if (n) { const nr = n.getBoundingClientRect(); if (mid > nr.top + nr.height / 2) { c.before(n); y0 += nr.height + gap; moved = true; } }
+          }
+          c.style.transform = `translateY(${ev.clientY - y0}px)`;
+        };
+        const up = () => { c.classList.remove("drag"); c.style.transform = ""; window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); clear(); };
+        window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+      });
+      chk.addEventListener("click", () => {
+        const cs = [...ol.children]; let k = 0;
+        cs.forEach((c, pos) => { const ok = +c.dataset.i === pos; c.classList.toggle("right", ok); c.classList.toggle("wrong", !ok); k += ok; });
+        if (k === cs.length) {
+          locked = true; chk.disabled = true; cs.forEach(c => { c.tabIndex = -1; c.querySelectorAll("button").forEach(b => b.disabled = true); });
+          say(fb, true, q.why); done();
+        } else say(fb, false, `${k} of ${cs.length} are in the right place (green). ${q.hint || "Move the red cards and check again."}`);
+      });
+    },
+
+    match(q, body, fb, done) {
+      const rows = shuffle(q.pairs.map((p, i) => Object.assign({ i }, p))), rights = shuffle(q.pairs.map((p, i) => ({ r: p.r, i })));
+      body.innerHTML = `<div class="kc-match">${rows.map(p => `<div class="kc-pair" data-i="${p.i}"><span class="kc-term">${p.l}</span><select aria-label="Match for ${plain(p.l).replace(/"/g, "&quot;")}"><option value="">Choose a match…</option>${rights.map(o => `<option value="${o.i}">${plain(o.r)}</option>`).join("")}</select><span class="kc-pfb" aria-live="polite"></span></div>`).join("")}</div>`;
+      let left = rows.length;
+      body.querySelectorAll(".kc-pair").forEach(row => {
+        const sel = row.querySelector("select"), pf = row.querySelector(".kc-pfb"), i = +row.dataset.i;
+        sel.addEventListener("change", () => {
+          if (sel.value === "") return;
+          const j = +sel.value, ok = j === i; row.classList.toggle("right", ok); row.classList.toggle("wrong", !ok);
+          pf.innerHTML = ok ? `<span class="ok">Correct.</span> ${q.pairs[i].why}` : `<span class="no">Not quite.</span> That description fits “${q.pairs[j].l}” instead.`;
+          typeset(pf);
+          if (ok) { sel.disabled = true; if (--left === 0) { fb.innerHTML = `<span class="ok">All matched.</span>`; done(); } }
+        });
+      });
+    },
+
+    classify(q, body, fb, done) {
+      const items = shuffle(q.items.map((it, i) => Object.assign({ i }, it)));
+      body.innerHTML = `<div class="kc-pool">${items.map(it => `<button type="button" class="kc-chip" data-i="${it.i}">${it.t}</button>`).join("")}</div>` +
+        `<div class="kc-bins">${q.cats.map((c, k) => `<div class="kc-bin" role="button" tabindex="0" data-k="${k}" aria-label="Put the selected item in ${plain(c).replace(/"/g, "&quot;")}"><b>${c}</b><span class="kc-in"></span></div>`).join("")}</div>` +
+        `<p class="kc-hint">Drag each item into its group, or select an item (tap or Enter) and then a group.</p>`;
+      const bins = [...body.querySelectorAll(".kc-bin")];
+      let sel = null, left = items.length, dragged = false;
+      const select = ch => { if (sel) sel.classList.remove("sel"); sel = ch && ch !== sel ? ch : null; if (sel) sel.classList.add("sel"); };
+      const place = (ch, k) => {
+        const it = q.items[+ch.dataset.i]; select(null);
+        if (it.cat === k) {
+          ch.classList.add("done"); ch.disabled = true; bins[k].querySelector(".kc-in").appendChild(ch); say(fb, true, `${it.t} goes in “${q.cats[k]}”. ${it.why}`);
+          if (--left === 0) done();
+        } else { ch.classList.remove("shake"); void ch.offsetWidth; ch.classList.add("shake"); say(fb, false, `${it.t} does not belong in “${q.cats[k]}”. ${it.why}`); ch.focus(); }
+      };
+      body.querySelectorAll(".kc-chip").forEach(ch => {
+        ch.addEventListener("click", () => { if (dragged) { dragged = false; return; } if (!ch.disabled) select(ch); });
+        ch.addEventListener("pointerdown", e => {   // drag with a mouse, pen or finger
+          if (ch.disabled || e.button > 0) return;
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null;
+          const hit = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY); return el && el.closest(".kc-bin"); };
+          const mv = ev => {
+            if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+            if (!ghost) { ghost = ch.cloneNode(true); ghost.classList.add("drag"); document.body.appendChild(ghost); ch.style.opacity = .35; }
+            ghost.style.left = ev.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = ev.clientY - ghost.offsetHeight / 2 + "px";
+            const b = hit(ev); bins.forEach(x => x.classList.toggle("hot", x === b));
+          };
+          const up = ev => {
+            window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+            if (!ghost) return;
+            const b = ev.type === "pointerup" ? hit(ev) : null; ghost.remove(); ch.style.opacity = ""; bins.forEach(x => x.classList.remove("hot")); dragged = true;
+            if (b) place(ch, +b.dataset.k);
+          };
+          window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+        });
+      });
+      bins.forEach((b, k) => {
+        b.addEventListener("click", () => { if (sel) place(sel, k); });
+        b.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && sel) { e.preventDefault(); place(sel, k); } });
+      });
+    },
+
+    fill(q, body, fb, done) {
+      body.innerHTML = `<div class="kc-fill"><input type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span class="kc-unit">${q.unit || ""}</span><button type="button" class="primary small">Check</button></div>`;
+      const inp = body.querySelector("input"), btn = body.querySelector("button"), tol = q.tol != null ? q.tol : Math.max(1e-9, Math.abs(q.answer) * 0.005);
+      let tries = 0;
+      const check = () => {
+        const v = parseFloat(inp.value.replace(/,/g, "").replace(/[−–]/g, "-"));
+        if (!isFinite(v)) { fb.innerHTML = `<span class="no">Enter a number.</span>`; return; }
+        const ok = Math.abs(v - q.answer) <= tol; inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+        if (ok) { inp.disabled = btn.disabled = true; say(fb, true, q.why); done(); }
+        else { tries++; say(fb, false, tries < 2 ? q.hint : `The answer is ${fmtNum(q.answer)}${q.unit ? " " + q.unit : ""}. ${q.why}`); }
+      };
+      btn.addEventListener("click", check);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    }
+  };
+
+  document.querySelectorAll(".kc[data-sec]").forEach(box => {
+    const qs = DATA[box.dataset.sec]; if (!qs || !qs.length) return;
+    box.innerHTML = `<div class="kc-head"><h4>${box.dataset.title || "Check your understanding"}</h4><span class="kc-score" aria-live="polite"></span></div><ol class="kc-list"></ol>`;
+    const list = box.querySelector(".kc-list"), score = box.querySelector(".kc-score");
+    const tally = () => { score.textContent = `${list.querySelectorAll(".kc-q.solved").length} of ${qs.length} solved`; };
+    qs.forEach(q => {
+      const li = document.createElement("li"); li.className = "kc-q";
+      li.innerHTML = `<p class="kc-stem">${q.q} <span class="kc-kind">${KIND[q.type]}</span></p><div class="kc-body"></div><p class="kc-fb" aria-live="polite"></p>`;
+      list.appendChild(li);
+      BUILD[q.type](q, li.querySelector(".kc-body"), li.querySelector(".kc-fb"), () => { li.classList.add("solved"); tally(); });
+    });
+    tally(); typeset(box);
+  });
+})();
+/* kc:js-end */
+</script>
 </body>
 </html>
