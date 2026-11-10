@@ -1,0 +1,21 @@
+# GitHub Pages only serves the HTML labs (index.html, Treasure_Hunting_Mission.html and Chapter N/*_Lab.html).
+# Notebooks, datasets and models stay in the repo for GitHub and Colab, but are left out of the Pages build,
+# which keeps the deployment small enough to finish within the deploy timeout.
+exclude:
+  - "Appendix A"
+  - "Appendix B"
+  - "Appendix C"
+  - optalgotools
+  - "Chapter 11/learning_tsp"
+  - "Chapter 8/Projects"
+  - "*.ipynb"
+  - "*.geojson"
+  - "*.zip"
+  - "*.pt"
+  - "*.csv"
+  - "*.txt"
+  - "*.IN2"
+  - "*.py"
+  - requirements.txt
+  - setup.py
+  - LICENSE
