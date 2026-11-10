@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Blind Search Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -343,7 +362,7 @@ td.del{color:var(--muted);text-decoration:line-through}
     <h2>Graphs</h2>
     <div class="two">
       <div class="prose">
-        <p>A graph G = (V, E) is a set of <b>vertices</b> joined by <b>edges</b>. Pick a graph type to see how it looks.</p>
+        <p>A graph \(G = (V, E)\) is a set of <b>vertices</b> joined by <b>edges</b>. Pick a graph type to see how it looks.</p>
         <p class="more">Section 3.1 of the book builds each type in Listings 3.1 to 3.6 and turns web, social and road networks into graphs.</p>
       </div>
       <div class="bench" style="margin-top:0">
@@ -1210,7 +1229,7 @@ function drawRoad(cv, res, upto, o = {}) {
     directed: { n: [[.12, .5], [.38, .5], [.62, .2], [.62, .8], [.88, .5]], e: [[0, 1], [1, 2], [1, 3], [2, 3], [3, 4]], dir: true, note: "Listing 3.2: nx.DiGraph(). The same edges, now one-way: one-way streets, causal relations, task dependencies." },
     multi: { n: [[.15, .5], [.42, .5], [.62, .15], [.68, .75], [.9, .55]], e: [[0, 1, 0], [0, 1, 1], [4, 3, 0], [1, 2, 0], [1, 3, 0], [2, 3, 0], [3, 4, 1], [0, 1, 2]], note: "Listing 3.3: nx.MultiGraph(). Three parallel edges join 0 and 1, and two join 3 and 4: parallel roads, multiple relationships." },
     acyclic: { n: [[.12, .3], [.42, .55], [.62, .2], [.88, .4], [.15, .85]], e: [[0, 1], [0, 2], [4, 1], [1, 2], [2, 3]], dir: true, note: "Listing 3.4: a directed acyclic graph (nx.is_directed_acyclic_graph returns True). No path leads back to where it started, as in task precedence." },
-    hyper: { hyper: true, note: "Listing 3.5 (HyperNetX): hyperedges join any number of nodes. Edge 0 = {A, B, G}, 1 = {A, C, D, E, F}, 2 = {B, F}, 3 = {A, B, D, E, F, G}." },
+    hyper: { hyper: true, note: `Listing 3.5 (HyperNetX): hyperedges join any number of nodes. Edge ${tex(String.raw`0 = \{A, B, G\}`)}, ${tex(String.raw`1 = \{A, C, D, E, F\}`)}, ${tex(String.raw`2 = \{B, F\}`)}, ${tex(String.raw`3 = \{A, B, D, E, F, G\}`)}.` },
     weighted: { n: [[.18, .82], [.18, .18], [.82, .82], [.82, .18]], lbl: ["Device1", "Device2", "Device3", "Device4"], e: [[0, 1, 0, 45.69], [0, 2, 0, 56.34], [1, 3, 0, 18.5]], note: "Listing 3.6: a weighted graph of telecommunication devices; weights are connection speeds in Mbps." }
   };
   const ctl = makeControls($("#gtCtl"), [{ key: "t", id: "gtT", type: "select", label: "Graph type", value: "undirected", options: [["undirected", "Undirected (3.1)"], ["directed", "Directed (3.2)"], ["multi", "Multigraph (3.3)"], ["acyclic", "Acyclic (3.4)"], ["hyper", "Hypergraph (3.5)"], ["weighted", "Weighted (3.6)"]] }], () => draw());
@@ -1235,7 +1254,7 @@ function drawRoad(cv, res, upto, o = {}) {
       });
       g.n.forEach((p, i) => { const [x, y] = P(i); ctx.fillStyle = c.accent; ctx.beginPath(); ctx.arc(x, y, R, 0, 7); ctx.fill(); ctx.fillStyle = "#fff"; ctx.font = `600 ${g.lbl ? 10 : 13}px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(g.lbl ? g.lbl[i].replace("Device", "D") : i, x, y); });
     }
-    $("#gtNote").textContent = g.note;
+    $("#gtNote").innerHTML = g.note;
   }
   ro.observe($("#gtCv")); onRedraw(draw); draw();
 })();
@@ -1452,18 +1471,19 @@ const RB_W = 16, RB_H = 10, RB_COMPASS = [["S", 1, 0], ["SE", 1, 1], ["E", 0, 1]
     { key: "b", id: "boB", label: "BFS branching factor b", min: 2, max: 10, step: 1, value: 5 },
     { key: "nps", id: "boNps", label: "BFS nodes scanned per second", min: 100, max: 100000, step: 100, value: 1000, fmt: v => v.toLocaleString("en-US") }
   ], () => draw());
-  const human = s => { if (!isFinite(s)) return "∞"; if (s < 1e-3) return (s * 1e6).toPrecision(3) + " µs"; if (s < 1) return (s * 1e3).toPrecision(3) + " ms"; if (s < 60) return s.toPrecision(3) + " s"; if (s < 3600) return (s / 60).toPrecision(3) + " min"; if (s < 86400) return (s / 3600).toPrecision(3) + " h"; if (s < 3.156e7) return (s / 86400).toPrecision(3) + " days"; return (s / 3.156e7).toPrecision(4) + " years"; };
-  const humanLog = l10s => { const y = l10s - Math.log10(3.156e7); if (l10s < 9) return human(10 ** l10s); const e = Math.floor(y), m = 10 ** (y - e); return `${m.toFixed(3)} × 10^${e.toLocaleString("en-US")} years`; };
+  const human = s => { if (!isFinite(s)) return tex(String.raw`\infty`); if (s < 1e-3) return (s * 1e6).toPrecision(3) + " µs"; if (s < 1) return (s * 1e3).toPrecision(3) + " ms"; if (s < 60) return s.toPrecision(3) + " s"; if (s < 3600) return (s / 60).toPrecision(3) + " min"; if (s < 86400) return (s / 3600).toPrecision(3) + " h"; if (s < 3.156e7) return (s / 86400).toPrecision(3) + " days"; return (s / 3.156e7).toPrecision(4) + " years"; };
+  const humanLog = l10s => { const y = l10s - Math.log10(3.156e7); if (l10s < 9) return human(10 ** l10s); const e = Math.floor(y), m = 10 ** (y - e); return tex(String.raw`${m.toFixed(3)} \times 10^{${texNum(e)}}`) + " years"; };
+  const texNum = v => v.toLocaleString("en-US").replace(/,/g, "{,}");
   const lgamma = n => { let s = 0; if (n < 1000) { for (let k = 2; k <= n; k++) s += Math.log(k); return s; } return n * Math.log(n) - n + .5 * Math.log(2 * PI * n) + 1 / (12 * n); };
   function draw() {
     const n = Math.round(10 ** ctl.ln), ops = 10 ** ctl.lops, L = Math.log10;
-    const rows = [["O(1)", "Constant", 0], ["O(log n)", "Logarithmic", L(Math.log2(n))], ["O(n)", "Linear", L(n)], ["O(n log n)", "Linearithmic", L(n * Math.log2(n))], ["O(n²)", "Quadratic", 2 * L(n)], ["O(n³)", "Cubic", 3 * L(n)], ["O(2ⁿ)", "Exponential", n * L(2)], ["O(n!)", "Factorial", lgamma(n) / Math.LN10]];
-    $("#boTbl").innerHTML = `<thead><tr><th>Big O</th><th>Name</th><th class="n">Running time at n = ${n.toLocaleString("en-US")}</th></tr></thead><tbody>` + rows.map(([o, nm, l]) => `<tr><td class="mono">${o}</td><td>${nm}</td><td class="n">${humanLog(l - ctl.lops)}</td></tr>`).join("") + "</tbody>";
-    const b = ctl.b; let html = `<thead><tr><th class="n">Depth d</th><th class="n">Nodes N</th><th class="n">Time</th><th class="n">Memory (1 KB per node)</th></tr></thead><tbody>`;
+    const rows = [[String.raw`O(1)`, "Constant", 0], [String.raw`O(\log n)`, "Logarithmic", L(Math.log2(n))], [String.raw`O(n)`, "Linear", L(n)], [String.raw`O(n \log n)`, "Linearithmic", L(n * Math.log2(n))], [String.raw`O(n^2)`, "Quadratic", 2 * L(n)], [String.raw`O(n^3)`, "Cubic", 3 * L(n)], [String.raw`O(2^n)`, "Exponential", n * L(2)], [String.raw`O(n!)`, "Factorial", lgamma(n) / Math.LN10]];
+    $("#boTbl").innerHTML = `<thead><tr><th>Big O</th><th>Name</th><th class="n">Running time at ${tex(String.raw`n = ${texNum(n)}`)}</th></tr></thead><tbody>` + rows.map(([o, nm, l]) => `<tr><td>${tex(o)}</td><td>${nm}</td><td class="n">${humanLog(l - ctl.lops)}</td></tr>`).join("") + "</tbody>";
+    const b = ctl.b; let html = `<thead><tr><th class="n">Depth ${tex("d")}</th><th class="n">Nodes ${tex("N")}</th><th class="n">Time</th><th class="n">Memory (1 KB per node)</th></tr></thead><tbody>`;
     for (let d = 2; d <= 14; d += 2) { const N = (b ** (d + 1) - 1) / (b - 1); html += `<tr><td class="n">${d}</td><td class="n">${Math.round(N).toLocaleString("en-US")}</td><td class="n">${human(N / ctl.nps)}</td><td class="n">${N < 1e3 ? N.toFixed(0) + " KB" : N < 1e6 ? (N / 1e3).toPrecision(3) + " MB" : N < 1e9 ? (N / 1e6).toPrecision(3) + " GB" : (N / 1e9).toPrecision(3) + " TB"}</td></tr>`; }
     $("#bfTbl").innerHTML = html + "</tbody>";
   }
-  $("#boNote").innerHTML = `Top: Table 3.3 (n = 20,000 and a million operations per second by default; logarithms base 2). Bottom: Table 3.4, BFS with N = (b<sup>d+1</sup> − 1)/(b − 1) nodes. In the book’s Table 3.4, the times from depth 6 on do not match 1,000 nodes per second: 19,531 nodes take about 20 seconds, not 5.43 hours. Table 3.3 also lists 0.028 s for O(n log n), where n log₂ n operations take 0.286 s, and the exponents of the last two rows are off.`;
+  $("#boNote").innerHTML = `Top: Table 3.3 (${tex(String.raw`n = 20{,}000`)} and a million operations per second by default; logarithms base 2). Bottom: Table 3.4, BFS with ${tex(String.raw`N = \frac{b^{d+1} - 1}{b - 1}`)} nodes. In the book’s Table 3.4, the times from depth 6 on do not match 1,000 nodes per second: 19,531 nodes take about 20 seconds, not 5.43 hours. Table 3.3 also lists 0.028 s for ${tex(String.raw`O(n \log n)`)}, where ${tex(String.raw`n \log_2 n`)} operations take 0.286 s, and the exponents of the last two rows are off.`;
   draw();
 })();
 
@@ -1502,12 +1522,12 @@ const RB_W = 16, RB_H = 10, RB_COMPASS = [["S", 1, 0], ["SE", 1, 1], ["E", 0, 1]
       const mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2; ctx.fillStyle = c.surface; ctx.fillRect(mx - 10, my - 9, 20, 18); ctx.fillStyle = c.ink; ctx.font = `12px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(wt, mx, my); });
     NODES.forEach(n => { const [x, y] = P(n), st = S.settled.includes(n); ctx.fillStyle = n === S.last ? c.gold : st ? c.ink : c.surface; ctx.strokeStyle = c.ink; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, R, 0, 7); ctx.fill(); ctx.stroke();
       ctx.fillStyle = st && n !== S.last ? c.bg : c.ink; ctx.font = `600 13px ${MONO}`; ctx.fillText(n, x, y); ctx.fillStyle = c.bad; ctx.font = `12px ${MONO}`; ctx.fillText(S.dist[n] === Infinity ? "∞" : S.dist[n], x + (n === "B" ? 0 : 0), y + (POS[n][1] > .5 ? 30 : -30)); });
-    $("#djTbl").innerHTML = `<thead><tr><th>From S to</th><th class="n">Distance</th><th>Predecessor</th><th>Settled</th></tr></thead><tbody>` + NODES.map(n => `<tr class="${n === S.last ? "best" : ""}"><td>${n}</td><td class="n">${S.hist[n].map((v, i, a) => `<span class="${i < a.length - 1 ? "del" : ""}" style="${i < a.length - 1 ? "text-decoration:line-through;color:var(--muted)" : ""}">${v === Infinity ? "∞" : v}</span>`).join(" ")}</td><td>${S.pred[n] || "–"}</td><td>${S.settled.includes(n) ? "yes (" + (S.settled.indexOf(n) + 1) + ")" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#djTbl").innerHTML = `<thead><tr><th>From S to</th><th class="n">Distance</th><th>Predecessor</th><th>Settled</th></tr></thead><tbody>` + NODES.map(n => `<tr class="${n === S.last ? "best" : ""}"><td>${n}</td><td class="n">${S.hist[n].map((v, i, a) => `<span class="${i < a.length - 1 ? "del" : ""}" style="${i < a.length - 1 ? "text-decoration:line-through;color:var(--muted)" : ""}">${v === Infinity ? tex(String.raw`\infty`) : v}</span>`).join(" ")}</td><td>${S.pred[n] || "–"}</td><td>${S.settled.includes(n) ? "yes (" + (S.settled.indexOf(n) + 1) + ")" : ""}</td></tr>`).join("") + "</tbody>";
     const pq = S.frontier.filter(n => !S.settled.includes(n)).sort((a, b) => S.dist[a] - S.dist[b]);
-    $("#djPq").innerHTML = pq.length ? pq.map((n, i) => `<span class="${i === 0 ? "next" : ""}">${n} (${S.dist[n] === Infinity ? "∞" : S.dist[n]})</span>`).join("") : "<small>empty</small>";
+    $("#djPq").innerHTML = pq.length ? pq.map((n, i) => `<span class="${i === 0 ? "next" : ""}">${n} (${S.dist[n] === Infinity ? tex(String.raw`\infty`) : S.dist[n]})</span>`).join("") : "<small>empty</small>";
     stats($("#djStats"), [["Step", S.step], ["Settled", S.settled.join(", ") || "none"], [`Route S → ${ctl.t}`, rt.length ? rt.join("-") + " = " + S.dist[ctl.t] : "not yet"]]);
     const notes = ["", "S is the closest node (distance 0). Relax its edges: A = 11, C = 3, D = 6 (Figure 3.28).", "C is the closest unsettled node (3). Through C, A drops to 9, D to 5 and B becomes 11 (Figure 3.29).", "D is next (5). Through D, B drops to 10 (Figure 3.30).", "A is next (9). Through A, B would cost 12: no change (Figure 3.31).", "B is last (10). All nodes are settled (Figure 3.32): S-C-A = 9 and S-C-D-B = 10."];
-    $("#djNote").innerHTML = ctl.mode === "dijkstra" ? (notes[S.step] || "") + (S.step === 0 ? "Every node starts in the queue at distance ∞, except S at 0 (Figure 3.27). Press Next step." : "") : S.step === 0 ? "UCS starts with only S in the queue and adds nodes as it discovers them." : S.done && S.last === ctl.t ? `UCS popped the target ${ctl.t} after settling ${S.settled.length} nodes and stopped; Dijkstra would settle all ${NODES.length}.` : `Popped ${S.last}; the queue holds only nodes discovered so far.`;
+    $("#djNote").innerHTML = ctl.mode === "dijkstra" ? (notes[S.step] || "") + (S.step === 0 ? `Every node starts in the queue at distance ${tex(String.raw`\infty`)}, except S at 0 (Figure 3.27). Press Next step.` : "") : S.step === 0 ? "UCS starts with only S in the queue and adds nodes as it discovers them." : S.done && S.last === ctl.t ? `UCS popped the target ${ctl.t} after settling ${S.settled.length} nodes and stopped; Dijkstra would settle all ${NODES.length}.` : `Popped ${S.last}; the queue holds only nodes discovered so far.`;
   }
   $("#djStep").addEventListener("click", step); $("#djReset").addEventListener("click", reset);
   ro.observe($("#djCv")); onRedraw(draw); reset();
@@ -1612,7 +1632,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

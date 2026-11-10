@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Reinforcement Learning Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -423,7 +442,7 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 1 · Section 12.1</span>
     <h2>Reinforcement learning</h2>
     <div class="prose">
-      <p>An agent observes a state, takes an action from its policy π, collects a reward and moves on, learning by trial and error. In <b>Markov decision processes</b> (MDPs) actions change future states; in <b>multi-armed bandits</b> the agent only chooses among actions.</p>
+      <p>An agent observes a state, takes an action from its policy \(\pi\), collects a reward and moves on, learning by trial and error. In <b>Markov decision processes</b> (MDPs) actions change future states; in <b>multi-armed bandits</b> the agent only chooses among actions.</p>
       <p class="more">Section 12.1 explains the agent-environment loop (Figure 12.3) and maps the RL algorithm families in Figure 12.1.</p>
     </div>
   </div>
@@ -435,7 +454,7 @@ tr.dim td{color:var(--muted)}
     <h2>Markov decision processes</h2>
     <div class="prose">
         <p>Real commutes are uncertain, so the next state follows probabilities: an <b>MDP</b>. Switch between the deterministic and nondeterministic models, pick a mode of transport and take trips.</p>
-        <p class="more">Section 12.1.1 contrasts the two commute models of Figure 12.2 and defines the expected return and discount factor γ.</p>
+        <p class="more">Section 12.1.1 contrasts the two commute models of Figure 12.2 and defines the expected return and discount factor \(\gamma\).</p>
       </div>
     <div class="bench"><div class="bench-head"><h4>Take the commute (Figure 12.2)</h4></div><div class="stage cm-stage">
       <div class="cm-side"><div id="cmCtl"></div><div class="cm-right"><div class="btns"><button id="cmGo" class="primary">Take a trip</button><button id="cmMany">Run 100 trips</button><button id="cmReset">Reset</button></div><div class="stats" id="cmStats"></div></div></div>
@@ -457,12 +476,12 @@ tr.dim td{color:var(--muted)}
       <div class="tt-bar"><div class="btns"><button id="trPlay" class="primary">Play an episode</button><button id="trMany">Play 1,000 episodes</button><button id="trBook">Book’s policy</button><button id="trBest">Best policy</button></div><div class="stats" id="trStats"></div></div>
       <p class="note" id="trNote" style="margin:0"></p>
       <div class="tt" id="trTree"></div>
-      <p class="cap">🔥 fire pit (−10, ends) · 💎 treasure (+10) · 🤖 agent · 🏁 exit (+4, ends). Each card is a state the agent can reach; p is the probability of reaching it under the current policy. obs = [cell, treasure collected]; policies are [left, right] probabilities.</p>
+      <p class="cap">🔥 fire pit (−10, ends) · 💎 treasure (+10) · 🤖 agent · 🏁 exit (+4, ends). Each card is a state the agent can reach; \(p\) is the probability of reaching it under the current policy. obs = [cell, treasure collected]; policies are [left, right] probabilities.</p>
     </div></div>
 
     <h3 id="grid">Learning by trial and error: Q-learning</h3>
     <div class="prose">
-      <p><b>Q-learning</b> learns the return Q(s, a) of each action by trial and error, with no model. Press Learn and watch the arrows settle; click cells to cycle empty, wall and fire pit.</p>
+      <p><b>Q-learning</b> learns the return \(Q(s, a)\) of each action by trial and error, with no model. Press Learn and watch the arrows settle; click cells to cycle empty, wall and fire pit.</p>
       <p class="more">Section 12.1.2 derives the Q-learning update and explains why it is off-policy.</p>
     </div>
     <div class="bench">
@@ -480,7 +499,7 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 3 · Sections 12.1.2 to 12.1.4</span>
     <h2>Values, policies and actor-critic</h2>
     <div class="prose">
-      <p><b>Policy gradient</b> methods make actions with a positive <b>advantage</b> Â = Q(s, a) − V(s) more likely; in <b>actor-critic</b> methods such as A2C, a critic network estimates V(s) for the actor.</p>
+      <p><b>Policy gradient</b> methods make actions with a positive <b>advantage</b> \(\hat{A} = Q(s, a) - V(s)\) more likely; in <b>actor-critic</b> methods such as A2C, a critic network estimates \(V(s)\) for the actor.</p>
       <p class="more">Sections 12.1.2 to 12.1.4 build up equations 12.1 to 12.4, compare model-based, model-free, on-policy and off-policy methods (Tables 12.1 and 12.2), and draw A2C in Figure 12.5.</p>
     </div>
   </div>
@@ -509,20 +528,20 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 5 · Section 12.1.5</span>
     <h2>Proximal policy optimization</h2>
     <div class="prose">
-        <p><b>PPO</b> keeps each policy update close to the old policy. PPO-clip caps how far the probability ratio r(θ) = π<sub>θ</sub>(a|s) / π<sub>old</sub>(a|s) can move from 1:</p>
-        <p class="calc">L<sup>CLIP</sup>(θ) = Ê[min(r(θ) Â, clip(r(θ), 1 − ε, 1 + ε) Â)]</p>
-        <p>Drag r(θ) on the plots, or sweep it, to see where the objective goes flat.</p>
+        <p><b>PPO</b> keeps each policy update close to the old policy. PPO-clip caps how far the probability ratio \(r(\theta) = \pi_\theta(a \mid s) / \pi_{\text{old}}(a \mid s)\) can move from 1:</p>
+        <p class="calc">\[L^{\text{CLIP}}(\theta) = \hat{\mathbb{E}}\left[\min\left(r(\theta)\,\hat{A},\ \operatorname{clip}\left(r(\theta), 1 - \varepsilon, 1 + \varepsilon\right)\hat{A}\right)\right]\]</p>
+        <p>Drag \(r(\theta)\) on the plots, or sweep it, to see where the objective goes flat.</p>
         <p class="more">Section 12.1.5 explains why big updates are risky and compares PPO-penalty (equation 12.5) with PPO-clip (Figure 12.6).</p>
       </div>
     <div class="bench"><div class="bench-head"><h4>The clipped objective</h4></div><div class="stage ppo-stage">
       <div class="ppo-side"><div id="ppCtl"></div><div class="btns"><button id="ppSweep" class="primary">Sweep r(θ)</button><button id="ppReset">Reset</button></div><div class="stats" id="ppStats"></div></div>
       <div class="ppo-main">
         <div class="ppo-plots">
-          <figure id="ppFigP"><canvas id="ppCvP" aria-label="Clipped objective for a positive advantage"></canvas><figcaption>Â &gt; 0</figcaption></figure>
-          <figure id="ppFigN"><canvas id="ppCvN" aria-label="Clipped objective for a negative advantage"></canvas><figcaption>Â &lt; 0</figcaption></figure>
+          <figure id="ppFigP"><canvas id="ppCvP" aria-label="Clipped objective for a positive advantage"></canvas><figcaption>\(\hat{A} \gt 0\)</figcaption></figure>
+          <figure id="ppFigN"><canvas id="ppCvN" aria-label="Clipped objective for a negative advantage"></canvas><figcaption>\(\hat{A} \lt 0\)</figcaption></figure>
         </div>
         <div class="tbl-wrap"><table class="ppo-tbl" id="ppTbl"></table></div>
-        <p class="cap">Solid: L<sup>CLIP</sup>. Dashed gray: unclipped r(θ)Â. Gold arrow: the direction the update pushes r(θ) (none on a flat part).</p>
+        <p class="cap">Solid: \(L^{\text{CLIP}}\). Dashed gray: unclipped \(r(\theta)\hat{A}\). Gold arrow: the direction the update pushes \(r(\theta)\) (none on a flat part).</p>
       </div>
     </div></div>
     <div class="two">
@@ -544,7 +563,7 @@ tr.dim td{color:var(--muted)}
       <div class="mb-bar"><div id="mbCtl"></div><div class="mb-right"><div class="btns"><button id="mbPlay" class="primary">Play</button><button id="mbTrap">Greedy trap (7, 6, 3)</button><button id="mbMany">Compare 2,000 runs</button></div><div class="stats" id="mbStats"></div></div></div>
       <div class="casino" id="mbCasino"></div>
       <canvas id="mbCv" aria-label="Cumulative reward over 90 pulls"></canvas>
-      <p class="cap">Curves: true payoffs (hidden from the player). Ticks: payoffs so far. Dashed gold: the estimate Q. Bars: share of the 90 pulls.</p>
+      <p class="cap">Curves: true payoffs (hidden from the player). Ticks: payoffs so far. Dashed gold: the estimate \(Q\). Bars: share of the 90 pulls.</p>
     </div></div>
     <div class="tbl-wrap"><table class="ttab" id="mbTbl"></table></div>
     <p class="cap" id="mbNote"></p>
@@ -556,7 +575,7 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 7 · Section 12.5, Listing 12.5</span>
     <h2>Contextual bandits: choosing a delivery truck</h2>
     <div class="prose">
-      <p>Each truck is an arm, and the route type is the <b>context</b> that changes which arm is best. Press Learn to watch an ε-greedy learner pick a truck per route.</p>
+      <p>Each truck is an arm, and the route type is the <b>context</b> that changes which arm is best. Press Learn to watch an \(\varepsilon\)-greedy learner pick a truck per route.</p>
       <p class="more">Section 12.5 builds this reward model and solves it with Vowpal Wabbit (Listing 12.5).</p>
     </div>
     <div class="bench">
@@ -926,14 +945,14 @@ print(<span class="st">"best noise-free book reward: medium, electric, performan
     <h2>Check your understanding</h2>
     <p class="prose">Two quick questions on Chapter 12. Pick an answer to check it.</p>
     <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> In PPO-clip, the advantage Â of an action is positive and the probability ratio r(θ) has already risen above 1 + ε. What does the clipped objective L<sup>CLIP</sup> do?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>It keeps rewarding further increases of r(θ) in proportion to Â</span></button><button type="button" class="mcq-o"><b>B</b><span>It reverses the update and pushes r(θ) back below 1</span></button><button type="button" class="mcq-o"><b>C</b><span>It goes flat, so there is no gain from making the action even more likely</span></button><button type="button" class="mcq-o"><b>D</b><span>It adds a KL penalty that grows with r(θ)</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Above 1 + ε the clipped term caps the objective at (1 + ε)Â, so the gradient is zero and the update has no incentive to move the policy further from the old one. A KL penalty belongs to the separate PPO-penalty variant.</template>
+      <p class="mcq-q"><b>Q1.</b> In PPO-clip, the advantage \(\hat{A}\) of an action is positive and the probability ratio \(r(\theta)\) has already risen above \(1 + \varepsilon\). What does the clipped objective \(L^{\text{CLIP}}\) do?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>It keeps rewarding further increases of \(r(\theta)\) in proportion to \(\hat{A}\)</span></button><button type="button" class="mcq-o"><b>B</b><span>It reverses the update and pushes \(r(\theta)\) back below 1</span></button><button type="button" class="mcq-o"><b>C</b><span>It goes flat, so there is no gain from making the action even more likely</span></button><button type="button" class="mcq-o"><b>D</b><span>It adds a KL penalty that grows with \(r(\theta)\)</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Above \(1 + \varepsilon\) the clipped term caps the objective at \((1 + \varepsilon)\hat{A}\), so the gradient is zero and the update has no incentive to move the policy further from the old one. A KL penalty belongs to the separate PPO-penalty variant.</template>
     </div>
     <div class="mcq" data-a="1">
       <p class="mcq-q"><b>Q2.</b> Why can the purely greedy (exploit-only) bandit strategy get stuck on a worse slot machine, while UCB does not?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Greedy uses a larger discount factor γ than UCB</span></button><button type="button" class="mcq-o"><b>B</b><span>Greedy trusts early, noisy averages and never retries the other machines, while UCB adds an uncertainty bonus that grows for rarely played machines</span></button><button type="button" class="mcq-o"><b>C</b><span>UCB knows the true payoff distributions in advance</span></button><button type="button" class="mcq-o"><b>D</b><span>Greedy explores at random with probability ε, which wastes pulls</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>After one unlucky payoff, a greedy player never pulls the best machine again. UCB plays argmax [Q(a) + c √(ln t / N(a))], so a machine pulled only a few times keeps a large bonus and gets retried.</template>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Greedy uses a larger discount factor \(\gamma\) than UCB</span></button><button type="button" class="mcq-o"><b>B</b><span>Greedy trusts early, noisy averages and never retries the other machines, while UCB adds an uncertainty bonus that grows for rarely played machines</span></button><button type="button" class="mcq-o"><b>C</b><span>UCB knows the true payoff distributions in advance</span></button><button type="button" class="mcq-o"><b>D</b><span>Greedy explores at random with probability \(\varepsilon\), which wastes pulls</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>After one unlucky payoff, a greedy player never pulls the best machine again. UCB plays \(\arg\max_a \left[Q(a) + c\sqrt{\ln t / N(a)}\right]\), so a machine pulled only a few times keeps a large bonus and gets retried.</template>
     </div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2012" target="_blank" rel="noopener">Chapter 12</a>).</p>
   </div>
@@ -1133,7 +1152,7 @@ class MLP {
 const softmax = z => { const m = Math.max(...z), e = z.map(v => Math.exp(v - m)), s = e.reduce((a, b) => a + b, 0); return e.map(v => v / s); };
 function codeTabs(caps, first) {
   const keys = Object.keys(caps); let cur = first;
-  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").textContent = caps[k]; }
+  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").innerHTML = caps[k]; }
   document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.code)));
   document.querySelectorAll("a[data-tab]").forEach(a => a.addEventListener("click", () => show(a.dataset.tab)));
   $("#codeCopy").addEventListener("click", async () => {
@@ -1387,15 +1406,15 @@ function drawGrid(cv, W, path, o = {}) {
   function update() {
     for (const [id, n] of Object.entries(N)) {
       const card = $("#tt-" + id), p = pathP(id);
-      card.querySelector("[data-p]").textContent = id === "root" ? "p = 1" : `p = ${p.toFixed(3)}`;
+      card.querySelector("[data-p]").innerHTML = tex(id === "root" ? "p = 1" : `p = ${p.toFixed(3)}`);
       card.classList.toggle("dim", p < 1e-9);
       if (n.pol) card.querySelector("[data-pol]").textContent = `policy(obs) = [${f2(P[n.pol])}, ${f2(1 - P[n.pol])}]`;
       if (n.parent) card.querySelector("[data-via]").textContent = `${n.act}, ${f2(edgeP(id))}`;
       if (n.parent) $("#tte-" + id).textContent = `${n.act} ${f2(edgeP(id))}`;
     }
     const { p0, p1, p2 } = P, R = Object.keys(N).filter(id => N[id].r != null).reduce((s, id) => s + pathP(id) * N[id].r, 0);
-    const t = (ps, r) => `${ps.map(f2).join(" · ")} · ${r < 0 ? "(−10)" : r}`;
-    $("#trCalc").innerHTML = `R = ${t([p0], 10)} + ${t([1 - p0], 4)} + ${t([p0, p1], -10)} + ${t([p0, 1 - p1], 0)} + ${t([p0, 1 - p1, p2], 0)} + ${t([p0, 1 - p1, 1 - p2], 4)} = <b>${R.toFixed(3)}</b>`;
+    const DOT = String.raw` \cdot `, t = (ps, r) => `${ps.map(f2).join(DOT)}${DOT}${r < 0 ? "(-10)" : r}`;
+    $("#trCalc").innerHTML = tex(String.raw`R = ${t([p0], 10)} + ${t([1 - p0], 4)} + ${t([p0, p1], -10)} + ${t([p0, 1 - p1], 0)} + ${t([p0, 1 - p1, p2], 0)} + ${t([p0, 1 - p1, 1 - p2], 4)} = \mathbf{${R.toFixed(3)}}`);
     stats($("#trStats"), [["Expected return R", R.toFixed(3)], ["Episodes played", eps.n], ["Average return", eps.n ? (eps.sum / eps.n).toFixed(3) : "–"], ["Last episode", eps.last == null ? "–" : sg(eps.last)]]);
     requestAnimationFrame(layout);
   }
@@ -1417,10 +1436,10 @@ function drawGrid(cv, W, path, o = {}) {
     };
     tick();
   });
-  $("#trMany").addEventListener("click", () => { stopEp(); let s; for (let i = 0; i < 1000; i++) { s = sample(); eps.n++; eps.sum += s.ret; eps.last = s.ret; } mark(s.path); $("#trNote").innerHTML = `After ${eps.n} episodes the average return is ${(eps.sum / eps.n).toFixed(3)}, close to the expected return R. The last episode is highlighted.`; update(); });
+  $("#trMany").addEventListener("click", () => { stopEp(); let s; for (let i = 0; i < 1000; i++) { s = sample(); eps.n++; eps.sum += s.ret; eps.last = s.ret; } mark(s.path); $("#trNote").innerHTML = `After ${eps.n} episodes the average return is ${(eps.sum / eps.n).toFixed(3)}, close to the expected return ${tex("R")}. The last episode is highlighted.`; update(); });
   const setP = v => { Object.assign(P, v); host.querySelectorAll("input[data-k]").forEach(i => i.value = P[i.dataset.k]); };
-  $("#trBook").addEventListener("click", () => { stopEp(); setP(BOOK); eps.n = 0; eps.sum = 0; eps.last = null; mark([]); $("#trNote").textContent = "The book’s policy: R = 5.728."; update(); });
-  $("#trBest").addEventListener("click", () => { stopEp(); setP({ p0: 1, p1: 0, p2: 0 }); eps.n = 0; eps.sum = 0; eps.last = null; mark(["root", "A", "D", "F"]); $("#trNote").textContent = "A deterministic policy that grabs the treasure, then walks right twice to the exit: 10 + 0 + 4 = 14, the most this tree can earn."; update(); });
+  $("#trBook").addEventListener("click", () => { stopEp(); setP(BOOK); eps.n = 0; eps.sum = 0; eps.last = null; mark([]); $("#trNote").innerHTML = `The book’s policy: ${tex("R = 5.728")}.`; update(); });
+  $("#trBest").addEventListener("click", () => { stopEp(); setP({ p0: 1, p1: 0, p2: 0 }); eps.n = 0; eps.sum = 0; eps.last = null; mark(["root", "A", "D", "F"]); $("#trNote").innerHTML = `A deterministic policy that grabs the treasure, then walks right twice to the exit: ${tex("10 + 0 + 4 = 14")}, the most this tree can earn.`; update(); });
   new ResizeObserver(layout).observe(host);
   $("#trNote").textContent = "Drag a policy slider inside a card, then play episodes and watch the agent follow the tree.";
   update();
@@ -1440,7 +1459,7 @@ function drawGrid(cv, W, path, o = {}) {
     const recent = W.lens.slice(-20), opt = (() => { const d = Array.from({ length: 6 }, () => new Array(6).fill(Infinity)), q = [W.start]; d[W.start[0]][W.start[1]] = 0; while (q.length) { const [r, cc] = q.shift(); if (W.g[r][cc] === "T") return d[r][cc]; if (W.g[r][cc] === "F") continue; MOVES.forEach(([dr, dc]) => { const nr = r + dr, nc = cc + dc; if (nr >= 0 && nc >= 0 && nr < 6 && nc < 6 && W.g[nr][nc] !== "#" && d[nr][nc] === Infinity) { d[nr][nc] = d[r][cc] + 1; q.push([nr, nc]); } }); } return null; })();
     stats($("#qlStats"), [["Episodes", W.lens.length], ["Steps, last episode", W.lens.length ? W.lens[W.lens.length - 1] : "–"], ["Mean steps, last 20", recent.length ? (recent.reduce((s, v) => s + v, 0) / recent.length).toFixed(1) : "–"], ["Shortest safe path", opt == null ? "none" : opt + " steps"], ["Return, last episode", W.rets.length ? W.rets[W.rets.length - 1].toFixed(1) : "–"]]);
     lineChart($("#qlChart"), [{ data: W.lens.length ? W.lens : [0], color: c.accent, label: "steps per episode" }], { labels: true, refs: opt ? [{ v: opt, label: "shortest " + opt, color: c.good }] : [] });
-    $("#qlNote").textContent = W.lens.length ? "Arrows show the greedy action in each cell; shading shows max Q (brighter is better). Early episodes wander and often end in a fire pit; the values of the treasure spread backward one step per visit, until the greedy path is short and safe. With ε > 0 the agent still explores, so some episodes stay long." : "Q starts at zero everywhere, so the first episodes are random walks. Press Learn.";
+    $("#qlNote").innerHTML = W.lens.length ? `Arrows show the greedy action in each cell; shading shows ${tex(String.raw`\max Q`)} (brighter is better). Early episodes wander and often end in a fire pit; the values of the treasure spread backward one step per visit, until the greedy path is short and safe. With ${tex(String.raw`\varepsilon \gt 0`)} the agent still explores, so some episodes stay long.` : `${tex("Q")} starts at zero everywhere, so the first episodes are random walks. Press Learn.`;
   }
   let geo = null;
   $("#qlRun").addEventListener("click", () => { if (timer) { clearInterval(timer); timer = null; $("#qlRun").textContent = "Learn"; return; } $("#qlRun").textContent = "Pause"; timer = setInterval(() => { path = gridEpisode(W, rnd, ctl.a, ctl.g, ctl.e); draw(); if (W.lens.length >= 500) { clearInterval(timer); timer = null; $("#qlRun").textContent = "Learn"; } }, 60); });
@@ -1506,14 +1525,14 @@ function drawGrid(cv, W, path, o = {}) {
   // Figure 12.6: regions I to III for a positive advantage, IV to VI for a negative one
   const SERIF = '"Source Serif 4", Georgia, serif';
   const ROWS = [
-    ["I", "Positive", "Better", "r(θ)Â", "Positive", "More likely", "No"],
-    ["II", "Positive", "Better", "r(θ)Â", "Positive", "More likely", "No"],
-    ["III", "Positive", "Better", "(1 + ε)Â", "Zero", "Unchanged", "Yes"],
-    ["IV", "Negative", "Worse", "(1 − ε)Â", "Zero", "Unchanged", "Yes"],
-    ["V", "Negative", "Worse", "r(θ)Â", "Negative", "Less likely", "No"],
-    ["VI", "Negative", "Worse", "r(θ)Â", "Negative", "Less likely", "No"]
+    ["I", "Positive", "Better", String.raw`r(\theta)\hat{A}`, "Positive", "More likely", "No"],
+    ["II", "Positive", "Better", String.raw`r(\theta)\hat{A}`, "Positive", "More likely", "No"],
+    ["III", "Positive", "Better", String.raw`(1 + \varepsilon)\hat{A}`, "Zero", "Unchanged", "Yes"],
+    ["IV", "Negative", "Worse", String.raw`(1 - \varepsilon)\hat{A}`, "Zero", "Unchanged", "Yes"],
+    ["V", "Negative", "Worse", String.raw`r(\theta)\hat{A}`, "Negative", "Less likely", "No"],
+    ["VI", "Negative", "Worse", String.raw`r(\theta)\hat{A}`, "Negative", "Less likely", "No"]
   ];
-  $("#ppTbl").innerHTML = `<thead><tr><th>Region</th><th>Advantage estimate</th><th>Selected action</th><th>Return value of min</th><th>Gradient</th><th>Action likelihood</th><th>Clip objective?</th></tr></thead><tbody>${ROWS.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  $("#ppTbl").innerHTML = `<thead><tr><th>Region</th><th>Advantage estimate</th><th>Selected action</th><th>Return value of min</th><th>Gradient</th><th>Action likelihood</th><th>Clip objective?</th></tr></thead><tbody>${ROWS.map(r => `<tr>${r.map((v, j) => `<td>${j === 3 ? tex(v) : v}</td>`).join("")}</tr>`).join("")}</tbody>`;
   const ctl = makeControls($("#ppCtl"), [
     { key: "s", id: "ppS", type: "select", label: "Advantage estimate Â", value: "1", options: [["1", "Positive: a better action (Â = +1)"], ["-1", "Negative: a worse action (Â = −1)"]] },
     { key: "r", id: "ppR", label: "Probability ratio r(θ)", min: .05, max: 1.95, step: .01, value: 1, fmt: v => v.toFixed(2) },
@@ -1636,7 +1655,7 @@ function drawGrid(cv, W, path, o = {}) {
     </svg>`;
   const LO = 3.5, HI = 12.5, pdf = (x, m, s) => Math.exp(-((x - m) ** 2) / (2 * s * s)) / (s * Math.sqrt(2 * Math.PI));
   $("#mbCasino").innerHTML = MEAN.map((m, k) => `<div class="slot" id="mbSlot${k}">
-      <div class="slot-dist"><div class="slot-cap">Payoff distribution: μ = ${m}, σ = ${SD[k]}</div><canvas id="mbD${k}" aria-label="Payoff distribution of slot machine ${k + 1}"></canvas></div>
+      <div class="slot-dist"><div class="slot-cap">Payoff distribution: ${tex(String.raw`\mu = ${m},\ \sigma = ${SD[k]}`)}</div><canvas id="mbD${k}" aria-label="Payoff distribution of slot machine ${k + 1}"></canvas></div>
       <div class="slot-art">${SLOT}<span class="slot-pay" id="mbPay${k}"></span></div>
       <div class="slot-name">Slot machine ${k + 1}</div>
       <div class="slot-read"><span id="mbN${k}">0 pulls</span><span id="mbQ${k}">Q = –</span></div>
@@ -1659,7 +1678,7 @@ function drawGrid(cv, W, path, o = {}) {
       ctx.globalAlpha = 1;
       if (n[k]) { const q = sum[k] / n[k]; ctx.strokeStyle = c.gold; ctx.lineWidth = 2; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(X(q), pad.t); ctx.lineTo(X(q), h - pad.b); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = c.gold; ctx.font = `600 11px ${MONO}`; ctx.textAlign = X(q) > w - 40 ? "right" : "left"; ctx.textBaseline = "top"; ctx.fillText("Q", X(q) + (X(q) > w - 40 ? -4 : 4), pad.t); }
       $("#mbN" + k).textContent = `${n[k]} pull${n[k] === 1 ? "" : "s"}`;
-      $("#mbQ" + k).textContent = n[k] ? `Q = ${(sum[k] / n[k]).toFixed(2)}` : "Q = –";
+      $("#mbQ" + k).innerHTML = tex(n[k] ? `Q = ${(sum[k] / n[k]).toFixed(2)}` : String.raw`Q = \text{–}`);
       $("#mbB" + k).style.width = (100 * n[k] / T) + "%";
       const slot = $("#mbSlot" + k), on = k === last;
       slot.classList.toggle("on", on); slot.classList.toggle("best", upTo > T && n[k] === Math.max(...n));
@@ -1693,9 +1712,9 @@ function drawGrid(cv, W, path, o = {}) {
   $("#mbPlay").addEventListener("click", () => run());
   $("#mbTrap").addEventListener("click", () => { run({ strat: "greedy", first: [7, 6, 3] }); $("#mbNote").textContent = "The first pulls happen to pay 7, 6 and 3, so greedy believes machine 1 is best and never tries machine 2 again: 87 more pulls on machine 1, a regret of about 2 per pull."; });
   $("#mbMany").addEventListener("click", () => {
-    const rnd = mulberry32(newSeed()), N = 2000, rows = [["Explore only", "explore", {}], ["Exploit only (greedy)", "greedy", {}], [`ε-greedy, ε = ${ctl.e}`, "eps", {}], [`UCB, c = ${ctl.c}`, "ucb", {}], ["Greedy as coded in Listing 12.1", "greedy", { trueMeans: true }], [`ε-greedy as coded in Listing 12.1`, "eps", { trueMeans: true }]];
+    const rnd = mulberry32(newSeed()), N = 2000, rows = [["Explore only", "explore", {}], ["Exploit only (greedy)", "greedy", {}], [`${tex(String.raw`\varepsilon`)}-greedy, ${tex(String.raw`\varepsilon = ${ctl.e}`)}`, "eps", {}], [`UCB, ${tex(`c = ${ctl.c}`)}`, "ucb", {}], ["Greedy as coded in Listing 12.1", "greedy", { trueMeans: true }], [`${tex(String.raw`\varepsilon`)}-greedy as coded in Listing 12.1`, "eps", { trueMeans: true }]];
     $("#mbTbl").innerHTML = `<thead><tr><th>Strategy</th><th class="n">Average regret per pull</th><th class="n">Pulls on machine 2</th><th class="n">Runs stuck on a wrong machine</th></tr></thead><tbody>` + rows.map(([name, s, o]) => { let reg = 0, best = 0, stuck = 0; for (let i = 0; i < N; i++) { const r = play(s, rnd, ctl.e, ctl.c, o); reg += r.regret; best += r.n[1]; if (r.n[1] < 10) stuck++; } return `<tr class="${o.trueMeans ? "dim" : ""}"><td>${name}</td><td class="n">${(reg / N).toFixed(3)}</td><td class="n">${(best / N / T * 100).toFixed(1)}%</td><td class="n">${(stuck / N * 100).toFixed(1)}%</td></tr>`; }).join("") + "</tbody>";
-    $("#mbNote").textContent = "Averages over 2,000 runs of 90 pulls. Explore-only wastes two thirds of its pulls (regret about 2.33 per pull, as the book computes). Greedy usually lucks into machine 2 because the means are far apart, but a few runs get stuck. The last two rows reproduce Listing 12.1, whose greedy and ε-greedy pick the machine with the highest true mean, information a real player never has, so their low regret is not earned by learning.";
+    $("#mbNote").innerHTML = `Averages over 2,000 runs of 90 pulls. Explore-only wastes two thirds of its pulls (regret about 2.33 per pull, as the book computes). Greedy usually lucks into machine 2 because the means are far apart, but a few runs get stuck. The last two rows reproduce Listing 12.1, whose greedy and ${tex(String.raw`\varepsilon`)}-greedy pick the machine with the highest true mean, information a real player never has, so their low regret is not earned by learning.`;
   });
   ro.observe($("#mbCv")); onRedraw(draw); run();
 })();
@@ -1726,7 +1745,7 @@ function drawGrid(cv, W, path, o = {}) {
   ro.observe($("#cbChart")); run();
 })();
 
-codeTabs({ m: "The commute of Figure 12.2, Reach the Treasure by value iteration and Q-learning, and Q-learning in a gridworld", b: "Explore-only, greedy, ε-greedy and UCB learning from their own estimates, and the greedy trap", c: "CartPole physics and an advantage actor-critic with NumPy networks and Adam", p: "PPO’s clipped surrogate objective and the KL divergence between Gaussians", t: "Truck selection with a tabular ε-greedy contextual bandit, with and without a route-dependent reward" }, "m");
+codeTabs({ m: "The commute of Figure 12.2, Reach the Treasure by value iteration and Q-learning, and Q-learning in a gridworld", b: `Explore-only, greedy, ${tex(String.raw`\varepsilon`)}-greedy and UCB learning from their own estimates, and the greedy trap`, c: "CartPole physics and an advantage actor-critic with NumPy networks and Adam", p: "PPO’s clipped surrogate objective and the KL divergence between Gaussians", t: `Truck selection with a tabular ${tex(String.raw`\varepsilon`)}-greedy contextual bandit, with and without a route-dependent reward` }, "m");
 
 /* ---------- side menu ---------- */
 (function sideMenu() {
@@ -1761,7 +1780,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

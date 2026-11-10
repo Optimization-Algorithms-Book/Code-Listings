@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Particle Swarm Optimization Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -306,10 +325,10 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <h1>Particle Swarm <em>Optimization</em> Lab</h1>
       <p class="lede">Watch candidate solutions fly through a search space, learning from their own memory and from their neighbors. Change any parameter and see what it does.</p>
       <div class="variants">
-        <a class="chip" href="#continuous"><b>x ∈ ℝ</b> Continuous</a>
-        <a class="chip" href="#binary"><b>x ∈ {0,1}</b> Binary</a>
-        <a class="chip" href="#permutation"><b>x ∈ Sₙ</b> Permutation</a>
-        <a class="chip" href="#adaptive"><b>w(t)</b> Adaptive</a>
+        <a class="chip" href="#continuous"><b>\(x \in \mathbb{R}\)</b> Continuous</a>
+        <a class="chip" href="#binary"><b>\(x \in \{0,1\}\)</b> Binary</a>
+        <a class="chip" href="#permutation"><b>\(x \in S_n\)</b> Permutation</a>
+        <a class="chip" href="#adaptive"><b>\(w(t)\)</b> Adaptive</a>
       </div>
       <p class="cite">Based on Chapter 9, “Particle swarm optimization,” in Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning Publications, 2024 (ISBN 978-1633438835).</p>
     </div>
@@ -358,38 +377,38 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>Pseudocode, motion equations and steps</h2>
     <div class="two" id="pseudocode">
       <div class="prose">
-        <p>Each particle keeps its position <b>x</b>, velocity <b>v</b>, personal best <b>pbest</b> and the best position in its neighborhood, <b>nbest</b> (gbest for the whole swarm, lbest for a few neighbors). Every iteration it updates its velocity, then moves.</p>
+        <p>Each particle keeps its position \(\mathbf{x}\), velocity \(\mathbf{v}\), personal best <b>pbest</b> and the best position in its neighborhood, <b>nbest</b> (gbest for the whole swarm, lbest for a few neighbors). Every iteration it updates its velocity, then moves.</p>
         <p class="more">Section 9.2 of the book walks through every step, from initialization to stopping criteria, and explains each term of equations 9.1 to 9.4.</p>
       </div>
       <div class="pseudo"><span class="k">Algorithm</span>: PSO
 <span class="k">for each</span> particle
-    initialize position x (random) and velocity v (zero or small)
-    pbest ← x
+    initialize position \(x\) (random) and velocity \(v\) (zero or small)
+    \(\mathrm{pbest} \leftarrow x\)
 <span class="k">end</span>
 <span class="k">do</span>
     <span class="k">for each</span> particle
-        calculate fitness f(x)
-        <span class="k">if</span> f(x) is better than f(pbest)   <span class="c"># eq. 9.3</span>
-            pbest ← x
+        calculate fitness \(f(x)\)
+        <span class="k">if</span> \(f(x)\) is better than \(f(\mathrm{pbest})\)   <span class="c"># eq. 9.3</span>
+            \(\mathrm{pbest} \leftarrow x\)
     <span class="k">end</span>
     choose nbest (gbest for the star topology)  <span class="c"># eq. 9.4</span>
     <span class="k">for each</span> particle
-        v ← w·v + c1·r1·(pbest − x) + c2·r2·(nbest − x)   <span class="c"># eq. 9.1</span>
-        x ← x + v                                         <span class="c"># eq. 9.2</span>
+        \(v \leftarrow w \cdot v + c_1 \cdot r_1 \cdot (\mathrm{pbest} - x) + c_2 \cdot r_2 \cdot (\mathrm{nbest} - x)\)   <span class="c"># eq. 9.1</span>
+        \(x \leftarrow x + v\)   <span class="c"># eq. 9.2</span>
     <span class="k">end</span>
 <span class="k">while</span> maximum iterations or minimum error is not reached</div>
     </div>
 
-    <div class="eq">v<sub>k+1</sub><sup>id</sup> = <span class="t-in">w·v<sub>k</sub><sup>id</sup></span> + <span class="t-cog">c<sub>1</sub>r<sub>1</sub>(pbest<sub>k</sub><sup>id</sup> − x<sub>k</sub><sup>id</sup>)</span> + <span class="t-soc">c<sub>2</sub>r<sub>2</sub>(gbest<sub>k</sub><sup>d</sup> − x<sub>k</sub><sup>id</sup>)</span><span class="tag">(9.1)</span><br>x<sub>k+1</sub><sup>id</sup> = x<sub>k</sub><sup>id</sup> + v<sub>k+1</sub><sup>id</sup><span class="tag">(9.2)</span></div>
+    <div class="eq">\(v_{k+1}^{id} =\) <span class="t-in">\(w \cdot v_k^{id}\)</span> \(+\) <span class="t-cog">\(c_1 r_1 (\mathrm{pbest}_k^{id} - x_k^{id})\)</span> \(+\) <span class="t-soc">\(c_2 r_2 (\mathrm{gbest}_k^{d} - x_k^{id})\)</span><span class="tag">(9.1)</span><br>\(x_{k+1}^{id} = x_k^{id} + v_{k+1}^{id}\)<span class="tag">(9.2)</span></div>
     <p class="prose"><span style="color:var(--muted)">Inertia</span> keeps the particle on course, the <span style="color:var(--accent)">cognitive</span> term pulls it toward its own best, and the <span style="color:var(--gold)">social</span> term toward the swarm’s best. Drag the points below to see how they combine.</p>
 
     <div class="bench" id="velocity">
-      <div class="bench-head"><h4>Anatomy of one velocity update</h4><span class="eyebrow">Drag x, pbest, gbest or the tip of v<sub>k</sub></span></div>
+      <div class="bench-head"><h4>Anatomy of one velocity update</h4><span class="eyebrow">Drag \(x\), pbest, gbest or the tip of \(v_k\)</span></div>
       <div class="bench-body">
         <div class="side" id="vecCtl"></div>
         <div class="stage">
           <canvas id="vecCv" class="cv-map" style="aspect-ratio:16/10" aria-label="Velocity update vector diagram"></canvas>
-          <div class="legend"><span><i style="background:var(--muted)"></i>inertia w·v<sub>k</sub></span><span><i style="background:var(--accent)"></i>cognitive c1·r1·(pbest − x)</span><span><i style="background:var(--gold)"></i>social c2·r2·(gbest − x)</span><span><i style="background:var(--ink)"></i>new velocity v<sub>k+1</sub></span></div>
+          <div class="legend"><span><i style="background:var(--muted)"></i>inertia \(w \cdot v_k\)</span><span><i style="background:var(--accent)"></i>cognitive \(c_1 \cdot r_1 \cdot (\mathrm{pbest} - x)\)</span><span><i style="background:var(--gold)"></i>social \(c_2 \cdot r_2 \cdot (\mathrm{gbest} - x)\)</span><span><i style="background:var(--ink)"></i>new velocity \(v_{k+1}\)</span></div>
         </div>
       </div>
     </div>
@@ -398,11 +417,11 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <div class="tbl-wrap"><table>
       <thead><tr><th>Parameter</th><th>Typical value</th><th>Effect</th></tr></thead>
       <tbody>
-        <tr><td>Inertia weight <i>w</i></td><td class="mono">0.792</td><td>Large <i>w</i> explores; small <i>w</i> exploits.</td></tr>
-        <tr><td>Acceleration <i>c1</i>, <i>c2</i></td><td class="mono">1.49</td><td>Weights of the cognitive and social pulls.</td></tr>
-        <tr><td>Swarm size <i>N</i></td><td class="mono">20 to 40</td><td>Larger swarms explore more at higher cost.</td></tr>
+        <tr><td>Inertia weight \(w\)</td><td class="mono">0.792</td><td>Large \(w\) explores; small \(w\) exploits.</td></tr>
+        <tr><td>Acceleration \(c_1\), \(c_2\)</td><td class="mono">1.49</td><td>Weights of the cognitive and social pulls.</td></tr>
+        <tr><td>Swarm size \(N\)</td><td class="mono">20 to 40</td><td>Larger swarms explore more at higher cost.</td></tr>
       </tbody></table></div>
-    <p class="more">Chapter 9 explains how to set every parameter, including V<sub>max</sub>, the initial velocity and the update mode.</p>
+    <p class="more">Chapter 9 explains how to set every parameter, including \(V_{\max}\), the initial velocity and the update mode.</p>
 
     <h3 id="topologies">Neighborhood topologies</h3>
     <p class="prose">The topology decides who shares information with whom, and so how fast good news spreads. Pick a topology and click a particle to see its neighborhood.</p>
@@ -428,7 +447,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <p class="prose">Every coordinate is a real number, so equations 9.1 and 9.2 apply directly.</p>
 
     <h3 id="cont-worked">Use case 1: worked example, maximize f(x) = −x² + 2x + 11</h3>
-    <p class="prose">Four particles maximize f(x) on −2 ≤ x ≤ 2 (maximum 12 at x = 1). Click <b>Next iteration</b> to apply equations 9.1 and 9.2 by hand; the table shows every update.</p>
+    <p class="prose">Four particles maximize \(f(x)\) on \(-2 \le x \le 2\) (maximum 12 at \(x = 1\)). Click <b>Next iteration</b> to apply equations 9.1 and 9.2 by hand; the table shows every update.</p>
     <p class="more">Chapter 9 works through the first two iterations by hand, with numbers you can check against the panel.</p>
     <div class="bench">
       <div class="bench-head"><h4>Hand calculation, one iteration at a time</h4><span class="eyebrow" id="wkIterLbl">Iteration 0</span></div>
@@ -476,7 +495,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h3 id="trilateration">Use case 3: trilateration of a connected vehicle</h3>
     <div class="two">
       <div class="prose">
-        <p>Three C-V2X cells measure their distances to a vehicle; the vehicle position minimizes Σ e<sub>i</sub>², the squared distance errors. The table shows one hand-calculated iteration. Select <b>C-V2X trilateration</b> in the swarm lab above to watch a full swarm locate the vehicle.</p>
+        <p>Three C-V2X cells measure their distances to a vehicle; the vehicle position minimizes \(\sum_i e_i^2\), the squared distance errors. The table shows one hand-calculated iteration. Select <b>C-V2X trilateration</b> in the swarm lab above to watch a full swarm locate the vehicle.</p>
         <p class="more">Listing C.13 in Appendix C solves this localization problem in Python, with the full problem setup.</p>
       </div>
       <div class="tbl-wrap"><table id="triTbl"></table></div>
@@ -500,8 +519,8 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <div class="two">
       <div class="prose">
         <p>In <b>binary PSO</b> each bit is 0 or 1. The velocity stays real but is read as the <b>propensity of the bit to be 1</b>: the sigmoid turns it into a probability, and a random draw sets the bit.</p>
-        <div class="eq" style="font-size:1.02rem">v<sub>k+1</sub><sup>id</sup> = v<sub>k</sub><sup>id</sup> + φ<sub>1</sub>(pbest<sub>k</sub><sup>id</sup> − x<sub>k</sub><sup>id</sup>) + φ<sub>2</sub>(gbest<sub>k</sub><sup>d</sup> − x<sub>k</sub><sup>id</sup>)<span class="tag">(9.8)</span><br>sig(v) = 1 / (1 + e<sup>−v</sup>)<span class="tag">(9.9)</span><br>x<sub>k+1</sub><sup>id</sup> = 1 if sig(v<sub>k+1</sub><sup>id</sup>) &gt; r, otherwise 0<span class="tag">(9.10)</span></div>
-        <p class="more">Section 9.3 of the book explains binary PSO in full, including how φ<sub>1</sub>, φ<sub>2</sub> and V<sub>max</sub> shape the search.</p>
+        <div class="eq" style="font-size:1.02rem">\(v_{k+1}^{id} = v_k^{id} + \varphi_1 (\mathrm{pbest}_k^{id} - x_k^{id}) + \varphi_2 (\mathrm{gbest}_k^{d} - x_k^{id})\)<span class="tag">(9.8)</span><br>\(\operatorname{sig}(v) = 1 / (1 + e^{-v})\)<span class="tag">(9.9)</span><br>\(x_{k+1}^{id} = 1 \text{ if } \operatorname{sig}(v_{k+1}^{id}) \gt r, \text{ otherwise } 0\)<span class="tag">(9.10)</span></div>
+        <p class="more">Section 9.3 of the book explains binary PSO in full, including how \(\varphi_1\), \(\varphi_2\) and \(V_{\max}\) shape the search.</p>
       </div>
       <div class="bench" id="bin-worked" style="margin-top:0">
         <div class="bench-head"><h4>Use case 1: the BPSO worked example</h4><span class="eyebrow">Chapter 9 · Section 9.3</span></div>
@@ -518,9 +537,9 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     </div>
 
     <h3 id="bin-lab">Use case 2: a binary swarm selecting projects under a budget</h3>
-    <p class="prose">Practice problem: choose among 16 projects to maximize value under a $60M budget (optimum <b id="bOptTxt">91</b>). Rows are particles, columns projects; the shade is sig(v), and a dot marks a 1.</p>
+    <p class="prose">Practice problem: choose among 16 projects to maximize value under a $60M budget (optimum <b id="bOptTxt">91</b>). Rows are particles, columns projects; the shade is \(\operatorname{sig}(v)\), and a dot marks a 1.</p>
     <div class="bench">
-      <div class="bench-head"><h4>Binary swarm lab</h4><span class="eyebrow">Maximization over {0,1}<sup>16</sup></span></div>
+      <div class="bench-head"><h4>Binary swarm lab</h4><span class="eyebrow">Maximization over \(\{0,1\}^{16}\)</span></div>
       <div class="bench-body">
         <div class="side" id="bCtl"></div>
         <div class="stage">
@@ -528,7 +547,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
           <div class="stage-grid">
             <div>
               <canvas id="bGrid" aria-label="Bit grid of the swarm"></canvas>
-              <div class="legend"><span><i class="sq" style="background:var(--accent)"></i>high sig(v)</span><span><i class="sq" style="background:var(--sunk);border:1px solid var(--line)"></i>low sig(v)</span><span><i style="background:var(--ink)"></i>bit = 1</span><span><i class="sq" style="background:var(--gold)"></i>gbest row</span></div>
+              <div class="legend"><span><i class="sq" style="background:var(--accent)"></i>high \(\operatorname{sig}(v)\)</span><span><i class="sq" style="background:var(--sunk);border:1px solid var(--line)"></i>low \(\operatorname{sig}(v)\)</span><span><i style="background:var(--ink)"></i>bit = 1</span><span><i class="sq" style="background:var(--gold)"></i>gbest row</span></div>
             </div>
             <div>
               <div class="stats" id="bStats"></div>
@@ -574,7 +593,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       </div>
       <div class="op">
         <h4>Multiplication: constant × velocity</h4>
-        <p class="cap">c = 0 empties, c &lt; 1 truncates and c &gt; 1 augments the list (Figure 9.8).</p>
+        <p class="cap">\(c = 0\) empties, \(c \lt 1\) truncates and \(c \gt 1\) augments the list (Figure 9.8).</p>
         <label class="cap" for="mulV">Velocity (swaps)</label><input type="text" id="mulV" value="(2,6) (3,7)">
         <div class="ctl"><label for="mulC">Constant c<output id="mulCo">1.8</output></label><input type="range" id="mulC" min="0" max="3" step="0.1" value="1.8"></div>
         <div id="mulOut"></div>
@@ -615,20 +634,20 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <span class="eyebrow">Part 6 · Section 9.5</span>
     <h2>Adaptive PSO</h2>
     <div class="prose">
-      <p><b>Adaptive PSO</b> changes w, c1 and c2 while the search runs: it explores broadly at the start and homes in on the best solutions late.</p>
-      <p class="more">Section 9.5 explains why <i>w</i> &gt; 1 makes the swarm diverge, how velocity clamping helps, and how each parameter shifts the search (Figure 9.11).</p>
+      <p><b>Adaptive PSO</b> changes \(w\), \(c_1\) and \(c_2\) while the search runs: it explores broadly at the start and homes in on the best solutions late.</p>
+      <p class="more">Section 9.5 explains why \(w \gt 1\) makes the swarm diverge, how velocity clamping helps, and how each parameter shifts the search (Figure 9.11).</p>
     </div>
 
     <h3 id="adapt-inertia">Inertia weight schedules (9.5.1)</h3>
     <div class="prose">
-      <p>Three schedules for <i>w</i>: <b>RS</b> picks a random weight each iteration, <b>LTV</b> falls linearly from 0.9 to 0.4, and <b>NLTV</b> falls nonlinearly and reaches the low end early.</p>
+      <p>Three schedules for \(w\): <b>RS</b> picks a random weight each iteration, <b>LTV</b> falls linearly from 0.9 to 0.4, and <b>NLTV</b> falls nonlinearly and reaches the low end early.</p>
       <p class="more">Section 9.5.1 gives the formulas for all three schedules (equations 9.11 to 9.13) and plots them in Figure 9.12.</p>
     </div>
 
     <h3 id="adapt-coeff">Cognitive and social components (9.5.2)</h3>
     <div class="prose">
-      <p>c1 (learning from oneself) falls and c2 (learning from neighbors) rises, so the swarm starts individualistic and ends cooperative. Press <b>Play t</b> below to watch where the settings sit over time.</p>
-      <p class="more">Section 9.5.2 gives the c1 and c2 schedules (equations 9.14 and 9.15) and the limit c1 + c2 ≤ 4.</p>
+      <p>\(c_1\) (learning from oneself) falls and \(c_2\) (learning from neighbors) rises, so the swarm starts individualistic and ends cooperative. Press <b>Play t</b> below to watch where the settings sit over time.</p>
+      <p class="more">Section 9.5.2 gives the \(c_1\) and \(c_2\) schedules (equations 9.14 and 9.15) and the limit \(c_1 + c_2 \le 4\).</p>
     </div>
 
     <div class="bench" id="adapt-explorer">
@@ -638,11 +657,11 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
         <div class="stage">
           <div class="stage-grid">
             <div><canvas id="asW" class="cv-chart" style="height:200px" aria-label="Inertia weight schedules"></canvas><p class="cap">Inertia weight: RS (gold), LTV (blue), NLTV (purple).</p></div>
-            <div><canvas id="asC" class="cv-chart" style="height:200px" aria-label="Acceleration coefficient schedules"></canvas><p class="cap">c1(t) (gold) falls and c2(t) (blue) rises.</p></div>
+            <div><canvas id="asC" class="cv-chart" style="height:200px" aria-label="Acceleration coefficient schedules"></canvas><p class="cap">\(c_1(t)\) (gold) falls and \(c_2(t)\) (blue) rises.</p></div>
           </div>
           <div class="stats" id="asStats"></div>
           <div>
-            <div class="eyebrow">Design space of a PSO: where the LTV and c1, c2 settings at iteration t sit</div>
+            <div class="eyebrow">Design space of a PSO: where the LTV and \(c_1, c_2\) settings at iteration \(t\) sit</div>
             <div class="dspace">
               <span class="tick" style="left:6%">Random search</span><span class="tick mid" style="left:36%">Cognitive model</span><span class="tick mid" style="left:64%">Social model</span><span class="tick" style="left:94%">Local search</span>
               <div class="track"></div>
@@ -1053,14 +1072,14 @@ plt.title("</span>Adaptive PSO on Rastrigin (d = <span class="nm">10</span>)"); 
     <h2>Check your understanding</h2>
     <p class="prose">Two quick questions on Chapter 9. Pick an answer to check it.</p>
     <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> In binary PSO, what does the velocity <i>v</i> of one bit represent?</p>
+      <p class="mcq-q"><b>Q1.</b> In binary PSO, what does the velocity \(v\) of one bit represent?</p>
       <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>The distance the bit moves along the search axis</span></button><button type="button" class="mcq-o"><b>B</b><span>The number of bits to flip in the next iteration</span></button><button type="button" class="mcq-o"><b>C</b><span>After the sigmoid, the probability that the bit becomes 1</span></button><button type="button" class="mcq-o"><b>D</b><span>The Hamming distance between the particle and gbest</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>The velocity stays a real number but is read as the propensity of the bit to be 1: sig(v) turns it into a probability, and a random draw sets the bit. A velocity of 0 means a coin flip.</template>
+      <p class="mcq-fb" aria-live="polite"></p><template>The velocity stays a real number but is read as the propensity of the bit to be 1: \(\operatorname{sig}(v)\) turns it into a probability, and a random draw sets the bit. A velocity of 0 means a coin flip.</template>
     </div>
     <div class="mcq" data-a="1">
       <p class="mcq-q"><b>Q2.</b> Which setting shifts a PSO swarm toward exploitation, refining the area around elite solutions?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Raising the inertia weight <i>w</i> above 1</span></button><button type="button" class="mcq-o"><b>B</b><span>A small <i>w</i> with c<sub>2</sub> larger than c<sub>1</sub></span></button><button type="button" class="mcq-o"><b>C</b><span>Setting c<sub>2</sub> = 0 so particles ignore their neighbors</span></button><button type="button" class="mcq-o"><b>D</b><span>Making c<sub>1</sub> larger than c<sub>2</sub></span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>A small inertia weight and a stronger social pull concentrate the swarm around the best positions found. A large w or c1 > c2 favors exploration, and c2 = 0 turns the particles into independent hill climbers.</template>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Raising the inertia weight \(w\) above 1</span></button><button type="button" class="mcq-o"><b>B</b><span>A small \(w\) with \(c_2\) larger than \(c_1\)</span></button><button type="button" class="mcq-o"><b>C</b><span>Setting \(c_2 = 0\) so particles ignore their neighbors</span></button><button type="button" class="mcq-o"><b>D</b><span>Making \(c_1\) larger than \(c_2\)</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>A small inertia weight and a stronger social pull concentrate the swarm around the best positions found. A large \(w\) or \(c_1 \gt c_2\) favors exploration, and \(c_2 = 0\) turns the particles into independent hill climbers.</template>
     </div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%209" target="_blank" rel="noopener">Chapter 9</a>).</p>
   </div>
@@ -1357,7 +1376,7 @@ function drawTopology(cv, top, N, sel) {
     dot(x, c.ink, "x (here I am)", false);
     const q = T(a3); ctx.beginPath(); ctx.arc(q[0], q[1], 7, 0, 7); ctx.strokeStyle = c.ink; ctx.setLineDash([2, 2]); ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = c.ink; ctx.font = "12px " + MONO; ctx.textBaseline = "middle"; label(ctx, "x(k+1)", q[0], q[1] + 14, w);
     const L = v => Math.hypot(v[0], v[1]).toFixed(3);
-    $("#vecTxt").innerHTML = `|w·v| = ${L(inr)}, |cognitive| = ${L(cog)}, |social| = ${L(soc)}. Each random number scales its pull, so the same particle takes a different step every iteration.`;
+    $("#vecTxt").innerHTML = `${tex(String.raw`\lvert w \cdot v \rvert = ${L(inr)}`)}, ${tex(String.raw`\lvert \text{cognitive} \rvert = ${L(cog)}`)}, ${tex(String.raw`\lvert \text{social} \rvert = ${L(soc)}`)}. Each random number scales its pull, so the same particle takes a different step every iteration.`;
   }
   function label(ctx, t, x, y, w) { const tw = ctx.measureText(t).width; if (x + 12 + tw > w - 4) { ctx.textAlign = "right"; ctx.fillText(t, x - 12, y); } else { ctx.textAlign = "left"; ctx.fillText(t, Math.max(4, x + 12), y); } }
   function pick(e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / S, (e.clientY - r.top) / S]; }
@@ -1419,14 +1438,14 @@ const paren = v => v < 0 ? `(${f4(v)})` : f4(v);
     const it = its[K]; $("#wkIterLbl").textContent = "Iteration " + K;
     let h;
     if (K === 0) {
-      h = `<thead><tr><th>Particle</th><th class="n">x₀</th><th class="n">f(x₀)</th><th class="n">v₀</th><th class="n">pbest₀</th></tr></thead><tbody>` +
+      h = `<thead><tr><th>Particle</th><th class="n">${tex("x_0")}</th><th class="n">${tex("f(x_0)")}</th><th class="n">${tex("v_0")}</th><th class="n">${tex(String.raw`\mathrm{pbest}_0`)}</th></tr></thead><tbody>` +
         it.x.map((p, i) => `<tr class="${i === it.g ? "hl" : ""}"><td>${i + 1}</td><td class="n">${vec(p)}</td><td class="n">${f4(it.fx[i])}</td><td class="n">0</td><td class="n">${vec(it.pb[i])}</td></tr>`).join("") + "</tbody>";
-      $("#wkCap").innerHTML = `Initialization: velocities are zero and each pbest is the starting position. gbest₀ = <b>${vec(it.gpos)}</b> with f = ${f4(it.gf)} (highlighted).`;
+      $("#wkCap").innerHTML = `Initialization: velocities are zero and each pbest is the starting position. ${tex(String.raw`\mathrm{gbest}_0 = \mathbf{${vec(it.gpos)}}`)} with ${tex(String.raw`f = ${f4(it.gf)}`)} (highlighted).`;
     } else {
-      h = `<thead><tr><th>Particle</th><th class="n">x<sub>${K - 1}</sub></th><th>v<sub>${K}</sub> = w·v + c1·r1·(pbest − x) + c2·r2·(gbest − x)</th><th class="n">x<sub>${K}</sub></th><th class="n">f(x<sub>${K}</sub>)</th><th class="n">pbest<sub>${K}</sub></th></tr></thead><tbody>` +
-        it.rows.map((r, i) => `<tr class="${i === it.g ? "hl" : ""}"><td>${i + 1}</td><td class="n">${f4(r.xo[0])}</td><td class="n" style="text-align:left">${fmtNum(ctl.w, 2)}·${paren(r.vo[0])} + ${fmtNum(ctl.c1, 2)}·${it.r1}·(${f4(r.pbo[0])} − ${paren(r.xo[0])}) + ${fmtNum(ctl.c2, 2)}·${it.r2}·(${f4(it.gp[0])} − ${paren(r.xo[0])}) = <b>${f4(r.nv[0])}</b></td><td class="n">${f4(r.nx[0])}</td><td class="n">${f4(it.fx[i])}</td><td class="n">${f4(it.pb[i][0])}</td></tr>`).join("") + "</tbody>";
+      h = `<thead><tr><th>Particle</th><th class="n">${tex(String.raw`x_{${K - 1}}`)}</th><th>${tex(String.raw`v_{${K}} = w \cdot v + c_1 \cdot r_1 \cdot (\mathrm{pbest} - x) + c_2 \cdot r_2 \cdot (\mathrm{gbest} - x)`)}</th><th class="n">${tex(String.raw`x_{${K}}`)}</th><th class="n">${tex(String.raw`f(x_{${K}})`)}</th><th class="n">${tex(String.raw`\mathrm{pbest}_{${K}}`)}</th></tr></thead><tbody>` +
+        it.rows.map((r, i) => `<tr class="${i === it.g ? "hl" : ""}"><td>${i + 1}</td><td class="n">${f4(r.xo[0])}</td><td class="n" style="text-align:left">${tex(String.raw`${fmtNum(ctl.w, 2)} \cdot ${paren(r.vo[0])} + ${fmtNum(ctl.c1, 2)} \cdot ${it.r1} \cdot (${f4(r.pbo[0])} - ${paren(r.xo[0])}) + ${fmtNum(ctl.c2, 2)} \cdot ${it.r2} \cdot (${f4(it.gp[0])} - ${paren(r.xo[0])}) = \mathbf{${f4(r.nv[0])}}`)}</td><td class="n">${f4(r.nx[0])}</td><td class="n">${f4(it.fx[i])}</td><td class="n">${f4(it.pb[i][0])}</td></tr>`).join("") + "</tbody>";
       const out = it.x.map((p, i) => p[0] < -2 || p[0] > 2 ? i + 1 : null).filter(Boolean);
-      $("#wkCap").innerHTML = `r1 = ${it.r1}, r2 = ${it.r2}${K > 2 ? " (seeded random)" : " (given values; a few published results differ in the fourth decimal because of rounding)"}. gbest after this iteration = <b>${vec(it.gpos)}</b> with f = ${f4(it.gf)}.` + (out.length ? ` <span style="color:var(--bad)">Particle ${out.join(", ")} left the range [−2, 2]: the plain update has no boundary handling or V<sub>max</sub>.</span>` : "");
+      $("#wkCap").innerHTML = `${tex(String.raw`r_1 = ${it.r1},\ r_2 = ${it.r2}`)}${K > 2 ? " (seeded random)" : " (given values; a few published results differ in the fourth decimal because of rounding)"}. gbest after this iteration = ${tex(String.raw`\mathbf{${vec(it.gpos)}}`)} with ${tex(String.raw`f = ${f4(it.gf)}`)}.` + (out.length ? ` <span style="color:var(--bad)">Particle ${out.join(", ")} left the range ${tex("[-2, 2]")}: the plain update has no boundary handling or ${tex(String.raw`V_{\max}`)}.</span>` : "");
     }
     $("#wkTbl").innerHTML = h; draw();
   }
@@ -1457,20 +1476,20 @@ const triF = p => triErr(p).reduce((s, e) => s + e * e, 0);
   const st = makeStepper({ f: triF, x0: [[1, 0], [.5, 1.25]], sense: "min", rs: [[.2, .2]] });
   const its = st.run(1, .79, 1, 1), a = its[0], b = its[1];
   const se = p => triErr(p).reduce((s, e) => s + e, 0);
-  $("#triTbl").innerHTML = `<thead><tr><th>Particle</th><th class="n">x₀</th><th class="n">Σeᵢ</th><th class="n">Σeᵢ²</th><th class="n">v₁</th><th class="n">x₁</th><th class="n">Σeᵢ²(x₁)</th></tr></thead><tbody>` +
+  $("#triTbl").innerHTML = `<thead><tr><th>Particle</th><th class="n">${tex("x_0")}</th><th class="n">${tex(String.raw`\sum e_i`)}</th><th class="n">${tex(String.raw`\sum e_i^2`)}</th><th class="n">${tex("v_1")}</th><th class="n">${tex("x_1")}</th><th class="n">${tex(String.raw`\sum e_i^2(x_1)`)}</th></tr></thead><tbody>` +
     a.x.map((p, i) => `<tr class="${i === a.g ? "hl" : ""}"><td>${i + 1}</td><td class="n">${vec(p, 2)}</td><td class="n">${se(p).toFixed(2)}</td><td class="n">${triF(p).toFixed(2)}</td><td class="n">${vec(b.rows[i].nv, 2)}</td><td class="n">${vec(b.x[i], 2)}</td><td class="n">${triF(b.x[i]).toFixed(2)}</td></tr>`).join("") +
-    `</tbody><caption style="caption-side:bottom;text-align:left;padding:.5rem .65rem;font-size:.8rem;color:var(--muted)">Iteration 1 with w = 0.79, c1 = c2 = 1, r1 = r2 = 0.2. Particle 1 is gbest (highlighted), so it does not move; particle 2 moves by 0.2 × (gbest − x) = (0.1, −0.25).</caption>`;
+    `</tbody><caption style="caption-side:bottom;text-align:left;padding:.5rem .65rem;font-size:.8rem;color:var(--muted)">Iteration 1 with ${tex("w = 0.79")}, ${tex("c_1 = c_2 = 1")}, ${tex("r_1 = r_2 = 0.2")}. Particle 1 is gbest (highlighted), so it does not move; particle 2 moves by ${tex(String.raw`0.2 \times (\mathrm{gbest} - x) = (0.1, -0.25)`)}.</caption>`;
 })();
 
 /* ---------- continuous lab ---------- */
 const E = Math.E, PI = Math.PI;
 const FUNCS = {
-  michalewicz: { name: "Michalewicz (d = 2)", lo: [0, 0], hi: [PI, PI], f: (x, y) => -(Math.sin(x) * Math.pow(Math.sin(x * x / PI), 20) + Math.sin(y) * Math.pow(Math.sin(2 * y * y / PI), 20)), opt: [2.2029, 1.5708], fopt: -1.8013, note: "Michalewicz: flat plateaus with steep, narrow valleys (m = 10). Minimum −1.8013 at (2.20, 1.57). Listing 9.1 solves it with from-scratch PSO, pymoo and PySwarms." },
+  michalewicz: { name: "Michalewicz (d = 2)", lo: [0, 0], hi: [PI, PI], f: (x, y) => -(Math.sin(x) * Math.pow(Math.sin(x * x / PI), 20) + Math.sin(y) * Math.pow(Math.sin(2 * y * y / PI), 20)), opt: [2.2029, 1.5708], fopt: -1.8013, note: `Michalewicz: flat plateaus with steep, narrow valleys (${tex("m = 10")}). Minimum −1.8013 at (2.20, 1.57). Listing 9.1 solves it with from-scratch PSO, pymoo and PySwarms.` },
   sphere: { name: "Sphere", lo: [-5.12, -5.12], hi: [5.12, 5.12], f: (x, y) => x * x + y * y, opt: [0, 0], fopt: 0, note: "Sphere: unimodal and convex, minimum 0 at the origin. Every topology works; the star converges fastest." },
   rosenbrock: { name: "Rosenbrock", lo: [-2, -1], hi: [2, 3], f: (x, y) => (1 - x) ** 2 + 100 * (y - x * x) ** 2, opt: [1, 1], fopt: 0, note: "Rosenbrock: a long curved valley, minimum 0 at (1, 1). Finding the valley is easy; following it to the end is hard." },
   ackley: { name: "Ackley", lo: [-5, -5], hi: [5, 5], f: (x, y) => -20 * Math.exp(-.2 * Math.sqrt(.5 * (x * x + y * y))) - Math.exp(.5 * (Math.cos(2 * PI * x) + Math.cos(2 * PI * y))) + 20 + E, opt: [0, 0], fopt: 0, note: "Ackley: an almost flat outer region covered with small bumps around a deep central funnel, minimum 0 at the origin." },
   rastrigin: { name: "Rastrigin", lo: [-5.12, -5.12], hi: [5.12, 5.12], f: (x, y) => 20 + x * x - 10 * Math.cos(2 * PI * x) + y * y - 10 * Math.cos(2 * PI * y), opt: [0, 0], fopt: 0, note: "Rastrigin: highly multimodal, a regular grid of local minima, global minimum 0 at the origin. A good stage to compare star and ring topologies." },
-  trilat: { name: "C-V2X trilateration", lo: [-6, -6], hi: [6, 6], f: (x, y) => triF([x, y]), opt: null, fopt: null, note: "Trilateration: Σ eᵢ² for towers at (1, 1), (2, 2), (3, 3) with r = 4, 6.5, 8. The towers lie on one line, so the measured distances cannot all be met exactly; the least-squares position is near (−2.36, −2.36)." }
+  trilat: { name: "C-V2X trilateration", lo: [-6, -6], hi: [6, 6], f: (x, y) => triF([x, y]), opt: null, fopt: null, note: `Trilateration: ${tex(String.raw`\sum e_i^2`)} for towers at (1, 1), (2, 2), (3, 3) with ${tex("r = 4, 6.5, 8")}. The towers lie on one line, so the measured distances cannot all be met exactly; the least-squares position is near (−2.36, −2.36).` }
 };
 (function findTrilatOpt() {
   let b = [0, 0], bf = Infinity;
@@ -1582,7 +1601,7 @@ function contStep(S, p) {
       out[t] = sum;
     }
     race = out; draw();
-    $("#cChartCap").textContent = `Mean best cost over ${R} runs per topology with the current settings (N = ${ctl.N}, ${ctl.iters} iterations). Click New swarm to return to the live run.`;
+    $("#cChartCap").innerHTML = `Mean best cost over ${R} runs per topology with the current settings (${tex(String.raw`N = ${ctl.N}`)}, ${ctl.iters} iterations). Click New swarm to return to the live run.`;
   });
   presets($("#cPresets"), [
     { t: "Star vs. ring on Rastrigin", d: "Rastrigin, star topology. Run it, then switch to ring and click Compare all four topologies.", s: { fkey: "rastrigin", top: "star", N: 20, wmode: "const", w: .792, c1: 1.49, c2: 1.49, vmax: .2, iters: 150 } },
@@ -1612,7 +1631,7 @@ function contStep(S, p) {
     const gi = gIdx(S), bx = S.P[gi];
     const err = F.opt ? Math.hypot(bx[0] - F.opt[0], bx[1] - F.opt[1]) : null;
     stats($("#cStats"), [["Iteration", S.iter + " / " + ctl.iters], ["Best cost", fmtNum(S.Pf[gi])], ["Best position", `(${bx[0].toFixed(3)}, ${bx[1].toFixed(3)})`], ["Distance to optimum", err == null ? "n/a" : fmtNum(err)], ["Diversity", fmtNum(S.div[S.div.length - 1])], ["Distinct leaders", leaders.size], ["w · c1 · c2 now", [S.wNow ?? inertia(ctl, 0, () => .5, null), ...(S.cNow || accel(ctl, 0))].map(v => v.toFixed(2)).join(" · ")]]);
-    $("#cFnNote").textContent = F.note;
+    $("#cFnNote").innerHTML = F.note;
     if (race) lineChart($("#cChart"), TOPO_OPTS.map(([t, n], i) => ({ data: race[t], color: c["s" + (i + 1)], label: n.split(" ")[0] + (t === "vn" ? " N." : "") })), { refs: [{ v: F.fopt, color: c.bad }], labels: true });
     else lineChart($("#cChart"), [{ data: S.mean, color: c.muted, alpha: .5, width: 1.5 }, { data: S.hist, color: c.accent }], { refs: [{ v: F.fopt, color: c.bad }], xmax: ctl.iters });
     lineChart($("#cDiv"), [{ data: S.div, color: c.s3 }], { xmax: ctl.iters });
@@ -1669,8 +1688,11 @@ const sig = v => 1 / (1 + Math.exp(-v));
     const pr = sig(nv), nx = pr > ctl.r ? 1 : 0, ns = s.slice(0, d) + nx + s.slice(d + 1);
     $("#bxBits").innerHTML = [...s].map((b, i) => `<span class="bit ${b === "1" ? "on" : ""} ${i === d ? "sel" : ""}">${b}</span>`).join("");
     $("#bxNew").innerHTML = [...ns].map((b, i) => `<span class="bit ${b === "1" ? "on" : ""} ${i === d ? (b !== s[i] ? "changed" : "sel") : ""}">${b}</span>`).join("");
-    const k = `<sub>k</sub>`, sup = `<sup>${+ctl.pi + 1}${d}</sup>`;
-    $("#bxCalc").innerHTML = `x${k}${sup} = ${x}, pbest${k}${sup} = ${pb}, gbest${k}<sup>${d}</sup> = ${gb}<br>v<sub>k+1</sub>${sup} = ${ctl.v.toFixed(2)} + ${ctl.p1.toFixed(1)}(${pb} − ${x}) + ${ctl.p2.toFixed(1)}(${gb} − ${x}) = <b>${raw.toFixed(2)}</b>${raw !== nv ? ` → clamped to ${nv.toFixed(2)}` : ""}<br>sig(${nv.toFixed(2)}) = 1/(1 + e<sup>−${nv.toFixed(2)}</sup>) = <b>${pr.toFixed(3)}</b><br>x<sub>k+1</sub>${sup} = ${nx} because sig(v) = ${pr.toFixed(3)} ${pr > ctl.r ? "&gt;" : "≤"} r = ${ctl.r.toFixed(2)}. Updated particle ${+ctl.pi + 1}: <b>${ns}</b>`;
+    const sup = `${+ctl.pi + 1}${d}`, clamp = raw !== nv ? String.raw`\;\to\; \text{clamped to } ${nv.toFixed(2)}` : "", rel = pr > ctl.r ? String.raw`\gt` : String.raw`\le`;
+    $("#bxCalc").innerHTML = texLine(String.raw`x_k^{${sup}} = ${x},\quad \mathrm{pbest}_k^{${sup}} = ${pb},\quad \mathrm{gbest}_k^{${d}} = ${gb}`)
+      + texLine(String.raw`v_{k+1}^{${sup}} = ${ctl.v.toFixed(2)} + ${ctl.p1.toFixed(1)}(${pb} - ${x}) + ${ctl.p2.toFixed(1)}(${gb} - ${x}) = \mathbf{${raw.toFixed(2)}} ${clamp}`)
+      + texLine(String.raw`\operatorname{sig}(${nv.toFixed(2)}) = 1/(1 + e^{-${nv.toFixed(2)}}) = \mathbf{${pr.toFixed(3)}}`)
+      + texLine(String.raw`x_{k+1}^{${sup}} = ${nx} \text{ because } \operatorname{sig}(v) = ${pr.toFixed(3)} ${rel} r = ${ctl.r.toFixed(2)}`) + `Updated particle ${+ctl.pi + 1}: <b>${ns}</b>`;
     last = { nv, pr, r: ctl.r, vmax: ctl.vmax }; draw();
   }
   function draw() {
@@ -1786,7 +1808,7 @@ const permHtml = (x, mark) => `<div class="perm">${x.map((c, i) => `<span class=
     const v = permSub(A, B), mism = A.map((a, i) => a !== B[i] ? `(${a},${B[i]})` : null).filter(Boolean);
     let x = B.slice(), steps = `<div class="cap">Start from Position 2:</div>` + permHtml(x, (c, i) => c !== A[i] ? "b" : "");
     v.forEach(s => { x = permAdd(x, [s]); steps += `<div class="cap">swap (${s[0]},${s[1]}):</div>` + permHtml(x, (c, i) => c === A[i] ? (s.includes(c) ? "a" : "") : "b"); });
-    $("#subOut").innerHTML = `<div class="eyebrow">Velocity = Position 1 − Position 2</div><div>${swapHtml(v)}</div>${steps}<p class="cap">Mismatched pairs listed in Figure 9.9: ${mism.join(" ") || "none"}. They form ${mism.length ? "a cycle" : "nothing"}; a cycle of m cities needs only m − 1 swaps, so ${v.length} swap${v.length === 1 ? "" : "s"} already turn Position 2 into Position 1.</p>`;
+    $("#subOut").innerHTML = `<div class="eyebrow">Velocity = Position 1 − Position 2</div><div>${swapHtml(v)}</div>${steps}<p class="cap">Mismatched pairs listed in Figure 9.9: ${mism.join(" ") || "none"}. They form ${mism.length ? "a cycle" : "nothing"}; a cycle of ${tex("m")} cities needs only ${tex("m - 1")} swaps, so ${v.length} swap${v.length === 1 ? "" : "s"} already turn Position 2 into Position 1.</p>`;
   }
   let addK = 0;
   function add() {
@@ -1797,7 +1819,8 @@ const permHtml = (x, mark) => `<div class="perm">${x.map((c, i) => `<span class=
   function mul() {
     const V = parseSwaps($("#mulV").value), c = +$("#mulC").value; $("#mulCo").textContent = c.toFixed(1);
     const r = permMul(c, V), kind = c === 0 ? "Vanished: no swaps" : c < 1 ? "Truncated" : c === 1 ? "Unchanged" : "Augmented with swaps from the top";
-    $("#mulOut").innerHTML = `<div class="eyebrow">${c.toFixed(1)} × velocity</div><div>${swapHtml(r, i => i >= V.length ? "now" : "")}</div><p class="cap">${kind}. Length ${c < 1 && c > 0 ? "⌈" : "⌊"}${c.toFixed(1)} × ${V.length}${c < 1 && c > 0 ? "⌉" : "⌋"} = ${r.length}.</p>`;
+    const lo = c < 1 && c > 0 ? String.raw`\lceil` : String.raw`\lfloor`, hi = c < 1 && c > 0 ? String.raw`\rceil` : String.raw`\rfloor`;
+    $("#mulOut").innerHTML = `<div class="eyebrow">${c.toFixed(1)} × velocity</div><div>${swapHtml(r, i => i >= V.length ? "now" : "")}</div><p class="cap">${kind}. Length ${tex(String.raw`${lo} ${c.toFixed(1)} \times ${V.length} ${hi} = ${r.length}`)}.</p>`;
   }
   ["#subA", "#subB"].forEach(s => $(s).addEventListener("input", sub));
   ["#addX", "#addV"].forEach(s => $(s).addEventListener("input", () => { addK = 0; add(); }));
@@ -1981,13 +2004,13 @@ function tspStep(S, p) {
     lineChart($("#asC"), [{ data: S.c1, color: c.s2 }, { data: S.c2, color: c.s1 }], { vline: t });
     const den = (ctl.c1max - ctl.c1min) + (ctl.c2max - ctl.c2min);
     const f = den > 0 ? (ctl.c2max - ctl.c1min) / den : NaN, tc = ctl.T * (1 - f);
-    stats($("#asStats"), [["w RS", S.rs[t].toFixed(3)], ["w LTV", S.ltv[t].toFixed(3)], ["w NLTV", S.nltv[t].toFixed(3)], ["c1(t)", S.c1[t].toFixed(3)], ["c2(t)", S.c2[t].toFixed(3)], ["c1 = c2 at", isFinite(tc) && tc >= 0 && tc <= ctl.T ? "t ≈ " + tc.toFixed(1) : "never"]]);
+    stats($("#asStats"), [["w RS", S.rs[t].toFixed(3)], ["w LTV", S.ltv[t].toFixed(3)], ["w NLTV", S.nltv[t].toFixed(3)], ["c1(t)", S.c1[t].toFixed(3)], ["c2(t)", S.c2[t].toFixed(3)], ["c1 = c2 at", isFinite(tc) && tc >= 0 && tc <= ctl.T ? tex(String.raw`t \approx ${tc.toFixed(1)}`) : "never"]]);
     const span = Math.max(1e-9, ctl.wmax - ctl.wmin), sw = Math.max(0, Math.min(1, (ctl.wmax - S.ltv[t]) / span));
     const sc = S.c1[t] + S.c2[t] > 0 ? S.c2[t] / (S.c1[t] + S.c2[t]) : .5, pos = .5 * sw + .5 * sc;
     $("#asMark").style.left = (6 + 88 * pos) + "%";
-    $("#asPhase").textContent = (S.c1[t] > S.c2[t]
-      ? `At t = ${t}, c1 > c2 and w = ${S.ltv[t].toFixed(2)}: particles trust their own experience and keep momentum, so the swarm diversifies.`
-      : `At t = ${t}, c2 ≥ c1 and w = ${S.ltv[t].toFixed(2)}: particles follow the swarm’s best and slow down, so the swarm intensifies.`) + " The marker is qualitative.";
+    $("#asPhase").innerHTML = (S.c1[t] > S.c2[t]
+      ? `At ${tex(String.raw`t = ${t}`)}, ${tex(String.raw`c_1 \gt c_2`)} and ${tex(String.raw`w = ${S.ltv[t].toFixed(2)}`)}: particles trust their own experience and keep momentum, so the swarm diversifies.`
+      : `At ${tex(String.raw`t = ${t}`)}, ${tex(String.raw`c_2 \ge c_1`)} and ${tex(String.raw`w = ${S.ltv[t].toFixed(2)}`)}: particles follow the swarm’s best and slow down, so the swarm intensifies.`) + " The marker is qualitative.";
   }
   ro.observe($("#asW")); onRedraw(draw); draw();
 })();
@@ -1995,11 +2018,11 @@ function tspStep(S, p) {
 /* ---------- adaptive PSO: strategy comparison ---------- */
 (function strategyCompare() {
   const STRATS = [
-    { n: "Constant w = 0.792", wmode: "const", tvac: false, col: "muted" },
+    { n: "Constant " + tex("w = 0.792"), wmode: "const", tvac: false, col: "muted" },
     { n: "RS (eq. 9.11)", wmode: "rs", tvac: false, col: "s2" },
     { n: "LTV (eq. 9.12)", wmode: "ltv", tvac: false, col: "s1" },
     { n: "NLTV (eq. 9.13)", wmode: "nltv", tvac: false, col: "s4" },
-    { n: "LTV + varying c1, c2", wmode: "ltv", tvac: true, col: "s3" }
+    { n: "LTV + varying " + tex("c_1, c_2"), wmode: "ltv", tvac: true, col: "s3" }
   ];
   const ctl = makeControls($("#acCtl"), [
     { key: "fkey", id: "acF", type: "select", label: "Problem", value: "ackley", options: Object.entries(FUNCS).map(([k, v]) => [k, v.name]) },
@@ -2022,7 +2045,7 @@ function tspStep(S, p) {
       const m = finals.reduce((a, b) => a + b, 0) / finals.length, sd = Math.sqrt(finals.reduce((a, b) => a + (b - m) ** 2, 0) / finals.length);
       res.rows.push({ st, mean, m, sd, best: Math.min(...finals), succ: finals.filter(v => v - F.fopt < .01).length / finals.length });
     }
-    $("#acStatus").textContent = `${ctl.runs} runs × ${STRATS.length} strategies on ${F.name}, N = ${ctl.N}, ${ctl.iters} iterations. The same seeds are used for every strategy.`;
+    $("#acStatus").innerHTML = `${ctl.runs} runs × ${STRATS.length} strategies on ${F.name}, ${tex(String.raw`N = ${ctl.N}`)}, ${ctl.iters} iterations. The same seeds are used for every strategy.`;
     draw();
   }
   function draw() {
@@ -2070,7 +2093,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

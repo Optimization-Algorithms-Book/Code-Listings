@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Ant Colony Optimization Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -359,13 +378,13 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
           <canvas id="brCv" class="cv-bridge" aria-label="Ants crossing two bridges"></canvas>
           <div class="stats" id="brStats"></div>
           <canvas id="brChart" class="cv-chart" aria-label="Probability of the short branch per iteration"></canvas>
-          <p class="cap">Probability p₁ of choosing branch 1 per iteration.</p>
+          <p class="cap">Probability \(p_1\) of choosing branch 1 per iteration.</p>
         </div>
       </div>
     </div>
 
     <h3 id="evaporation">Why evaporation matters</h3>
-    <p class="prose">Evaporation (ρ) lets the colony forget stale trails. Change ρ and watch how the ants share out the three food piles.</p>
+    <p class="prose">Evaporation (\(\rho\)) lets the colony forget stale trails. Change \(\rho\) and watch how the ants share out the three food piles.</p>
     <p class="more">Figure 10.4 in the book compares foraging runs at three evaporation rates and explains what goes wrong at each extreme.</p>
     <div class="bench">
       <div class="bench-head"><h4>Foraging colony</h4><span class="eyebrow">After the NetLogo Ants model</span></div>
@@ -392,7 +411,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>ACO metaheuristics</h2>
     <div class="two">
       <div>
-        <p class="prose">Ants build solutions step by step on a graph, biased by pheromone τ (learned) and desirability η (usually 1/distance); then trails evaporate and good solutions are reinforced.</p>
+        <p class="prose">Ants build solutions step by step on a graph, biased by pheromone \(\tau\) (learned) and desirability \(\eta\) (usually \(1/\text{distance}\)); then trails evaporate and good solutions are reinforced.</p>
         <div class="pseudo"><span class="k">Algorithm</span>: Ant colony optimization metaheuristic
 Set parameters, initialize pheromone trails
 <span class="k">while</span> termination conditions not met <span class="k">do</span>
@@ -400,26 +419,26 @@ Set parameters, initialize pheromone trails
     ApplyLocalSearch               <span class="c"># optional, e.g. 2-opt</span>
     UpdatePheromones               <span class="c"># evaporation and deposit (eqs. 10.2 to 10.5)</span>
 <span class="k">end while</span></div>
-        <p class="more">Chapter 10 explains each step, the stopping criteria, and how α and β in equation 10.6 trade experience against greed.</p>
+        <p class="more">Chapter 10 explains each step, the stopping criteria, and how \(\alpha\) and \(\beta\) in equation 10.6 trade experience against greed.</p>
       </div>
       <div>
-        <div class="eq" id="transition" style="white-space:normal">p<sub>ij</sub><sup>k</sup>(t) = [τ<sub>ij</sub>(t)]<sup>α</sup> [η<sub>ij</sub>(t)]<sup>β</sup> / Σ<sub>l ∈ N<sub>i</sub><sup>k</sup></sub> [τ<sub>il</sub>(t)]<sup>α</sup> [η<sub>il</sub>(t)]<sup>β</sup> &nbsp;if j ∈ N<sub>i</sub><sup>k</sup>, otherwise 0<span class="tag">(10.6)</span></div>
-        <p class="cap">α weights the pheromone and β the desirability η = 1/d.</p>
-        <div class="eq" id="update" style="white-space:normal">τ<sub>ij</sub>(t+1) = (1 − ρ) τ<sub>ij</sub>(t)<span class="tag">(10.2)</span><br><br>Δτ<sub>ij</sub><sup>k</sup>(t) = Q / L<sup>k</sup>(t) &nbsp;&nbsp;τ<sub>ij</sub>(t+1) = τ<sub>ij</sub>(t) + Σ<sub>k=1</sub><sup>m</sup> Δτ<sub>ij</sub><sup>k</sup>(t)<span class="tag">(10.4, 10.5)</span></div>
+        <div class="eq" id="transition" style="white-space:normal"><span class="tag">(10.6)</span>\[ p_{ij}^{k}(t) = \begin{cases} \dfrac{[\tau_{ij}(t)]^{\alpha}\,[\eta_{ij}(t)]^{\beta}}{\sum_{l \in N_i^k} [\tau_{il}(t)]^{\alpha}\,[\eta_{il}(t)]^{\beta}} &amp; \text{if } j \in N_i^k \\ 0 &amp; \text{otherwise} \end{cases} \]</div>
+        <p class="cap">\(\alpha\) weights the pheromone and \(\beta\) the desirability \(\eta = 1/d\).</p>
+        <div class="eq" id="update" style="white-space:normal">\[ \tau_{ij}(t+1) = (1-\rho)\,\tau_{ij}(t) \tag{10.2} \]\[ \Delta\tau_{ij}^{k}(t) = \frac{Q}{L^{k}(t)} \tag{10.4} \]\[ \tau_{ij}(t+1) = \tau_{ij}(t) + \sum_{k=1}^{m} \Delta\tau_{ij}^{k}(t) \tag{10.5} \]</div>
       </div>
     </div>
     <h3>Three ways to deposit pheromone</h3>
-    <p class="prose">Ants deposit pheromone while moving or after completing a path (Q / L<sup>k</sup>).</p>
+    <p class="prose">Ants deposit pheromone while moving or after completing a path (\(Q / L^k\)).</p>
     <p class="more">The book compares the ant density, ant quantity and ant cycle rules and when to combine them.</p>
     <h3 id="params">Choosing the parameters</h3>
     <div class="tbl-wrap"><table>
       <thead><tr><th>Parameter</th><th>Effect</th></tr></thead>
       <tbody>
-        <tr><td>Number of ants m</td><td>More exploration per iteration, at more cost.</td></tr>
-        <tr><td>Evaporation rate ρ</td><td>0 never forgets; 1 forgets everything.</td></tr>
-        <tr><td>α and β</td><td>Learned knowledge versus greedy local information.</td></tr>
+        <tr><td>Number of ants \(m\)</td><td>More exploration per iteration, at more cost.</td></tr>
+        <tr><td>Evaporation rate \(\rho\)</td><td>0 never forgets; 1 forgets everything.</td></tr>
+        <tr><td>\(\alpha\) and \(\beta\)</td><td>Learned knowledge versus greedy local information.</td></tr>
       </tbody></table></div>
-    <p class="more">Chapter 10 discusses how to set every parameter, including the initial pheromone τ₀ and the deposit constant Q.</p>
+    <p class="more">Chapter 10 discusses how to set every parameter, including the initial pheromone \(\tau_0\) and the deposit constant \(Q\).</p>
   </div>
 </section>
 
@@ -462,11 +481,11 @@ Set parameters, initialize pheromone trails
     <div class="cards3">
       <div class="card" id="as"><h5>Ant system (AS)</h5><p>Ants keep a tabu list of visited nodes, and all ants deposit pheromone.</p></div>
       <div class="card" id="acs-card"><h5>Ant colony system (ACS)</h5><p>Ants often take the best edge greedily, and only the global-best ant deposits.</p></div>
-      <div class="card" id="mmas"><h5>Max-min ant system (MMAS)</h5><p>Only the iteration-best ant deposits, and trails stay within [τ<sub>min</sub>, τ<sub>max</sub>].</p></div>
+      <div class="card" id="mmas"><h5>Max-min ant system (MMAS)</h5><p>Only the iteration-best ant deposits, and trails stay within \([\tau_{\min}, \tau_{\max}]\).</p></div>
       <div class="card"><h5>Elitist ant system</h5><p>Like AS, plus an extra deposit on the best path so far.</p></div>
     </div>
     <h3 id="acs">The ACS decision rule, at node 4</h3>
-    <p class="prose">An ant at node 4 chooses between nodes 2 and 5. If a random r ≤ r₀ it <b>exploits</b> the best edge (equation 10.10); otherwise it <b>explores</b> with equation 10.6. Change r₀ and watch the probabilities.</p>
+    <p class="prose">An ant at node 4 chooses between nodes 2 and 5. If a random \(r \le r_0\) it <b>exploits</b> the best edge (equation 10.10); otherwise it <b>explores</b> with equation 10.6. Change \(r_0\) and watch the probabilities.</p>
     <p class="more">Section 10.3 details each variant and several more; Section 10.3.3 works through this decision by hand.</p>
     <div class="bench">
       <div class="bench-head"><h4>Pseudo-random proportional rule</h4><span class="eyebrow">Equation 10.10</span></div>
@@ -524,7 +543,7 @@ Set parameters, initialize pheromone trails
   <div class="wrap">
     <span class="eyebrow">Part 6 · Continuous optimization</span>
     <h2>ACO for a continuous variable</h2>
-    <p class="prose">ACO handles a continuous variable by discretizing it: minimize f(x) = x² − 2x − 11 on [0, 3], where each of seven values of x is a path. Click <b>Next iteration</b> to watch four ants choose and reinforce paths.</p>
+    <p class="prose">ACO handles a continuous variable by discretizing it: minimize \(f(x) = x^2 - 2x - 11\) on \([0, 3]\), where each of seven values of \(x\) is a path. Click <b>Next iteration</b> to watch four ants choose and reinforce paths.</p>
     <p class="more">Chapter 10 works through the first two iterations by hand and extends the idea to several variables.</p>
     <div class="bench">
       <div class="bench-head"><h4>Discretized ACO, iteration by iteration</h4><span class="eyebrow" id="ctIter">Iteration 0</span></div>
@@ -549,12 +568,12 @@ Set parameters, initialize pheromone trails
     <span class="eyebrow">Part 7 · Adaptation</span>
     <h2>Adaptive ACO</h2>
     <div class="prose">
-      <p>Instead of fixing ρ, α, β and r₀, adapt them as the search progresses: explore early, exploit late. The panels below try five ways to do it. The last three run live on the 20-city open route from the <a href="#tsp-lab">colony lab</a>.</p>
+      <p>Instead of fixing \(\rho\), \(\alpha\), \(\beta\) and \(r_0\), adapt them as the search progresses: explore early, exploit late. The panels below try five ways to do it. The last three run live on the 20-city open route from the <a href="#tsp-lab">colony lab</a>.</p>
       <p class="more">Chapter 10 describes these adaptation strategies, such as switching which ant deposits or tightening the MMAS limits, and when each one helps.</p>
     </div>
 
     <h3 id="ad-params">Dynamic parameter control</h3>
-    <p class="prose">Start with strong evaporation, ρ(t) = ρ<sub>min</sub> + (ρ<sub>max</sub> − ρ<sub>min</sub>) e<sup>−λt</sup>, and let it decay. Raise the heuristic weight, β(t) = β<sub>start</sub> + (β<sub>end</sub> − β<sub>start</sub>) t/T, so ants grow greedier. Drag t to watch one ant switch from the strong trail (exit B) to the shortest edge (exit A).</p>
+    <p class="prose">Start with strong evaporation, \(\rho(t) = \rho_{\min} + (\rho_{\max} - \rho_{\min})\, e^{-\lambda t}\), and let it decay. Raise the heuristic weight, \(\beta(t) = \beta_{\text{start}} + (\beta_{\text{end}} - \beta_{\text{start}})\, t/T\), so ants grow greedier. Drag \(t\) to watch one ant switch from the strong trail (exit B) to the shortest edge (exit A).</p>
     <div class="bench" id="a1Box">
       <div class="bench-head"><h4>ρ(t) and β(t) schedules</h4><span class="eyebrow">Drag t or press Play</span></div>
       <div class="bench-body">
@@ -564,7 +583,7 @@ Set parameters, initialize pheromone trails
           <canvas id="a1Cv" class="cv-chart" style="height:200px" aria-label="Evaporation rate and heuristic weight over the iterations"></canvas>
           <div class="stage-grid">
             <div><canvas id="a1Ex" class="cv-chart" style="height:140px" aria-label="Choice probabilities of one ant at a city with four exits"></canvas>
-            <p class="cap">One ant at a city with four exits: p ∝ τ · (100/d)<sup>β(t)</sup>, with α = 1.</p></div>
+            <p class="cap">One ant at a city with four exits: \(p \propto \tau \cdot (100/d)^{\beta(t)}\), with \(\alpha = 1\).</p></div>
             <div class="stats" id="a1Stats"></div>
           </div>
           <div class="btns"><button id="a1Cmp">Try it on the 20-city route</button><span class="cap" id="a1Status" style="align-self:center"></span></div>
@@ -575,7 +594,7 @@ Set parameters, initialize pheromone trails
     </div>
 
     <h3 id="ad-deposit">Quality-sensitive deposition</h3>
-    <p class="prose">Make the deposit nonlinear in solution quality, Δτ ∝ 1/cost<sup>k</sup>, and raise k over time. A small k lets every ant leave a similar amount (exploration); a large k gives almost all of it to the best ant (exploitation).</p>
+    <p class="prose">Make the deposit nonlinear in solution quality, \(\Delta\tau \propto 1/\text{cost}^{k}\), and raise \(k\) over time. A small \(k\) lets every ant leave a similar amount (exploration); a large \(k\) gives almost all of it to the best ant (exploitation).</p>
     <div class="bench" id="a2Box">
       <div class="bench-head"><h4>Deposit vs. solution cost</h4><span class="eyebrow">Five ants, costs 2 to 6</span></div>
       <div class="bench-body">
@@ -585,7 +604,7 @@ Set parameters, initialize pheromone trails
           <canvas id="a2Cv" class="cv-chart" style="height:200px" aria-label="Pheromone deposit as a function of solution cost for several exponents k"></canvas>
           <div class="stage-grid">
             <div><canvas id="a2Bars" class="cv-chart" style="height:150px" aria-label="Share of the deposit left by each ant"></canvas>
-            <p class="cap">Each ant’s share of the total deposit. Green: the best ant. In the chart above, the x axis is the solution cost.</p></div>
+            <p class="cap">Each ant’s share of the total deposit. Green: the best ant. In the chart above, the \(x\) axis is the solution cost.</p></div>
             <div class="stats" id="a2Stats"></div>
           </div>
         </div>
@@ -615,7 +634,7 @@ Set parameters, initialize pheromone trails
     </div>
 
     <h3 id="ad-r0">Time-varying and performance-triggered r₀ in ACS</h3>
-    <p class="prose">In ACS each ant draws a random r: if r ≤ r₀ it exploits the best edge, otherwise it explores. Raise r₀ over time, r₀(t) = r<sub>0,start</sub> + (r<sub>0,end</sub> − r<sub>0,start</sub>) t/T, or steer it by performance: r₀ + δ after an improvement, r₀ − δ after stagnation (here, several iterations in a row without one).</p>
+    <p class="prose">In ACS each ant draws a random \(r\): if \(r \le r_0\) it exploits the best edge, otherwise it explores. Raise \(r_0\) over time, \(r_0(t) = r_{0,\text{start}} + (r_{0,\text{end}} - r_{0,\text{start}})\, t/T\), or steer it by performance: \(r_0 + \delta\) after an improvement, \(r_0 - \delta\) after stagnation (here, several iterations in a row without one).</p>
     <div class="bench" id="a4Box">
       <div class="bench-head"><h4>Exploration vs. exploitation with r₀</h4><span class="eyebrow">Ant colony system · 10 ants</span></div>
       <div class="bench-body">
@@ -623,10 +642,10 @@ Set parameters, initialize pheromone trails
         <div class="stage">
           <div class="btns"><button id="a4Run" class="primary">Run</button><button id="a4Step">Step</button><button id="a4Reset">New colony</button></div>
           <canvas id="a4G" class="cv-chart" style="height:80px" aria-label="Random draws r against the threshold r0"></canvas>
-          <p class="cap">Ant 1’s random draws r in the latest iteration, against r₀.</p>
+          <p class="cap">Ant 1’s random draws \(r\) in the latest iteration, against \(r_0\).</p>
           <div class="stage-grid">
             <div><canvas id="a4R" class="cv-chart" style="height:170px" aria-label="r0 per iteration"></canvas>
-            <p class="cap">r₀ per iteration.</p></div>
+            <p class="cap">\(r_0\) per iteration.</p></div>
             <div><canvas id="a4Ln" class="cv-chart" style="height:170px" aria-label="Best route length per iteration"></canvas>
             <p class="cap">Best route so far.</p></div>
           </div>
@@ -639,7 +658,7 @@ Set parameters, initialize pheromone trails
     </div>
 
     <h3 id="ad-limits">Dynamic pheromone limits in MMAS</h3>
-    <p class="prose">Instead of fixed limits, tighten the upper one as the search converges: τ<sub>max</sub>(t) = (1 − t/T)(τ<sub>max,init</sub> − τ<sub>min</sub>) + τ<sub>min</sub>. Watch the pheromone on the best route get squeezed toward τ<sub>min</sub>. Tightened all the way, the trails stop guiding the ants at the end, so compare it with fixed limits.</p>
+    <p class="prose">Instead of fixed limits, tighten the upper one as the search converges: \(\tau_{\max}(t) = (1 - t/T)(\tau_{\max,\text{init}} - \tau_{\min}) + \tau_{\min}\). Watch the pheromone on the best route get squeezed toward \(\tau_{\min}\). Tightened all the way, the trails stop guiding the ants at the end, so compare it with fixed limits.</p>
     <div class="bench" id="a5Box">
       <div class="bench-head"><h4>Tightening τ<sub>max</sub></h4><span class="eyebrow">Max-min ant system · 20 ants</span></div>
       <div class="bench-body">
@@ -647,7 +666,7 @@ Set parameters, initialize pheromone trails
         <div class="stage">
           <div class="btns"><button id="a5Run" class="primary">Run</button><button id="a5Step">Step</button><button id="a5Reset">New colony</button></div>
           <canvas id="a5Cv" class="cv-chart" style="height:200px" aria-label="Pheromone limits and pheromone levels per iteration"></canvas>
-          <p class="cap"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--bad)"></i>τ<sub>max</sub>(t) <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--s3)"></i>τ<sub>min</sub> <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--gold)"></i>mean τ on the best route’s edges <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--muted)"></i>mean τ on all other edges. All relative to τ<sub>max,init</sub> = 1 / (ρ · best route).</p>
+          <p class="cap"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--bad)"></i>\(\tau_{\max}(t)\) <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--s3)"></i>\(\tau_{\min}\) <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--gold)"></i>mean \(\tau\) on the best route’s edges <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--muted)"></i>mean \(\tau\) on all other edges. All relative to \(\tau_{\max,\text{init}} = 1 / (\rho \cdot \text{best route})\).</p>
           <div class="stage-grid">
             <div><canvas id="a5Ln" class="cv-chart" style="height:170px" aria-label="Best route length per iteration"></canvas>
             <p class="cap">Best route so far.</p></div>
@@ -878,7 +897,7 @@ print(<span class="st">"most reinforced path: x ="</span>, x_best, <span class="
     <div class="cards3">
       <div class="card"><h5>Stigmergy</h5><p>Pheromone is a collective memory, reinforced by success and erased by evaporation.</p></div>
       <div class="card"><h5>Construction plus learning</h5><p>Each ant builds a solution with equation 10.6, guided by the colony’s trails.</p></div>
-      <div class="card"><h5>Exploration vs. exploitation</h5><p>ρ, α, β and r₀ set the balance; MMAS bounds trails to avoid stagnation.</p></div>
+      <div class="card"><h5>Exploration vs. exploitation</h5><p>\(\rho\), \(\alpha\), \(\beta\) and \(r_0\) set the balance; MMAS bounds trails to avoid stagnation.</p></div>
       <div class="card"><h5>Strengths</h5><p>ACO shines on combinatorial problems, especially with local search.</p></div>
     </div>
     <div class="prose">
@@ -898,9 +917,9 @@ print(<span class="st">"most reinforced path: x ="</span>, x_best, <span class="
       <p class="mcq-fb" aria-live="polite"></p><template>Individual ants have no global view. The shorter branch collects pheromone faster, which raises its choice probability, a positive feedback loop called autocatalytic behavior. Evaporation acts on both branches alike.</template>
     </div>
     <div class="mcq" data-a="3">
-      <p class="mcq-q"><b>Q2.</b> What happens to an ACO colony if the evaporation rate ρ is set to 0?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Trails vanish at once and the ants search at random</span></button><button type="button" class="mcq-o"><b>B</b><span>The algorithm becomes the max-min ant system</span></button><button type="button" class="mcq-o"><b>C</b><span>Ants ignore pheromone and follow only the desirability η</span></button><button type="button" class="mcq-o"><b>D</b><span>Trails never fade, so the colony keeps following early trails even after better ones exist</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>With ρ = 0 the colony never forgets, so early (possibly poor) trails dominate. ρ = 1 is the opposite extreme, where trails vanish and the search becomes random; a moderate rate keeps useful trails while forgetting stale ones.</template>
+      <p class="mcq-q"><b>Q2.</b> What happens to an ACO colony if the evaporation rate \(\rho\) is set to 0?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Trails vanish at once and the ants search at random</span></button><button type="button" class="mcq-o"><b>B</b><span>The algorithm becomes the max-min ant system</span></button><button type="button" class="mcq-o"><b>C</b><span>Ants ignore pheromone and follow only the desirability \(\eta\)</span></button><button type="button" class="mcq-o"><b>D</b><span>Trails never fade, so the colony keeps following early trails even after better ones exist</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>With \(\rho = 0\) the colony never forgets, so early (possibly poor) trails dominate. \(\rho = 1\) is the opposite extreme, where trails vanish and the search becomes random; a moderate rate keeps useful trails while forgetting stale ones.</template>
     </div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>. The coding solutions are also on GitHub (<a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/tree/main/Appendix%20C/Chapter%2010" target="_blank" rel="noopener">Chapter 10</a>).</p>
   </div>
@@ -1325,16 +1344,16 @@ const spNbrs = n => SP_EDGES.filter(e => e[0] === n || e[1] === n).map(e => e[0]
     $("#scIter").textContent = S.phase === "update" ? `Iteration ${S.it} · all ants done, update next` : `Iteration ${S.it} · ant ${S.ant} of ${ctl.ants}`;
     const d = S.dec;
     if (d && d.rows) {
-      $("#scTbl").innerHTML = `<thead><tr><th>j</th><th class="n">d<sub>ij</sub></th><th class="n">τ<sub>ij</sub></th><th class="n">τ<sup>α</sup>(1/d)<sup>β</sup></th><th class="n">p<sub>ij</sub></th><th class="n">range</th></tr></thead><tbody>` +
+      $("#scTbl").innerHTML = `<thead><tr><th>${tex("j")}</th><th class="n">${tex("d_{ij}")}</th><th class="n">${tex(String.raw`\tau_{ij}`)}</th><th class="n">${tex(String.raw`\tau^{\alpha}(1/d)^{\beta}`)}</th><th class="n">${tex("p_{ij}")}</th><th class="n">range</th></tr></thead><tbody>` +
         d.rows.map(r => `<tr><td class="${r.j === d.j ? "pick" : ""}">${r.j}${r.j === d.j ? " ✓" : ""}</td><td class="n">${r.d}</td><td class="n">${r.tau.toFixed(3)}</td><td class="n">${r.v.toFixed(4)}</td><td class="n">${r.p.toFixed(2)}</td><td class="n">${r.lo.toFixed(2)} to ${r.hi.toFixed(2)}</td></tr>`).join("") + "</tbody>";
-      $("#scNote").innerHTML = `Ant ${S.ant} at node ${d.i}: random r = ${d.r.toFixed(3)} falls in the range of node <b>${d.j}</b>.`;
+      $("#scNote").innerHTML = `Ant ${S.ant} at node ${d.i}: random ${tex(String.raw`r = ${d.r.toFixed(3)}`)} falls in the range of node <b>${d.j}</b>.`;
     } else if (d && d.update && S.log.before) {
-      $("#scTbl").innerHTML = `<thead><tr><th>Edge</th><th class="n">before</th><th class="n">× (1 − ρ)</th><th class="n">+ deposit</th><th class="n">after</th></tr></thead><tbody>` +
+      $("#scTbl").innerHTML = `<thead><tr><th>Edge</th><th class="n">before</th><th class="n">${tex(String.raw`\times (1-\rho)`)}</th><th class="n">+ deposit</th><th class="n">after</th></tr></thead><tbody>` +
         SP_EDGES.map(([a, b]) => { const k = spKey(a, b); return `<tr><td>${a}–${b}</td><td class="n">${S.log.before[k].toFixed(3)}</td><td class="n">${(S.log.before[k] * (1 - ctl.rho)).toFixed(3)}</td><td class="n">${(S.log.dep[k] || 0).toFixed(3)}</td><td class="n">${S.log.after[k].toFixed(3)}</td></tr>`; }).join("") + "</tbody>";
-      $("#scNote").textContent = `End of iteration ${S.it - 1}: evaporation (equation 10.2) then deposit (${ctl.model === "cycle" ? "every ant adds Q / L" : ctl.model === "best" ? "the iteration-best ant adds Q / L" : "deposits were made while moving"}).`;
+      $("#scNote").innerHTML = `End of iteration ${S.it - 1}: evaporation (equation 10.2) then deposit (${ctl.model === "cycle" ? "every ant adds " + tex("Q / L") : ctl.model === "best" ? "the iteration-best ant adds " + tex("Q / L") : "deposits were made while moving"}).`;
     } else if (d && d.dead) { $("#scNote").textContent = `Ant ${S.ant} reached a dead end at node ${d.i} (every neighbor already visited) and starts again from node 1.`; }
     else { $("#scTbl").innerHTML = ""; $("#scNote").textContent = "Press Next decision: ant 1 stands at the source node 1 with neighbors 2 and 3."; }
-    const cur = S.paths.map(p => `${p.join(" → ")} (L = ${plen(p)})`);
+    const cur = S.paths.map(p => `${p.join(" → ")} (${tex(String.raw`L = ${plen(p)}`)})`);
     if (S.phase === "move" && S.path.length > 1) cur.push(`${S.path.join(" → ")} …`);
     $("#scPaths").innerHTML = (cur.length ? cur.join("<br>") : "none yet") + (S.hist.length ? `<br><span class="cap">Earlier iterations: ${S.hist.slice(-4).map((h, i) => `#${S.hist.length - Math.min(4, S.hist.length) + i + 1}: ${h.join(", ")}`).join(" · ")}</span>` : "");
     $("#scCap").innerHTML = S.best ? `Best path so far: <b>${S.best.join(" → ")}</b>, length ${S.bestL}.` : "Edge labels: length : pheromone. Line width shows pheromone.";
@@ -1372,9 +1391,9 @@ const spNbrs = n => SP_EDGES.filter(e => e[0] === n || e[1] === n).map(e => e[0]
     const tau = ctl.state === "init" ? { 2: .5, 5: .5 } : { 2: .15, 5: .15 + 1 / 11 }, d = { 2: 4, 5: 6 };
     const v = { 2: tau[2] * Math.pow(1 / d[2], ctl.beta), 5: tau[5] * Math.pow(1 / d[5], ctl.beta) }, tot = v[2] + v[5], p = { 2: v[2] / tot, 5: v[5] / tot };
     const exploit = ctl.r <= ctl.r0, arg = v[2] >= v[5] ? 2 : 5, rr = ctl.r, chosen = exploit ? arg : (rr <= p[2] ? 2 : 5);
-    $("#acCalc").innerHTML = `τ₄₂·η₄₂<sup>β</sup> = ${tau[2].toFixed(3)} × (1/4)<sup>${ctl.beta}</sup> = <b>${v[2].toFixed(4)}</b><br>τ₄₅·η₄₅<sup>β</sup> = ${tau[5].toFixed(3)} × (1/6)<sup>${ctl.beta}</sup> = <b>${v[5].toFixed(4)}</b><br>` +
-      (exploit ? `r = ${rr.toFixed(2)} ≤ r₀ = ${ctl.r0.toFixed(2)}: <b>exploit</b>, j = argmax = node <b>${arg}</b>` :
-      `r = ${rr.toFixed(2)} > r₀ = ${ctl.r0.toFixed(2)}: <b>explore</b> with eq. 10.6: p₄₂ = ${p[2].toFixed(2)}, p₄₅ = ${p[5].toFixed(2)}; a roulette draw picks node <b>${chosen}</b>`) +
+    $("#acCalc").innerHTML = texLine(String.raw`\tau_{42}\,\eta_{42}^{\beta} = ${tau[2].toFixed(3)} \times (1/4)^{${ctl.beta}} = \mathbf{${v[2].toFixed(4)}}`) + texLine(String.raw`\tau_{45}\,\eta_{45}^{\beta} = ${tau[5].toFixed(3)} \times (1/6)^{${ctl.beta}} = \mathbf{${v[5].toFixed(4)}}`) +
+      (exploit ? `${tex(String.raw`r = ${rr.toFixed(2)} \le r_0 = ${ctl.r0.toFixed(2)}`)}: <b>exploit</b>, ${tex(String.raw`j = \arg\max`)} = node <b>${arg}</b>` :
+      `${tex(String.raw`r = ${rr.toFixed(2)} \gt r_0 = ${ctl.r0.toFixed(2)}`)}: <b>explore</b> with eq. 10.6: ${tex(String.raw`p_{42} = ${p[2].toFixed(2)}`)}, ${tex(String.raw`p_{45} = ${p[5].toFixed(2)}`)}; a roulette draw picks node <b>${chosen}</b>`) +
       `<br>Overall chance of each node: node 2 = ${(ctl.r0 * (arg === 2) + (1 - ctl.r0) * p[2]).toFixed(2)}, node 5 = ${(ctl.r0 * (arg === 5) + (1 - ctl.r0) * p[5]).toFixed(2)}`;
     const cv = $("#acCv"), { ctx, w, h } = setupCanvas(cv), c = colors(); ctx.clearRect(0, 0, w, h);
     const tot2 = ctl.r0 * (arg === 2) + (1 - ctl.r0) * p[2], tot5 = 1 - tot2, bw = w - 140;
@@ -1495,7 +1514,7 @@ function acoStep(S, P) {
       lineChart($("#cmpChart"), rows.map(r => ({ data: r.mean, color: c[r.col], label: r.name.split(" ").map(w => w[0]).join("").toUpperCase() })), { refs: [{ v: OPT_LEN, color: c.bad }], labels: true });
       const bm = Math.min(...rows.map(r => r.m));
       $("#cmpTbl").innerHTML = `<thead><tr><th>Variant</th><th class="n">Mean best (km)</th><th class="n">Best run (km)</th><th class="n">Mean gap</th><th class="n">Runs at optimum</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r.m === bm ? "hl" : ""}"><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:var(--${r.col})"></i>${r.name}</td><td class="n">${r.m.toFixed(1)}</td><td class="n">${r.best.toFixed(1)}</td><td class="n">${((r.m - OPT_LEN) / OPT_LEN * 100).toFixed(2)}%</td><td class="n">${r.hits} / ${R}</td></tr>`).join("") + "</tbody>";
-      $("#cmpStatus").textContent = `${R} runs per variant, ${ctl.ants} ants, ${ctl.iters} iterations, same seeds. AS and elitist AS use your α, β and ρ; ACS and MMAS use ρ = 0.1 and β ≥ 2, their usual settings.`;
+      $("#cmpStatus").innerHTML = `${R} runs per variant, ${ctl.ants} ants, ${ctl.iters} iterations, same seeds. AS and elitist AS use your ${tex(String.raw`\alpha`)}, ${tex(String.raw`\beta`)} and ${tex(String.raw`\rho`)}; ACS and MMAS use ${tex(String.raw`\rho = 0.1`)} and ${tex(String.raw`\beta \ge 2`)}, their usual settings.`;
     }, 30);
   });
 })();
@@ -1529,11 +1548,11 @@ function acoStep(S, P) {
     const { its, tau } = simulate(), it = its[its.length - 1];
     $("#ctIter").textContent = "Iteration " + K;
     if (!it) {
-      $("#ctTbl").innerHTML = `<thead><tr><th>Path</th><th class="n">x</th><th class="n">f(x)</th><th class="n">τ</th><th class="n">p</th><th class="n">cumulative range</th></tr></thead><tbody>` + XS.map((x, i) => `<tr><td>x₁${i + 1}</td><td class="n">${x.toFixed(1)}</td><td class="n">${f(x).toFixed(2)}</td><td class="n">1</td><td class="n">${(1 / 7).toFixed(4)}</td><td class="n">${(i / 7).toFixed(4)} to ${((i + 1) / 7).toFixed(4)}</td></tr>`).join("") + "</tbody>";
-      $("#ctCap").textContent = "Initially every path has the same pheromone, so each of the 7 values has probability 1/7. Press Next iteration.";
+      $("#ctTbl").innerHTML = `<thead><tr><th>Path</th><th class="n">${tex("x")}</th><th class="n">${tex("f(x)")}</th><th class="n">${tex(String.raw`\tau`)}</th><th class="n">${tex("p")}</th><th class="n">cumulative range</th></tr></thead><tbody>` + XS.map((x, i) => `<tr><td>${tex(String.raw`x_{1${i + 1}}`)}</td><td class="n">${x.toFixed(1)}</td><td class="n">${f(x).toFixed(2)}</td><td class="n">1</td><td class="n">${(1 / 7).toFixed(4)}</td><td class="n">${(i / 7).toFixed(4)} to ${((i + 1) / 7).toFixed(4)}</td></tr>`).join("") + "</tbody>";
+      $("#ctCap").innerHTML = "Initially every path has the same pheromone, so each of the 7 values has probability " + tex("1/7") + ". Press Next iteration.";
     } else {
-      $("#ctTbl").innerHTML = `<thead><tr><th>Ant</th><th class="n">r</th><th class="n">path chosen</th><th class="n">x</th><th class="n">f(x)</th><th></th></tr></thead><tbody>` + it.rs.map((r, a) => `<tr class="${it.fx[a] === it.fb ? "hl" : ""}"><td>${a + 1}</td><td class="n">${r.toFixed(4)}</td><td class="n">x₁${it.ch[a] + 1}</td><td class="n">${XS[it.ch[a]].toFixed(1)}</td><td class="n">${it.fx[a].toFixed(2)}</td><td>${it.fx[a] === it.fb ? "best" : it.fx[a] === it.fw ? "worst" : ""}</td></tr>`).join("") + "</tbody>";
-      $("#ctCap").innerHTML = `${it.given ? "Random numbers from the worked example. " : "Seeded random numbers. "}Best f = ${it.fb.toFixed(2)} (x = ${XS[it.bi]}), worst f = ${it.fw.toFixed(2)}. Evaporation: τ ← ${(1 - ctl.rho).toFixed(2)} τ. Deposit on the best path: Δτ = ${it.nb > 1 ? it.nb + " × " : ""}${ctl.zeta} × (${it.fb.toFixed(2)}) / (${it.fw.toFixed(2)}) = <b>${it.dTau.toFixed(4)}</b>, so τ(x = ${XS[it.bi]}) = <b>${it.tau[it.bi].toFixed(4)}</b>.`;
+      $("#ctTbl").innerHTML = `<thead><tr><th>Ant</th><th class="n">${tex("r")}</th><th class="n">path chosen</th><th class="n">${tex("x")}</th><th class="n">${tex("f(x)")}</th><th></th></tr></thead><tbody>` + it.rs.map((r, a) => `<tr class="${it.fx[a] === it.fb ? "hl" : ""}"><td>${a + 1}</td><td class="n">${r.toFixed(4)}</td><td class="n">${tex(String.raw`x_{1${it.ch[a] + 1}}`)}</td><td class="n">${XS[it.ch[a]].toFixed(1)}</td><td class="n">${it.fx[a].toFixed(2)}</td><td>${it.fx[a] === it.fb ? "best" : it.fx[a] === it.fw ? "worst" : ""}</td></tr>`).join("") + "</tbody>";
+      $("#ctCap").innerHTML = `${it.given ? "Random numbers from the worked example. " : "Seeded random numbers. "}Best ${tex(String.raw`f = ${it.fb.toFixed(2)}`)} (${tex(String.raw`x = ${XS[it.bi]}`)}), worst ${tex(String.raw`f = ${it.fw.toFixed(2)}`)}. Evaporation: ${tex(String.raw`\tau \leftarrow ${(1 - ctl.rho).toFixed(2)}\,\tau`)}. Deposit on the best path: ${tex(String.raw`\Delta\tau = ${it.nb > 1 ? it.nb + " \\times " : ""}${ctl.zeta} \times (${it.fb.toFixed(2)}) / (${it.fw.toFixed(2)}) = \mathbf{${it.dTau.toFixed(4)}}`)}, so ${tex(String.raw`\tau(x = ${XS[it.bi]}) = \mathbf{${it.tau[it.bi].toFixed(4)}}`)}.`;
     }
     const cv = $("#ctCv"), { ctx, w, h } = setupCanvas(cv), c = colors(); ctx.clearRect(0, 0, w, h);
     // title above the plot (two lines when narrow), then room for the τ labels over the tallest bar
@@ -1623,7 +1642,7 @@ function adaCmpShow(id, out, R, note) {
   lineChart(cv, out.map(r => ({ data: r.mean, color: c[r.col], label: r.short })), { refs: [{ v: OPT_LEN, color: c.bad, label: "optimum 7,909" }], labels: true });
   const bm = Math.min(...out.map(r => r.m));
   tw.innerHTML = `<thead><tr><th>Setting</th><th class="n">Mean best (km)</th><th class="n">Best run (km)</th><th class="n">Mean gap</th></tr></thead><tbody>` + out.map(r => `<tr class="${r.m === bm ? "hl" : ""}"><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:var(--${r.col})"></i>${r.name}</td><td class="n">${r.m.toFixed(1)}</td><td class="n">${r.best.toFixed(1)}</td><td class="n">${((r.m - OPT_LEN) / OPT_LEN * 100).toFixed(2)}%</td></tr>`).join("") + "</tbody>";
-  $(`#${id}Status`).textContent = `${R} runs per setting with the same seeds. ${note}`;
+  $(`#${id}Status`).innerHTML = `${R} runs per setting with the same seeds. ${note}`;
 }
 // a live run with Run / Step / New colony, shared by the last three panels
 function adaPanel(id, specs, build, draw, cmp) {
@@ -1691,9 +1710,9 @@ function adaStrip(cv, S, T, line, o) {   // a trace chart, with an optional stri
     $("#a1Status").textContent = "Running…";
     const T = ctl.T, A = { variant: "AS", ants: 20 };
     adaCompare([
-      { name: `Fixed at the start: ρ = ${ctl.rMax}, β = ${ctl.bS}`, short: "start", col: "s1", o: Object.assign({ rho: () => ctl.rMax, beta: () => ctl.bS }, A) },
-      { name: `Fixed at the end: ρ = ${ctl.rMin}, β = ${ctl.bE}`, short: "end", col: "s2", o: Object.assign({ rho: () => ctl.rMin, beta: () => ctl.bE }, A) },
-      { name: "Adaptive ρ(t) and β(t)", short: "adaptive", col: "s3", o: Object.assign({ rho: rhoT, beta: betaT }, A) }
+      { name: `Fixed at the start: ${tex(String.raw`\rho = ${ctl.rMax}`)}, ${tex(String.raw`\beta = ${ctl.bS}`)}`, short: "start", col: "s1", o: Object.assign({ rho: () => ctl.rMax, beta: () => ctl.bS }, A) },
+      { name: `Fixed at the end: ${tex(String.raw`\rho = ${ctl.rMin}`)}, ${tex(String.raw`\beta = ${ctl.bE}`)}`, short: "end", col: "s2", o: Object.assign({ rho: () => ctl.rMin, beta: () => ctl.bE }, A) },
+      { name: `Adaptive ${tex(String.raw`\rho(t)`)} and ${tex(String.raw`\beta(t)`)}`, short: "adaptive", col: "s3", o: Object.assign({ rho: rhoT, beta: betaT }, A) }
     ], T, (out, R) => adaCmpShow("a1", out, R, `Ant system with 20 ants and ${T} iterations on the 20-city open route. Results depend on the problem: on this small route, greedy settings already do well.`));
   });
   ["#a1Cv", "#a1Ex"].forEach(s => ro.observe($(s))); onRedraw(render); render();
@@ -1740,7 +1759,7 @@ adaPanel("a3", [
   adaStrip($("#a3Cv"), S, ctl.T, [{ data: tr.cv, color: c.s3 }], { refs: [{ v: ctl.cvTh, color: c.bad, label: "threshold" }], xmax: ctl.T, strip: tr.dep });
   lineChart($("#a3Ln"), [{ data: S.hist, color: c.accent }], { refs: [{ v: OPT_LEN, color: c.bad, label: "optimum 7,909" }], xmax: ctl.T });
   stats($("#a3Stats"), [["Iteration", S.t + " / " + ctl.T], ["Best route", adaFmt(S.bestL)], ["CV now", tr.cv.length ? tr.cv[tr.cv.length - 1].toFixed(2) : "n/a"], ["Deposits by best-so-far", tr.dep.length ? Math.round(nb / tr.dep.length * 100) + "%" : "n/a"]]);
-}, ctl => ({ note: "Max-min ant system, 20 ants, ρ = 0.1, β = 2, τmin = τmax / 200.", rows: [
+}, ctl => ({ note: `Max-min ant system, 20 ants, ${tex(String.raw`\rho = 0.1`)}, ${tex(String.raw`\beta = 2`)}, ${tex(String.raw`\tau_{\min} = \tau_{\max} / 200`)}.`, rows: [
   { name: "Always iteration-best", short: "iteration-best", col: "s1", o: { variant: "MMAS", ants: 20, depositor: "ib", minRatio: .005 } },
   { name: "Always best-so-far", short: "best-so-far", col: "s2", o: { variant: "MMAS", ants: 20, depositor: "bsf", minRatio: .005 } },
   { name: `Switch on variance (CV threshold ${ctl.cvTh.toFixed(2)})`, short: "switch", col: "s3", o: { variant: "MMAS", ants: 20, depositor: "switch", cvTh: ctl.cvTh, minRatio: .005 } }] }));
@@ -1769,10 +1788,10 @@ adaPanel("a4", [
   lineChart($("#a4Ln"), [{ data: S.hist, color: c.accent }], { refs: [{ v: OPT_LEN, color: c.bad, label: "optimum 7,909" }], xmax: ctl.T });
   const ex = S.rs.filter(u => u <= q0).length;
   stats($("#a4Stats"), [["Iteration", S.t + " / " + ctl.T], ["Best route", adaFmt(S.bestL)], ["Threshold now", q0.toFixed(2)], ["Exploit moves (ant 1)", S.rs.length ? `${ex} of ${S.rs.length}` : "n/a"]]);
-}, ctl => ({ note: "Ant colony system, 10 ants, ρ = 0.1, β = 2.", rows: [
-  { name: `Fixed r₀ = ${ctl.r0}`, short: "fixed", col: "s1", o: { variant: "ACS", ants: 10, q0: ctl.r0, q0t: () => ctl.r0 } },
-  { name: `Time-varying r₀: ${ctl.r0} → ${ctl.r1}`, short: "time-varying", col: "s2", o: { variant: "ACS", ants: 10, q0: ctl.r0, q0t: t => ctl.r0 + (ctl.r1 - ctl.r0) * Math.min(1, t / ctl.T) } },
-  { name: `Performance-triggered r₀ (start ${ctl.r0}, δ = ${ctl.delta}, stagnation after ${ctl.pat})`, short: "performance", col: "s3", o: { variant: "ACS", ants: 10, q0: ctl.r0, delta: ctl.delta, patience: ctl.pat, q0lo: .3, q0hi: .98 } }] }));
+}, ctl => ({ note: `Ant colony system, 10 ants, ${tex(String.raw`\rho = 0.1`)}, ${tex(String.raw`\beta = 2`)}.`, rows: [
+  { name: `Fixed ${tex(String.raw`r_0 = ${ctl.r0}`)}`, short: "fixed", col: "s1", o: { variant: "ACS", ants: 10, q0: ctl.r0, q0t: () => ctl.r0 } },
+  { name: `Time-varying ${tex("r_0")}: ${ctl.r0} → ${ctl.r1}`, short: "time-varying", col: "s2", o: { variant: "ACS", ants: 10, q0: ctl.r0, q0t: t => ctl.r0 + (ctl.r1 - ctl.r0) * Math.min(1, t / ctl.T) } },
+  { name: `Performance-triggered ${tex("r_0")} (start ${ctl.r0}, ${tex(String.raw`\delta = ${ctl.delta}`)}, stagnation after ${ctl.pat})`, short: "performance", col: "s3", o: { variant: "ACS", ants: 10, q0: ctl.r0, delta: ctl.delta, patience: ctl.pat, q0lo: .3, q0hi: .98 } }] }));
 
 /* 5. MMAS with a tightening upper limit τmax(t) */
 adaPanel("a5", [
@@ -1786,15 +1805,15 @@ adaPanel("a5", [
   lineChart($("#a5Ln"), [{ data: S.hist, color: c.accent }], { refs: [{ v: OPT_LEN, color: c.bad, label: "optimum 7,909" }], xmax: ctl.T });
   const L = tr.tmax.length - 1;
   stats($("#a5Stats"), [["Iteration", S.t + " / " + ctl.T], ["Best route", adaFmt(S.bestL)], ["Upper limit (relative)", L >= 0 ? tr.tmax[L].toFixed(2) : "n/a"], ["Upper / lower limit", L >= 0 ? (tr.tmax[L] / tr.tmin[L]).toFixed(1) + " ×" : "n/a"]]);
-}, ctl => ({ note: "Max-min ant system, 20 ants, ρ = 0.1, β = 2, iteration-best deposits.", rows: [
+}, ctl => ({ note: `Max-min ant system, 20 ants, ${tex(String.raw`\rho = 0.1`)}, ${tex(String.raw`\beta = 2`)}, iteration-best deposits.`, rows: [
   { name: "Fixed limits", short: "fixed", col: "s1", o: { variant: "MMAS", ants: 20, depositor: "ib", minRatio: ctl.ratio, tighten: false } },
-  { name: "Tightening τmax(t)", short: "tightening", col: "s2", o: { variant: "MMAS", ants: 20, depositor: "ib", minRatio: ctl.ratio, tighten: true } }] }));
+  { name: `Tightening ${tex(String.raw`\tau_{\max}(t)`)}`, short: "tightening", col: "s2", o: { variant: "MMAS", ants: 20, depositor: "ib", minRatio: ctl.ratio, tighten: true } }] }));
 
 /* ---------- code tabs ---------- */
 (function codeTabs() {
-  const caps = { sp: "SACO on the book's shortest path problem (reproduces equations 10.7 and 10.8)", tsp: "Open TSP for 20 US cities with AS, ACS and MMAS (Listing 10.1 settings)", ct: "Discretized ACO for f(x) = x² − 2x − 11 (reproduces the worked example)" };
+  const caps = { sp: "SACO on the book's shortest path problem (reproduces equations 10.7 and 10.8)", tsp: "Open TSP for 20 US cities with AS, ACS and MMAS (Listing 10.1 settings)", ct: "Discretized ACO for " + tex("f(x) = x^2 - 2x - 11") + " (reproduces the worked example)" };
   let cur = "sp";
-  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); ["sp", "tsp", "ct"].forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").textContent = caps[k]; }
+  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); ["sp", "tsp", "ct"].forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").innerHTML = caps[k]; }
   document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.code)));
   document.querySelectorAll("a[data-tab]").forEach(a => a.addEventListener("click", () => show(a.dataset.tab)));
   $("#codeCopy").addEventListener("click", async () => {
@@ -1839,7 +1858,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

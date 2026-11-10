@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Supervised Learning Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -371,8 +390,8 @@ tr.dim td{color:var(--muted)}
     <h3 id="gcn">Message passing and graph convolution</h3>
     <div class="two">
       <div class="prose">
-        <p>In a <b>graph convolutional network</b>, each layer lets every node aggregate messages from its neighbors, H<sup>(t+1)</sup> = σ(Â H<sup>(t)</sup> W<sup>(t)</sup>). Click a node to put a signal there, then apply layers to watch it spread hop by hop.</p>
-        <p class="more">Figures 11.6 and 11.7 in the book build the normalized matrix Â step by step.</p>
+        <p>In a <b>graph convolutional network</b>, each layer lets every node aggregate messages from its neighbors, \(H^{(t+1)} = \sigma(\hat{A}\, H^{(t)} W^{(t)})\). Click a node to put a signal there, then apply layers to watch it spread hop by hop.</p>
+        <p class="more">Figures 11.6 and 11.7 in the book build the normalized matrix \(\hat{A}\) step by step.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Signal spreading through Â</h4></div>
         <div class="stage"><canvas id="mpCv" class="cv-sq" style="aspect-ratio:16/10;cursor:pointer" aria-label="Six-node graph"></canvas><div class="btns"><button id="mpStep" class="primary small">Apply one layer</button><button id="mpReset" class="small">Reset</button></div><div class="mats" id="mpMats"></div><p class="cap" id="mpNote"></p></div></div>
@@ -749,7 +768,7 @@ print(f<span class="st">"   trained problems {gap(train[:16], pred):.3f}, unseen
     <h2>What to remember</h2>
     <div class="cards3">
       <div class="card"><h5>Training is optimization</h5><p>Backpropagation plus a gradient method fits the weights.</p></div>
-      <div class="card"><h5>Graphs</h5><p>GCNs pass messages; k layers see k hops.</p></div>
+      <div class="card"><h5>Graphs</h5><p>GCNs pass messages; \(k\) layers see \(k\) hops.</p></div>
       <div class="card"><h5>Attention and pointers</h5><p>Pointer networks use attention to output input positions.</p></div>
       <div class="card"><h5>Learned optimizers</h5><p>Training time buys fast solutions to new instances.</p></div>
     </div>
@@ -763,9 +782,9 @@ print(f<span class="st">"   trained problems {gap(train[:16], pred):.3f}, unseen
     <h2>Check your understanding</h2>
     <p class="prose">Two quick questions on Chapter 11. Pick an answer to check it.</p>
     <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> After k layers of a graph convolutional network, what information does a node’s embedding encode?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Only the node’s own input features</span></button><button type="button" class="mcq-o"><b>B</b><span>Every node in the graph, whatever the value of k</span></button><button type="button" class="mcq-o"><b>C</b><span>Its k-hop neighborhood</span></button><button type="button" class="mcq-o"><b>D</b><span>Only the labeled nodes of the graph</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Each layer aggregates messages from direct neighbors, so information spreads one hop per layer: after k layers a node has heard from everything within k hops.</template>
+      <p class="mcq-q"><b>Q1.</b> After \(k\) layers of a graph convolutional network, what information does a node’s embedding encode?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Only the node’s own input features</span></button><button type="button" class="mcq-o"><b>B</b><span>Every node in the graph, whatever the value of \(k\)</span></button><button type="button" class="mcq-o"><b>C</b><span>Its \(k\)-hop neighborhood</span></button><button type="button" class="mcq-o"><b>D</b><span>Only the labeled nodes of the graph</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Each layer aggregates messages from direct neighbors, so information spreads one hop per layer: after \(k\) layers a node has heard from everything within \(k\) hops.</template>
     </div>
     <div class="mcq" data-a="3">
       <p class="mcq-q"><b>Q2.</b> Why is a pointer network, rather than a standard sequence-to-sequence model, a natural fit for the convex hull problem?</p>
@@ -1086,7 +1105,7 @@ function drawKarate(cv, P, o = {}) {
   const reset = () => { h = Array.from({ length: n }, (_, i) => i === src ? 1 : 0); layer = 0; draw(); };
   const hops = (() => { const D = Array.from({ length: n }, (_, s) => { const d = new Array(n).fill(Infinity); d[s] = 0; const q = [s]; while (q.length) { const u = q.shift(); for (let v = 0; v < n; v++) if (A[u][v] && d[v] === Infinity) { d[v] = d[u] + 1; q.push(v); } } return d; }); return D; })();
   const mat = (M, title, f, hl) => `<div><div class="group-label">${title}</div><table class="matrix">${M.map((r, i) => `<tr>${r.map((v, j) => `<td class="${hl && hl(i, j) ? "on" : ""}">${f(v)}</td>`).join("")}</tr>`).join("")}</table></div>`;
-  $("#mpMats").innerHTML = mat(A, "A (adjacency)", v => v) + mat(A.map((r, i) => r.map((_, j) => i === j ? deg[i] : 0)), "D (degree)", v => v) + mat(At, "Â = D̃<sup>−1/2</sup>(A + I)D̃<sup>−1/2</sup>", v => v ? v.toFixed(2) : "0");
+  $("#mpMats").innerHTML = mat(A, tex("A") + " (adjacency)", v => v) + mat(A.map((r, i) => r.map((_, j) => i === j ? deg[i] : 0)), tex("D") + " (degree)", v => v) + mat(At, tex(String.raw`\hat{A} = \tilde{D}^{-1/2}(A + I)\,\tilde{D}^{-1/2}`), v => v ? v.toFixed(2) : "0");
   let map = null;
   function draw() {
     const ax = axes($("#mpCv"), { x0: 0, x1: 1, y0: 0, y1: 1, bare: true, equal: true, pad: { l: 20, r: 20, t: 20, b: 20 } }), { ctx, X, Y, c } = ax; map = ax;
@@ -1094,7 +1113,7 @@ function drawKarate(cv, P, o = {}) {
     const mx = Math.max(...h);
     POS.forEach((p, i) => { const t = h[i] / mx, [r, g, b] = ramp(t); dot(ctx, X(p[0]), Y(p[1]), 22, h[i] > 1e-12 ? `rgb(${r},${g},${b})` : c.surface, i === src ? c.bad : c.ink); ctx.fillStyle = h[i] / mx > .55 ? "#000" : (h[i] > 1e-12 ? "#fff" : c.ink); ctx.font = `600 11px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(h[i] > 1e-12 ? h[i].toFixed(2) : "0", X(p[0]), Y(p[1])); ctx.fillStyle = c.muted; ctx.font = `11px ${MONO}`; ctx.fillText("x" + (i + 1), X(p[0]), Y(p[1]) - 30); });
     const reached = h.filter(v => v > 1e-12).length;
-    $("#mpNote").textContent = `Layer ${layer}: h = Â${layer ? "^" + layer : "⁰"} x. ${reached} of 6 nodes have received the signal from x${src + 1}, exactly those within ${layer} hop${layer === 1 ? "" : "s"}. ${layer >= Math.max(...hops[src]) ? "Every node now carries information about every other: more layers only smooth the values further (too many layers oversmooth)." : ""}`;
+    $("#mpNote").innerHTML = `Layer ${layer}: ${tex(String.raw`h = \hat{A}^{${layer}} x`)}. ${reached} of 6 nodes have received the signal from ${tex(String.raw`x_{${src + 1}}`)}, exactly those within ${layer} hop${layer === 1 ? "" : "s"}. ${layer >= Math.max(...hops[src]) ? "Every node now carries information about every other: more layers only smooth the values further (too many layers oversmooth)." : ""}`;
   }
   $("#mpCv").addEventListener("click", e => { if (!map) return; const r = $("#mpCv").getBoundingClientRect(), x = map.iX(e.clientX - r.left), y = map.iY(e.clientY - r.top); let b = 0; POS.forEach((p, i) => { if (Math.hypot(p[0] - x, p[1] - y) < Math.hypot(POS[b][0] - x, POS[b][1] - y)) b = i; }); src = b; reset(); });
   $("#mpStep").addEventListener("click", () => { h = At.map(r => r.reduce((s, v, j) => s + v * h[j], 0)); layer++; draw(); });
@@ -1137,7 +1156,7 @@ function drawKarate(cv, P, o = {}) {
     const [sx, sy] = P(POS[4]); ctx.strokeStyle = c.accent; ctx.lineWidth = 1 + 14 * avg[2]; ctx.beginPath(); ctx.arc(sx + 14, sy - 14, 12, Math.PI * .9, Math.PI * 2.6); ctx.stroke();
     const bx = gw + 20, bw = w - bx - 10, gh = (h - 40) / H.length; ctx.font = `11px ${MONO}`;
     H.forEach((al, hI) => { const y0 = 24 + hI * gh; ctx.fillStyle = c.muted; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(ctl.mode === "gcn" ? "GCN (no attention)" : `head ${hI + 1}`, bx, y0 - 14); al.forEach((a, k) => { const yy = y0 + k * (gh - 18) / 3; ctx.fillStyle = cols[k]; ctx.fillRect(bx + 40, yy, (bw - 90) * a, (gh - 18) / 3 - 4); ctx.fillStyle = c.ink; ctx.textBaseline = "top"; ctx.fillText(`α5${NB[k] + 1}`, bx, yy); ctx.fillText(a.toFixed(2), bx + 46 + (bw - 90) * a, yy); }); });
-    $("#atNote").textContent = ctl.mode === "gcn" ? "A GCN mixes node 5 with nodes 2 and 4 using the same normalized weight (here 1/3 each): no notion of which neighbor matters more." : `Each head scores the neighbors with its own attention vector and a LeakyReLU, then normalizes with a softmax, so the coefficients of each head sum to 1. Edge widths on the left show the average over ${H.length} head${H.length > 1 ? "s" : ""}: α52 = ${avg[0].toFixed(2)}, α54 = ${avg[1].toFixed(2)}, α55 = ${avg[2].toFixed(2)}. The weights here are random, not trained: training would tune them.`;
+    $("#atNote").innerHTML = ctl.mode === "gcn" ? "A GCN mixes node 5 with nodes 2 and 4 using the same normalized weight (here 1/3 each): no notion of which neighbor matters more." : `Each head scores the neighbors with its own attention vector and a LeakyReLU, then normalizes with a softmax, so the coefficients of each head sum to 1. Edge widths on the left show the average over ${H.length} head${H.length > 1 ? "s" : ""}: ${tex(String.raw`\alpha_{52} = ${avg[0].toFixed(2)}`)}, ${tex(String.raw`\alpha_{54} = ${avg[1].toFixed(2)}`)}, ${tex(String.raw`\alpha_{55} = ${avg[2].toFixed(2)}`)}. The weights here are random, not trained: training would tune them.`;
   }
   ro.observe($("#atCv")); onRedraw(draw); draw();
   // sentence attention with hand-made 2D word vectors
@@ -1149,7 +1168,7 @@ function drawKarate(cv, P, o = {}) {
     const s = V.map(k => (V[q][0] * k[0] + V[q][1] * k[1]) * 4 / Math.SQRT2), a = softmax(s), { ctx, w, h } = setupCanvas($("#sqCv")), c = colors(), bw = (w - 20) / T.length;
     ctx.clearRect(0, 0, w, h); ctx.font = `12px ${MONO}`; ctx.textAlign = "center";
     a.forEach((v, i) => { const bh = (h - 50) * v / Math.max(...a); ctx.fillStyle = i === q ? c.gold : c.accent; ctx.fillRect(10 + i * bw + 6, h - 24 - bh, bw - 12, bh); ctx.fillStyle = c.ink; ctx.textBaseline = "top"; ctx.fillText(T[i], 10 + i * bw + bw / 2, h - 20); ctx.textBaseline = "bottom"; ctx.fillText(v.toFixed(2), 10 + i * bw + bw / 2, h - 26 - bh); });
-    $("#sqNote").textContent = `Query “${T[q]}”: weights α = softmax(q·k / √d) over all 7 words; they sum to 1, and the output is the weighted sum of the value vectors. With these toy vectors, “bank” attends mostly to “river” and “flooded,” the words that tell which bank is meant.`;
+    $("#sqNote").innerHTML = `Query “${T[q]}”: weights ${tex(String.raw`\alpha = \operatorname{softmax}(\mathbf{q}\cdot\mathbf{k} / \sqrt{d})`)} over all 7 words; they sum to 1, and the output is the weighted sum of the value vectors. With these toy vectors, “bank” attends mostly to “river” and “flooded,” the words that tell which bank is meant.`;
   }
   ro.observe($("#sqCv")); onRedraw(sq); sq();
 })();
@@ -1175,7 +1194,7 @@ function drawKarate(cv, P, o = {}) {
     const b = setupCanvas($("#phBar")), bc = b.ctx; bc.clearRect(0, 0, b.w, b.h); bc.font = `10px ${MONO}`;
     if (S.last) { const n = P.length, bw = (b.w - 20) / n, mx = Math.max(...S.last); S.last.forEach((v, i) => { const hh = (b.h - 40) * v / mx; bc.fillStyle = v === mx ? c.gold : c.accent; bc.fillRect(10 + i * bw + 1, b.h - 18 - hh, bw - 2, hh); bc.fillStyle = c.muted; bc.textAlign = "center"; bc.textBaseline = "top"; bc.fillText(i + 1, 10 + i * bw + bw / 2, b.h - 15); }); bc.fillStyle = c.ink; bc.textAlign = "left"; bc.textBaseline = "top"; bc.fillText(`pointer distribution at step ${S.seq.length - (S.done ? 0 : 1)}: probability of each input point`, 10, 2); }
     stats($("#phStats"), [["Output so far", S.seq.map(i => i + 1).join(" → ") + (S.eos ? " → <eos>" : "")], ["Hull vertices", S.done ? S.seq.length : "…"], ["Points inside", S.done ? P.length - S.seq.length : "…"]]);
-    $("#phNote").textContent = S.done ? `The sequence returned to point ${S.seq[0] + 1}, so the decoder emits the end token. The ${S.seq.length} pointed-to points are the hull; the other ${P.length - S.seq.length} lie inside it.` : "Each step is a softmax over the input points, as in a pointer network. Here the scores favor the point with the smallest left turn (gift wrapping), so the argmax always traces the true hull; a trained network has to learn such scores from examples, which is why its accuracy in the table is below 100%. Lower τ makes the distribution sharper.";
+    $("#phNote").innerHTML = S.done ? `The sequence returned to point ${S.seq[0] + 1}, so the decoder emits the end token. The ${S.seq.length} pointed-to points are the hull; the other ${P.length - S.seq.length} lie inside it.` : `Each step is a softmax over the input points, as in a pointer network. Here the scores favor the point with the smallest left turn (gift wrapping), so the argmax always traces the true hull; a trained network has to learn such scores from examples, which is why its accuracy in the table is below 100%. Lower ${tex(String.raw`\tau`)} makes the distribution sharper.`;
   }
   $("#phStep").addEventListener("click", step);
   $("#phRun").addEventListener("click", () => { let k = 0; while (!S.done && k++ < 200) step(); });
@@ -1245,7 +1264,7 @@ function drawKarate(cv, P, o = {}) {
     const o = OPT_TE[ctl.p - 1], q = pred(p); dot(ctx, X(o), Y(f(o, p)), 7, c.good, c.bg); dot(ctx, X(q), Y(f(q, p)), 7, c.gold, c.bg);
     const rr = mulberry32(42);
     stats($("#amStats"), [["Training steps", steps], ["Gap on this problem", (f(q, p) - f(o, p)).toFixed(3)], ["Mean gap, trained problems", gap(TRAIN.slice(0, 16), OPT_TR, pred).toFixed(3)], ["Mean gap, unseen problems", gap(TEST, OPT_TE, pred).toFixed(3)], ["Mean gap, random guess", gap(TEST, OPT_TE, () => -Math.PI + 2 * Math.PI * rr()).toFixed(3)]]);
-    $("#amNote").textContent = steps ? "Green: the true minimizer (found by searching 2,000 angles); gold: the network’s one-shot prediction. Training uses f(model(p)) as the loss, as Listing 11.3 does, so no solved examples are needed." : "Before training, predictions are arbitrary. Press Train.";
+    $("#amNote").innerHTML = steps ? `Green: the true minimizer (found by searching 2,000 angles); gold: the network’s one-shot prediction. Training uses ${tex(String.raw`f(\operatorname{model}(p))`)} as the loss, as Listing 11.3 does, so no solved examples are needed.` : "Before training, predictions are arbitrary. Press Train.";
   }
   $("#amTrain").addEventListener("click", () => { train(ctl.it); draw(); });
   $("#amReset").addEventListener("click", reset);
@@ -1287,7 +1306,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

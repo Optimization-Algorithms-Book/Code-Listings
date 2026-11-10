@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Unsupervised Learning Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -199,6 +218,17 @@ blockquote footer{font-family:var(--f-body);font-style:normal;font-size:.85rem;c
 .bit.sel{outline:2px solid var(--gold);outline-offset:1px}
 .bit.changed{background:var(--gold);color:#fff}
 .calc{font-family:var(--f-mono);font-size:.86rem;line-height:1.8;background:var(--sunk);border-radius:8px;padding:.7rem .9rem;overflow-x:auto;white-space:nowrap}
+.calc small{color:var(--muted);font-size:.78rem}
+.va-card .fx .katex{font-size:1em}
+.va-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.8rem}
+.va-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.8rem .9rem;display:flex;flex-direction:column;gap:.45rem;min-width:0}
+.va-card h5{margin:0;font-size:.95rem;display:flex;justify-content:space-between;gap:.5rem;align-items:baseline}
+.va-card h5 b{font-family:var(--f-mono);font-size:.95rem;color:var(--accent)}
+.va-card .fx{font-size:.95rem;line-height:1.4;background:var(--sunk);border-radius:6px;padding:.5rem .6rem;overflow-x:auto;overflow-y:hidden}
+.va-card p{margin:0;font-size:.84rem;line-height:1.5}
+.va-tag{font-family:var(--f-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+#vaTbl tbody tr{cursor:pointer}
+#vaTbl tr.sel td{box-shadow:inset 0 -2px 0 var(--accent)}
 .perm{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .perm .cell{min-width:2.1rem;height:2.1rem;padding:0 .3rem;display:grid;place-items:center;font-family:var(--f-mono);border:1px solid var(--line);border-radius:5px;background:var(--surface)}
 .perm .cell.a{background:var(--accent-soft);border-color:var(--accent)}
@@ -341,13 +371,12 @@ tr.dim td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 2 · Similarity</span>
     <h2>Similarity measures</h2>
-    <p class="prose">Pick a measure to see its contours of equal distance; click to place a point.</p>
-    <p class="more">Chapter 11 of the book gives the formula for each measure and works a haversine example.</p>
+    <p class="prose">Pick a measure to see its contours of equal distance; click to place a point. The box under the map gives the measure’s formula, worked out for your point.</p>
     <div class="bench">
       <div class="bench-head"><h4>Distance explorer</h4><span class="eyebrow">Click to place a point</span></div>
       <div class="bench-body">
         <div class="side"><div id="dsCtl"></div><div class="stats" id="dsStats"></div></div>
-        <div class="stage"><canvas id="dsCv" class="cv-sq" style="aspect-ratio:16/10;cursor:crosshair" aria-label="Distance contours"></canvas><p class="cap" id="dsNote"></p></div>
+        <div class="stage"><canvas id="dsCv" class="cv-sq" style="aspect-ratio:16/10;cursor:crosshair" aria-label="Distance contours"></canvas><p class="cap" id="dsNote"></p><div class="calc" id="dsFx" aria-live="polite"></div></div>
       </div>
     </div>
     <div class="two">
@@ -363,7 +392,7 @@ tr.dim td{color:var(--muted)}
     <h2>K-means clustering</h2>
     <div class="prose">
       <p>K-means alternates two steps: assign every point to its nearest center, then move each center to the mean of its points. It converges, but to a local minimum that depends on the seeds. Click Next step, or try Bad seeds.</p>
-      <p class="more">Chapter 11 of the book covers k-means++ seeding, the cost of k-means, and how it compares with other algorithms.</p>
+      <p class="more">The book introduces k-means and DBSCAN briefly, as examples of clustering algorithms. The panels here let you explore both in more depth.</p>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>K-means step by step</h4><span class="eyebrow">Click to add points</span></div>
@@ -373,11 +402,10 @@ tr.dim td{color:var(--muted)}
       </div>
     </div>
     <h3 id="validation">Validating clusters</h3>
-    <p class="prose"><b>Internal</b> measures (silhouette, Davies-Bouldin) judge a clustering from the data alone; <b>external</b> ones (ARI, NMI) compare it with known classes. The chart scores each k for the data above.</p>
-    <p class="more">Chapter 11 of the book defines each validation index and explains the elbow method for choosing k.</p>
+    <p class="prose"><b>Internal</b> measures (silhouette, Davies-Bouldin) judge a clustering from the data alone; <b>external</b> ones (ARI, NMI) compare it with known classes. The chart scores each k for the data above. Click a row of the table to see every index explained at that k.</p>
     <div class="bench">
       <div class="bench-head"><h4>Choosing k for the data above</h4></div>
-      <div class="stage"><canvas id="vaChart" class="cv-chart" style="height:190px" aria-label="Validation measures vs k"></canvas><div class="tbl-wrap"><table class="ttab" id="vaTbl"></table></div><p class="cap" id="vaNote"></p></div>
+      <div class="stage"><canvas id="vaChart" class="cv-chart" style="height:190px" aria-label="Validation measures vs k"></canvas><div class="tbl-wrap"><table class="ttab" id="vaTbl"></table></div><p class="cap" id="vaNote"></p><div class="va-cards" id="vaInfo"></div></div>
     </div>
   </div>
 </section>
@@ -980,23 +1008,38 @@ function drawQatar(cv, S, route, o = {}) {
 /* ---------- distance explorer ---------- */
 (function distances() {
   const ctl = makeControls($("#dsCtl"), [
-    { key: "m", id: "dsM", type: "select", label: "Measure", value: "euclid", options: [["euclid", "Euclidean"], ["manhattan", "Manhattan"], ["cheb", "Chebyshev"], ["cosine", "Cosine distance (1 − cos θ)"], ["maha", "Mahalanobis"]] },
+    { key: "m", id: "dsM", type: "select", label: "Measure", value: "euclid", options: [["euclid", "Euclidean"], ["manhattan", "Manhattan"], ["cheb", "Chebyshev"], ["cossim", "Cosine similarity (cos θ)"], ["cosine", "Cosine distance (1 − cos θ)"], ["maha", "Mahalanobis"]] },
     { key: "rho", id: "dsR", label: "Correlation of the data (Mahalanobis)", min: -.9, max: .9, step: .05, value: .7, fmt: v => v.toFixed(2) }
   ], () => draw());
   const R = [1, .5]; let pt = [2, 1.6];
   const D = { euclid: (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]), manhattan: (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]), cheb: (a, b) => Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1])),
+    cossim: (a, b) => (a[0] * b[0] + a[1] * b[1]) / (Math.hypot(...a) * Math.hypot(...b) || 1),
     cosine: (a, b) => 1 - (a[0] * b[0] + a[1] * b[1]) / (Math.hypot(...a) * Math.hypot(...b) || 1),
     maha: (a, b) => { const r = ctl.rho, dx = a[0] - b[0], dy = a[1] - b[1], det = 1 - r * r; return Math.sqrt((dx * dx - 2 * r * dx * dy + dy * dy) / det); } };
   let map = null;
   function draw() {
     const ax = axes($("#dsCv"), { x0: -3, x1: 3, y0: -2, y1: 2, equal: true, xd: 0, yd: 0 }), { ctx, X, Y, c, w, h } = ax; map = ax;
-    const f = D[ctl.m], step = ctl.m === "cosine" ? .1 : .5, n = 2, img = ctx.createImageData(Math.ceil(w / n), Math.ceil(h / n));
-    for (let j = 0; j < img.height; j++) for (let i = 0; i < img.width; i++) { const x = ax.iX(i * n + n / 2), y = ax.iY(j * n + n / 2), d = f([x, y], R), band = (d / step) % 1, edge = band < .035 || band > .965, [r, g, b] = ramp(1 - Math.min(1, d / (ctl.m === "cosine" ? 2 : 6))), k = 4 * (j * img.width + i); img.data.set(edge ? [30, 30, 30, 255] : [r, g, b, 200], k); }
+    const cos = ctl.m === "cosine" || ctl.m === "cossim", f = ctl.m === "cossim" ? D.cosine : D[ctl.m], step = cos ? .1 : .5, n = 2, img = ctx.createImageData(Math.ceil(w / n), Math.ceil(h / n));
+    for (let j = 0; j < img.height; j++) for (let i = 0; i < img.width; i++) { const x = ax.iX(i * n + n / 2), y = ax.iY(j * n + n / 2), d = f([x, y], R), band = (d / step) % 1, edge = band < .035 || band > .965, [r, g, b] = ramp(1 - Math.min(1, d / (cos ? 2 : 6))), k = 4 * (j * img.width + i); img.data.set(edge ? [30, 30, 30, 255] : [r, g, b, 200], k); }
     const tmp = document.createElement("canvas"); tmp.width = img.width; tmp.height = img.height; tmp.getContext("2d").putImageData(img, 0, 0); ctx.imageSmoothingEnabled = false; ctx.drawImage(tmp, 0, 0, img.width * n, img.height * n);
-    if (ctl.m === "cosine") { ctx.strokeStyle = "#fff"; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(R[0] * 3), Y(R[1] * 3)); ctx.stroke(); ctx.setLineDash([]); }
+    if (cos) { ctx.strokeStyle = "#fff"; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(R[0] * 3), Y(R[1] * 3)); ctx.stroke(); ctx.setLineDash([]); }
     dot(ctx, X(R[0]), Y(R[1]), 7, c.good, "#fff"); dot(ctx, X(pt[0]), Y(pt[1]), 7, c.gold, "#fff");
-    stats($("#dsStats"), [["Reference (green)", `(${R.join(", ")})`], ["Your point (gold)", `(${pt.map(v => v.toFixed(2)).join(", ")})`]].concat(Object.entries({ euclid: "Euclidean", manhattan: "Manhattan", cheb: "Chebyshev", cosine: "Cosine distance", maha: "Mahalanobis" }).map(([k, n]) => [n, D[k](pt, R).toFixed(3)])));
-    $("#dsNote").textContent = { euclid: "Circles: all directions count equally.", manhattan: "Diamonds: distance along the grid, as on city blocks.", cheb: "Squares: only the largest coordinate difference counts.", cosine: "Wedges: only the angle from the origin matters, so every point on the dashed ray has distance 0.", maha: `Ellipses stretched along the data’s correlation (ρ = ${ctl.rho}): moving along the trend costs less than moving across it.` }[ctl.m] + " Dark lines join points at equal distance from the green reference.";
+    stats($("#dsStats"), [["Reference (green)", `(${R.join(", ")})`], ["Your point (gold)", `(${pt.map(v => v.toFixed(2)).join(", ")})`]].concat(Object.entries({ euclid: "Euclidean", manhattan: "Manhattan", cheb: "Chebyshev", cossim: "Cosine similarity", cosine: "Cosine distance", maha: "Mahalanobis" }).map(([k, n]) => [n, D[k](pt, R).toFixed(3)])));
+    $("#dsNote").textContent = { euclid: "Circles: all directions count equally.", manhattan: "Diamonds: distance along the grid, as on city blocks.", cheb: "Squares: only the largest coordinate difference counts.", cossim: "Wedges: only the angle from the origin matters. Similarity is 1 on the dashed ray, 0 at a right angle to it and −1 in the opposite direction, so brighter means more similar.",
+      cosine: "Wedges: only the angle from the origin matters, so every point on the dashed ray has distance 0.", maha: `Ellipses stretched along the data’s correlation (ρ = ${ctl.rho}): moving along the trend costs less than moving across it.` }[ctl.m] + (ctl.m === "cossim" ? " Dark lines join points of equal similarity to the green reference." : " Dark lines join points at equal distance from the green reference.");
+    const d1 = pt[0] - R[0], d2_ = pt[1] - R[1], n2 = v => v.toFixed(2), q = v => v < 0 ? `(${n2(v)})` : n2(v), r = ctl.rho, dv = D[ctl.m](pt, R).toFixed(3);
+    const dotp = pt[0] * R[0] + pt[1] * R[1], nx = Math.hypot(...pt), ny = Math.hypot(...R);
+    const L = String.raw, N = v => v < 0 ? `(${n2(v)})` : n2(v), R2 = L`\mathbf{${dv}}`;
+    $("#dsFx").innerHTML = "<small>x = your point (gold), y = the reference (green)</small>" + {
+      euclid: texLine(L`d(\mathbf{x},\mathbf{y}) = \sqrt{\sum_i (x_i - y_i)^2} = \sqrt{${N(d1)}^2 + ${N(d2_)}^2} = ${R2}`),
+      manhattan: texLine(L`d(\mathbf{x},\mathbf{y}) = \sum_i \lvert x_i - y_i \rvert = \lvert ${n2(d1)} \rvert + \lvert ${n2(d2_)} \rvert = ${R2}`),
+      cheb: texLine(L`d(\mathbf{x},\mathbf{y}) = \max_i \lvert x_i - y_i \rvert = \max\bigl(\lvert ${n2(d1)} \rvert, \lvert ${n2(d2_)} \rvert\bigr) = ${R2}`),
+      cossim: texLine(L`\cos\theta = \frac{\mathbf{x}\cdot\mathbf{y}}{\lVert\mathbf{x}\rVert\,\lVert\mathbf{y}\rVert} = \frac{\sum_i x_i y_i}{\sqrt{\sum_i x_i^2}\,\sqrt{\sum_i y_i^2}}`) +
+        texLine(L`= \frac{${n2(dotp)}}{${n2(nx)} \times ${n2(ny)}} = ${R2}`) + "<small>1: same direction · 0: perpendicular · −1: opposite</small>",
+      cosine: texLine(L`d(\mathbf{x},\mathbf{y}) = 1 - \frac{\mathbf{x}\cdot\mathbf{y}}{\lVert\mathbf{x}\rVert\,\lVert\mathbf{y}\rVert} = 1 - \frac{${n2(dotp)}}{${n2(nx)} \times ${n2(ny)}} = ${R2}`),
+      maha: texLine(L`d(\mathbf{x},\mathbf{y}) = \sqrt{(\mathbf{x}-\mathbf{y})^{\top}\,\Sigma^{-1}\,(\mathbf{x}-\mathbf{y})}, \qquad \Sigma = \begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}`) +
+        texLine(L`= \sqrt{\frac{\Delta_1^2 - 2\rho\,\Delta_1\Delta_2 + \Delta_2^2}{1-\rho^2}} = \sqrt{\frac{${N(d1)}^2 - 2 \cdot ${N(r)} \cdot ${N(d1)} \cdot ${N(d2_)} + ${N(d2_)}^2}{1 - ${N(r)}^2}} = ${R2}`) + "<small>Δ = x − y</small>"
+    }[ctl.m];
   }
   $("#dsCv").addEventListener("click", e => { if (!map) return; const r = $("#dsCv").getBoundingClientRect(); pt = [map.iX(e.clientX - r.left), map.iY(e.clientY - r.top)]; draw(); });
   ro.observe($("#dsCv")); onRedraw(draw); draw();
@@ -1004,7 +1047,7 @@ function drawQatar(cv, S, route, o = {}) {
   const opts = Object.entries(CITIES).map(([k, v]) => [k, v[0]]);
   const hc = makeControls($("#hvCtl"), [{ key: "a", id: "hvA", type: "select", label: "From", value: "la", options: opts }, { key: "b", id: "hvB", type: "select", label: "To", value: "madrid", options: opts }], () => hv());
   function hv() { const [, la1, lo1] = CITIES[hc.a], [, la2, lo2] = CITIES[hc.b], r = Math.PI / 180, a = Math.sin((la2 - la1) * r / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((lo2 - lo1) * r / 2) ** 2, d = 2 * 6371 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)), flat = 6371 * Math.hypot((lo2 - lo1) * r * Math.cos((la1 + la2) / 2 * r), (la2 - la1) * r);
-    $("#hvOut").innerHTML = `a = sin²(Δlat/2) + cos(lat₁) cos(lat₂) sin²(Δlon/2)<br>d = 2R · atan2(√a, √(1 − a)), R = 6,371 km<br>great circle: <b>${d.toLocaleString("en-US", { maximumFractionDigits: 1 })} km</b><br>flat map: ${flat.toLocaleString("en-US", { maximumFractionDigits: 1 })} km`; }
+    $("#hvOut").innerHTML = texLine(String.raw`a = \sin^2\!\Bigl(\frac{\Delta\varphi}{2}\Bigr) + \cos\varphi_1 \cos\varphi_2 \sin^2\!\Bigl(\frac{\Delta\lambda}{2}\Bigr) = ${a.toFixed(4)}`) + texLine(String.raw`d = 2R\,\operatorname{atan2}\bigl(\sqrt{a}, \sqrt{1-a}\bigr), \quad R = 6371\ \text{km}`) + `<small>φ: latitude, λ: longitude</small><br>great circle: <b>${d.toLocaleString("en-US", { maximumFractionDigits: 1 })} km</b><br>flat map: ${flat.toLocaleString("en-US", { maximumFractionDigits: 1 })} km`; }
   hv();
 })();
 
@@ -1043,14 +1086,40 @@ function drawQatar(cv, S, route, o = {}) {
   $("#kmBad").addEventListener("click", () => { run.stop(); const a = P.reduce((b, p) => p[0] + p[1] < b[0] + b[1] ? p : b); init(Array.from({ length: ctl.k }, () => [a[0] + .3 * gauss(rnd), a[1] + .3 * gauss(rnd)])); $("#kmNote").textContent = "All seeds start in one corner. Run it: k-means still converges, but often to a worse local minimum (compare the final inertia with a k-means++ start)."; });
   $("#kmData").addEventListener("click", () => { run.stop(); makeData(); init(); });
   $("#kmCv").addEventListener("click", e => { if (!map) return; const r = $("#kmCv").getBoundingClientRect(); P.push([map.iX(e.clientX - r.left), map.iY(e.clientY - r.top), -1]); S.done = false; draw("Point added. Keep stepping to update the clusters."); });
+  let VA = null, vaK = null;
   function validate() {
     const truth = P.map(p => p[2]), hasTruth = ctl.data !== "uniform", rows = [];
     for (let k = 2; k <= 8; k++) { let best = null; for (let r = 0; r < 4; r++) { const res = kmeansFull(P, k, rnd); if (!best || res.inertia < best.inertia) best = res; } rows.push({ k, I: best.inertia, si: silhouette(P, best.lab), dbi: daviesBouldin(P, best.lab), ari: hasTruth ? ari(truth, best.lab) : null, nmi: hasTruth ? nmi(truth, best.lab) : null }); }
     const c = colors(), bestSI = rows.reduce((a, b) => b.si > a.si ? b : a);
     lineChart($("#vaChart"), [{ data: [null, null].concat(rows.map(r => r.si)), color: c.accent, label: "silhouette (higher is better)" }, { data: [null, null].concat(rows.map(r => r.dbi)), color: c.gold, label: "Davies-Bouldin (lower is better), k = 0 to 8" }], { labels: true, vline: bestSI.k });
-    $("#vaTbl").innerHTML = `<thead><tr><th class="n">k</th><th class="n">Inertia</th><th class="n">SI</th><th class="n">DBI</th><th class="n">ARI</th><th class="n">NMI</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r === bestSI ? "best" : ""}"><td class="n">${r.k}</td><td class="n">${r.I.toFixed(1)}</td><td class="n">${r.si.toFixed(3)}</td><td class="n">${r.dbi.toFixed(3)}</td><td class="n">${r.ari == null ? "–" : r.ari.toFixed(3)}</td><td class="n">${r.nmi == null ? "–" : r.nmi.toFixed(3)}</td></tr>`).join("") + "</tbody>";
+    $("#vaTbl").innerHTML = `<thead><tr><th class="n">k</th><th class="n">Inertia</th><th class="n">SI</th><th class="n">DBI</th><th class="n">ARI</th><th class="n">NMI</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r === bestSI ? "best" : ""}" data-k="${r.k}"><td class="n">${r.k}</td><td class="n">${r.I.toFixed(1)}</td><td class="n">${r.si.toFixed(3)}</td><td class="n">${r.dbi.toFixed(3)}</td><td class="n">${r.ari == null ? "–" : r.ari.toFixed(3)}</td><td class="n">${r.nmi == null ? "–" : r.nmi.toFixed(3)}</td></tr>`).join("") + "</tbody>";
+    VA = rows; vaK = bestSI.k; vaInfo();
     $("#vaNote").textContent = `Best of 4 k-means++ runs per k. The silhouette peaks at k = ${bestSI.k}. ` + (ctl.data === "moons" ? "On two moons, k-means scores well on compactness yet poorly against the true classes (low ARI): internal measures reward round clusters." : ctl.data === "uniform" ? "Uniform data has no real clusters, so every k gives a mediocre silhouette and there are no true classes to compare with." : "Inertia always falls with k; look for the elbow where it stops falling quickly.");
   }
+  function vaInfo() {
+    const r = VA.find(x => x.k === vaK), prev = VA.find(x => x.k === vaK - 1), f = v => v == null ? "–" : v.toFixed(3), noT = "No true classes for this data.";
+    $("#vaTbl").querySelectorAll("tbody tr").forEach(tr => tr.classList.toggle("sel", +tr.dataset.k === vaK));
+    const card = (name, tag, val, fx, txt, read) => `<div class="va-card"><h5>${name}<b>${val}</b></h5><span class="va-tag">${tag}</span><div class="fx">${fx}</div><p>${txt}</p><p><b>At k = ${vaK}:</b> ${read}</p></div>`;
+    const si = r.si, dbi = r.dbi;
+    $("#vaInfo").innerHTML = [
+      card("Inertia (elbow method)", "internal · lower, but watch the elbow", r.I.toFixed(1), tex(String.raw`\displaystyle W = \sum_{j=1}^{k} \sum_{\mathbf{x} \in C_j} \lVert \mathbf{x} - \boldsymbol{\mu}_j \rVert^2`),
+        "The total squared distance from each point to its cluster center: the quantity k-means minimizes. It always falls as k grows, so plot it against k and pick the elbow, where adding a cluster stops paying off.",
+        prev ? `going from k = ${vaK - 1} to ${vaK} cut inertia by ${((1 - r.I / prev.I) * 100).toFixed(0)}%.` : "this is the smallest k in the table."),
+      card("Silhouette index (SI)", "internal · −1 to 1, higher is better", f(si), tex(String.raw`\displaystyle s(i) = \frac{b(i) - a(i)}{\max\{a(i),\, b(i)\}}`) + '<br>' + tex(String.raw`\displaystyle \mathrm{SI} = \frac{1}{n} \sum_{i=1}^{n} s(i)`),
+        `${tex("a(i)")} is the mean distance from point ${tex("i")} to the other points of its own cluster; ${tex("b(i)")} is its mean distance to the points of the nearest other cluster. Near 1: compact, well-separated clusters. Near 0: overlapping clusters. Negative: points closer to another cluster than to their own.`,
+        si > .7 ? "strong structure." : si > .5 ? "reasonable structure." : si > .25 ? "weak structure: the clusters overlap." : "little structure."),
+      card("Davies-Bouldin index (DBI)", "internal · 0 or more, lower is better", f(dbi), tex(String.raw`\displaystyle \mathrm{DBI} = \frac{1}{k} \sum_{i=1}^{k} \max_{j \ne i} \frac{s_i + s_j}{d(\boldsymbol{\mu}_i, \boldsymbol{\mu}_j)}`),
+        `${tex("s_i")} is the mean distance from the points of cluster ${tex("i")} to its center, and ${tex(String.raw`d(\boldsymbol{\mu}_i, \boldsymbol{\mu}_j)`)} the distance between two centers. Each cluster is compared with its most similar neighbor: spread out clusters with close centers score high.`,
+        dbi < .5 ? "clusters are tight and far apart." : dbi < 1 ? "clusters are fairly well separated." : "clusters are spread out relative to their distances."),
+      card("Adjusted Rand index (ARI)", "external · up to 1, higher is better", f(r.ari), tex(String.raw`\displaystyle \mathrm{ARI} = \frac{\mathrm{RI} - \mathbb{E}[\mathrm{RI}]}{\max(\mathrm{RI}) - \mathbb{E}[\mathrm{RI}]}`),
+        `${tex(String.raw`\mathrm{RI}`)} is the share of point pairs on which the clustering and the true classes agree (both put the pair together, or both keep it apart). The adjustment subtracts the agreement expected by chance: 1 is a perfect match, about 0 is no better than random labels, and it can go negative.`,
+        r.ari == null ? noT : r.ari > .9 ? "almost the true classes." : r.ari > .5 ? "partial agreement with the true classes." : "little agreement with the true classes."),
+      card("Normalized mutual information (NMI)", "external · 0 to 1, higher is better", f(r.nmi), tex(String.raw`\displaystyle \mathrm{NMI}(U, V) = \frac{I(U; V)}{\tfrac{1}{2}\,[H(U) + H(V)]}`),
+        `${tex("I(U; V)")} is the mutual information between the cluster labels ${tex("U")} and the true classes ${tex("V")}, and ${tex("H")} the entropy of each labeling. It measures how much knowing the cluster tells you about the class: 0 means nothing, 1 means the two partitions are identical.`,
+        r.nmi == null ? noT : r.nmi > .9 ? "the clusters reveal the classes almost exactly." : r.nmi > .5 ? "the clusters carry much of the class information." : "the clusters say little about the classes.")
+    ].join("");
+  }
+  $("#vaTbl").addEventListener("click", e => { const tr = e.target.closest("tr[data-k]"); if (tr) { vaK = +tr.dataset.k; vaInfo(); } });
   ro.observe($("#kmCv")); onRedraw(() => draw()); makeData(); init();
 })();
 
@@ -1186,7 +1255,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

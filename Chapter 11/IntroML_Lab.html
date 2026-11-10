@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Intro to ML Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -338,7 +357,7 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 2 · Section 11.2</span>
     <h2>What is learning?</h2>
     <div class="prose">
-      <p>A program <b>learns</b> from experience <b>E</b> on tasks <b>T</b> if its performance <b>P</b> at T improves with E (Tom Mitchell). Every school of ML, in Domingos’ view, needs an optimizer.</p>
+      <p>A program <b>learns</b> from experience <b>\(E\)</b> on tasks <b>\(T\)</b> if its performance <b>\(P\)</b> at \(T\) improves with \(E\) (Tom Mitchell). Every school of ML, in Domingos’ view, needs an optimizer.</p>
       <p class="more">Section 11.2 of the book covers Dehaene’s seven definitions of learning and Domingos’ five ML tribes (Figure 11.1).</p>
     </div>
   </div>
@@ -350,7 +369,7 @@ tr.dim td{color:var(--muted)}
     <h2>Fitting a model is minimizing a loss</h2>
     <p class="prose">Training picks the polynomial of a given degree that minimizes the loss on the sample. Change the degree and sample size and watch training versus test error.</p>
     <div class="bench">
-      <div class="bench-head"><h4>Curve fitting playground</h4><span class="eyebrow">True function: sin(2πx) + noise</span></div>
+      <div class="bench-head"><h4>Curve fitting playground</h4><span class="eyebrow">True function: \(\sin(2\pi x)\) + noise</span></div>
       <div class="bench-body">
         <div class="side"><div id="cfCtl"></div><div class="btns"><button id="cfNew">New sample</button></div><div class="stats" id="cfStats"></div></div>
         <div class="stage"><canvas id="cfCv" class="cv-sq" style="aspect-ratio:16/9" aria-label="Polynomial fit"></canvas>
@@ -905,7 +924,7 @@ function shade(ax, f, n = 70) {
     const D = Array.from({ length: 13 }, (_, d) => { const g = fit(d); return [Math.log10(mse(g, pts) + 1e-6), Math.log10(mse(g, TEST) + 1e-6)]; });
     lineChart($("#cfChart"), [{ data: D.map(v => v[0]), color: c.accent, label: "log10 training MSE" }, { data: D.map(v => Math.min(v[1], 3)), color: c.gold, label: "log10 test MSE, by degree 0 to 12" }], { labels: true, vline: ctl.d });
     const best = D.reduce((b, v, i) => v[1] < D[b][1] ? i : b, 0);
-    $("#cfNote").textContent = `Training error always falls as the degree grows, but the error on new data is lowest at degree ${best} here. ` + (ctl.d >= ctl.n - 1 ? "With as many parameters as points, the polynomial passes through every point and memorizes the noise. " : ctl.d > best + 2 ? "This model is overfitting. " : ctl.d < 3 ? "This model is too simple: it underfits. " : "") + "Raise n to see a flexible model behave once it has enough data.";
+    $("#cfNote").innerHTML = `Training error always falls as the degree grows, but the error on new data is lowest at degree ${best} here. ` + (ctl.d >= ctl.n - 1 ? "With as many parameters as points, the polynomial passes through every point and memorizes the noise. " : ctl.d > best + 2 ? "This model is overfitting. " : ctl.d < 3 ? "This model is too simple: it underfits. " : "") + "Raise " + tex("n") + " to see a flexible model behave once it has enough data.";
   }
   $("#cfNew").addEventListener("click", () => { sample(); draw(); });
   sample(); ro.observe($("#cfCv")); onRedraw(draw); draw();
@@ -981,13 +1000,13 @@ function shade(ax, f, n = 70) {
     dot(ctx, X(0), Y(0), 5, c.good);
     const b = setupCanvas($("#lcBar")), bc = b.ctx; bc.clearRect(0, 0, b.w, b.h); bc.font = `11px ${MONO}`;
     if (res) { const mx = Math.max(...res.n), bw = (b.w - 40) / 4; res.n.forEach((v, k) => { const hh = (b.h - 40) * v / mx; bc.fillStyle = cols[k]; bc.fillRect(20 + k * bw + 8, b.h - 22 - hh, bw - 16, hh); bc.fillStyle = c.ink; bc.textAlign = "center"; bc.textBaseline = "bottom"; bc.fillText(v, 20 + k * bw + bw / 2, b.h - 24 - hh); bc.fillStyle = c.muted; bc.textBaseline = "top"; bc.fillText("σ = " + STEPS[k], 20 + k * bw + bw / 2, b.h - 18); }); bc.fillStyle = c.muted; bc.textAlign = "left"; bc.textBaseline = "top"; bc.fillText("times each step size was chosen", 6, 4); }
-    stats($("#lcStats"), [["Best f", res ? res.fx.toFixed(3) : "–"], ["Global minimum", "f(0, 0) = 0"], ["Accepted moves", res ? res.path.length - 1 : "–"]]);
+    stats($("#lcStats"), [["Best f", res ? res.fx.toFixed(3) : "–"], ["Global minimum", tex("f(0, 0) = 0")], ["Accepted moves", res ? res.path.length - 1 : "–"]]);
   }
   $("#lcRun").addEventListener("click", () => { res = search(ucb(ctl.c), mulberry32(newSeed()), ctl.it); draw(); $("#lcNote").textContent = "Path colors show which step size produced each accepted move. Early on, large steps pay off by jumping between valleys; later, small steps refine. The bandit shifts its choices as the rewards change."; });
   $("#lcAll").addEventListener("click", () => {
-    const rnd = mulberry32(newSeed()), runs = 30, rows = STEPS.map((s, k) => ["fixed σ = " + s, Array.from({ length: runs }, () => search(() => k, rnd, ctl.it).fx)]).concat([["UCB-chosen σ", Array.from({ length: runs }, () => search(ucb(ctl.c), rnd, ctl.it).fx)]]);
+    const rnd = mulberry32(newSeed()), runs = 30, rows = STEPS.map((s, k) => ["fixed " + tex(String.raw`\sigma = ${s}`), Array.from({ length: runs }, () => search(() => k, rnd, ctl.it).fx)]).concat([["UCB-chosen " + tex(String.raw`\sigma`), Array.from({ length: runs }, () => search(ucb(ctl.c), rnd, ctl.it).fx)]]);
     const mean = a => a.reduce((s, v) => s + v, 0) / a.length, best = Math.min(...rows.map(r => mean(r[1])));
-    $("#lcTbl").innerHTML = `<thead><tr><th>Step size</th><th class="n">Mean best f (${runs} runs)</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r[0].startsWith("UCB") ? "best" : ""}"><td>${r[0]}</td><td class="n">${mean(r[1]).toFixed(3)}</td></tr>`).join("") + `<tr class="dim"><td>a fixed σ picked blindly</td><td class="n">${mean(rows.slice(0, 4).map(r => mean(r[1]))).toFixed(3)}</td></tr></tbody>`;
+    $("#lcTbl").innerHTML = `<thead><tr><th>Step size</th><th class="n">Mean best ${tex("f")} (${runs} runs)</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r[0].startsWith("UCB") ? "best" : ""}"><td>${r[0]}</td><td class="n">${mean(r[1]).toFixed(3)}</td></tr>`).join("") + `<tr class="dim"><td>a fixed ${tex(String.raw`\sigma`)} picked blindly</td><td class="n">${mean(rows.slice(0, 4).map(r => mean(r[1]))).toFixed(3)}</td></tr></tbody>`;
     const u = mean(rows[4][1]), blind = mean(rows.slice(0, 4).map(r => mean(r[1])));
     $("#lcNote").textContent = `UCB reached ${u.toFixed(2)} on average, against ${best.toFixed(2)} for the best fixed step size (which it did not know in advance) and ${blind.toFixed(2)} for a blind pick: the algorithm configures itself while it runs. The best fixed step depends on the problem and the budget, so it would normally have to be found by trial runs.`;
   });
@@ -1056,7 +1075,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

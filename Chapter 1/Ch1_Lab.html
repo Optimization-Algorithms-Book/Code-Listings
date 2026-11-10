@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Optimization Basics Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -354,7 +373,7 @@ tr.dim td{color:var(--muted)}
     <div class="tbl-wrap"><table>
       <thead><tr><th>Group</th><th>Examples</th><th>Time to solve</th><th>Expected quality</th></tr></thead>
       <tbody>
-        <tr><td><b>Benchmark and classic</b></td><td>Test functions (Ackley, Rastrigin, Rosenbrock…), n-puzzle, n-queens, bin packing, knapsack, MST, TSP, Chinese postman, assignment, job shop, graph coloring</td><td>Varies</td><td>Known optimum, for testing</td></tr>
+        <tr><td><b>Benchmark and classic</b></td><td>Test functions (Ackley, Rastrigin, Rosenbrock…), \(n\)-puzzle, \(n\)-queens, bin packing, knapsack, MST, TSP, Chinese postman, assignment, job shop, graph coloring</td><td>Varies</td><td>Known optimum, for testing</td></tr>
         <tr><td><b>Design</b> (strategic)</td><td>Suspension and wheel design, VLSI, assembly line balancing, railway scheduling, PID tuning, timetabling, political districting, hospital planning, placing EV chargers</td><td>Minutes to days, run rarely</td><td>High</td></tr>
         <tr><td><b>Planning</b> (tactical)</td><td>Motion planning, ride-sharing, shift planning, task allocation, vehicle routing, appointment and patient scheduling, trip itineraries</td><td>Seconds to minutes</td><td>Medium</td></tr>
         <tr><td><b>Control</b> (operational)</td><td>Elevator dispatching, communication relaying, vehicle motion control, multirobot control, microrobot drug delivery, truck platooning</td><td>Milliseconds to seconds, repeatedly</td><td>Lower: speed matters more</td></tr>
@@ -369,11 +388,11 @@ tr.dim td{color:var(--muted)}
     <h2>Basic ingredients of optimization problems</h2>
     <div class="two">
       <div class="prose">
-        <p>Find X that optimizes f(X) subject to equality constraints g<sub>i</sub>(X) = 0 and inequality constraints h<sub>j</sub>(X) ≤ 0 (equation 1.1), where</p>
+        <p>Find \(\mathbf{X}\) that optimizes \(f(\mathbf{X})\) subject to equality constraints \(g_i(\mathbf{X}) = 0\) and inequality constraints \(h_j(\mathbf{X}) \le 0\) (equation 1.1), where</p>
         <ul>
-          <li><b>X = (x<sub>1</sub>, …, x<sub>n</sub>)</b> are the <b>decision variables</b>, the inputs we control;</li>
-          <li><b>f(X) = (f<sub>1</sub>, …, f<sub>M</sub>)</b> are the <b>objective functions</b> (also called criteria, cost, utility or merit functions);</li>
-          <li><b>g</b> and <b>h</b> are the <b>constraints</b>, plus boundary constraints on each variable.</li>
+          <li><b>\(\mathbf{X} = (x_1, \ldots, x_n)\)</b> are the <b>decision variables</b>, the inputs we control;</li>
+          <li><b>\(f(\mathbf{X}) = (f_1, \ldots, f_M)\)</b> are the <b>objective functions</b> (also called criteria, cost, utility or merit functions);</li>
+          <li><b>\(g\)</b> and <b>\(h\)</b> are the <b>constraints</b>, plus boundary constraints on each variable.</li>
         </ul>
       </div>
       <div class="tbl-wrap"><table>
@@ -382,9 +401,9 @@ tr.dim td{color:var(--muted)}
           <tr><td>Feasible</td><td>Satisfies all the constraints</td></tr>
           <tr><td>Optimal</td><td>Feasible, with the best objective value</td></tr>
           <tr><td>Near-optimal</td><td>Feasible and very good, but not necessarily the best</td></tr>
-          <tr><td>Global minimum</td><td>f(x*) ≤ f(x) for every x in the domain</td></tr>
-          <tr><td>Strong local minimum</td><td>f(x*) &lt; f(x) for all other x in a neighborhood</td></tr>
-          <tr><td>Weak local minimum</td><td>f(x*) ≤ f(x) in a neighborhood: flat spots and saddle points</td></tr>
+          <tr><td>Global minimum</td><td>\(f(x^*) \le f(x)\) for every \(x\) in the domain</td></tr>
+          <tr><td>Strong local minimum</td><td>\(f(x^*) \lt f(x)\) for all other \(x\) in a neighborhood</td></tr>
+          <tr><td>Weak local minimum</td><td>\(f(x^*) \le f(x)\) in a neighborhood: flat spots and saddle points</td></tr>
         </tbody></table></div>
     </div>
 
@@ -402,8 +421,8 @@ tr.dim td{color:var(--muted)}
     <h3 id="ticket">Decision variables and objectives: ticket pricing (Sections 1.3.1 and 1.3.2)</h3>
     <div class="two">
       <div class="prose">
-        <p>An event organizer pays fixed costs <b>a</b> (venue, security, speakers) and a variable cost <b>b</b> per attendee (badges, lunch). Demand falls with the ticket price x: <b>Q = 5,000 − 20x</b> tickets (equation 1.2), so 5,000 attend for free and nobody at $250. The profit is <b>f(x) = Qx − (a + Qb)</b> (equations 1.3 and 1.4). With a = $50,000 and b = $60, f(x) = −20x² + 6,200x − 350,000; setting df/dx = −40x + 6,200 = 0 gives <b>x* = $155</b> and a profit of <b>$130,500</b> (Figure 1.5).</p>
-        <p><b>Duality:</b> maximizing f is the same as minimizing −f. Scaling f by a positive constant or shifting it by a constant changes the objective value but not the optimal decision (Figure 1.4).</p>
+        <p>An event organizer pays fixed costs <b>\(a\)</b> (venue, security, speakers) and a variable cost <b>\(b\)</b> per attendee (badges, lunch). Demand falls with the ticket price \(x\): <b>\(Q = 5{,}000 - 20x\)</b> tickets (equation 1.2), so 5,000 attend for free and nobody at $250. The profit is <b>\(f(x) = Qx - (a + Qb)\)</b> (equations 1.3 and 1.4). With \(a = \$50{,}000\) and \(b = \$60\), \(f(x) = -20x^2 + 6{,}200x - 350{,}000\); setting \(\frac{df}{dx} = -40x + 6{,}200 = 0\) gives <b>\(x^* = \$155\)</b> and a profit of <b>$130,500</b> (Figure 1.5).</p>
+        <p><b>Duality:</b> maximizing \(f\) is the same as minimizing \(-f\). Scaling \(f\) by a positive constant or shifting it by a constant changes the objective value but not the optimal decision (Figure 1.4).</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Set the price</h4><span class="eyebrow">Listing 2.4 solves it with SciPy</span></div>
         <div class="stage"><div id="tkCtl"></div><canvas id="tkCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Profit as a function of ticket price"></canvas><div class="stats" id="tkStats"></div><p class="cap" id="tkNote"></p></div></div>
@@ -414,7 +433,7 @@ tr.dim td{color:var(--muted)}
       <div class="prose">
         <p>An EV designer wants to <b>minimize acceleration time</b> (0 to 60 mph) and <b>maximize EPA range</b>. A bigger battery adds range but also weight, so the objectives conflict. Decision variables might be wheel size, motor power and battery capacity.</p>
         <p>A <b>preference-based</b> approach scalarizes the objectives with weights; the result depends on the weights you choose. A <b>Pareto</b> approach keeps every <b>nondominated</b> design (no other design is better in one objective without being worse in the other) and decides later. The 13 designs from the book’s notebook are all nondominated: each extra mile of range costs acceleration.</p>
-        <p>When there is no objective at all, only constraints, the problem is a <b>constraint-satisfaction problem</b>, such as placing 4 queens on a 4 × 4 board without attacks (two equally good solutions exist).</p>
+        <p>When there is no objective at all, only constraints, the problem is a <b>constraint-satisfaction problem</b>, such as placing 4 queens on a \(4 \times 4\) board without attacks (two equally good solutions exist).</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Weigh range against acceleration</h4></div>
         <div class="stage"><div id="evCtl"></div><canvas id="evCv" class="cv-sq" style="aspect-ratio:16/11" aria-label="Acceleration time vs EPA range"></canvas><p class="cap" id="evNote"></p></div></div>
@@ -444,7 +463,7 @@ tr.dim td{color:var(--muted)}
       <div class="prose">
         <p>Herbert Simon described <b>well-structured problems</b> (WSPs): a clear test for solutions, a problem space that represents the states, legal state changes, and computation that stays tractable. A robot picking defective parts off a conveyor belt is one: the states (arm position, speed, gripper), operators (motion commands), goal, stopping and evaluation criteria (duration, success rate) are all clear, and the workspace is static and fully observable (Figure 1.8).</p>
         <p><b>Ill-structured problems</b> (ISPs) have some of the following: unclear or changing goals, multimodality, no exact model or proven algorithm, hard-to-predict consequences, uncertainty and partial observability, and computational intractability. Dispatching four elevators over ten floors is one: calls cannot be predicted and the state space is enormous (Figure 1.9).</p>
-        <p>Some problems are <b>WSPs in principle but ISPs in practice</b>: the traveling salesman problem is easy to state, but naive search over 13 cities faces 13! = 6,227,020,800 tours. Most algorithms in the book are <b>stochastic, derivative-free black-box solvers</b> aimed at such problems.</p>
+        <p>Some problems are <b>WSPs in principle but ISPs in practice</b>: the traveling salesman problem is easy to state, but naive search over 13 cities faces \(13! = 6{,}227{,}020{,}800\) tours. Most algorithms in the book are <b>stochastic, derivative-free black-box solvers</b> aimed at such problems.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>How big is the state space?</h4></div>
         <div class="stage">
@@ -466,7 +485,7 @@ tr.dim td{color:var(--muted)}
     <div class="two">
       <div class="prose">
         <p><b>Exploration</b> (diversification) investigates new regions of the feasible search space; <b>exploitation</b> (intensification) focuses on regions where good solutions were already found (Figure 1.10). Move to a new city and you first try many restaurants, then settle on a few favorites. Honeybee foragers exploit known flowers while scouts (5 to 25% of the foragers) keep exploring.</p>
-        <p>Pure exploitation behaves like local search and gets trapped in the nearest valley; pure exploration behaves like random search and rarely pins down the exact optimum. Here a searcher has 150 evaluations. At each one it explores (samples anywhere) with probability ε, or exploits (samples near the best point so far). A run counts as a success if it gets within 5% of the global minimum.</p>
+        <p>Pure exploitation behaves like local search and gets trapped in the nearest valley; pure exploration behaves like random search and rarely pins down the exact optimum. Here a searcher has 150 evaluations. At each one it explores (samples anywhere) with probability \(\varepsilon\), or exploits (samples near the best point so far). A run counts as a success if it gets within 5% of the global minimum.</p>
       </div>
       <div class="tbl-wrap"><table>
         <thead><tr><th>Exploitative</th><th>Explorative</th></tr></thead>
@@ -911,8 +930,8 @@ function drawLand(cv, run, upto, r = 3) {
     if (probe != null) marks.push({ x: probe, y: f(probe), col: feas(probe) ? c.good : c.bad, r: 5, txt: `f(${probe.toFixed(2)}) = ${f(probe).toFixed(2)}` });
     map = plot1d($("#miCv"), { x0: X0, x1: X1, f, xlab: "x", ylab: "f(x)", shade: [[X0, ctl.lb], [ctl.ub, X1]], vlines: [{ x: ctl.lb, col: c.bad, txt: "LB" }, { x: ctl.ub, col: c.bad, txt: "UB" }], marks });
     const out = MINS.filter(x => !feas(x)), lowest = MINS.reduce((a, b) => f(b) < f(a) ? b : a);
-    stats($("#miStats"), [["Global minimum (feasible)", `x = ${g.toFixed(2)}`], ["f(x*)", f(g).toFixed(2)], ["Local minima inside", inner.filter(x => x !== g).length], ["Minima outside", out.length], ["Probe", probe == null ? "click the curve" : `${feas(probe) ? "feasible" : "infeasible"}, f = ${f(probe).toFixed(2)}`]]);
-    $("#miNote").textContent = `f(x) = 3 cos(x²) − sin(3x) e^(−x), from the book’s MathPlots notebook. ` + (feas(lowest) ? "With these bounds the lowest valley of the whole curve is feasible." : `The deepest valley (x = ${lowest.toFixed(2)}, f = ${f(lowest).toFixed(1)}) lies outside the bounds, so it is infeasible; the best feasible point is the global minimum of the constrained problem.`) + (g === ctl.lb || g === ctl.ub ? " Here the optimum sits on a bound: a boundary constraint is active." : "");
+    stats($("#miStats"), [["Global minimum (feasible)", tex(String.raw`x = ${g.toFixed(2)}`)], ["f(x*)", f(g).toFixed(2)], ["Local minima inside", inner.filter(x => x !== g).length], ["Minima outside", out.length], ["Probe", probe == null ? "click the curve" : `${feas(probe) ? "feasible" : "infeasible"}, ${tex(String.raw`f = ${f(probe).toFixed(2)}`)}`]]);
+    $("#miNote").innerHTML = `${tex(String.raw`f(x) = 3\cos(x^2) - \sin(3x)\,e^{-x}`)}, from the book’s MathPlots notebook. ` + (feas(lowest) ? "With these bounds the lowest valley of the whole curve is feasible." : `The deepest valley (${tex(String.raw`x = ${lowest.toFixed(2)},\ f = ${f(lowest).toFixed(1)}`)}) lies outside the bounds, so it is infeasible; the best feasible point is the global minimum of the constrained problem.`) + (g === ctl.lb || g === ctl.ub ? " Here the optimum sits on a bound: a boundary constraint is active." : "");
   }
   $("#miCv").addEventListener("click", e => { if (!map) return; const r = $("#miCv").getBoundingClientRect(), x = X0 + (e.clientX - r.left - map.pad.l) / (r.width - map.pad.l - map.pad.r) * (X1 - X0); probe = Math.max(X0, Math.min(X1, x)); draw(); });
   ro.observe($("#miCv")); onRedraw(draw); draw();
@@ -933,7 +952,8 @@ function drawLand(cv, run, upto, r = 3) {
     const xs = Math.max(0, Math.min(250, 125 + b / 2)), x = ctl.x;
     plot1d($("#tkCv"), { x0: 0, x1: 250, f: g, y0: -200, y1: 200, xticks: 5, xlab: "ticket price ($)", ylab: (ctl.view === "dual" ? "−profit" : "profit") + " (K$)", vlines: [{ x: xs, col: c.accent, txt: `x* = $${xs.toFixed(0)}` }], marks: [{ x: xs, y: g(xs), col: c.accent, r: 7 }, { x, y: g(x), col: c.gold, r: 6, txt: `$${x}`, below: true }] });
     stats($("#tkStats"), [["Tickets sold Q", Math.max(0, Q(x)).toLocaleString("en-US")], ["Revenue", money(Q(x) * x)], ["Costs", money(a + Q(x) * b)], ["Profit", money(P(x) * 1000)], ["Optimal price x*", "$" + xs.toFixed(2)], ["Best profit", money(P(xs) * 1000)]]);
-    $("#tkNote").textContent = `f(x) = −20x² + ${(5000 + 20 * b).toLocaleString("en-US")}x − ${(a + 5000 * b).toLocaleString("en-US")}; df/dx = 0 at x* = 125 + b/2. ` + { base: "Maximize the profit.", dual: "Minimizing −f picks the same price: the maximum of f is the minimum of −f.", stretch: "Halving f halves every value, but the best price does not move.", shift: "Adding 3 K$ lifts the whole curve; the best price does not move." }[ctl.view] + (x === Math.round(xs) ? " You found the optimum." : "");
+    const tc = v => v.toLocaleString("en-US").replace(/,/g, "{,}"), c1 = tc(5000 + 20 * b), c0 = tc(a + 5000 * b);
+    $("#tkNote").innerHTML = `${tex(String.raw`f(x) = -20x^2 + ${c1}x - ${c0}`)}; ${tex(String.raw`\frac{df}{dx} = 0`)} at ${tex(String.raw`x^* = 125 + b/2`)}. ` + { base: "Maximize the profit.", dual: `Minimizing ${tex("-f")} picks the same price: the maximum of ${tex("f")} is the minimum of ${tex("-f")}.`, stretch: `Halving ${tex("f")} halves every value, but the best price does not move.`, shift: "Adding 3 K$ lifts the whole curve; the best price does not move." }[ctl.view] + (x === Math.round(xs) ? " You found the optimum." : "");
   }
   ro.observe($("#tkCv")); onRedraw(draw); draw();
 })();
@@ -961,7 +981,7 @@ function drawLand(cv, run, upto, r = 3) {
     all.forEach(d => { const nd = !all.some(q => dom(q, d)); ctx.fillStyle = nd ? c.accent : c.muted; ctx.beginPath(); ctx.arc(X(d[0]), Y(d[1]), nd ? 5 : 4, 0, 7); ctx.fill(); });
     ctx.strokeStyle = c.gold; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(X(best[0]), Y(best[1]), 10, 0, 7); ctx.stroke();
     const ndN = all.filter(d => !all.some(q => dom(q, d))).length;
-    $("#evNote").innerHTML = `Weighted choice: <b>${best[0]} s, ${best[1]} miles</b> (gold ring). Blue: nondominated designs (${ndN}); the line is the Pareto front of the book’s designs.${ctl.extra ? ` Gray: ${all.length - ndN} dominated designs, worse in both objectives than some other design; no weight ever picks them.` : ""} Both objectives are scaled to [0, 1] before weighting.`;
+    $("#evNote").innerHTML = `Weighted choice: <b>${best[0]} s, ${best[1]} miles</b> (gold ring). Blue: nondominated designs (${ndN}); the line is the Pareto front of the book’s designs.${ctl.extra ? ` Gray: ${all.length - ndN} dominated designs, worse in both objectives than some other design; no weight ever picks them.` : ""} Both objectives are scaled to ${tex(String.raw`[0, 1]`)} before weighting.`;
   }
   ro.observe($("#evCv")); onRedraw(draw); draw();
 })();
@@ -984,10 +1004,10 @@ function drawLand(cv, run, upto, r = 3) {
     const t = tot(x), s = score(x), over = t.w > CAP + 1e-9;
     $("#cgBar").classList.toggle("over", over); $("#cgBar").firstElementChild.style.width = Math.min(100, t.w / 130 * 100) + "%";
     stats($("#cgStats"), [["Weight", `${t.w.toFixed(2)} / ${CAP} kg`], ["Profit", "$" + t.p.toFixed(2)], ["Objective", s === -Infinity ? "infeasible" : s.toFixed(2)], ["Parcels", x.reduce((a, b) => a + b, 0) + " of 10"]]);
-    $("#cgNote").textContent = (note ? note + " " : "") + (over ? (ctl.mode === "hard" ? "Overweight: with a hard constraint this load is not a valid solution." : `Overweight: the soft constraint keeps it but subtracts ${ctl.pen}.`) : "Within the payload limit.") + " The bar spans 0 to 130 kg.";
+    $("#cgNote").innerHTML = (note ? note + " " : "") + (over ? (ctl.mode === "hard" ? "Overweight: with a hard constraint this load is not a valid solution." : `Overweight: the soft constraint keeps it but subtracts ${ctl.pen}.`) : "Within the payload limit.") + " The bar spans 0 to 130 kg.";
   }
   $("#cgGreedy").addEventListener("click", () => { x = Array(10).fill(0); let w = 0; [...W.keys()].sort((a, b) => P[b] / W[b] - P[a] / W[a]).forEach(i => { if (w + W[i] <= CAP) { x[i] = 1; w += W[i]; } }); update("Greedy construction by efficiency (Table 2.3): items 10, 7, 4, 1, 8, 6, 2 and 9 fit; 3 and 5 would exceed 100 kg."); });
-  $("#cgBest").addEventListener("click", () => { let b = null, bs = -Infinity; for (let m = 0; m < 1024; m++) { const s = [...Array(10)].map((_, i) => m >> i & 1), v = score(s); if (v > bs) { bs = v; b = s; } } x = b; update(`Exhaustive search over all 2^10 = 1,024 subsets: the best ${ctl.mode} solution scores ${bs.toFixed(2)}.`); });
+  $("#cgBest").addEventListener("click", () => { let b = null, bs = -Infinity; for (let m = 0; m < 1024; m++) { const s = [...Array(10)].map((_, i) => m >> i & 1), v = score(s); if (v > bs) { bs = v; b = s; } } x = b; update(`Exhaustive search over all ${tex(String.raw`2^{10} = 1{,}024`)} subsets: the best ${ctl.mode} solution scores ${bs.toFixed(2)}.`); });
   $("#cgAll").addEventListener("click", () => { x = Array(10).fill(1); update(); });
   $("#cgNone").addEventListener("click", () => { x = Array(10).fill(0); update(); });
   update("This starting load is the greedy solution of Section 2.3.");
@@ -996,16 +1016,16 @@ function drawLand(cv, run, upto, r = 3) {
 /* ---------- state-space size: elevators and TSP ---------- */
 (function stateSpace() {
   const fact = n => { let r = 1n; for (let i = 2n; i <= BigInt(n); i++) r *= i; return r; };
-  const sci = b => { const s = b.toString(); return s.length <= 15 ? Number(b).toLocaleString("en-US") : `${s[0]}.${s.slice(1, 4)} × 10^${s.length - 1}`; };
+  const sci = b => { const s = b.toString(); return s.length <= 15 ? Number(b).toLocaleString("en-US") : tex(String.raw`${s[0]}.${s.slice(1, 4)} \times 10^{${s.length - 1}}`); };
   const dur = sec => { const u = [["years", 31557600], ["days", 86400], ["hours", 3600], ["minutes", 60], ["seconds", 1]]; for (const [n, k] of u) if (sec >= k) { const v = sec / k; return (v >= 1e6 ? v.toExponential(2) : v.toLocaleString("en-US", { maximumFractionDigits: 1 })) + " " + n; } return (sec * 1000).toFixed(3) + " ms"; };
   const c1 = makeControls($("#ssCtl"), [{ key: "fl", id: "ssF", label: "Floors", min: 2, max: 30, step: 1, value: 10 }, { key: "cars", id: "ssC", label: "Elevator cars", min: 1, max: 8, step: 1, value: 4 }], () => upd());
   const c2 = makeControls($("#ssCtl2"), [{ key: "n", id: "ssN", label: "Cities in a TSP", min: 3, max: 30, step: 1, value: 13 }], () => upd());
   function upd() {
     const F = BigInt(c1.fl), C = BigInt(c1.cars), st = F ** C * 2n ** (F * C) * 2n ** (2n * (F - 1n));
-    $("#ssElev").innerHTML = `${c1.fl}<sup>${c1.cars}</sup> positions × 2<sup>${c1.fl * c1.cars}</sup> car buttons × 2<sup>${2 * (c1.fl - 1)}</sup> hall buttons<br>= <b>${sci(st)}</b> states`;
+    $("#ssElev").innerHTML = `${tex(String.raw`${c1.fl}^{${c1.cars}}`)} positions ${tex(String.raw`\times 2^{${c1.fl * c1.cars}}`)} car buttons ${tex(String.raw`\times 2^{${2 * (c1.fl - 1)}}`)} hall buttons<br>= <b>${sci(st)}</b> states`;
     const nf = fact(c2.n), sec = Number(nf) / 1e9;
-    $("#ssTsp").innerHTML = `${c2.n}! = <b>${sci(nf)}</b> tours (asymmetric)<br>${sci(fact(c2.n - 1) / 2n)} distinct tours if symmetric<br>at 1 billion tours per second: ${dur(sec)}`;
-    $("#ssNote").textContent = `The book’s elevator example (10 floors, 4 cars) has 2.88 × 10^21 states. The universe is about 1.38 × 10^10 years old.`;
+    $("#ssTsp").innerHTML = `${tex(String.raw`${c2.n}!`)} = <b>${sci(nf)}</b> tours (asymmetric)<br>${sci(fact(c2.n - 1) / 2n)} distinct tours if symmetric<br>at 1 billion tours per second: ${dur(sec)}`;
+    $("#ssNote").innerHTML = `The book’s elevator example (10 floors, 4 cars) has ${tex(String.raw`2.88 \times 10^{21}`)} states. The universe is about ${tex(String.raw`1.38 \times 10^{10}`)} years old.`;
   }
   upd();
 })();
@@ -1024,7 +1044,7 @@ function drawLand(cv, run, upto, r = 3) {
     stats($("#dlStats"), [["Explore / exploit", run ? `${run.pts.slice(0, n).filter(p => p.ex).length} / ${run.pts.slice(0, n).filter(p => !p.ex).length}` : "–"], ["Best f", last ? LAND(last.bx, last.by).toFixed(3) : "–"], ["Global minimum", LMIN.toFixed(3)], ["This run", fin ? (run.ok ? "found it" : "missed it") : "…"], ["Success over 200 runs", trials ? (trials * 100).toFixed(1) + "%" : "–"]]);
     const c = colors();
     if (sweep) lineChart($("#dlChart"), [{ data: sweep.map(v => v * 100), color: c.accent, label: "success rate (%) vs. ε = 0, 0.1, …, 1" }], { labels: true, vline: Math.round(ctl.eps * 10) });
-    $("#dlNote").textContent = sweep ? `Success peaks at ε = ${(sweep.indexOf(Math.max(...sweep)) / 10).toFixed(1)} (${(Math.max(...sweep) * 100).toFixed(0)}%), versus ${(sweep[0] * 100).toFixed(0)}% for pure exploitation (ε = 0) and ${(sweep[10] * 100).toFixed(0)}% for pure exploration (ε = 1). The wide valley at the upper left traps exploiters; the narrow global valley (green ring) is hard to hit by chance.` : "";
+    $("#dlNote").innerHTML = sweep ? `Success peaks at ${tex(String.raw`\varepsilon = ${(sweep.indexOf(Math.max(...sweep)) / 10).toFixed(1)}`)} (${(Math.max(...sweep) * 100).toFixed(0)}%), versus ${(sweep[0] * 100).toFixed(0)}% for pure exploitation (${tex(String.raw`\varepsilon = 0`)}) and ${(sweep[10] * 100).toFixed(0)}% for pure exploration (${tex(String.raw`\varepsilon = 1`)}). The wide valley at the upper left traps exploiters; the narrow global valley (green ring) is hard to hit by chance.` : "";
   }
   const trialsAt = (eps, k = 200) => { const rnd = mulberry32(newSeed()); let ok = 0; for (let i = 0; i < k; i++) if (landSearch(eps, ctl.B, rnd, ctl.sig).ok) ok++; return ok / k; };
   $("#dlRun").addEventListener("click", () => { clearInterval(timer); run = landSearch(ctl.eps, ctl.B, mulberry32(newSeed()), ctl.sig); t = 0; timer = setInterval(() => { t += 2; draw(); if (t >= run.pts.length) clearInterval(timer); }, 30); });
@@ -1035,9 +1055,9 @@ function drawLand(cv, run, upto, r = 3) {
 
 /* ---------- code tabs ---------- */
 (function codeTabs() {
-  const caps = { m: "Global, strong local and infeasible minima of the Figure 1.3 function inside the bounds [−3, 3]", t: "Ticket pricing by derivative, golden-section search and grid search, plus the duality transformations of Figure 1.4", e: "Nondominated designs and weighted-sum choices for the EV trade-off of Figure 1.6", c: "Exhaustive search over the cargo bike loads with a hard or a soft payload constraint", d: "Elevator and TSP state counts, and an exploration-exploitation experiment" };
+  const caps = { m: "Global, strong local and infeasible minima of the Figure 1.3 function inside the bounds " + tex("[-3, 3]"), t: "Ticket pricing by derivative, golden-section search and grid search, plus the duality transformations of Figure 1.4", e: "Nondominated designs and weighted-sum choices for the EV trade-off of Figure 1.6", c: "Exhaustive search over the cargo bike loads with a hard or a soft payload constraint", d: "Elevator and TSP state counts, and an exploration-exploitation experiment" };
   const keys = Object.keys(caps); let cur = "m";
-  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").textContent = caps[k]; }
+  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").innerHTML = caps[k]; }
   document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.code)));
   $("#codeCopy").addEventListener("click", async () => {
     const pre = $("#code-" + cur), btn = $("#codeCopy");
@@ -1081,7 +1101,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

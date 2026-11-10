@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Tabu Search Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -365,7 +384,7 @@ tr.tabu td{color:var(--muted)}
       <p class="more">Sections 6.1 and 6.2 of the book build this idea from a resort-restaurant analogy and weigh the pros and cons of TS.</p>
     </div>
     <h3 id="ls-vs-ts">Escaping local optima</h3>
-    <p class="prose">Both searches start at the same point. Local search stops at the first valley; tabu search keeps going and marks each visited position tabu for T iterations (red bars). Click the landscape to choose a new start, then Step or Run.</p>
+    <p class="prose">Both searches start at the same point. Local search stops at the first valley; tabu search keeps going and marks each visited position tabu for \(T\) iterations (red bars). Click the landscape to choose a new start, then Step or Run.</p>
     <div class="bench">
       <div class="bench-head"><h4>Local search vs. tabu search</h4><span class="eyebrow">Minimize f(x)</span></div>
       <div class="bench-body">
@@ -384,19 +403,19 @@ tr.tabu td{color:var(--muted)}
     <div class="two">
       <div>
         <div class="pseudo"><span class="k">Algorithm 6.1</span>: Local search
-<span class="k">Input</span>: an initial feasible solution s
+<span class="k">Input</span>: an initial feasible solution \(s\)
 <span class="k">while</span> termination criteria not met
-    generate a neighbor s′ by local moves
-    <span class="k">if</span> s′ is better than s <span class="k">then</span> s ← s′</div>
+    generate a neighbor \(s'\) by local moves
+    <span class="k">if</span> \(s'\) is better than \(s\) <span class="k">then</span> \(s \leftarrow s'\)</div>
         <div class="pseudo"><span class="k">Algorithm 6.2</span>: Tabu search
-<span class="k">Input</span>: an initial feasible solution s
+<span class="k">Input</span>: an initial feasible solution \(s\)
 <span class="k">while</span> termination criteria not met
-    choose the best s′ ∈ N(s) − T(s) + A(s)
+    choose the best \(s' \in N(s) - T(s) + A(s)\)
         <span class="c"># neighbors, minus tabu moves, plus moves
         # allowed by the aspiration criterion</span>
-    memorize s′ if it improves the best known solution
-    s ← s′                <span class="c"># even if s′ is worse</span>
-    update the tabu list T(s) and aspiration A(s)</div>
+    memorize \(s'\) if it improves the best known solution
+    \(s \leftarrow s'\)                <span class="c"># even if \(s'\) is worse</span>
+    update the tabu list \(T(s)\) and aspiration \(A(s)\)</div>
       </div>
       <div class="prose">
         <p>Each iteration builds a candidate list of moves, evaluates them, discards tabu ones unless they pass the <b>aspiration criterion</b>, and makes the best admissible move, even a worsening one.</p>
@@ -444,7 +463,7 @@ tr.tabu td{color:var(--muted)}
     <span class="eyebrow">Part 4 · Section 6.3</span>
     <h2>Constraint satisfaction: n-queens</h2>
     <div class="prose">
-      <p>Place n queens so that none attack each other. As a permutation, only diagonal <b>collisions</b> remain to minimize; a move swaps two queens’ columns and that swap becomes tabu. Step from the book’s board or a random one.</p>
+      <p>Place \(n\) queens so that none attack each other. As a permutation, only diagonal <b>collisions</b> remain to minimize; a move swaps two queens’ columns and that swap becomes tabu. Step from the book’s board or a random one.</p>
       <p class="more">Section 6.3 carries out the first iterations by hand on Figure 6.8 and solves larger boards with Listing 6.1.</p>
     </div>
     <div class="bench">
@@ -474,8 +493,8 @@ tr.tabu td{color:var(--muted)}
     <h2>A 0/1 knapsack problem</h2>
     <div class="two">
       <div class="prose">
-        <p>Pack seven items into a 50 kg knapsack. A solution is a bit string, and f below rewards filling the knapsack exactly while packing high utility (<b>minimize</b>):</p>
-        <p class="eq" style="white-space:normal;font-size:1rem">f = f₁ − f₂, &nbsp; f₁ = |Σw<sub>i</sub> − 50| (+ 50 if overloaded), &nbsp; f₂ = Σu<sub>i</sub></p>
+        <p>Pack seven items into a 50 kg knapsack. A solution is a bit string, and \(f\) below rewards filling the knapsack exactly while packing high utility (<b>minimize</b>):</p>
+        <p class="eq" style="white-space:normal;font-size:1rem">\(f = f_1 - f_2\), &nbsp; \(f_1 = \left\lvert \sum w_i - 50 \right\rvert\) (+ 50 if overloaded), &nbsp; \(f_2 = \sum u_i\)</p>
         <p>A move flips one item, which then becomes tabu.</p>
       </div>
       <div><div class="items" id="ksItems"></div><div class="capbar" id="ksBar"><i></i><u></u></div><p class="cap" id="ksBarCap"></p></div>
@@ -495,7 +514,7 @@ tr.tabu td{color:var(--muted)}
   <div class="wrap">
     <span class="eyebrow">Part 6 · Graph problems</span>
     <h2>Connecting factory units with cables</h2>
-    <p class="prose">Connect five factory units at minimum cable cost (a minimum spanning tree). A move swaps one tree edge for another; the edge just <b>added</b> is tabu to remove for T = 2 iterations. Press Step to follow each swap.</p>
+    <p class="prose">Connect five factory units at minimum cable cost (a minimum spanning tree). A move swaps one tree edge for another; the edge just <b>added</b> is tabu to remove for \(T = 2\) iterations. Press Step to follow each swap.</p>
     <div class="bench">
       <div class="bench-head"><h4>Edge-swap tabu search</h4><span class="eyebrow">Minimize cable cost</span></div>
       <div class="bench-body">
@@ -513,8 +532,8 @@ tr.tabu td{color:var(--muted)}
     <h2>The quadratic assignment problem</h2>
     <div class="two">
       <div class="prose">
-        <p>Place n objects on n sites to minimize total flow × distance (the NUG5 instance; matrices at right):</p>
-        <p class="eq" style="white-space:normal;font-size:1rem">cost(p) = Σ<sub>i</sub> Σ<sub>j</sub> f<sub>p<sub>i</sub>p<sub>j</sub></sub> d<sub>ij</sub></p>
+        <p>Place \(n\) objects on \(n\) sites to minimize total \(\text{flow} \times \text{distance}\) (the NUG5 instance; matrices at right):</p>
+        <p class="eq" style="white-space:normal;font-size:1rem">\(\displaystyle \operatorname{cost}(p) = \sum_i \sum_j f_{p_i p_j}\, d_{ij}\)</p>
         <p>A move exchanges two sites’ objects; returning an object to a site it just left is tabu for a while. Step and watch the tabu matrix.</p>
       </div>
       <div class="opgrid2" style="gap:.6rem"><div class="tbl-wrap"><table class="qmat" id="qpF"></table></div><div class="tbl-wrap"><table class="qmat" id="qpD"></table></div></div>
@@ -607,8 +626,8 @@ tr.tabu td{color:var(--muted)}
     <h2>Assembly line balancing</h2>
     <div class="two">
       <div class="prose">
-        <p>Assign tasks to workstations so no station exceeds the <b>cycle time</b> CT and precedence is respected. SALBP-1 minimizes the number of stations; balance is measured by the <b>smoothing index</b>:</p>
-        <p class="eq" style="white-space:normal;font-size:1rem">SI = √( Σ<sub>i=1..NS</sub> (WL<sub>max</sub> − WL<sub>i</sub>)² / NS )</p>
+        <p>Assign tasks to workstations so no station exceeds the <b>cycle time</b> \(\mathrm{CT}\) and precedence is respected. SALBP-1 minimizes the number of stations; balance is measured by the <b>smoothing index</b>:</p>
+        <p class="eq" style="white-space:normal;font-size:1rem">\(\displaystyle \mathrm{SI} = \sqrt{\frac{\sum_{i=1}^{\mathrm{NS}} \left(\mathrm{WL}_{\max} - \mathrm{WL}_i\right)^2}{\mathrm{NS}}}\)</p>
         <p>A solution is a task sequence; a move swaps two tasks. Step through the 6-task example below.</p>
         <p class="more">Section 6.6 defines the SALBP and TSALBP variants (Table 6.1) and works this example by hand with Listing 6.5.</p>
       </div>
@@ -630,7 +649,7 @@ tr.tabu td{color:var(--muted)}
         <div class="stage">
           <div class="btns"><button id="alRun" class="primary">Run</button><button id="alStep">Step</button><button id="alReset">New start</button></div>
           <canvas id="alBars" class="cv-chart" style="height:230px" aria-label="Station workloads"></canvas>
-          <div class="stage-grid"><div><div class="stats" id="alStats"></div></div><div><canvas id="alChart" class="cv-chart" aria-label="Stations and SI per iteration"></canvas><p class="cap">Best number of stations + SI/CT per iteration (lower is better).</p></div></div>
+          <div class="stage-grid"><div><div class="stats" id="alStats"></div></div><div><canvas id="alChart" class="cv-chart" aria-label="Stations and SI per iteration"></canvas><p class="cap">Best number of stations + \(\mathrm{SI}/\mathrm{CT}\) per iteration (lower is better).</p></div></div>
         </div>
       </div>
     </div>
@@ -1300,7 +1319,7 @@ function drawCont(cv, F, S, o = {}) {
 (function hero() {
   const cv = $("#heroCv"), F = FUNCS.himmelblau, O = { nb: 30, step: .8, radius: .9, tenure: 12, asp: true };
   let seed = 3, S = contTS(F, { seed }), wait = 0;
-  const draw = () => { drawCont(cv, F, S, { radius: O.radius, trail: 60 }); $("#heroCap").textContent = `Iteration ${S.it}: f = ${fmtNum(S.v)} at (${S.x[0].toFixed(2)}, ${S.x[1].toFixed(2)}); best ${fmtNum(S.bestV)}. Dashed circles are tabu regions around the last ${O.tenure} points; × marks the four minima.`; };
+  const draw = () => { drawCont(cv, F, S, { radius: O.radius, trail: 60 }); $("#heroCap").innerHTML = `Iteration ${S.it}: ${tex("f = " + fmtNum(S.v).replace(/,/g, "{,}"))} at ${tex(String.raw`(${S.x[0].toFixed(2)}, ${S.x[1].toFixed(2)})`)}; best ${fmtNum(S.bestV)}. Dashed circles are tabu regions around the last ${O.tenure} points; × marks the four minima.`; };
   if (reduceMotion) for (let k = 0; k < 80; k++) contStep(S, F, O);
   ro.observe(cv); onRedraw(draw); draw();
   if (reduceMotion) return;
@@ -1337,7 +1356,7 @@ function drawCont(cv, F, S, o = {}) {
     ctx.fillStyle = c.gold; ctx.strokeStyle = c.ink; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(X(T.x), Y(fx[T.x]), 7, 0, 7); ctx.fill(); ctx.stroke();
     star(ctx, X(T.best), Y(fx[T.best]) + 16, 6); ctx.fill();
     stats($("#lvStats"), [["Iteration", it], ["Local search f", fx[L.x].toFixed(3) + (L.stuck ? " (stuck)" : "")], ["Tabu search f", fx[T.x].toFixed(3)], ["Tabu search best", fx[T.best].toFixed(3)], ["Global minimum", gmin.toFixed(3)], ["Tabu positions", T.tabu.length]]);
-    $("#lvNote").innerHTML = `<b style="color:var(--accent)">▼ Local search</b> ${L.stuck ? "has stopped: no neighbor is better." : "is still improving."} <b style="color:var(--gold)">● Tabu search</b> ${T.best === gi ? "has found the global minimum (green circle)." : "keeps moving; the star marks its best point."}${ctl.T === 0 ? " With T = 0 nothing is ever tabu, so tabu search bounces back and forth between two points: cycling." : ""}`;
+    $("#lvNote").innerHTML = `<b style="color:var(--accent)">▼ Local search</b> ${L.stuck ? "has stopped: no neighbor is better." : "is still improving."} <b style="color:var(--gold)">● Tabu search</b> ${T.best === gi ? "has found the global minimum (green circle)." : "keeps moving; the star marks its best point."}${ctl.T === 0 ? ` With ${tex("T = 0")} nothing is ever tabu, so tabu search bounces back and forth between two points: cycling.` : ""}`;
   }
   $("#lvStep").addEventListener("click", step);
   const run = stepper($("#lvRun"), step, () => it >= 300, () => 120);
@@ -1430,7 +1449,7 @@ const NQ_BOOK = [4, 5, 3, 6, 7, 1, 2];
     $("#nqSeq").innerHTML = S.q.map((x, r) => `<span class="${S.last && (r === S.last.i || r === S.last.j) ? "hi" : ""}" title="Q${r + 1}">${x}</span>`).join("");
     C = cands(); const pick = C.find(x => x.ok);
     stats($("#nqStats"), [["Iteration", S.it], ["Collisions", S.v], ["Best so far", S.best], ["Neighbors", C.length], ["Tabu-active swaps", Object.keys(S.tabu).length]]);
-    $("#nqTbl").innerHTML = `<thead><tr><th>Queen swap</th><th class="n">Δ collisions</th><th>Status</th></tr></thead><tbody>` + C.slice(0, 6).map(x => `<tr class="${S.v && x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">(Q${x.i + 1}, Q${x.j + 1})</td><td class="n">${x.d > 0 ? "+" : ""}${x.d}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${S.v && x === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#nqTbl").innerHTML = `<thead><tr><th>Queen swap</th><th class="n">${tex(String.raw`\Delta`)} collisions</th><th>Status</th></tr></thead><tbody>` + C.slice(0, 6).map(x => `<tr class="${S.v && x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">(Q${x.i + 1}, Q${x.j + 1})</td><td class="n">${x.d > 0 ? "+" : ""}${x.d}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${S.v && x === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
     const tl = Object.entries(S.tabu);
     $("#nqTri").innerHTML = tl.length ? tl.map(([k, v]) => { const [i, j] = k.split(",").map(Number); return `<span style="width:auto;padding:0 .4rem" class="rec">Q${i + 1},Q${j + 1}: ${v}</span>`; }).join("") : `<span class="x" style="width:auto;color:var(--muted)">Tabu list empty</span>`;
     $("#nqTri").style.gridTemplateColumns = "repeat(auto-fill, minmax(5.5rem, max-content))";
@@ -1477,8 +1496,8 @@ const KS_W = [10, 12, 15, 27, 30, 20, 7], KS_U = [2, 1, 3, 4, 1, 3, 1], KS_C = 5
     $("#ksBarCap").textContent = `Packed: ${w} kg of 50 kg${w > KS_C ? " (overloaded)" : ""}, utility ${u}. Blue items are in the knapsack; a red outline marks a tabu item.`;
     const C = cands(), pick = C.find(c => c.ok);
     stats($("#ksStats"), [["Iteration", S.it], ["Solution", S.x.join("")], ["f now", S.f], ["Best f", S.best + " (" + S.bestX.join("") + ")"], ["Optimum", OPT], ["Tabu items", Object.keys(S.tabu).map(k => +k + 1).join(", ") || "none"]]);
-    $("#ksTbl").innerHTML = `<thead><tr><th>Neighbor</th><th>Move</th><th class="n">f</th><th>Status</th></tr></thead><tbody>` + C.slice(0, ctl.nb === "two" ? 10 : 7).map(c => `<tr class="${c === pick ? "pick" : c.ok ? "" : "tabu"}"><td class="mono">${c.y.join("")}</td><td>${c.label}</td><td class="n">${c.v}</td><td>${c.tabu ? TAG_T : ""} ${c.asp ? TAG_A : ""} ${c === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
-    $("#ksNote").innerHTML = `${ctl.nb === "two" ? `Best 10 of ${C.length} neighbors.` : "All 7 neighbors."} ${pick && pick.v > S.f ? "Every admissible neighbor is worse, so tabu search accepts a worse solution to move on." : ""} ${S.best === OPT ? `<b>Optimum reached:</b> items ${S.bestX.map((b, i) => b ? i + 1 : 0).filter(Boolean).join(", ")}, f = ${OPT}.` : ""}`;
+    $("#ksTbl").innerHTML = `<thead><tr><th>Neighbor</th><th>Move</th><th class="n">${tex("f")}</th><th>Status</th></tr></thead><tbody>` + C.slice(0, ctl.nb === "two" ? 10 : 7).map(c => `<tr class="${c === pick ? "pick" : c.ok ? "" : "tabu"}"><td class="mono">${c.y.join("")}</td><td>${c.label}</td><td class="n">${c.v}</td><td>${c.tabu ? TAG_T : ""} ${c.asp ? TAG_A : ""} ${c === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#ksNote").innerHTML = `${ctl.nb === "two" ? `Best 10 of ${C.length} neighbors.` : "All 7 neighbors."} ${pick && pick.v > S.f ? "Every admissible neighbor is worse, so tabu search accepts a worse solution to move on." : ""} ${S.best === OPT ? `<b>Optimum reached:</b> items ${S.bestX.map((b, i) => b ? i + 1 : 0).filter(Boolean).join(", ")}, ${tex(String.raw`f = ${OPT}`)}.` : ""}`;
   }
   $("#ksStep").addEventListener("click", step);
   $("#ksRun").addEventListener("click", () => { for (let k = 0; k < 10; k++) step(); });
@@ -1560,9 +1579,9 @@ const KS_W = [10, 12, 15, 27, 30, 20, 7], KS_U = [2, 1, 3, 4, 1, 3, 1], KS_C = 5
     $("#qpAssign").innerHTML = S.p.map((o, i) => `<span>Site ${i + 1}: <b>object ${o}</b></span>`).join("");
     const C = cands(), adm = C.filter(x => x.ok), pick = adm.length ? adm.reduce((x, y) => y.v < x.v ? y : x) : null;
     stats($("#qpStats"), [["Iteration", S.it], ["p", "(" + S.p.join(", ") + ")"], ["Cost", S.c], ["Best", S.best], ["Optimum", 50]]);
-    $("#qpTbl").innerHTML = `<thead><tr><th>Swap sites</th><th class="n">Δ cost</th><th>Status</th></tr></thead><tbody>` + C.map(x => `<tr class="${x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">(${x.r + 1}, ${x.s + 1})</td><td class="n">${x.d > 0 ? "+" : ""}${x.d}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${x === pick ? "← next" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#qpTbl").innerHTML = `<thead><tr><th>Swap sites</th><th class="n">${tex(String.raw`\Delta`)} cost</th><th>Status</th></tr></thead><tbody>` + C.map(x => `<tr class="${x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">(${x.r + 1}, ${x.s + 1})</td><td class="n">${x.d > 0 ? "+" : ""}${x.d}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${x === pick ? "← next" : ""}</td></tr>`).join("") + "</tbody>";
     $("#qpT").innerHTML = `<thead><tr><th>Object</th>${[1, 2, 3, 4, 5].map(j => `<th>S${j}</th>`).join("")}</tr></thead><tbody>` + [1, 2, 3, 4, 5].map(o => `<tr><th>${o}</th>${[1, 2, 3, 4, 5].map(s => { const left = S.T[o][s] - S.it; return left > 0 ? `<td class="on">${left}</td>` : `<td></td>`; }).join("")}</tr>`).join("") + "</tbody>";
-    $("#qpNote").innerHTML = `${S.it === 0 ? "Three moves reduce the cost by 12: (1, 3), (1, 4) and (2, 5). The first one, which exchanges objects 2 and 1, is retained." : ""}${S.it === 1 ? "Swapping sites (1, 3) again would undo the last move, so it is tabu. The best admissible move is (1, 4), for a gain of 8." : ""} ${S.best === 50 ? `<b>Optimum reached:</b> p = (${S.bestP.join(", ")}), cost 50.` : ""}`;
+    $("#qpNote").innerHTML = `${S.it === 0 ? "Three moves reduce the cost by 12: (1, 3), (1, 4) and (2, 5). The first one, which exchanges objects 2 and 1, is retained." : ""}${S.it === 1 ? "Swapping sites (1, 3) again would undo the last move, so it is tabu. The best admissible move is (1, 4), for a gain of 8." : ""} ${S.best === 50 ? `<b>Optimum reached:</b> ${tex(String.raw`p = (${S.bestP.join(", ")})`)}, cost 50.` : ""}`;
   }
   $("#qpStep").addEventListener("click", step); $("#qpReset").addEventListener("click", reset);
   reset();
@@ -1765,8 +1784,8 @@ function drawLoads(cv, seq, P, o = {}) {
     drawLoads($("#abBars"), S.seq, P());
     stats($("#abStats"), [["Iteration", S.it], ["Stations NS", S.L.length], ["Workloads", S.L.join("-")], ["SI", S.si.toFixed(4)], ["Tabu moves", Object.entries(S.tabu).map(([k, v]) => `(${k.replace(",", "-")}): ${v}`).join(", ") || "none"]]);
     const C = albCands(S, P()), adm = C.filter(c => c.ok), pick = adm.length ? adm.reduce((x, y) => y.key < x.key - 1e-12 ? y : x) : null;
-    $("#abTbl").innerHTML = `<thead><tr><th>Move</th><th>Workloads</th><th class="n">NS</th><th class="n">SI</th><th>Status</th></tr></thead><tbody>` + C.map(x => `<tr class="${x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">${x.a}-${x.b}</td><td class="mono">${x.L.join("-")}</td><td class="n">${x.L.length}</td><td class="n">${x.si.toFixed(4)}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${x === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
-    $("#abNote").innerHTML = `Only precedence-feasible swaps are neighbors: ${C.length} of the 15 possible pairs. ${S.it === 0 ? "All four give SI = 1.1832, so the first, (1-2), is taken (Figure 6.24)." : ""}${S.it === 1 ? "The reverse swap (2-1) is tabu. Swap (3-4) balances every station at 3 minutes: SI = 0 (Figure 6.25)." : ""}`;
+    $("#abTbl").innerHTML = `<thead><tr><th>Move</th><th>Workloads</th><th class="n">${tex(String.raw`\mathrm{NS}`)}</th><th class="n">${tex(String.raw`\mathrm{SI}`)}</th><th>Status</th></tr></thead><tbody>` + C.map(x => `<tr class="${x === pick ? "pick" : x.ok ? "" : "tabu"}"><td class="mono">${x.a}-${x.b}</td><td class="mono">${x.L.join("-")}</td><td class="n">${x.L.length}</td><td class="n">${x.si.toFixed(4)}</td><td>${x.tabu ? TAG_T : ""} ${x.asp ? TAG_A : ""} ${x === pick ? "← next move" : ""}</td></tr>`).join("") + "</tbody>";
+    $("#abNote").innerHTML = `Only precedence-feasible swaps are neighbors: ${C.length} of the 15 possible pairs. ${S.it === 0 ? `All four give ${tex(String.raw`\mathrm{SI} = 1.1832`)}, so the first, (1-2), is taken (Figure 6.24).` : ""}${S.it === 1 ? `The reverse swap (2-1) is tabu. Swap (3-4) balances every station at 3 minutes: ${tex(String.raw`\mathrm{SI} = 0`)} (Figure 6.25).` : ""}`;
   }
   $("#abStep").addEventListener("click", () => { albStep(S, P()); draw(); }); $("#abReset").addEventListener("click", reset);
   ro.observe($("#abBars")); ro.observe($("#abPrec")); onRedraw(draw); reset();
@@ -1791,7 +1810,7 @@ function drawLoads(cv, seq, P, o = {}) {
   function draw() {
     const p = P(), d = ALB_DATA[ctl.ds], { L } = albLoads(S.best, p.times, p.ct), lb = Math.ceil(d.t.reduce((a, b) => a + b, 0) / p.ct);
     drawLoads($("#alBars"), S.best, p);
-    stats($("#alStats"), [["Iteration", S.it + " / " + ctl.iters], ["Best NS", L.length], ["Lower bound ⌈Σt/CT⌉", lb], ["Best known", ctl.ct === d.ct ? d.best + " (CT = " + d.ct + ")" : "n/a for this CT"], ["SI", albSI(L).toFixed(3)], ["Current NS", S.L.length]]);
+    stats($("#alStats"), [["Iteration", S.it + " / " + ctl.iters], ["Best NS", L.length], ["Lower bound ⌈Σt/CT⌉", lb], ["Best known", ctl.ct === d.ct ? d.best + " (" + tex(String.raw`\mathrm{CT} = ${d.ct}`) + ")" : "n/a for this CT"], ["SI", albSI(L).toFixed(3)], ["Current NS", S.L.length]]);
     const c = colors(); lineChart($("#alChart"), [{ data: S.hist, color: c.accent }], { xmax: ctl.iters, refs: ctl.ct === d.ct ? [{ v: d.best, color: c.bad, label: "best known" }] : [] });
   }
   ro.observe($("#alBars")); onRedraw(draw); reset();
@@ -1799,9 +1818,9 @@ function drawLoads(cv, seq, P, o = {}) {
 
 /* ---------- code tabs ---------- */
 (function codeTabs() {
-  const caps = { q: "n-queens with swap moves, a tabu matrix and aspiration; checks the book’s first iteration", k: "Knapsack with one- and two-item moves; finds the optimum f = −7", p: "Quadratic assignment (NUG5) with an object-site tabu matrix; reaches the optimum 50", c: "Continuous tabu search with tabu regions, on Himmelblau and Schwefel", t: "Berlin52 with 2-opt moves and tabu edges; reaches the optimal 7,542", a: "Assembly line balancing (SALBP-1): the book’s example and the MANSOOR benchmark" };
+  const caps = { q: "n-queens with swap moves, a tabu matrix and aspiration; checks the book’s first iteration", k: "Knapsack with one- and two-item moves; finds the optimum " + tex("f = -7"), p: "Quadratic assignment (NUG5) with an object-site tabu matrix; reaches the optimum 50", c: "Continuous tabu search with tabu regions, on Himmelblau and Schwefel", t: "Berlin52 with 2-opt moves and tabu edges; reaches the optimal 7,542", a: "Assembly line balancing (SALBP-1): the book’s example and the MANSOOR benchmark" };
   const keys = Object.keys(caps); let cur = "q";
-  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").textContent = caps[k]; }
+  function show(k) { cur = k; document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.code === k)); keys.forEach(n => $("#code-" + n).hidden = n !== k); $("#codeCap").innerHTML = caps[k]; }
   document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.code)));
   document.querySelectorAll("a[data-tab]").forEach(a => a.addEventListener("click", () => show(a.dataset.tab)));
   $("#codeCopy").addEventListener("click", async () => {
@@ -1846,7 +1865,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

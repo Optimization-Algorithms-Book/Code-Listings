@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Genetic Algorithm Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -354,10 +373,10 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <p class="lede">A population of candidate solutions evolves through selection, crossover and mutation, and the fittest pass on their genes. Every operator and example below is interactive.</p>
       <div class="variants">
         <a class="chip" href="#ticket"><b>0101</b> Binary</a>
-        <a class="chip" href="#gray"><b>0111→0100</b> Gray</a>
+        <a class="chip" href="#gray"><b>\(0111 \to 0100\)</b> Gray</a>
         <a class="chip" href="#real"><b>2.3, −1.7</b> Real-valued</a>
         <a class="chip" href="#perm"><b>3 1 5 2 4</b> Permutation</a>
-        <a class="chip" href="#moo"><b>f₁, f₂</b> Multi-objective</a>
+        <a class="chip" href="#moo"><b>\(f_1, f_2\)</b> Multi-objective</a>
       </div>
       <p class="cite">Based on Chapters 7, “Genetic algorithms,” and 8, “Genetic algorithm variants,” in Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning Publications, 2024 (ISBN 978-1633438835).</p>
     </div>
@@ -380,7 +399,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h3 id="genetics">Genotype and phenotype</h3>
     <p class="prose">The <b>genotype</b> is the combination of alleles; the <b>phenotype</b> is what it produces. Click an allele for each of the four genes and see the creature it encodes.</p>
     <div class="bench">
-      <div class="bench-head"><h4>Encode a creature</h4><span class="eyebrow">4 genes · 3 × 4 × 4 × 3 = 144 genotypes</span></div>
+      <div class="bench-head"><h4>Encode a creature</h4><span class="eyebrow">4 genes · \(3 \times 4 \times 4 \times 3 = 144\) genotypes</span></div>
       <div class="stage" id="crBox"></div>
     </div>
     <h3 id="pmeta">Population-based metaheuristics</h3>
@@ -399,10 +418,10 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <div class="two">
       <div>
         <div class="pseudo"><span class="k">Algorithm 7.1</span>: Genetic algorithm
-<span class="k">Initialization</span>: randomly generate an initial population M(0)
-<span class="k">Evaluate</span> all individuals: compute f(m) for each m in M(t)
+<span class="k">Initialization</span>: randomly generate an initial population \(M(0)\)
+<span class="k">Evaluate</span> all individuals: compute \(f(m)\) for each \(m\) in \(M(t)\)
 <span class="k">while</span> termination criteria are not met
-    Select parents       <span class="c"># selection probabilities p(m)</span>
+    Select parents       <span class="c"># selection probabilities \(p(m)\)</span>
     Apply crossover      <span class="c"># offspring from pairs of parents</span>
     Apply mutation       <span class="c"># random changes</span>
     Check feasibility and repair
@@ -420,7 +439,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
         <p>GAs <b>maximize</b> fitness, so a minimization objective is transformed first, for example negated.</p>
         <p class="more">Section 7.3 gives the reciprocal and shifting transformations (equations 7.1 and 7.2).</p>
       </div>
-      <div class="eq" style="white-space:normal">Ticket pricing (equation 7.3):<br>profit(x) = −20x² + 6200x − 350,000, &nbsp; 75 ≤ x ≤ 235<p class="cap" style="margin-top:.5rem">An event organizer chooses the ticket price x.</p></div>
+      <div class="eq" style="white-space:normal">Ticket pricing (equation 7.3):\[\operatorname{profit}(x) = -20x^2 + 6200x - 350{,}000, \qquad 75 \le x \le 235\]<p class="cap" style="margin-top:.5rem">An event organizer chooses the ticket price \(x\).</p></div>
     </div>
     <h3 id="representation">Representation schemes</h3>
     <p class="prose">The main encodings are <b>binary</b>, <b>value</b> (real) and <b>permutation</b>. Set a range and precision to see how many bits a binary gene needs.</p>
@@ -461,7 +480,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <div class="note warn">Erratum: in Figure 7.13, child 2 of the 1-point crossover should be 10001101 (141).</div>
 
     <h3 id="mutation">Mutation and survivor selection</h3>
-    <p class="prose">Bit-flip mutation flips each gene whose random number falls below p<sub>m</sub>. Draw new numbers to try it.</p>
+    <p class="prose">Bit-flip mutation flips each gene whose random number falls below \(p_m\). Draw new numbers to try it.</p>
     <div class="bench">
       <div class="bench-head"><h4>Bit-flip mutation</h4><span class="eyebrow">Figure 7.16</span></div>
       <div class="bench-body"><div class="side"><div id="muCtl"></div><div class="btns"><button id="muDraw" class="primary">Draw new random numbers</button><button id="muBook">Book example</button></div></div><div class="stage"><div id="muOut"></div></div></div>
@@ -510,12 +529,12 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>Gray-coded GA and the Hamming cliff</h2>
     <div class="two">
       <div class="prose">
-        <p>In binary, neighbors such as 7 = 0111 and 8 = 1000 can differ in every bit: a <b>Hamming cliff</b>. In Gray code they differ by one bit. Move the slider to see the XOR conversion.</p>
+        <p>In binary, neighbors such as \(7 = 0111\) and \(8 = 1000\) can differ in every bit: a <b>Hamming cliff</b>. In Gray code they differ by one bit. Move the slider to see the XOR conversion.</p>
         <p class="more">Section 8.1 explains when Gray coding helps; try it in the ticket pricing lab.</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Binary to Gray</h4><span class="eyebrow">XOR gates</span></div>
-        <div class="stage"><div id="grCtl"></div><div id="grOut"></div><canvas id="grCv" class="cv-chart" style="height:150px" aria-label="Hamming distance between consecutive values"></canvas><p class="cap">Hamming distance between each value and the next, 0 to 15: binary (blue) jumps to 4 at 7→8; Gray (gold) is always 1.</p></div>
+        <div class="stage"><div id="grCtl"></div><div id="grOut"></div><canvas id="grCv" class="cv-chart" style="height:150px" aria-label="Hamming distance between consecutive values"></canvas><p class="cap">Hamming distance between each value and the next, 0 to 15: binary (blue) jumps to 4 at \(7 \to 8\); Gray (gold) is always 1.</p></div>
       </div>
     </div>
     <div class="tbl-wrap" style="max-width:520px"><table id="grTbl"></table></div>
@@ -538,7 +557,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
         <h3 id="curve-lab">Curve fitting</h3>
     <div class="two">
       <div class="prose">
-        <p>Fit y = ax³ + bx² + cx + d to five points (Table 8.2) by minimizing the mean squared error, then Run the lab below.</p>
+        <p>Fit \(y = ax^3 + bx^2 + cx + d\) to five points (Table 8.2) by minimizing the mean squared error, then Run the lab below.</p>
         <div class="calc" id="cfCalc" style="white-space:normal"></div>
       </div>
       <div class="tbl-wrap"><table id="cfTbl"></table></div>
@@ -551,7 +570,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
           <div class="btns"><button id="rgRun" class="primary">Run</button><button id="rgStep">Step</button><button id="rgReset">New population</button></div>
           <div class="stage-grid">
             <div><canvas id="rgCv" class="cv-sq" aria-label="Data points and the best fitted polynomial"></canvas></div>
-            <div><div class="stats" id="rgStats"></div><canvas id="rgChart" class="cv-chart" aria-label="log10 of best MSE"></canvas><p class="cap">log₁₀ of the best MSE per generation.</p><canvas id="rgSig" class="cv-chart" style="height:110px" aria-label="Mutation step size"></canvas><p class="cap">Mutation step size σ per generation (see Adaptive GA).</p></div>
+            <div><div class="stats" id="rgStats"></div><canvas id="rgChart" class="cv-chart" aria-label="log10 of best MSE"></canvas><p class="cap">\(\log_{10}\) of the best MSE per generation.</p><canvas id="rgSig" class="cv-chart" style="height:110px" aria-label="Mutation step size"></canvas><p class="cap">Mutation step size \(\sigma\) per generation (see Adaptive GA).</p></div>
           </div>
         </div>
       </div>
@@ -606,7 +625,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>Multi-objective optimization</h2>
     <div class="two">
       <div class="prose">
-        <p>X <b>dominates</b> Y if it is no worse in every objective and better in one. Non-dominated points form the <b>Pareto front</b>. Click a point.</p>
+        <p>\(X\) <b>dominates</b> \(Y\) if it is no worse in every objective and better in one. Non-dominated points form the <b>Pareto front</b>. Click a point.</p>
         <p class="more">Section 8.4 introduces Pareto optimality and surveys multi-objective approaches.</p>
       </div>
       <div class="bench" style="margin-top:0" id="pareto">
@@ -620,7 +639,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
         <p>Trade cost against time imbalance. <b>NSGA-II</b> sorts solutions into non-dominated fronts and keeps diversity with the <b>crowding distance</b>. Run it and watch the front form.</p>
         <p class="more">Listing 8.3 sets up this problem and shows how to pick one trade-off.</p>
       </div>
-      <div class="eq" style="white-space:normal;font-size:1.02rem">minimize f₁ = 100x₁ + 150x₂ + 200y₁ + 50y₂ &nbsp;(total cost)<br>minimize f₂ = |(2x₁ + 4y₁) − (3x₂ + y₂)| &nbsp;(time imbalance)<br>subject to x₁ + x₂ ≥ 80, &nbsp; y₁ + y₂ ≥ 300</div>
+      <div class="eq" style="white-space:normal;font-size:1.02rem">\[\begin{aligned} &\text{minimize } f_1 = 100x_1 + 150x_2 + 200y_1 + 50y_2 && \text{(total cost)} \\ &\text{minimize } f_2 = \lvert (2x_1 + 4y_1) - (3x_2 + y_2) \rvert && \text{(time imbalance)} \\ &\text{subject to } x_1 + x_2 \ge 80, \quad y_1 + y_2 \ge 300 \end{aligned}\]</div>
     </div>
     <div class="bench">
       <div class="bench-head"><h4>NSGA-II lab</h4><span class="eyebrow">Objective space</span></div>
@@ -649,12 +668,12 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <h2>Adaptive GA</h2>
     <div class="two">
       <div class="prose">
-        <p>Parameter control changes settings such as the mutation step σ during the run: <b>deterministic</b>, <b>adaptive</b> or <b>self-adaptive</b>. Compare the modes on curve fitting.</p>
+        <p>Parameter control changes settings such as the mutation step \(\sigma\) during the run: <b>deterministic</b>, <b>adaptive</b> or <b>self-adaptive</b>. Compare the modes on curve fitting.</p>
         <p class="more">Section 8.5 gives the formula for each control mode.</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Mutation step size during a run</h4><span class="eyebrow">Curve fitting</span></div>
-        <div class="stage"><div id="adCtl"></div><div class="btns"><button id="adRun" class="primary">Compare the four modes</button></div><canvas id="adCv" class="cv-chart" style="height:200px" aria-label="Best MSE per generation for each mode"></canvas><p class="cap">log₁₀ of the best MSE per generation, averaged over 5 runs.</p><div class="tbl-wrap"><table id="adTbl"></table></div></div>
+        <div class="stage"><div id="adCtl"></div><div class="btns"><button id="adRun" class="primary">Compare the four modes</button></div><canvas id="adCv" class="cv-chart" style="height:200px" aria-label="Best MSE per generation for each mode"></canvas><p class="cap">\(\log_{10}\) of the best MSE per generation, averaged over 5 runs.</p><div class="tbl-wrap"><table id="adTbl"></table></div></div>
       </div>
     </div>
     <div class="runbox"><b>Run it in Python:</b>
@@ -670,7 +689,7 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
     <span class="eyebrow">Part 9 · Section 8.7</span>
     <h2>PID tuning with a GA</h2>
     <div class="prose">
-      <p>A PID controller sets u(t) = K<sub>p</sub>e + K<sub>i</sub>∫e dt + K<sub>d</sub> de/dt. Tune the gains by hand, then let a GA do it.</p>
+      <p>A PID controller sets \(u(t) = K_p e + K_i \int e\,dt + K_d \frac{de}{dt}\). Tune the gains by hand, then let a GA do it.</p>
       <p class="more">Section 8.7 derives the HVAC closed loop, compares error criteria with Listing 8.5, and Table 8.6 shows how each gain shapes the response.</p>
     </div>
     <div class="bench">
@@ -1578,11 +1597,12 @@ const km = v => v.toLocaleString("en-US", { maximumFractionDigits: 1, minimumFra
   ], () => { k = 0; draw(); });
   function draw() {
     const lb = ctl.lb, ub = Math.max(ctl.ub, ctl.lb + 5), P = +ctl.p, steps = Math.ceil((ub - lb) / P - 1e-9); nb = Math.max(1, Math.ceil(Math.log2(steps) - 1e-9));
-    $("#bitsCalc").innerHTML = `steps = ⌈(UB − LB) / P⌉ = ⌈(${ub} − ${lb}) / ${P}⌉ = ${steps.toLocaleString("en-US")}<br>bits = ⌈log₂(steps)⌉ = ⌈${Math.log2(steps).toFixed(2)}⌉ = <b>${nb}</b><br>${nb} bits encode ${(2 ** nb).toLocaleString("en-US")} different chromosomes`;
+    const stepsTx = steps.toLocaleString("en-US").replace(/,/g, "{,}");   // braces keep KaTeX from spacing the thousands comma
+    $("#bitsCalc").innerHTML = texLine(String.raw`\text{steps} = \left\lceil (\mathrm{UB} - \mathrm{LB}) / P \right\rceil = \left\lceil (${ub} - ${lb}) / ${P} \right\rceil = ${stepsTx}`) + texLine(String.raw`\text{bits} = \left\lceil \log_2(\text{steps}) \right\rceil = \left\lceil ${Math.log2(steps).toFixed(2)} \right\rceil = \mathbf{${nb}}`) + `${nb} bits encode ${(2 ** nb).toLocaleString("en-US")} different chromosomes`;
     if (nb > 20) { $("#bitsDemo").innerHTML = `<p class="cap">Too many bits to display.</p>`; return; }
     k = Math.min(k, 2 ** nb - 1);
     const b = k.toString(2).padStart(nb, "0").split(""), x = lb + k * P, ok = x <= ub + 1e-9, d = P < 1 ? String(P).split(".")[1].length : 0;
-    $("#bitsDemo").innerHTML = `<p class="cap">Click the bits. Decoding: x = LB + k · P, where k is the chromosome read as an integer.</p>` + rowHTML("Chromosome", b, (i, v) => "clk" + (v === "1" ? " one" : "") + (ok ? "" : " bad"), `k = ${k} → x = ${x.toFixed(d)}${ok ? "" : " (infeasible)"}`);
+    $("#bitsDemo").innerHTML = `<p class="cap">Click the bits. Decoding: ${tex(String.raw`x = \mathrm{LB} + k \cdot P`)}, where ${tex("k")} is the chromosome read as an integer.</p>` + rowHTML("Chromosome", b, (i, v) => "clk" + (v === "1" ? " one" : "") + (ok ? "" : " bad"), `${tex(String.raw`k = ${k} \to x = ${x.toFixed(d)}`)}${ok ? "" : " (infeasible)"}`);
     $("#bitsDemo").querySelectorAll(".gene").forEach(g => g.addEventListener("click", () => { k ^= 1 << (nb - 1 - +g.dataset.i); draw(); }));
   }
   draw();
@@ -1596,7 +1616,7 @@ const toInt = b => parseInt(b.join(""), 2);
 const toGray = b => b.map((v, i) => i ? b[i - 1] ^ v : v);
 const fromGray = g => { const b = [g[0]]; for (let i = 1; i < g.length; i++) b.push(b[i - 1] ^ g[i]); return b; };
 const POP0 = [77, 203, 110, 145, 230];
-$("#popTbl").innerHTML = `<thead><tr><th>Individual</th><th class="n">Price x</th><th>Chromosome</th><th class="n">Profit f(x)</th></tr></thead><tbody>` + POP0.map((x, i) => `<tr><td>${i + 1}</td><td class="n">${x}</td><td style="font-family:var(--f-mono)">${toBits(x).join("")}</td><td class="n">${usd(profit(x))}</td></tr>`).join("") + "</tbody>";
+$("#popTbl").innerHTML = `<thead><tr><th>Individual</th><th class="n">Price ${tex("x")}</th><th>Chromosome</th><th class="n">Profit ${tex("f(x)")}</th></tr></thead><tbody>` + POP0.map((x, i) => `<tr><td>${i + 1}</td><td class="n">${x}</td><td style="font-family:var(--f-mono)">${toBits(x).join("")}</td><td class="n">${usd(profit(x))}</td></tr>`).join("") + "</tbody>";
 
 function selProbs(method, f, o) {
   const N = f.length, order = f.map((v, i) => i).sort((a, b) => f[a] - f[b]), rank = new Array(N); order.forEach((i, r) => rank[i] = r + 1);   // rank 1 = worst
@@ -1634,11 +1654,11 @@ const wheelPick = (p, r) => { let acc = 0; for (let i = 0; i < p.length; i++) { 
       ctx.font = `11px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(k + 1, cx0 + (R + 18) * Math.cos(t), cy0 + (R + 18) * Math.sin(t)); });
     const cnt = POP0.map((x, i) => draws ? draws.filter(d => d.w === i).length : "");
     let cum = 0;
-    $("#selTbl").innerHTML = `<thead><tr><th>x</th><th class="n">f(x)</th><th class="n">p</th><th class="n">Cumulative</th><th class="n">Picked</th></tr></thead><tbody>` + POP0.map((x, i) => { cum += p[i]; return `<tr${draws && cnt[i] ? ' class="hl"' : ""}><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:var(--${PALETTE[i]})"></i>${x}</td><td class="n">${usd(f[i])}</td><td class="n">${p[i].toFixed(3)}</td><td class="n">${cum.toFixed(3)}</td><td class="n">${cnt[i]}</td></tr>`; }).join("") + "</tbody>";
+    $("#selTbl").innerHTML = `<thead><tr><th>${tex("x")}</th><th class="n">${tex("f(x)")}</th><th class="n">${tex("p")}</th><th class="n">Cumulative</th><th class="n">Picked</th></tr></thead><tbody>` + POP0.map((x, i) => { cum += p[i]; return `<tr${draws && cnt[i] ? ' class="hl"' : ""}><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:var(--${PALETTE[i]})"></i>${x}</td><td class="n">${usd(f[i])}</td><td class="n">${p[i].toFixed(3)}</td><td class="n">${cum.toFixed(3)}</td><td class="n">${cnt[i]}</td></tr>`; }).join("") + "</tbody>";
     const pb = Math.max(...p), avg = 1 / N;
-    const txt = { fps: "Each spin of the wheel picks one parent; a slice’s size is the individual’s share of the total fitness (Tables 7.4 and 7.5).", sus: "One spin of a wheel with N equally spaced pointers picks all N parents at once, so the counts stay close to the expected values N·p.", rank: "Probabilities depend only on the rank: p = (2 − SP + 2(SP − 1)(r − 1)/(N − 1)) / N, with rank r = 1 for the worst. Equation 7.5 and Table 7.6 in the book omit the 1/N factor, so their values sum to 3.75 rather than 1.", tour: `Each parent is the best of k randomly drawn individuals. The wheel shows the resulting probability of being picked.`, random: "Every individual has the same chance: no selective pressure." }[ctl.m];
+    const txt = { fps: "Each spin of the wheel picks one parent; a slice’s size is the individual’s share of the total fitness (Tables 7.4 and 7.5).", sus: `One spin of a wheel with ${tex("N")} equally spaced pointers picks all ${tex("N")} parents at once, so the counts stay close to the expected values ${tex(String.raw`N \cdot p`)}.`, rank: `Probabilities depend only on the rank: ${tex(String.raw`p = \bigl(2 - \mathrm{SP} + 2(\mathrm{SP} - 1)(r - 1)/(N - 1)\bigr) / N`)}, with rank ${tex("r = 1")} for the worst. Equation 7.5 and Table 7.6 in the book omit the ${tex("1/N")} factor, so their values sum to 3.75 rather than 1.`, tour: `Each parent is the best of ${tex("k")} randomly drawn individuals. The wheel shows the resulting probability of being picked.`, random: "Every individual has the same chance: no selective pressure." }[ctl.m];
     const tourTxt = draws && ctl.m === "tour" ? "<br>" + draws.map((d, k) => `Tournament ${k + 1}: {${d.c.map(i => POP0[i]).join(", ")}} → <b>${POP0[d.w]}</b>`).join("<br>") : "";
-    $("#selNote").innerHTML = `${txt} Selective pressure p<sub>best</sub>/p<sub>avg</sub> = ${(pb / avg).toFixed(2)}.${tourTxt}`;
+    $("#selNote").innerHTML = `${txt} Selective pressure ${tex(String.raw`p_{\text{best}} / p_{\text{avg}} = ${(pb / avg).toFixed(2)}`)}.${tourTxt}`;
     $("#selSP").closest(".ctl").style.display = ctl.m === "rank" ? "" : "none"; $("#selK").closest(".ctl").style.display = ctl.m === "tour" ? "" : "none";
   }
   ro.observe($("#selCv")); onRedraw(draw); draw();
@@ -1689,8 +1709,8 @@ const wheelPick = (p, r) => { let acc = 0; for (let i = 0; i < p.length; i++) { 
   $("#muBook").addEventListener("click", () => { r = BOOK_R.slice(); ctl.x = "77"; ctl.pm = .3; draw(); });
   function draw() {
     const P = toBits(+ctl.x), flip = r.map(v => ctl.pm > v), C = P.map((v, i) => flip[i] ? 1 - v : v), y = toInt(C), ok = y >= TLB && y <= TUB;
-    $("#muOut").innerHTML = rowHTML("Parent", P, (i, v) => v ? "one" : "", `${ctl.x} → ${usd(profit(+ctl.x))}`) + rowHTML("r", r.map(v => v.toFixed(2).slice(1)), i => flip[i] ? "flip" : "", `flip where pm = ${ctl.pm.toFixed(2)} > r`) + rowHTML("Child", C, (i, v) => (flip[i] ? "flip" : v ? "one" : "") + (ok ? "" : " bad"), `${y} → ${ok ? usd(profit(y)) : "infeasible, rejected"}`)
-      + `<p class="cap">${flip.filter(Boolean).length} of 8 bits flipped. Expected number of flips: 8 × pm = ${(8 * ctl.pm).toFixed(1)}. The book mutates 77 into 103 ($76,420).</p>`;
+    $("#muOut").innerHTML = rowHTML("Parent", P, (i, v) => v ? "one" : "", `${ctl.x} → ${usd(profit(+ctl.x))}`) + rowHTML(tex("r"), r.map(v => v.toFixed(2).slice(1)), i => flip[i] ? "flip" : "", `flip where ${tex(String.raw`p_m = ${ctl.pm.toFixed(2)} \gt r`)}`) + rowHTML("Child", C, (i, v) => (flip[i] ? "flip" : v ? "one" : "") + (ok ? "" : " bad"), `${y} → ${ok ? usd(profit(y)) : "infeasible, rejected"}`)
+      + `<p class="cap">${flip.filter(Boolean).length} of 8 bits flipped. Expected number of flips: ${tex(String.raw`8 \times p_m = ${(8 * ctl.pm).toFixed(1)}`)}. The book mutates 77 into 103 ($76,420).</p>`;
   }
   draw();
 })();
@@ -1699,7 +1719,7 @@ const wheelPick = (p, r) => { let acc = 0; for (let i = 0; i < p.length; i++) { 
   const src = [...POP0.map(x => ["Old population", x]), ["1-point crossover", 81], ["1-point crossover", 77], ["Mutation of 77", 103]];
   const ord = src.map((s, i) => i).sort((a, b) => profit(src[b][1]) - profit(src[a][1])), rank = []; ord.forEach((i, r) => rank[i] = r + 1);
   const sel = new Set(), seen = new Set(); ord.forEach(i => { if (sel.size < 5 && !seen.has(src[i][1])) { sel.add(i); seen.add(src[i][1]); } });
-  $("#eliteTbl").innerHTML = `<thead><tr><th>Source</th><th class="n">x</th><th>Chromosome</th><th class="n">f(x)</th><th class="n">Rank</th><th>Selected</th></tr></thead><tbody>` + src.map(([s, x], i) => `<tr${sel.has(i) ? ' class="hl"' : ""}><td>${s}</td><td class="n">${x}</td><td style="font-family:var(--f-mono)">${toBits(x).join("")}</td><td class="n">${usd(profit(x))}</td><td class="n">${rank[i]}</td><td>${sel.has(i) ? "Yes" : "No"}</td></tr>`).join("") + `</tbody>`;
+  $("#eliteTbl").innerHTML = `<thead><tr><th>Source</th><th class="n">${tex("x")}</th><th>Chromosome</th><th class="n">${tex("f(x)")}</th><th class="n">Rank</th><th>Selected</th></tr></thead><tbody>` + src.map(([s, x], i) => `<tr${sel.has(i) ? ' class="hl"' : ""}><td>${s}</td><td class="n">${x}</td><td style="font-family:var(--f-mono)">${toBits(x).join("")}</td><td class="n">${usd(profit(x))}</td><td class="n">${rank[i]}</td><td>${sel.has(i) ? "Yes" : "No"}</td></tr>`).join("") + `</tbody>`;
 })();
 
 /* ---------- binary GA lab ---------- */
@@ -1792,7 +1812,7 @@ function bgaStep(S, o) {
   const ctl = makeControls($("#grCtl"), [{ key: "v", id: "grV", label: "Value (8 bits)", min: 0, max: 255, step: 1, value: 7 }], () => draw());
   function draw() {
     const b = toBits(ctl.v), g = toGray(b), b2 = toBits(Math.min(255, ctl.v + 1)), g2 = toGray(b2);
-    $("#grOut").innerHTML = rowHTML("Binary " + ctl.v, b, (i, v) => v ? "one" : "") + rowHTML("Gray", g, (i, v) => v ? "one" : "", "g₁ = b₁, gᵢ = bᵢ₋₁ ⊕ bᵢ")
+    $("#grOut").innerHTML = rowHTML("Binary " + ctl.v, b, (i, v) => v ? "one" : "") + rowHTML("Gray", g, (i, v) => v ? "one" : "", tex(String.raw`g_1 = b_1,\ g_i = b_{i-1} \oplus b_i`))
       + (ctl.v < 255 ? rowHTML("Binary " + (ctl.v + 1), b2, (i, v) => (v ? "one" : "") + (v !== b[i] ? " flip" : "")) + rowHTML("Gray", g2, (i, v) => (v ? "one" : "") + (v !== g[i] ? " flip" : ""), `binary flips ${b2.filter((v, i) => v !== b[i]).length} bit(s), Gray flips 1`) : "");
     const c = colors(), hb = [...Array(16).keys()].map(v => v < 15 ? (v ^ (v + 1)).toString(2).split("1").length - 1 : NaN).slice(0, 15), hg = hb.map(() => 1);
     lineChart($("#grCv"), [{ data: hb, color: c.accent, label: "binary" }, { data: hg, color: c.gold, label: "Gray" }], { labels: true });
@@ -1813,7 +1833,7 @@ const RA = [1.1, 4.3, 2.3, 6.7, 1.5, .6, 1.8, 2.5], RB = [2.3, 3.2, 1.3, 4.2, 5.
     const on = i => t === "whole" || (t === "single" ? i === k : i >= k);
     const C1 = RA.map((v, i) => on(i) ? mix(i, a, 1 - a) : v), C2 = RB.map((v, i) => on(i) ? mix(i, 1 - a, a) : v);
     $("#rcOut").innerHTML = rowHTML("Parent 1", RA, () => "p1") + rowHTML("Parent 2", RB, () => "p2") + rowHTML("Child 1", C1, i => on(i) ? "flip" : "p1") + rowHTML("Child 2", C2, i => on(i) ? "flip" : "p2");
-    $("#rcNote").innerHTML = (t === "single" ? `Only gene k is recombined: child 1 gets α·x<sub>k</sub> + (1 − α)·y<sub>k</sub> = ${a.toFixed(2)}·${RA[k]} + ${(1 - a).toFixed(2)}·${RB[k]} = ${C1[k]}.` : t === "simple" ? "Genes before k are copied; genes from k onward are averaged with weights α and 1 − α." : "Every gene is a weighted average: child 1 = α·parent 1 + (1 − α)·parent 2.") + " Highlighted genes are new values.";
+    $("#rcNote").innerHTML = (t === "single" ? `Only gene ${tex("k")} is recombined: child 1 gets ${tex(String.raw`\alpha \cdot x_k + (1 - \alpha) \cdot y_k = ${a.toFixed(2)} \cdot ${RA[k]} + ${(1 - a).toFixed(2)} \cdot ${RB[k]} = ${C1[k]}`)}.` : t === "simple" ? `Genes before ${tex("k")} are copied; genes from ${tex("k")} onward are averaged with weights ${tex(String.raw`\alpha`)} and ${tex(String.raw`1 - \alpha`)}.` : `Every gene is a weighted average: ${tex(String.raw`\text{child 1} = \alpha \cdot \text{parent 1} + (1 - \alpha) \cdot \text{parent 2}`)}.`) + " Highlighted genes are new values.";
     $("#rcK").closest(".ctl").style.display = t === "whole" ? "none" : "";
   }
   draw();
@@ -1837,7 +1857,7 @@ const RA = [1.1, 4.3, 2.3, 6.7, 1.5, .6, 1.8, 2.5], RB = [2.3, 3.2, 1.3, 4.2, 5.
     const m = Math.max(...bins), { ctx, X, Y, c } = plotFrame($("#rmCv"), [0, 10], [0, m / n * 1.08], { padL: 44, fy: v => (v * 100).toFixed(0) + "%", fx: v => v.toFixed(1) });
     ctx.fillStyle = c.accent; bins.forEach((b, i) => { if (b) ctx.fillRect(X(i / 5) + .5, Y(b / n), X(.2) - X(0) - 1, Y(0) - Y(b / n)); });
     ctx.strokeStyle = c.gold; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(x), Y(0)); ctx.lineTo(X(x), Y(m / n * 1.08)); ctx.stroke();
-    $("#rmNote").textContent = { gauss: "Most mutants stay near x (gold); σ sets the typical step. Values past the bounds are clipped, which piles them up at the edges.", cauchy: "Same center, but occasional long jumps help escape local optima.", uniform: "The new value ignores x: maximum exploration.", boundary: "The gene jumps to a bound, useful when optima lie on the constraints.", poly: "A bounded, peaked distribution around x; η controls how close the mutants stay (used with SBX in NSGA-II)." }[mctl.t];
+    $("#rmNote").innerHTML = { gauss: `Most mutants stay near ${tex("x")} (gold); ${tex(String.raw`\sigma`)} sets the typical step. Values past the bounds are clipped, which piles them up at the edges.`, cauchy: "Same center, but occasional long jumps help escape local optima.", uniform: `The new value ignores ${tex("x")}: maximum exploration.`, boundary: "The gene jumps to a bound, useful when optima lie on the constraints.", poly: `A bounded, peaked distribution around ${tex("x")}; ${tex(String.raw`\eta`)} controls how close the mutants stay (used with SBX in NSGA-II).` }[mctl.t];
     $("#rmS").closest(".ctl").style.display = ["gauss", "cauchy"].includes(mctl.t) ? "" : "none";
   }
   ro.observe($("#rmCv")); onRedraw(mdraw); mdraw();
@@ -1849,9 +1869,9 @@ const polyval = (c, x) => ((c[0] * x + c[1]) * x + c[2]) * x + c[3];
 const cfMSE = c => CF_X.reduce((s, x, i) => s + (CF_Y[i] - polyval(c, x)) ** 2, 0) / CF_X.length;
 (function cfExample() {
   const p1 = [1, 2, 3, 4], p2 = [2, 2, 2, 2];
-  $("#cfTbl").innerHTML = `<thead><tr><th class="n">x</th><th class="n">y (data)</th><th class="n">ŷ parent 1</th><th class="n">ŷ parent 2</th></tr></thead><tbody>` + CF_X.map((x, i) => `<tr><td class="n">${x}</td><td class="n">${CF_Y[i].toFixed(3)}</td><td class="n">${polyval(p1, x).toFixed(3)}</td><td class="n">${polyval(p2, x).toFixed(3)}</td></tr>`).join("") + "</tbody>";
+  $("#cfTbl").innerHTML = `<thead><tr><th class="n">${tex("x")}</th><th class="n">${tex("y")} (data)</th><th class="n">${tex(String.raw`\hat{y}`)} parent 1</th><th class="n">${tex(String.raw`\hat{y}`)} parent 2</th></tr></thead><tbody>` + CF_X.map((x, i) => `<tr><td class="n">${x}</td><td class="n">${CF_Y[i].toFixed(3)}</td><td class="n">${polyval(p1, x).toFixed(3)}</td><td class="n">${polyval(p2, x).toFixed(3)}</td></tr>`).join("") + "</tbody>";
   const ch = p1.map((v, i) => +(.2 * v + .8 * p2[i]).toFixed(2));
-  $("#cfCalc").innerHTML = `Parent 1 = [1 2 3 4] → MSE = ${cfMSE(p1).toFixed(2)}<br>Parent 2 = [2 2 2 2] → MSE = ${cfMSE(p2).toFixed(2)}<br>Whole arithmetic, α = 0.2 → child = [${ch.join(" ")}], MSE = ${cfMSE(ch).toFixed(2)}<br><span style="color:var(--muted)">The book rounds y to two decimals, which gives 122.83 and 3,662.32.</span>`;
+  $("#cfCalc").innerHTML = `Parent 1 = [1 2 3 4] → MSE = ${cfMSE(p1).toFixed(2)}<br>Parent 2 = [2 2 2 2] → MSE = ${cfMSE(p2).toFixed(2)}<br>Whole arithmetic, ${tex(String.raw`\alpha = 0.2`)} → child = [${ch.join(" ")}], MSE = ${cfMSE(ch).toFixed(2)}<br><span style="color:var(--muted)">The book rounds y to two decimals, which gives 122.83 and 3,662.32.</span>`;
 })();
 
 function realGA(o) {
@@ -1883,6 +1903,7 @@ function realStep(S, o) {
   S.P = next; S.F = S.P.map(p => cfMSE(p.x)); S.gen++; realRecord(S, o);
 }
 const SIG_MODES = [["fixed", "Fixed σ"], ["det", "Deterministic: σ = σ₀(1 − 0.9 i/N)"], ["fifth", "Adaptive: 1/5 success rule"], ["self", "Self-adaptive σ per individual"]];
+const SIG_TEX = ["Fixed " + tex(String.raw`\sigma`), "Deterministic: " + tex(String.raw`\sigma = \sigma_0 (1 - 0.9\, i/N)`), "Adaptive: 1/5 success rule", "Self-adaptive " + tex(String.raw`\sigma`) + " per individual"];   // table text; SIG_MODES stays Unicode for the select
 (function realLab() {
   const ctl = makeControls($("#rgCtl"), [
     { type: "group", label: "Population" },
@@ -1943,7 +1964,7 @@ const SIG_MODES = [["fixed", "Fixed σ"], ["det", "Deterministic: σ = σ₀(1 �
       });
       rows = out; draw();
       const bm = Math.min(...rows.map(r => r.med));
-      $("#adTbl").innerHTML = `<thead><tr><th>Step size control</th><th class="n">Median final MSE</th><th class="n">Best run</th></tr></thead><tbody>` + rows.map((r, i) => `<tr${r.med === bm ? ' class="hl"' : ""}><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:var(--${PALETTE[i]})"></i>${r.name}</td><td class="n">${fmtNum(r.med)}</td><td class="n">${fmtNum(r.best)}</td></tr>`).join("") + "</tbody>";
+      $("#adTbl").innerHTML = `<thead><tr><th>Step size control</th><th class="n">Median final MSE</th><th class="n">Best run</th></tr></thead><tbody>` + rows.map((r, i) => `<tr${r.med === bm ? ' class="hl"' : ""}><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:var(--${PALETTE[i]})"></i>${SIG_TEX[i]}</td><td class="n">${fmtNum(r.med)}</td><td class="n">${fmtNum(r.best)}</td></tr>`).join("") + "</tbody>";
       $("#adRun").textContent = "Compare the four modes";
     }, 30);
   });
@@ -2127,7 +2148,7 @@ function asfPick(F, w) {
     fs.forEach(i => { ctx.fillStyle = c.accent; ctx.beginPath(); ctx.arc(X(S.E[i].f[0]), Y(S.E[i].f[1]), 4.5, 0, 7); ctx.fill(); });
     let pickTxt = "n/a";
     if (fs.length) { const F = fs.map(i => S.E[i].f), b = asfPick(F, [ctl.w1, 1 - ctl.w1]), i = fs[b]; ctx.fillStyle = c.gold; star(ctx, X(F[b][0]), Y(F[b][1]), 10); ctx.fill(); ctx.strokeStyle = c.ink; ctx.lineWidth = 1; ctx.stroke();
-      const v = S.P[i].map(Math.round); pickTxt = `x₁ = ${v[0]}, x₂ = ${v[1]}, y₁ = ${v[2]}, y₂ = ${v[3]}`;
+      const v = S.P[i].map(Math.round); pickTxt = tex(String.raw`x_1 = ${v[0]},\ x_2 = ${v[1]},\ y_1 = ${v[2]},\ y_2 = ${v[3]}`);
       const bookDom = BOOK_NS.filter(bk => F.some(f => f[0] <= bk[0] && f[1] <= bk[1] && (f[0] < bk[0] || f[1] < bk[1]))).length;
       stats($("#nsStats"), [["Generation", S.gen + " / " + ctl.gens], ["Front size", fs.length + " / " + S.P.length], ["ASF pick: cost", usd(F[b][0])], ["ASF pick: time diff.", F[b][1].toFixed(1) + " h"], ["Book solutions dominated", bookDom + " / 10"], ["Infeasible", S.P.length - feas.length]]);
     }
@@ -2205,7 +2226,7 @@ function pidCost(y, crit, beta) {
       $("#pidNote").textContent = `Generation ${g} / ${G}: best ${crit} = ${fmtNum(best.f)}. Gold lines are other members of the population.`;
       draw();
       if (g < G) setTimeout(gen, 30);
-      else { busy = false; ghost = null; $("#pidTune").textContent = "Tune with GA"; draw(); $("#pidNote").textContent = `GA result for ${crit}: Kp = ${best.p[0].toFixed(1)}, Ki = ${best.p[1].toFixed(1)}, Kd = ${best.p[2].toFixed(1)}. The book’s pymoo run (combined criterion W, population 50, 60 generations) reports a rise time of 0.353 s, settling time of 0.52 s and no overshoot.`; }
+      else { busy = false; ghost = null; $("#pidTune").textContent = "Tune with GA"; draw(); $("#pidNote").innerHTML = `GA result for ${crit}: ${tex(String.raw`K_p = ${best.p[0].toFixed(1)}`)}, ${tex(String.raw`K_i = ${best.p[1].toFixed(1)}`)}, ${tex(String.raw`K_d = ${best.p[2].toFixed(1)}`)}. The book’s pymoo run (combined criterion W, population 50, 60 generations) reports a rise time of 0.353 s, settling time of 0.52 s and no overshoot.`; }
     }
     gen();
   });
@@ -2261,7 +2282,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

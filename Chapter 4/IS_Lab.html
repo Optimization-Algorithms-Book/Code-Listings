@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Informed Search Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -334,7 +353,7 @@ tr.dim td{color:var(--muted)}
     <span class="eyebrow">Part 1 · Section 4.1</span>
     <h2>Informed search</h2>
     <div class="prose">
-      <p>A <b>heuristic function</b> h(n) estimates the remaining cost from node n and steers the search.</p>
+      <p>A <b>heuristic function</b> \(h(n)\) estimates the remaining cost from node \(n\) and steers the search.</p>
       <p class="more">Figure 4.1 in Section 4.1 maps the whole family of informed search algorithms.</p>
     </div>
   </div>
@@ -389,7 +408,7 @@ tr.dim td{color:var(--muted)}
       </div>
     </div>
     <h3 id="hc-puzzle">8-puzzle: hill climbing vs. A*</h3>
-    <div class="prose"><p>Choose a board and press <b>Compare</b>: hill climbing chases fewer misplaced tiles and may get stuck; A* ranks boards by f = g + h.</p>
+    <div class="prose"><p>Choose a board and press <b>Compare</b>: hill climbing chases fewer misplaced tiles and may get stuck; A* ranks boards by \(f = g + h\).</p>
     <p class="more">Figure 4.17 and Listing 4.3 trace hill climbing on the book’s 8-puzzle move by move.</p></div>
     <div class="bench">
       <div class="bench-head"><h4>Heuristics on the 8-puzzle</h4><span class="eyebrow">Goal: blank top left, then 1 to 8</span></div>
@@ -412,7 +431,7 @@ tr.dim td{color:var(--muted)}
     <h2>Beam search, best-first search and A*</h2>
     <div class="two">
       <div class="prose">
-        <p><b>Beam search</b> keeps the w best routes per level; <b>greedy best-first</b> follows h(n); <b>A*</b> ranks by f = g + h and is optimal when h is <b>admissible</b> (never overestimates). Step through each below.</p>
+        <p><b>Beam search</b> keeps the \(w\) best routes per level; <b>greedy best-first</b> follows \(h(n)\); <b>A*</b> ranks by \(f = g + h\) and is optimal when \(h\) is <b>admissible</b> (never overestimates). Step through each below.</p>
         <p class="more">Sections 4.3.2 and 4.3.3 develop A*, weighted A* (equations 4.1 and 4.2) and Listings 4.4 and 4.5 on this graph.</p>
       </div>
       <div class="tbl-wrap"><table class="ttab" id="adTbl"></table><p class="cap" style="padding:.4rem .6rem" id="adNote"></p></div>
@@ -474,7 +493,7 @@ tr.dim td{color:var(--muted)}
       <div class="bench-head"><h4>CH step by step (Figures 4.29 to 4.46)</h4><span class="eyebrow">Query from 1 to 5</span></div>
       <div class="bench-body">
         <div class="side"><div id="chCtl"></div><div class="btns"><button id="chStep" class="primary">Next step</button><button id="chRun">Finish</button><button id="chReset">Reset</button></div><div class="stats" id="chStats"></div></div>
-        <div class="stage"><canvas id="chCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Contraction hierarchy example graph"></canvas><div class="legend-row"><span><i style="background:var(--gold)"></i>shortcut / forward search</span><span><i style="background:var(--s3)"></i>backward search</span><span><i style="background:var(--s2)"></i>reached by both</span><span><i style="background:var(--accent)"></i>meeting node and route</span><span>r<i style="display:none"></i>: rank (contraction order)</span></div><p class="cap" id="chNote"></p></div>
+        <div class="stage"><canvas id="chCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="Contraction hierarchy example graph"></canvas><div class="legend-row"><span><i style="background:var(--gold)"></i>shortcut / forward search</span><span><i style="background:var(--s3)"></i>backward search</span><span><i style="background:var(--s2)"></i>reached by both</span><span><i style="background:var(--accent)"></i>meeting node and route</span><span>\(r\)<i style="display:none"></i>: rank (contraction order)</span></div><p class="cap" id="chNote"></p></div>
       </div>
     </div>
     <div class="runbox"><b>Run it in Python:</b>
@@ -1015,14 +1034,14 @@ length = <span class="kw">lambda</span> r: sum(adj[a][b] <span class="kw">for</s
     <h2>Check your understanding</h2>
     <p class="prose">Two quick questions on Chapter 4. Pick an answer to check it.</p>
     <div class="mcq" data-a="2">
-      <p class="mcq-q"><b>Q1.</b> A* ranks nodes by f(n) = g(n) + h(n). Under which condition is A* guaranteed to return an optimal path?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>When h(n) = 0 for every node, and only then</span></button><button type="button" class="mcq-o"><b>B</b><span>When h(n) always overestimates the remaining cost, so the search rushes to the goal</span></button><button type="button" class="mcq-o"><b>C</b><span>When h(n) never overestimates the true remaining cost (h is admissible)</span></button><button type="button" class="mcq-o"><b>D</b><span>When the beam width w is at least the branching factor</span></button></div>
+      <p class="mcq-q"><b>Q1.</b> A* ranks nodes by \(f(n) = g(n) + h(n)\). Under which condition is A* guaranteed to return an optimal path?</p>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>When \(h(n) = 0\) for every node, and only then</span></button><button type="button" class="mcq-o"><b>B</b><span>When \(h(n)\) always overestimates the remaining cost, so the search rushes to the goal</span></button><button type="button" class="mcq-o"><b>C</b><span>When \(h(n)\) never overestimates the true remaining cost (\(h\) is admissible)</span></button><button type="button" class="mcq-o"><b>D</b><span>When the beam width \(w\) is at least the branching factor</span></button></div>
       <p class="mcq-fb" aria-live="polite"></p><template>An admissible heuristic never overestimates the remaining cost, which is what makes A* optimal. An overestimating heuristic (as in weighted A*) reaches the goal faster but may return a longer path.</template>
     </div>
     <div class="mcq" data-a="0">
       <p class="mcq-q"><b>Q2.</b> Why can hill climbing fail on the 8-puzzle while A* with the same misplaced-tiles heuristic solves it?</p>
-      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Hill climbing moves only to a neighbor that improves h(n), so it stops when no neighbor is better, while A* also counts the moves already made and keeps a frontier of alternatives</span></button><button type="button" class="mcq-o"><b>B</b><span>Hill climbing cannot evaluate the misplaced-tiles heuristic</span></button><button type="button" class="mcq-o"><b>C</b><span>A* explores every possible board before choosing a move</span></button><button type="button" class="mcq-o"><b>D</b><span>Hill climbing is a form of blind search and ignores the heuristic</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>Hill climbing is greedy and keeps no alternatives, so it gets stuck on a local optimum or plateau. A* ranks boards by g + h and can back up to other promising boards, so it finds the shortest solution.</template>
+      <div class="mcq-opts" role="group" aria-label="Answers to question 2"><button type="button" class="mcq-o"><b>A</b><span>Hill climbing moves only to a neighbor that improves \(h(n)\), so it stops when no neighbor is better, while A* also counts the moves already made and keeps a frontier of alternatives</span></button><button type="button" class="mcq-o"><b>B</b><span>Hill climbing cannot evaluate the misplaced-tiles heuristic</span></button><button type="button" class="mcq-o"><b>C</b><span>A* explores every possible board before choosing a move</span></button><button type="button" class="mcq-o"><b>D</b><span>Hill climbing is a form of blind search and ignores the heuristic</span></button></div>
+      <p class="mcq-fb" aria-live="polite"></p><template>Hill climbing is greedy and keeps no alternatives, so it gets stuck on a local optimum or plateau. A* ranks boards by \(g + h\) and can back up to other promising boards, so it finds the shortest solution.</template>
     </div>
     <p class="more">For more exercises with full solutions, see Appendix C, “Exercises and solutions,” in <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms</i></a>.</p>
   </div>
@@ -1486,7 +1505,7 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
       ctx.globalAlpha = 1; });
     const done = t >= Math.max(...runs.map(r => r.path.length)), glob = Math.abs(bestRun.end - XG) < .2;
     stats($("#hfStats"), [["Start x", x0.toFixed(2)], ["Best x", done ? bestRun.end.toFixed(2) : "…"], ["f(x)", done ? f(bestRun.end).toFixed(2) : "…"], ["Moves", runs.reduce((s, r) => s + r.path.length - 1, 0)], ["Evaluations", runs.reduce((s, r) => s + r.ev, 0)], ["Peak", done ? (glob ? "global" : "local") : "…"]]);
-    $("#hfNote").textContent = !done ? "Climbing…" : ctl.v === "restart" ? `${runs.length} climbs; ${runs.filter(r => Math.abs(r.end - XG) < .2).length} reached the global peak. The best one is kept (blue); the others end at red dots.` : glob ? "This start lies on the slope of the global peak, so the climb reaches the summit. Click left of x = −1.3, the bottom of the valley, to start in the other basin." : "Stuck on the local peak: no neighbor is higher. Try random restart, or click right of x = −1.3.";
+    $("#hfNote").innerHTML = !done ? "Climbing…" : ctl.v === "restart" ? `${runs.length} climbs; ${runs.filter(r => Math.abs(r.end - XG) < .2).length} reached the global peak. The best one is kept (blue); the others end at red dots.` : glob ? `This start lies on the slope of the global peak, so the climb reaches the summit. Click left of ${tex(String.raw`x = -1.3`)}, the bottom of the valley, to start in the other basin.` : `Stuck on the local peak: no neighbor is higher. Try random restart, or click right of ${tex(String.raw`x = -1.3`)}.`;
   }
   $("#hfCv").addEventListener("click", e => { const r = $("#hfCv").getBoundingClientRect(), x = LO + (e.clientX - r.left - 44) / (r.width - 56) * (HI - LO); x0 = Math.max(LO, Math.min(HI, x)); reset(); play(); });
   $("#hfRun").addEventListener("click", () => { reset(); play(); });
@@ -1523,17 +1542,17 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
     res = { hc: ["misplaced", "manhattan"].map(k => ({ k, ...hill(board, H[k]) })), as: ["misplaced", "manhattan", "zero"].map(k => ({ k, ...astar(board, H[k]) })) };
     res.ms = performance.now() - t0; report();
   }
-  const NM = { misplaced: "misplaced tiles", manhattan: "Manhattan distance", zero: "h = 0 (uniform-cost)" };
+  const NM = { misplaced: "misplaced tiles", manhattan: "Manhattan distance", zero: tex("h = 0") + " (uniform-cost)" };
   function report() {
     if (!res) { $("#hpTbl").innerHTML = `<tbody><tr><td class="muted">Misplaced tiles: ${H.misplaced(board)}, Manhattan distance: ${H.manhattan(board)}. Press Compare.</td></tr></tbody>`; lineChart($("#hpCv"), []); $("#hpNote").textContent = "Click a tile next to the blank to slide it."; return; }
     const opt = res.as[1].moves;
     $("#hpTbl").innerHTML = `<thead><tr><th>Method</th><th>Result</th><th class="n">Moves</th><th class="n">States expanded or evaluated</th></tr></thead><tbody>` +
-      res.hc.map(r => { const end = r.path[r.path.length - 1], ok = end === GOAL; return `<tr class="${ok ? "" : "dim"}"><td>Hill climbing, ${NM[r.k]}</td><td>${ok ? "solved" : `stuck at h = ${H[r.k](end)}`}</td><td class="n">${r.path.length - 1}</td><td class="n">${r.ev}</td></tr>`; }).join("") +
+      res.hc.map(r => { const end = r.path[r.path.length - 1], ok = end === GOAL; return `<tr class="${ok ? "" : "dim"}"><td>Hill climbing, ${NM[r.k]}</td><td>${ok ? "solved" : `stuck at ${tex(String.raw`h = ${H[r.k](end)}`)}`}</td><td class="n">${r.path.length - 1}</td><td class="n">${r.ev}</td></tr>`; }).join("") +
       res.as.map(r => `<tr class="${r.k === "manhattan" ? "best" : ""}"><td>A*, ${NM[r.k]}</td><td>solved, optimal</td><td class="n">${r.moves}</td><td class="n">${r.expanded.toLocaleString("en-US")}</td></tr>`).join("") + "</tbody>";
     const pal = colors();
     lineChart($("#hpCv"), res.hc.map((r, i) => ({ data: r.path.map(H[r.k]), color: i ? pal.s2 : pal.gold, label: "hill climbing: " + NM[r.k] })), { labels: true, refs: [{ v: 0, label: "goal", color: pal.good }] });
     const hcOk = res.hc.filter(r => r.path[r.path.length - 1] === GOAL).length;
-    $("#hpNote").textContent = `The shortest solution takes ${opt} moves. ${hcOk === 2 ? "Both hill climbers reached the goal on this easy board." : hcOk ? "Only one hill climber reached the goal." : "Neither hill climber reached the goal: every neighbor looked no better, so they stopped."} Manhattan distance is the more informed heuristic, so A* expands fewer states with it than with misplaced tiles, and far fewer than with h = 0. Chart: heuristic value along each hill-climbing path.`;
+    $("#hpNote").innerHTML = `The shortest solution takes ${opt} moves. ${hcOk === 2 ? "Both hill climbers reached the goal on this easy board." : hcOk ? "Only one hill climber reached the goal." : "Neither hill climber reached the goal: every neighbor looked no better, so they stopped."} Manhattan distance is the more informed heuristic, so A* expands fewer states with it than with misplaced tiles, and far fewer than with ${tex("h = 0")}. Chart: heuristic value along each hill-climbing path.`;
   }
   $("#hpBook").addEventListener("click", () => { board = BOOK; res = null; drawBoard(); report(); });
   $("#hpHard").addEventListener("click", () => { board = HARD; res = null; drawBoard(); report(); });
@@ -1550,8 +1569,8 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
   const cost = p => { let s = 0; for (let i = 0; i < p.length - 1; i++) s += G[p[i]][p[i + 1]]; return s; };
   // true remaining cost h*(n) by Dijkstra from G
   const HS = { G: 0 }; { const q = [["G", 0]]; while (q.length) { q.sort((a, b) => a[1] - b[1]); const [n, d] = q.shift(); for (const m in G[n]) if (d + G[n][m] < (HS[m] ?? Infinity)) { HS[m] = d + G[n][m]; q.push([m, HS[m]]); } } }
-  $("#adTbl").innerHTML = `<thead><tr><th>Node</th><th class="n">h(n)</th><th class="n">h*(n)</th><th>Admissible</th></tr></thead><tbody>` + Object.keys(H).map(n => `<tr class="${H[n] > HS[n] ? "best" : ""}"><td>${n}</td><td class="n">${H[n]}</td><td class="n">${HS[n]}</td><td>${H[n] <= HS[n] ? "yes" : "no: overestimates"}</td></tr>`).join("") + "</tbody>";
-  $("#adNote").textContent = "h(n): the straight-line distances of Figure 4.21. h*(n): the true shortest road distance to G. The values for E and F exceed the road distance, so this heuristic is not admissible (a straight line cannot be longer than a road). A* still finds the optimal route here, but it is no longer guaranteed.";
+  $("#adTbl").innerHTML = `<thead><tr><th>Node</th><th class="n">${tex("h(n)")}</th><th class="n">${tex("h^*(n)")}</th><th>Admissible</th></tr></thead><tbody>` + Object.keys(H).map(n => `<tr class="${H[n] > HS[n] ? "best" : ""}"><td>${n}</td><td class="n">${H[n]}</td><td class="n">${HS[n]}</td><td>${H[n] <= HS[n] ? "yes" : "no: overestimates"}</td></tr>`).join("") + "</tbody>";
+  $("#adNote").innerHTML = `${tex("h(n)")}: the straight-line distances of Figure 4.21. ${tex("h^*(n)")}: the true shortest road distance to G. The values for E and F exceed the road distance, so this heuristic is not admissible (a straight line cannot be longer than a road). A* still finds the optimal route here, but it is no longer guaranteed.`;
   const ctl = makeControls($("#poCtl"), [
     { key: "m", id: "poM", type: "select", label: "Method", value: "astar", options: [["ucs", "Uniform-cost search: f = g"], ["greedy", "Greedy best-first: f = h"], ["astar", "A*: f = g + h"], ["wastar", "Weighted A*: f = g + w·h"], ["beam", "Beam search (by cost g)"]] },
     { key: "w", id: "poW", label: "Weight w", min: 1, max: 5, step: .5, value: 2, fmt: v => v.toFixed(1), hint: "Used by weighted A*." },
@@ -1591,11 +1610,11 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
       nodeDot(ctx, c, x, y, 16, n, end ? (n === "S" ? c.good : c.bad) : S.cur && S.cur[S.cur.length - 1] === n ? c.gold : c.surface, front.has(n) && !S.done ? c.accent : c.ink, end ? "#fff" : c.ink);
       ctx.fillStyle = c.bad; ctx.font = `12px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("h=" + H[n], x, y + (POS[n][1] === 0 ? 28 : -28) * (n === "S" || n === "G" ? -1 : 1)); });
     const beam = ctl.m === "beam";
-    $("#poTbl").innerHTML = `<thead><tr><th>${beam ? "Level" : "Expansion"}</th><th>${beam ? "Beam (partial routes)" : "Route popped"}</th>${beam ? "" : `<th class="n">g</th><th class="n">h</th><th class="n">f</th>`}<th>${beam ? "Note" : "Queue after (best first)"}</th></tr></thead><tbody>` +
+    $("#poTbl").innerHTML = `<thead><tr><th>${beam ? "Level" : "Expansion"}</th><th>${beam ? "Beam (partial routes)" : "Route popped"}</th>${beam ? "" : `<th class="n">${tex("g")}</th><th class="n">${tex("h")}</th><th class="n">${tex("f")}</th>`}<th>${beam ? "Note" : "Queue after (best first)"}</th></tr></thead><tbody>` +
       (S.log.length ? S.log.map((r, i) => `<tr class="${i === S.log.length - 1 ? "best" : ""}"><td>${i + 1}</td><td class="mono">${r.p}</td>${beam ? "" : `<td class="n">${r.g}</td><td class="n">${r.h}</td><td class="n">${r.f}</td>`}<td class="mono">${r.q}</td></tr>`).join("") : `<tr><td colspan="6" class="muted">Press Next expansion.</td></tr>`) + "</tbody>";
     stats($("#poStats"), [[beam ? "Levels" : "Expansions", S.log.length], ["Route", S.route ? S.route.join("-") : S.fail ? "none found" : "…"], ["Cost", S.route ? cost(S.route) : "…"], ["Optimal (12)", S.route ? (cost(S.route) === 12 ? "yes" : "no") : "…"]]);
-    const N = { ucs: "Uniform-cost search ignores the heuristic and expands routes in order of cost so far.", greedy: "Greedy best-first trusts only the heuristic: it always extends the route whose end looks closest to G.", astar: "A* ranks routes by f = g + h. The f values 11.5, 10.6, 13.4 and 12 match Figure 4.22.", wastar: `Weighted A* inflates the heuristic by w = ${ctl.w}: fewer expansions, but no optimality guarantee.`, beam: `Beam search keeps only the ${ctl.bw} cheapest partial routes at each level.${ctl.bw === 1 ? " With width 1 it is a greedy walk that can miss the goal." : ""}` };
-    $("#poNote").textContent = N[ctl.m] + (S.done ? (S.fail ? " The search ran out of routes." : ` Result: ${S.route.join("-")}, cost ${cost(S.route)}.`) : "");
+    const N = { ucs: "Uniform-cost search ignores the heuristic and expands routes in order of cost so far.", greedy: "Greedy best-first trusts only the heuristic: it always extends the route whose end looks closest to G.", astar: `A* ranks routes by ${tex("f = g + h")}. The ${tex("f")} values 11.5, 10.6, 13.4 and 12 match Figure 4.22.`, wastar: `Weighted A* inflates the heuristic by ${tex(String.raw`w = ${ctl.w}`)}: fewer expansions, but no optimality guarantee.`, beam: `Beam search keeps only the ${ctl.bw} cheapest partial routes at each level.${ctl.bw === 1 ? " With width 1 it is a greedy walk that can miss the goal." : ""}` };
+    $("#poNote").innerHTML = N[ctl.m] + (S.done ? (S.fail ? " The search ran out of routes." : ` Result: ${S.route.join("-")}, cost ${cost(S.route)}.`) : "");
   }
   const st = stepper($("#poRun"), step, () => S.done, () => 500);
   $("#poStep").addEventListener("click", step);
@@ -1656,7 +1675,7 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
   }
   function animate() { clearInterval(timer); last = run(); t = 0; timer = setInterval(() => { t += ctl.speed; draw(); if (t >= last.order.length) clearInterval(timer); }, 30); }
   function compare() {
-    const rows = [["Dijkstra / UCS", "ucs", "zero", 1], ["A*, Euclidean", "astar", "euclid", 1], ["A*, octile", "astar", "octile", 1], ["A*, Manhattan", "astar", "manhattan", 1], [`Weighted A*, octile, w = ${ctl.w}`, "wastar", "octile", ctl.w], ["Greedy best-first, octile", "greedy", "octile", 1]].map(([n, a, hk, wt]) => ({ n, a, ...search(a, hk, wt) }));
+    const rows = [["Dijkstra / UCS", "ucs", "zero", 1], ["A*, Euclidean", "astar", "euclid", 1], ["A*, octile", "astar", "octile", 1], ["A*, Manhattan", "astar", "manhattan", 1], [`Weighted A*, octile, ${tex(String.raw`w = ${ctl.w}`)}`, "wastar", "octile", ctl.w], ["Greedy best-first, octile", "greedy", "octile", 1]].map(([n, a, hk, wt]) => ({ n, a, ...search(a, hk, wt) }));
     const opt = rows[0].cost;
     $("#agTbl").innerHTML = `<thead><tr><th>Method</th><th class="n">Expanded</th><th class="n">Path cost</th><th>Optimal</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r.n.startsWith("A*, octile") ? "best" : ""}"><td>${r.n}</td><td class="n">${r.order.length}</td><td class="n">${isFinite(r.cost) ? r.cost.toFixed(2) : "–"}</td><td>${!isFinite(r.cost) ? "no path" : Math.abs(r.cost - opt) < 1e-6 ? "yes" : "no, +" + ((r.cost - opt) / opt * 100).toFixed(1) + "%"}</td></tr>`).join("") + "</tbody>";
   }
@@ -1681,7 +1700,7 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
     const [, la1, lo1] = PL[ctl.a], [, la2, lo2] = PL[ctl.b], r = PI / 180, d = haversine(la1, lo1, la2, lo2);
     const flat = 6371000 * Math.hypot((lo2 - lo1) * r * Math.cos((la1 + la2) / 2 * r), (la2 - la1) * r);
     const f = m => m >= 10000 ? (m / 1000).toLocaleString("en-US", { maximumFractionDigits: 1 }) + " km" : m.toFixed(1) + " m";
-    $("#hvOut").innerHTML = `Δlat = ${(la2 - la1).toFixed(4)}°, Δlon = ${(lo2 - lo1).toFixed(4)}°<br>haversine (great circle): <b>${f(d)}</b><br>flat earth: ${f(flat)}<br>difference: ${d ? (Math.abs(flat - d) / d * 100).toFixed(d > 1e5 ? 2 : 4) : "0"}%`;
+    $("#hvOut").innerHTML = `${tex(String.raw`\Delta\mathrm{lat} = ${(la2 - la1).toFixed(4)}^\circ`)}, ${tex(String.raw`\Delta\mathrm{lon} = ${(lo2 - lo1).toFixed(4)}^\circ`)}<br>haversine (great circle): <b>${f(d)}</b><br>flat earth: ${f(flat)}<br>difference: ${d ? (Math.abs(flat - d) / d * 100).toFixed(d > 1e5 ? 2 : 4) : "0"}%`;
   }
   upd();
 })();
@@ -1718,12 +1737,12 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
     const cur = i >= 1 && i <= 12 ? ch.log[i] : null;
     stats($("#chStats"), [["Contracted", `${nC} / 12`], ["Shortcuts", sc.length], ["Settled (up + down)", phase >= 2 ? q.F.order.length + q.B.order.length : phase === 1 ? q.F.order.length : "–"], ["Route 1 → 5", route ? `${route.join("-")} = ${q.cost}` : "…"]]);
     let note;
-    if (i === 0) note = ctl.ord === "book" ? "Contract the nodes in the book’s arbitrary order 1, 2, …, 12. Press Next step." : "Order by edge difference ED(v) = shortcuts added − edges removed, recomputed lazily as nodes are contracted. Press Next step.";
+    if (i === 0) note = ctl.ord === "book" ? "Contract the nodes in the book’s arbitrary order 1, 2, …, 12. Press Next step." : `Order by edge difference ${tex(String.raw`\mathrm{ED}(v) = \text{shortcuts added} - \text{edges removed}`)}, recomputed lazily as nodes are contracted. Press Next step.`;
     else if (cur) { const s2 = cur.sc.filter(([u, x]) => u < x); note = `Contract node ${cur.v} (rank ${dr[cur.v]}). ` + (s2.length ? s2.map(([u, x, cst]) => `No witness path avoids ${cur.v}, so shortcut ${u}-${x} (${cst}) is added.`).join(" ") : "Every pair of its neighbors has a witness path, or it has at most one neighbor left: no shortcut needed."); }
     else if (phase === 1) note = `Forward search from 1, relaxing only edges that lead to higher-ranked nodes: settles ${[...q.F.order].join(", ")}.`;
     else if (phase === 2) note = `Backward search from 5, also upward only: settles ${[...q.B.order].join(", ")}. Nodes reached by both searches are candidate meeting points.`;
     else note = `The best meeting node is ${q.meet} (blue), giving overlay route ${q.overlay.join("-")}. Unpacking the shortcuts gives ${q.route.join("-")}, cost ${q.cost}.`;
-    $("#chNote").textContent = note;
+    $("#chNote").innerHTML = note;
   }
   const st = stepper($("#chRun"), () => { i++; draw(); }, () => i >= steps, () => 450);
   $("#chStep").addEventListener("click", () => { if (i < steps) { i++; draw(); } });
@@ -1771,7 +1790,7 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
       ctx.globalAlpha = 1; if (done) drawRoute(ctx, P, res.route, c.accent, 4);
     }
     markEnds(ctx, c, P);
-    const L = len(res), name = NAMES[res.alg] + (res.alg === "wastar" ? `, w = ${ctl.w}` : res.alg === "beam" ? `, k = ${ctl.k}` : "");
+    const L = len(res), name = NAMES[res.alg] + (res.alg === "wastar" ? `, ${tex(String.raw`w = ${ctl.w}`)}` : res.alg === "beam" ? `, ${tex(String.raw`k = ${ctl.k}`)}` : "");
     stats($("#rtStats"), [["Algorithm", name], res.frames ? ["Iteration", `${n} / ${res.frames.length}`] : ["Explored", `${n} / ${res.order.length}`], ["Route length", done ? L.toFixed(1) + " m" : "…"], ["vs. shortest", done ? (L - OPT < .01 ? "optimal" : "+" + ((L - OPT) / OPT * 100).toFixed(1) + "%") : "…"]].concat(res.alg === "ch" ? [["Shortcuts added", res.shortcuts], ["Preprocessing", res.pre.toFixed(0) + " ms"]] : res.frames ? [["Child routes evaluated", res.evals]] : []));
     const N = { hc: "Hill climbing starts from a random route (gold) and moves to its best child route (gray: the children) until no child is shorter.", beam: "Beam search keeps the k best routes (gray) and builds the next beam from all their children.", book: "The book’s scoring ranks nodes by straight-line distance from the origin plus to the destination, ignoring the road distance already traveled, so it hugs the straight line and can return a longer route.", astar: "A* ranks nodes by road distance traveled plus straight-line distance left. The straight line never overestimates, so the route is optimal.", wastar: "Weighted A* trusts the heuristic more: fewer nodes explored, a route that may be slightly longer.", ch: "Gold dots: upward search from the statue; the backward-search color: upward search from the Bahen Centre (see the legend). They settle few nodes because shortcuts let them skip the unimportant ones.", ucs: "Dijkstra’s algorithm spreads in all directions until it reaches the destination." };
     $("#rtNote").textContent = N[res.alg];
@@ -1782,7 +1801,7 @@ function campusCH() { if (!UCH) { const t0 = performance.now(); UCH = buildCH(RN
     setTimeout(() => {
       const BOOK = { hc: "806.892, 400", beam: "825.929, 800", book: "846.92, 80", ch: "806.892, 164" };
       $("#rtTbl").innerHTML = `<thead><tr><th>Method</th><th class="n">Route (m)</th><th class="n">Explored or evaluated</th><th class="n">Query time</th><th>Optimal</th><th class="n">Book: route, explored</th></tr></thead><tbody>` + Object.keys(NAMES).map(a => { const r = solve(a), L = len(r);
-        return `<tr class="${a === ctl.alg ? "best" : ""}"><td>${NAMES[a]}${a === "wastar" ? `, w = ${ctl.w}` : a === "beam" ? `, k = ${ctl.k}` : ""}</td><td class="n">${L.toFixed(1)}</td><td class="n">${r.frames ? r.evals + " routes" : r.order.length + " nodes"}</td><td class="n">${r.ms.toFixed(1)} ms</td><td>${L - OPT < .01 ? "yes" : "no"}</td><td class="n">${BOOK[a] || ""}</td></tr>`; }).join("") + "</tbody>";
+        return `<tr class="${a === ctl.alg ? "best" : ""}"><td>${NAMES[a]}${a === "wastar" ? `, ${tex(String.raw`w = ${ctl.w}`)}` : a === "beam" ? `, ${tex(String.raw`k = ${ctl.k}`)}` : ""}</td><td class="n">${L.toFixed(1)}</td><td class="n">${r.frames ? r.evals + " routes" : r.order.length + " nodes"}</td><td class="n">${r.ms.toFixed(1)} ms</td><td>${L - OPT < .01 ? "yes" : "no"}</td><td class="n">${BOOK[a] || ""}</td></tr>`; }).join("") + "</tbody>";
     }, 30);
   });
   res = solve("astar"); ro.observe($("#rtCv")); onRedraw(draw); draw(); $("#rtAll").click();
@@ -1837,7 +1856,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

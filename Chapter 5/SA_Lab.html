@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Simulated Annealing Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -393,20 +412,20 @@ tr.rej td{color:var(--muted)}
     <div class="two">
       <div>
         <div class="pseudo"><span class="k">Algorithm 5.1</span>: Simulated annealing
-initialize T = T<sub>0</sub>, initial guess x<sub>0</sub>, n = 0
-set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperature,
-    a maximum number of iterations N and a cooling schedule
-<span class="k">while</span> T &gt; T<sub>f</sub> <span class="k">and</span> n &lt; N
-    <span class="k">for</span> k = 1 .. k<sub>max</sub>
-        move randomly to a neighbor x′
-        Δf = f(x′) − f(x)
-        <span class="k">if</span> Δf &lt; 0 <span class="k">then</span> accept x′
-        <span class="k">else</span> draw r ∈ [0, 1]; accept x′ <span class="k">if</span> e<sup>−Δf/T</sup> &gt; r
-    update T with the cooling schedule; n = n + 1
+initialize \(T = T_0\), initial guess \(x_0\), \(n = 0\)
+set the final temperature \(T_f\), \(k_{\max}\) iterations per temperature,
+    a maximum number of iterations \(N\) and a cooling schedule
+<span class="k">while</span> \(T \gt T_f\) <span class="k">and</span> \(n \lt N\)
+    <span class="k">for</span> \(k = 1, \dots, k_{\max}\)
+        move randomly to a neighbor \(x'\)
+        \(\Delta f = f(x') - f(x)\)
+        <span class="k">if</span> \(\Delta f \lt 0\) <span class="k">then</span> accept \(x'\)
+        <span class="k">else</span> draw \(r \in [0, 1]\); accept \(x'\) <span class="k">if</span> \(e^{-\Delta f/T} \gt r\)
+    update \(T\) with the cooling schedule; \(n \leftarrow n + 1\)
 <span class="k">return</span> the best solution found</div>
       </div>
       <div class="prose">
-        <p>Each iteration tries a random neighbor, always keeps it if it is better, and otherwise keeps it with probability e<sup>−Δf/T</sup>; then the temperature drops.</p>
+        <p>Each iteration tries a random neighbor, always keeps it if it is better, and otherwise keeps it with probability \(e^{-\Delta f/T}\); then the temperature drops.</p>
         <p class="more">Section 5.2.2 explains SA as a Markov chain (Figure 5.4) and surveys its variants, including quantum annealing.</p>
       </div>
     </div>
@@ -421,7 +440,7 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
     <div class="two">
       <div class="prose">
         <p>A worse move is accepted when</p>
-        <p class="eq" style="white-space:normal">p = e<sup>−Δf/T</sup>; &nbsp; accept a worse move if p &gt; r, r uniform in [0, 1]</p>
+        <p class="eq" style="white-space:normal">\(\displaystyle p = e^{-\Delta f/T}\); &nbsp; accept a worse move if \(p \gt r\), \(r\) uniform in \([0, 1]\)</p>
         <p>Move the sliders, then draw random numbers to see which moves pass.</p>
         <p class="more">Section 5.2.3 derives this rule from physics and shows cheaper forms (Figure 5.6).</p>
       </div>
@@ -443,17 +462,17 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
     <h3 id="t0">Initial temperature</h3>
     <div class="two">
       <div class="prose">
-        <p class="eq" style="white-space:normal">T<sub>0</sub> ≈ −max(Δf) / ln p<sub>0</sub></p>
-        <p>Set max(Δf) and p<sub>0</sub>, or run the warm-up on Berlin52.</p>
-        <p class="more">Equation 5.5 and the text around it explain both ways of choosing T<sub>0</sub>.</p>
+        <p class="eq" style="white-space:normal">\(\displaystyle T_0 \approx -\frac{\max(\Delta f)}{\ln p_0}\)</p>
+        <p>Set \(\max(\Delta f)\) and \(p_0\), or run the warm-up on Berlin52.</p>
+        <p class="more">Equation 5.5 and the text around it explain both ways of choosing \(T_0\).</p>
       </div>
       <div class="bench" style="margin-top:0">
         <div class="bench-head"><h4>Choosing T₀</h4></div>
-        <div class="stage"><div id="t0Ctl"></div><div class="calc" id="t0Calc"></div><div class="btns"><button id="t0Warm" class="small primary">Run the warm-up on Berlin52</button></div><canvas id="t0Cv" class="cv-chart" style="height:150px" aria-label="Share of worse moves accepted by temperature"></canvas><p class="cap" id="t0Note">Share of worse 2-opt moves accepted at each temperature (log scale on x).</p></div>
+        <div class="stage"><div id="t0Ctl"></div><div class="calc" id="t0Calc"></div><div class="btns"><button id="t0Warm" class="small primary">Run the warm-up on Berlin52</button></div><canvas id="t0Cv" class="cv-chart" style="height:150px" aria-label="Share of worse moves accepted by temperature"></canvas><p class="cap" id="t0Note">Share of worse 2-opt moves accepted at each temperature (log scale on \(x\)).</p></div>
       </div>
     </div>
     <h3 id="schedules">Cooling schedules</h3>
-    <p class="prose">Tune T<sub>0</sub> and each schedule’s factor to compare how fast they cool.</p>
+    <p class="prose">Tune \(T_0\) and each schedule’s factor to compare how fast they cool.</p>
     <div class="bench">
       <div class="bench-head"><h4>Cooling schedule explorer</h4><span class="eyebrow">Figure 5.8</span></div>
       <div class="bench-body">
@@ -475,7 +494,7 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
     <span class="eyebrow">Part 5 · Section 5.3</span>
     <h2>Function optimization</h2>
     <h3 id="hand">Hand iterations: minimize (x − 6)² on [0, 31]</h3>
-    <div class="prose"><p>Press <b>Next iteration</b> to follow each candidate, its Δf and the accept or reject decision.</p>
+    <div class="prose"><p>Press <b>Next iteration</b> to follow each candidate, its \(\Delta f\) and the accept or reject decision.</p>
     <p class="more">Section 5.3 works these first iterations out by hand, with every random number shown.</p></div>
     <div class="bench">
       <div class="bench-head"><h4>Step through SA</h4><span class="eyebrow">T₀ = 5 · α = 0.85 · 2 iterations per T</span></div>
@@ -577,7 +596,7 @@ set the final temperature T<sub>f</sub>, k<sub>max</sub> iterations per temperat
     <h2>Plant layout</h2>
     <div class="two">
       <div class="prose">
-        <p>Place six departments on a 2 × 3 grid to minimize TMHC = Σ flow × distance. A move swaps two departments.</p>
+        <p>Place six departments on a 2 × 3 grid to minimize \(\mathrm{TMHC} = \sum \text{flow} \times \text{distance}\). A move swaps two departments.</p>
         <p class="more">The book works the first swaps of this example by hand.</p>
       </div>
       <div class="tbl-wrap"><table class="ttab" id="plFlow"></table></div>
@@ -980,7 +999,7 @@ print(<span class="st">"SA assignment:"</span>, anneal_makespan(), <span class="
     <h2>What to remember</h2>
     <div class="cards3">
       <div class="card"><h5>Trajectory-based</h5><p>One agent always takes better moves and sometimes worse ones.</p></div>
-      <div class="card"><h5>Temperature</h5><p>p = e<sup>−Δf/T</sup>: hot explores, cold exploits.</p></div>
+      <div class="card"><h5>Temperature</h5><p>\(p = e^{-\Delta f/T}\): hot explores, cold exploits.</p></div>
       <div class="card"><h5>Schedule</h5><p>Temperatures, cooling and iterations per level shape the result.</p></div>
       <div class="card"><h5>Derivative-free</h5><p>SA needs only objective values but guarantees no optimum.</p></div>
     </div>
@@ -996,9 +1015,9 @@ print(<span class="st">"SA assignment:"</span>, anneal_makespan(), <span class="
     <h2>Check your understanding</h2>
     <p class="prose">Two quick questions on Chapter 5. Pick an answer to check it.</p>
     <div class="mcq" data-a="1">
-      <p class="mcq-q"><b>Q1.</b> In simulated annealing, a worse move with objective change Δf &gt; 0 is accepted with probability e<sup>−Δf/T</sup>. What happens as the temperature T approaches 0?</p>
+      <p class="mcq-q"><b>Q1.</b> In simulated annealing, a worse move with objective change \(\Delta f \gt 0\) is accepted with probability \(e^{-\Delta f/T}\). What happens as the temperature \(T\) approaches 0?</p>
       <div class="mcq-opts" role="group" aria-label="Answers to question 1"><button type="button" class="mcq-o"><b>A</b><span>Almost every move is accepted, so the search becomes a random walk</span></button><button type="button" class="mcq-o"><b>B</b><span>Worse moves are almost never accepted, so SA behaves like hill climbing</span></button><button type="button" class="mcq-o"><b>C</b><span>Only worse moves are accepted</span></button><button type="button" class="mcq-o"><b>D</b><span>The acceptance probability stays the same, but the neighborhood grows</span></button></div>
-      <p class="mcq-fb" aria-live="polite"></p><template>As T goes to 0, e<sup>−Δf/T</sup> goes to 0 for any worse move, so only improving moves remain, which is hill climbing. A very high temperature gives the random walk.</template>
+      <p class="mcq-fb" aria-live="polite"></p><template>As \(T\) goes to 0, \(e^{-\Delta f/T}\) goes to 0 for any worse move, so only improving moves remain, which is hill climbing. A very high temperature gives the random walk.</template>
     </div>
     <div class="mcq" data-a="3">
       <p class="mcq-q"><b>Q2.</b> In the slow cooling vs. quenching experiment, why does slow cooling reach a lower-energy state?</p>
@@ -1298,7 +1317,7 @@ const LAND = x => 4 + 1.3 * Math.sin(x * .33) + .9 * Math.sin(x * .121 + 1.7) + 
     const p = Math.exp(-ctl.d / ctl.T); ctx.fillStyle = c.bad; ctx.beginPath(); ctx.arc(X(ctl.d), Y(p), 5, 0, 7); ctx.fill();
     if (draws) draws.forEach((r, i) => { ctx.fillStyle = r < p ? c.good : c.bad; ctx.globalAlpha = .55; ctx.beginPath(); ctx.arc(X(ctl.d) + ((i % 10) - 4.5) * 4, Y(r), 2.2, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
     const acc = draws ? draws.filter(r => r < p).length : null;
-    $("#apNote").innerHTML = `Blue: e<sup>−Δf/T</sup> at T = ${ctl.T.toFixed(1)}; gold dashed: the non-exponential 1 − Δf/T (clipped at 0); gray: other temperatures. A move that is worse by ${ctl.d.toFixed(1)} is accepted with p = <b>${p.toFixed(4)}</b>.${acc != null ? ` Of 100 random numbers r, <b>${acc}</b> fall below p (green), so ${acc} such moves would be accepted.` : ""}`;
+    $("#apNote").innerHTML = `Blue: ${tex(String.raw`e^{-\Delta f/T}`)} at ${tex(String.raw`T = ${ctl.T.toFixed(1)}`)}; gold dashed: the non-exponential ${tex(String.raw`1 - \Delta f/T`)} (clipped at 0); gray: other temperatures. A move that is worse by ${ctl.d.toFixed(1)} is accepted with ${tex(String.raw`p = \mathbf{${p.toFixed(4)}}`)}.${acc != null ? ` Of 100 random numbers ${tex("r")}, <b>${acc}</b> fall below ${tex("p")} (green), so ${acc} such moves would be accepted.` : ""}`;
   }
   $("#apDraw").addEventListener("click", () => { draws = [...Array(100)].map(() => rnd()); draw(); });
   ro.observe($("#apCv")); onRedraw(draw); draw();
@@ -1332,7 +1351,7 @@ function b52Move(t, L, move, rnd) {
     { key: "d", id: "t0D", label: "Largest expected increase max(Δf)", min: 1, max: 1000, step: 1, value: 50 },
     { key: "p", id: "t0P", label: "Target acceptance p₀", min: .05, max: .95, step: .05, value: .8, fmt: v => v.toFixed(2) }
   ], () => calc());
-  function calc() { const T0 = -ctl.d / Math.log(ctl.p); $("#t0Calc").innerHTML = `T₀ ≈ −max(Δf) / ln p₀ = −${ctl.d} / ln ${ctl.p.toFixed(2)} = <b>${T0.toFixed(1)}</b><br>Check: e<sup>−${ctl.d}/${T0.toFixed(1)}</sup> = ${Math.exp(-ctl.d / T0).toFixed(2)}`; }
+  function calc() { const T0 = -ctl.d / Math.log(ctl.p); $("#t0Calc").innerHTML = texLine(String.raw`T_0 \approx -\frac{\max(\Delta f)}{\ln p_0} = -\frac{${ctl.d}}{\ln ${ctl.p.toFixed(2)}} = \mathbf{${T0.toFixed(1)}}`) + texLine(String.raw`\text{Check: } e^{-${ctl.d}/${T0.toFixed(1)}} = ${Math.exp(-ctl.d / T0).toFixed(2)}`); }
   let res = [];
   function draw() {
     if (!res.length) { plotFrame($("#t0Cv"), [1, 10000], [0, 100], { logX: true, fx: v => v >= 1000 ? (v / 1000).toFixed(0) + "k" : v.toFixed(0), fy: v => v.toFixed(0) + "%", padL: 40 }); return; }
@@ -1352,7 +1371,7 @@ function b52Move(t, L, move, rnd) {
     }
     draw();
     const last = res[res.length - 1];
-    $("#t0Note").innerHTML = `Starting at T = 10,000 and cooling by 15% per step, the share of accepted worse moves fell to ${last.a.toFixed(0)}% at T ≈ <b>${Math.round(last.T)}</b>, a good T₀ for Berlin52 with 2-opt moves. The book’s Listing 5.5 uses T₀ = 150. The green band is 50 to 60%.`;
+    $("#t0Note").innerHTML = `Starting at ${tex(String.raw`T = 10{,}000`)} and cooling by 15% per step, the share of accepted worse moves fell to ${last.a.toFixed(0)}% at ${tex(String.raw`T \approx \mathbf{${Math.round(last.T)}}`)}, a good ${tex("T_0")} for Berlin52 with 2-opt moves. The book’s Listing 5.5 uses ${tex("T_0 = 150")}. The green band is 50 to 60%.`;
   });
   calc(); ro.observe($("#t0Cv")); onRedraw(draw); draw();
 })();
@@ -1372,19 +1391,19 @@ function b52Move(t, L, move, rnd) {
   ], () => draw());
   function draw() {
     const c = colors(), Tf = +ctl.Tf, S = [
-      ["Linear", c.muted, i => temperature(i, "linear", ctl.T0, Tf, ctl.N)],
-      [`Geometric α = ${ctl.g1.toFixed(2)}`, c.s1, i => temperature(i, "geometric", ctl.T0, Tf, ctl.N, ctl.g1)],
-      [`Geometric α = ${ctl.g2.toFixed(2)}`, c.s2, i => temperature(i, "geometric", ctl.T0, Tf, ctl.N, ctl.g2)],
-      [`Logarithmic α = ${ctl.lg}`, c.s3, i => temperature(i, "logarithmic", ctl.T0, Tf, ctl.N, ctl.lg)],
-      [`Exponential α = ${ctl.ex.toFixed(2)}`, c.bad, i => temperature(i, "exponential", ctl.T0, Tf, ctl.N, ctl.ex)],
-      [`Linear inverse α = ${ctl.li.toFixed(2)}`, c.good, i => temperature(i, "linear_inverse", ctl.T0, Tf, ctl.N, ctl.li)]];
+      ["Linear", c.muted, i => temperature(i, "linear", ctl.T0, Tf, ctl.N), "Linear"],
+      [`Geometric α = ${ctl.g1.toFixed(2)}`, c.s1, i => temperature(i, "geometric", ctl.T0, Tf, ctl.N, ctl.g1), "Geometric " + tex(String.raw`\alpha = ${ctl.g1.toFixed(2)}`)],
+      [`Geometric α = ${ctl.g2.toFixed(2)}`, c.s2, i => temperature(i, "geometric", ctl.T0, Tf, ctl.N, ctl.g2), "Geometric " + tex(String.raw`\alpha = ${ctl.g2.toFixed(2)}`)],
+      [`Logarithmic α = ${ctl.lg}`, c.s3, i => temperature(i, "logarithmic", ctl.T0, Tf, ctl.N, ctl.lg), "Logarithmic " + tex(String.raw`\alpha = ${ctl.lg}`)],
+      [`Exponential α = ${ctl.ex.toFixed(2)}`, c.bad, i => temperature(i, "exponential", ctl.T0, Tf, ctl.N, ctl.ex), "Exponential " + tex(String.raw`\alpha = ${ctl.ex.toFixed(2)}`)],
+      [`Linear inverse α = ${ctl.li.toFixed(2)}`, c.good, i => temperature(i, "linear_inverse", ctl.T0, Tf, ctl.N, ctl.li), "Linear inverse " + tex(String.raw`\alpha = ${ctl.li.toFixed(2)}`)]];
     const lo = ctl.log ? Math.max(1e-6, Math.min(...S.map(s => Math.max(1e-6, s[2](ctl.N))))) : 0;
     const { ctx, X, Y } = plotFrame($("#csCv"), [0, ctl.N], [ctl.log ? lo : 0, ctl.T0 * 1.03], { xl: "iteration i", logY: ctl.log, fx: v => v.toFixed(0), fy: v => fmtNum(v), padL: 56 });
     S.forEach(([lbl, col, f]) => { ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i <= ctl.N; i++) { const v = Math.max(ctl.log ? lo : 0, f(i)); i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v)); } ctx.stroke(); });
     let x = 62; ctx.font = `11px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "top";
     S.forEach(([lbl, col], k) => { ctx.fillStyle = col; ctx.fillText("■ " + lbl, X(ctl.N * .45), 14 + k * 15); });
     const at = [10, Math.round(ctl.N / 2), ctl.N];
-    $("#csTbl").innerHTML = `<thead><tr><th>Schedule</th>${at.map(i => `<th class="n">T at i = ${i}</th>`).join("")}</tr></thead><tbody>` + S.map(([lbl, col, f]) => `<tr><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:${col}"></i>${lbl}</td>${at.map(i => `<td class="n">${fmtNum(f(i))}</td>`).join("")}</tr>`).join("") + "</tbody>";
+    $("#csTbl").innerHTML = `<thead><tr><th>Schedule</th>${at.map(i => `<th class="n">${tex("T")} at ${tex(String.raw`i = ${i}`)}</th>`).join("")}</tr></thead><tbody>` + S.map(([lbl, col, f, tx]) => `<tr><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:${col}"></i>${tx}</td>${at.map(i => `<td class="n">${fmtNum(f(i))}</td>`).join("")}</tr>`).join("") + "</tbody>";
   }
   ro.observe($("#csCv")); onRedraw(draw); draw();
 })();
@@ -1409,7 +1428,7 @@ function b52Move(t, L, move, rnd) {
     ctx.fillStyle = c.accent; ctx.beginPath(); ctx.arc(X(Math.min(12, S.x)), Y(Math.min(40, f(S.x))), 7, 0, 7); ctx.fill();
     const T = 5 * .85 ** Math.floor(S.it / 2);
     stats($("#hiStats"), [["Iteration", S.it], ["Current x", S.x.toFixed(2)], ["f(x)", f(S.x).toFixed(2)], ["Next T", T.toFixed(2)]]);
-    $("#hiTbl").innerHTML = `<thead><tr><th class="n">Iter.</th><th class="n">T</th><th class="n">x′</th><th class="n">f(x′)</th><th class="n">Δf</th><th class="n">p</th><th class="n">r</th><th>Decision</th></tr></thead><tbody>` + (S.log.length ? S.log.slice(-8).map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T.toFixed(2)}</td><td class="n">${l.cand.toFixed(2)}</td><td class="n">${l.fc.toFixed(2)}</td><td class="n">${l.d.toFixed(2)}</td><td class="n">${l.d < 0 ? "1" : l.p.toFixed(4)}</td><td class="n">${l.r == null ? "" : l.r.toFixed(2)}</td><td>${l.d < 0 ? "better: accept" : l.ok ? "worse, p > r: accept" : "worse, p ≤ r: reject"}</td></tr>`).join("") : `<tr><td colspan="8">Start: x = 2, f(2) = 16. Press Next iteration.</td></tr>`) + "</tbody>";
+    $("#hiTbl").innerHTML = `<thead><tr><th class="n">Iter.</th><th class="n">${tex("T")}</th><th class="n">${tex("x'")}</th><th class="n">${tex("f(x')")}</th><th class="n">${tex(String.raw`\Delta f`)}</th><th class="n">${tex("p")}</th><th class="n">${tex("r")}</th><th>Decision</th></tr></thead><tbody>` + (S.log.length ? S.log.slice(-8).map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T.toFixed(2)}</td><td class="n">${l.cand.toFixed(2)}</td><td class="n">${l.fc.toFixed(2)}</td><td class="n">${l.d.toFixed(2)}</td><td class="n">${l.d < 0 ? "1" : l.p.toFixed(4)}</td><td class="n">${l.r == null ? "" : l.r.toFixed(2)}</td><td>${l.d < 0 ? "better: accept" : l.ok ? `worse, ${tex("p > r")}: accept` : `worse, ${tex(String.raw`p \le r`)}: reject`}</td></tr>`).join("") : `<tr><td colspan="8">Start: ${tex("x = 2")}, ${tex("f(2) = 16")}. Press Next iteration.</td></tr>`) + "</tbody>";
   }
   $("#hiStep").addEventListener("click", step); $("#hiReset").addEventListener("click", reset);
   ro.observe($("#hiCv")); onRedraw(draw); reset();
@@ -1478,9 +1497,9 @@ function heatLayer(F, c, view) {
   $("#fnStep").addEventListener("click", () => { if (!done()) { level(); draw(); } });
   $("#fnReset").addEventListener("click", () => { run.stop(); ctl.seed = 1 + (ctl.seed % 99); reset(); });
   presets($("#fnPresets"), [
-    { t: "Listing 5.2 settings", d: "T₀ = 1000, T_f = 0.0001, geometric α = 0.9, 100 iterations per temperature.", s: { sch: "geometric", lT0: 3, lTf: -4, a: .9, k: 100, N: 1000, ad: "none", sm: 1 } },
+    { t: "Listing 5.2 settings", d: `${tex("T_0 = 1000")}, ${tex("T_f = 0.0001")}, geometric ${tex(String.raw`\alpha = 0.9`)}, 100 iterations per temperature.`, s: { sch: "geometric", lT0: 3, lTf: -4, a: .9, k: 100, N: 1000, ad: "none", sm: 1 } },
     { t: "Quenched (T₀ = 0.1)", d: "Start cold: almost hill climbing, stuck near the start.", s: { sch: "geometric", lT0: -1, lTf: -4, a: .9, k: 100, ad: "none" } },
-    { t: "Too hot for too long", d: "T₀ = 10,000 with slow cooling (α = 0.99): a long random walk.", s: { sch: "geometric", lT0: 4, lTf: -4, a: .99, k: 50, N: 2000, ad: "none" } },
+    { t: "Too hot for too long", d: `${tex("T_0 = 10{,}000")} with slow cooling (${tex(String.raw`\alpha = 0.99`)}): a long random walk.`, s: { sch: "geometric", lT0: 4, lTf: -4, a: .99, k: 50, N: 2000, ad: "none" } },
     { t: "Linear inverse", d: "Fast early cooling, slow later (the solver’s default schedule).", s: { sch: "linear_inverse", lT0: 3, a: .9, k: 100, N: 1000 } },
     { t: "Nonmonotonic adaptive", d: "Equation 5.12: heats up when the current solution drifts from the best.", s: { sch: "geometric", lT0: 3, a: .9, k: 100, ad: "nonmono" } }
   ], p => { run.stop(); for (const k in p.s) ctl[k] = p.s[k]; reset(); });
@@ -1589,7 +1608,7 @@ const sdCost = g => { let s = 0; for (let i = 0; i < 9; i++) { const R = new Set
     ctx.strokeStyle = c.accent; ctx.lineWidth = 3.5; ctx.beginPath(); S.t.forEach((v, i) => i ? ctx.lineTo(...P(v)) : ctx.moveTo(...P(v))); ctx.closePath(); ctx.stroke();
     [1, 2, 3, 4, 5].forEach(k => { const p = P(k); ctx.fillStyle = k === 1 ? c.gold : c.ink; ctx.beginPath(); ctx.arc(...p, 13, 0, 7); ctx.fill(); ctx.fillStyle = k === 1 ? "#fff" : c.bg; ctx.font = `600 12px ${MONO}`; ctx.fillText(k, ...p); ctx.font = `11px ${MONO}`; });
     stats($("#t5Stats"), [["Iteration", S.it], ["Tour", S.t.join(" → ")], ["Length", len(S.t)], ["Next T", Math.max(50, 500 - 50 * S.it)], ["Optimum", 18]]);
-    $("#t5Tbl").innerHTML = `<thead><tr><th class="n">Iter.</th><th class="n">T</th><th>Swap</th><th>Candidate</th><th class="n">Length</th><th class="n">p</th><th class="n">r</th><th>Decision</th></tr></thead><tbody>` + (S.log.length ? S.log.map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T}</td><td class="mono">${l.a}, ${l.b}</td><td class="mono">${l.cand.join(" ")}</td><td class="n">${l.L1}</td><td class="n">${l.d < 0 ? "1" : l.p.toFixed(3)}</td><td class="n">${l.r == null ? "" : l.r.toFixed(2)}</td><td>${l.note || (l.d < 0 ? "shorter: accept" : l.ok ? "longer, p > r: accept" : "longer, p ≤ r: reject")}</td></tr>`).join("") : `<tr><td colspan="8">Iteration 0: [1, 3, 4, 2, 5], length 2 + 4 + 5 + 5 + 12 = 28.</td></tr>`) + (S.it >= 10 ? `<tr><td colspan="8">T has reached T_f = 50: the search stops.</td></tr>` : "") + "</tbody>";
+    $("#t5Tbl").innerHTML = `<thead><tr><th class="n">Iter.</th><th class="n">${tex("T")}</th><th>Swap</th><th>Candidate</th><th class="n">Length</th><th class="n">${tex("p")}</th><th class="n">${tex("r")}</th><th>Decision</th></tr></thead><tbody>` + (S.log.length ? S.log.map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T}</td><td class="mono">${l.a}, ${l.b}</td><td class="mono">${l.cand.join(" ")}</td><td class="n">${l.L1}</td><td class="n">${l.d < 0 ? "1" : l.p.toFixed(3)}</td><td class="n">${l.r == null ? "" : l.r.toFixed(2)}</td><td>${l.note || (l.d < 0 ? "shorter: accept" : l.ok ? `longer, ${tex("p > r")}: accept` : `longer, ${tex(String.raw`p \le r`)}: reject`)}</td></tr>`).join("") : `<tr><td colspan="8">Iteration 0: [1, 3, 4, 2, 5], length ${tex("2 + 4 + 5 + 5 + 12 = 28")}.</td></tr>`) + (S.it >= 10 ? `<tr><td colspan="8">${tex("T")} has reached ${tex("T_f = 50")}: the search stops.</td></tr>` : "") + "</tbody>";
   }
   $("#t5Step").addEventListener("click", step); $("#t5Reset").addEventListener("click", reset);
   ro.observe($("#t5Cv")); onRedraw(draw); reset();
@@ -1623,11 +1642,11 @@ const sdCost = g => { let s = 0; for (let i = 0; i < 9; i++) { const R = new Set
   $("#bsStep").addEventListener("click", () => { if (!done()) { level(); draw(); } });
   $("#bsReset").addEventListener("click", () => { run.stop(); ctl.seed = 1 + (ctl.seed % 99); reset(); });
   presets($("#bsPresets"), [
-    { t: "Listing 5.5 settings", d: "Linear cooling, T₀ = 150, T_f = 0.01, 1,200 levels of 500 iterations, mutate moves. Seed 1 gives about 8,100, like the book.", s: { sch: "linear", T0: 150, lTf: -2, k: 500, N: 1200, move: "mutate", ad: "none", seed: 1 } },
+    { t: "Listing 5.5 settings", d: `Linear cooling, ${tex("T_0 = 150")}, ${tex("T_f = 0.01")}, 1,200 levels of 500 iterations, mutate moves. Seed 1 gives about 8,100, like the book.`, s: { sch: "linear", T0: 150, lTf: -2, k: 500, N: 1200, move: "mutate", ad: "none", seed: 1 } },
     { t: "2-opt moves", d: "Same schedule with segment reversals: usually reaches the optimum, 7,542.", s: { sch: "linear", T0: 150, lTf: -2, k: 500, N: 1200, move: "reverse", ad: "none", seed: 1 } },
-    { t: "Geometric, α = 0.99", d: "Cools in about 900 levels from T₀ = 150.", s: { sch: "geometric", T0: 150, a: .99, k: 500, N: 3000, move: "reverse", ad: "none" } },
+    { t: "Geometric, α = 0.99", d: `Cools in about 900 levels from ${tex("T_0 = 150")}.`, s: { sch: "geometric", T0: 150, a: .99, k: 500, N: 3000, move: "reverse", ad: "none" } },
     { t: "Swap moves", d: "Book settings with swaps: each move breaks four edges.", s: { sch: "linear", T0: 150, k: 500, N: 1200, move: "swap" } },
-    { t: "Quench", d: "T₀ = 1: almost greedy from the start.", s: { sch: "linear", T0: 1, k: 500, N: 300, move: "reverse" } },
+    { t: "Quench", d: `${tex("T_0 = 1")}: almost greedy from the start.`, s: { sch: "linear", T0: 1, k: 500, N: 300, move: "reverse" } },
     { t: "Nonmonotonic adaptive", d: "Equation 5.12 on top of linear cooling.", s: { sch: "linear", T0: 150, k: 500, N: 1200, move: "reverse", ad: "nonmono" } }
   ], p => { run.stop(); for (const k in p.s) ctl[k] = p.s[k]; reset(); });
   function draw() {
@@ -1670,11 +1689,11 @@ const sdCost = g => { let s = 0; for (let i = 0; i < 9; i++) { const R = new Set
     for (let l = 0; l < 6; l++) { const [x, y] = C(l); ctx.strokeStyle = c.line; ctx.lineWidth = 1; ctx.strokeRect(x - cw / 2 + 4, y - ch / 2 + 4, cw - 8, ch - 8); ctx.fillStyle = c.muted; ctx.font = `11px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText("location " + (l + 1), x - cw / 2 + 10, y - ch / 2 + 9); }
     S.loc.forEach((l, i) => { const [x, y] = C(l); ctx.fillStyle = c.accent; ctx.beginPath(); ctx.arc(x, y, Math.min(cw, ch) * .22, 0, 7); ctx.fill(); ctx.fillStyle = "#fff"; ctx.font = `600 ${Math.round(Math.min(cw, ch) * .22)}px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(NM[i], x, y); });
     stats($("#plStats"), [["Iteration", S.it], ["TMHC", S.c.toLocaleString("en-US")], ["Best", S.best.toLocaleString("en-US")], ["Optimum", OPT.toLocaleString("en-US")], ["Next T", (100 * .85 ** Math.floor(S.it / 2)).toFixed(2)]]);
-    $("#plTbl").innerHTML = `<thead><tr><th class="n">Iter.</th><th class="n">T</th><th>Swap</th><th class="n">TMHC</th><th class="n">p</th><th class="n">r</th><th>Decision</th></tr></thead><tbody>` + (S.log.length ? S.log.slice(-8).map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T.toFixed(2)}</td><td class="mono">${l.mv}</td><td class="n">${l.cc.toLocaleString("en-US")}</td><td class="n">${l.d <= 0 ? "1" : l.p.toFixed(3)}</td><td class="n">${l.r}</td><td>${l.d < 0 ? "better: accept" : l.d === 0 ? "equal: accept" : l.ok ? "worse, p > r: accept" : "worse, p ≤ r: reject"}</td></tr>`).join("") : `<tr><td colspan="7">Initial layout: A to F on locations 1 to 6, TMHC = 1,770.</td></tr>`) + "</tbody>";
-    $("#plNote").innerHTML = S.it === 1 ? "Swapping B and D leaves the cost at 1,770: the flows between B and C (35 + 75) become 2 units longer, +220, while those between C and D (60 + 50) become 2 units shorter, −220. With Δf = 0 the move is accepted." : S.it === 2 ? "Swapping A and D raises the cost to 2,020. At T = 100, p = e<sup>−250/100</sup> = 0.082, below r = 0.6, so the move is rejected." : "Line thickness shows the total flow between two departments; good layouts put heavy flows next to each other.";
+    $("#plTbl").innerHTML = `<thead><tr><th class="n">Iter.</th><th class="n">${tex("T")}</th><th>Swap</th><th class="n">TMHC</th><th class="n">${tex("p")}</th><th class="n">${tex("r")}</th><th>Decision</th></tr></thead><tbody>` + (S.log.length ? S.log.slice(-8).map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T.toFixed(2)}</td><td class="mono">${l.mv}</td><td class="n">${l.cc.toLocaleString("en-US")}</td><td class="n">${l.d <= 0 ? "1" : l.p.toFixed(3)}</td><td class="n">${l.r}</td><td>${l.d < 0 ? "better: accept" : l.d === 0 ? "equal: accept" : l.ok ? `worse, ${tex("p > r")}: accept` : `worse, ${tex(String.raw`p \le r`)}: reject`}</td></tr>`).join("") : `<tr><td colspan="7">Initial layout: A to F on locations 1 to 6, ${tex(String.raw`\mathrm{TMHC} = 1{,}770`)}.</td></tr>`) + "</tbody>";
+    $("#plNote").innerHTML = S.it === 1 ? `Swapping B and D leaves the cost at 1,770: the flows between B and C (35 + 75) become 2 units longer, +220, while those between C and D (60 + 50) become 2 units shorter, −220. With ${tex(String.raw`\Delta f = 0`)} the move is accepted.` : S.it === 2 ? `Swapping A and D raises the cost to 2,020. At ${tex("T = 100")}, ${tex(String.raw`p = e^{-250/100} = 0.082`)}, below ${tex("r = 0.6")}, so the move is rejected.` : "Line thickness shows the total flow between two departments; good layouts put heavy flows next to each other.";
   }
   $("#plStep").addEventListener("click", () => step());
-  $("#plRun").addEventListener("click", () => { let g = 0; while (step(true) && g++ < 5000); draw(); $("#plNote").innerHTML = `Annealed until T < 0.01 (${S.it} iterations): best TMHC ${S.best.toLocaleString("en-US")}${S.best === OPT ? ", the optimum" : `; the optimum is ${OPT.toLocaleString("en-US")}`}.`; });
+  $("#plRun").addEventListener("click", () => { let g = 0; while (step(true) && g++ < 5000); draw(); $("#plNote").innerHTML = `Annealed until ${tex("T < 0.01")} (${S.it} iterations): best TMHC ${S.best.toLocaleString("en-US")}${S.best === OPT ? ", the optimum" : `; the optimum is ${OPT.toLocaleString("en-US")}`}.`; });
   $("#plReset").addEventListener("click", reset);
   ro.observe($("#plCv")); onRedraw(draw); reset();
 })();
@@ -1683,7 +1702,7 @@ const sdCost = g => { let s = 0; for (let i = 0; i < 9; i++) { const R = new Set
 (function tardiness() {
   const P = [9, 9, 12, 3], D = [10, 8, 5, 28], W = [14, 12, 1, 12];
   const wt = s => { let t = 0, tot = 0; s.forEach(j => { t += P[j - 1]; tot += W[j - 1] * Math.max(0, t - D[j - 1]); }); return tot; };
-  $("#wtJobs").innerHTML = `<thead><tr><th>Job</th><th class="n">1</th><th class="n">2</th><th class="n">3</th><th class="n">4</th></tr></thead><tbody><tr><td>Processing p</td>${P.map(v => `<td class="n">${v}</td>`).join("")}</tr><tr><td>Due date d</td>${D.map(v => `<td class="n">${v}</td>`).join("")}</tr><tr><td>Weight w</td>${W.map(v => `<td class="n">${v}</td>`).join("")}</tr></tbody>`;
+  $("#wtJobs").innerHTML = `<thead><tr><th>Job</th><th class="n">1</th><th class="n">2</th><th class="n">3</th><th class="n">4</th></tr></thead><tbody><tr><td>Processing ${tex("p")}</td>${P.map(v => `<td class="n">${v}</td>`).join("")}</tr><tr><td>Due date ${tex("d")}</td>${D.map(v => `<td class="n">${v}</td>`).join("")}</tr><tr><td>Weight ${tex("w")}</td>${W.map(v => `<td class="n">${v}</td>`).join("")}</tr></tbody>`;
   const BOOK = [[[1, 3, 4, 2], null], [[1, 4, 3, 2], .01]];
   let S, rnd;
   function reset() { rnd = mulberry32(newSeed()); S = { s: [3, 1, 4, 2], it: 0, log: [] }; S.c = wt(S.s); S.best = S.c; draw(); }
@@ -1699,7 +1718,7 @@ const sdCost = g => { let s = 0; for (let i = 0; i < 9; i++) { const R = new Set
     const { ctx, X, Y, c } = plotFrame($("#wtCv"), [0, 36], [0, 1], { fx: v => v.toFixed(0), fy: () => "", padL: 10 }), pal = ["s1", "s2", "s3", "s4"];
     let t = 0; S.s.forEach(j => { const t1 = t + P[j - 1]; ctx.fillStyle = c[pal[j - 1]]; ctx.fillRect(X(t), Y(.85), X(t1) - X(t) - 1, Y(.25) - Y(.85)); ctx.fillStyle = "#fff"; ctx.font = `600 12px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("J" + j, (X(t) + X(t1)) / 2, Y(.55)); if (t1 > D[j - 1]) { ctx.strokeStyle = c.bad; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(D[j - 1]), Y(.95)); ctx.lineTo(X(D[j - 1]), Y(.15)); ctx.stroke(); } t = t1; });
     stats($("#wtStats"), [["Iteration", S.it], ["Sequence", S.s.join("-")], ["Σ w T", S.c], ["Best", S.best], ["Optimum", "148 (1-2-4-3)"]]);
-    $("#wtTbl").innerHTML = `<thead><tr><th class="n">It.</th><th class="n">T</th><th>Neighbor</th><th class="n">Σ w T</th><th class="n">p</th><th class="n">r</th><th></th></tr></thead><tbody>` + (S.log.length ? S.log.slice(-5).map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T.toFixed(3)}</td><td class="mono">${l.cand.join("-")}</td><td class="n">${l.cc}</td><td class="n">${l.d < 0 ? "1" : l.p.toFixed(4)}</td><td class="n">${l.r == null ? "" : l.r}</td><td>${l.ok ? "accept" : "reject"}</td></tr>`).join("") : `<tr><td colspan="7">Initial sequence 3-1-4-2: Σ w T = 461.</td></tr>`) + "</tbody>";
+    $("#wtTbl").innerHTML = `<thead><tr><th class="n">It.</th><th class="n">${tex("T")}</th><th>Neighbor</th><th class="n">${tex(String.raw`\sum wT`)}</th><th class="n">${tex("p")}</th><th class="n">${tex("r")}</th><th></th></tr></thead><tbody>` + (S.log.length ? S.log.slice(-5).map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T.toFixed(3)}</td><td class="mono">${l.cand.join("-")}</td><td class="n">${l.cc}</td><td class="n">${l.d < 0 ? "1" : l.p.toFixed(4)}</td><td class="n">${l.r == null ? "" : l.r}</td><td>${l.ok ? "accept" : "reject"}</td></tr>`).join("") : `<tr><td colspan="7">Initial sequence 3-1-4-2: ${tex(String.raw`\sum wT = 461`)}.</td></tr>`) + "</tbody>";
   }
   $("#wtStep").addEventListener("click", step); $("#wtReset").addEventListener("click", reset);
   ro.observe($("#wtCv")); onRedraw(draw); reset();
@@ -1722,7 +1741,7 @@ const sdCost = g => { let s = 0; for (let i = 0; i < 9; i++) { const R = new Set
     [1, 2, 3].forEach(m => { let t = 0; ctx.fillStyle = c.muted; ctx.font = `11px ${MONO}`; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText("M" + m, X(0) - 4, Y(3 - m + .5)); S.a.forEach((v, j) => { if (v !== m) return; ctx.fillStyle = c[pal[j]]; ctx.fillRect(X(t), Y(3 - m + .9), X(t + PT[j]) - X(t) - 1, Y(3 - m + .1) - Y(3 - m + .9)); ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.fillText("J" + (j + 1), (X(t) + X(t + PT[j])) / 2, Y(3 - m + .5)); t += PT[j]; }); });
     ctx.strokeStyle = c.bad; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(X(S.c), Y(3)); ctx.lineTo(X(S.c), Y(0)); ctx.stroke(); ctx.setLineDash([]);
     stats($("#msStats"), [["Iteration", S.it], ["Assignment", "(" + S.a.join(",") + ")"], ["Makespan", S.c], ["Best", S.best], ["Optimum", 7]]);
-    $("#msTbl").innerHTML = `<thead><tr><th class="n">It.</th><th class="n">T</th><th>Neighbor</th><th class="n">C<sub>max</sub></th><th class="n">p</th><th class="n">r</th><th></th></tr></thead><tbody>` + (S.log.length ? S.log.slice(-5).map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T.toFixed(3)}</td><td class="mono">(${l.cand.join(",")})</td><td class="n">${l.cc}</td><td class="n">${l.d < 0 ? "1" : l.p.toFixed(4)}</td><td class="n">${l.r == null ? "" : l.r}</td><td>${l.ok ? "accept" : "reject"}</td></tr>`).join("") : `<tr><td colspan="7">Initial assignment (1,1,2,2,3,3): makespan 10.</td></tr>`) + "</tbody>";
+    $("#msTbl").innerHTML = `<thead><tr><th class="n">It.</th><th class="n">${tex("T")}</th><th>Neighbor</th><th class="n">${tex(String.raw`C_{\max}`)}</th><th class="n">${tex("p")}</th><th class="n">${tex("r")}</th><th></th></tr></thead><tbody>` + (S.log.length ? S.log.slice(-5).map(l => `<tr class="${l.ok ? "acc" : "rej"}"><td class="n">${l.it}</td><td class="n">${l.T.toFixed(3)}</td><td class="mono">(${l.cand.join(",")})</td><td class="n">${l.cc}</td><td class="n">${l.d < 0 ? "1" : l.p.toFixed(4)}</td><td class="n">${l.r == null ? "" : l.r}</td><td>${l.ok ? "accept" : "reject"}</td></tr>`).join("") : `<tr><td colspan="7">Initial assignment (1,1,2,2,3,3): makespan 10.</td></tr>`) + "</tbody>";
   }
   $("#msStep").addEventListener("click", step); $("#msReset").addEventListener("click", reset);
   ro.observe($("#msCv")); onRedraw(draw); reset();
@@ -1777,7 +1796,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>

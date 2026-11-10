@@ -24,6 +24,25 @@ button.mcq-o.wrong,button.mcq-o.wrong:hover{border-color:var(--bad);background:c
 /* quiz:css-end */
 </style>
 <title>Problems and Algorithms Lab</title>
+<!-- katex:start -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>.katex{font-size:1.06em} .tx{margin:.35rem 0;line-height:1.4} .katex-display{margin:.4rem 0;overflow-x:auto;overflow-y:hidden;padding:.15rem 0}</style>
+<script>
+/* KaTeX: \( … \) and \[ … \] in the page are typeset on load; scripts build formulas with tex() and texLine().
+   Where the KaTeX stylesheet cannot load (the artifact viewer blocks it), KaTeX falls back to MathML. */
+const TEX_HTML = (() => { const s = document.createElement("span"); s.className = "katex"; s.innerHTML = '<span class="katex-mathml">x</span>'; document.documentElement.appendChild(s); const ok = getComputedStyle(s.firstChild).position === "absolute"; s.remove(); return ok; })();
+const TEX_OPT = { throwOnError: false, output: TEX_HTML ? "htmlAndMathml" : "mathml" };
+const tex = (s, display) => window.katex ? katex.renderToString(s, Object.assign({ displayMode: !!display }, TEX_OPT)) : s;
+const texLine = s => `<div class="tx">${tex("\\displaystyle " + s)}</div>`;
+function renderTex(el) {
+  if (window.renderMathInElement) renderMathInElement(el, Object.assign({ delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "canvas", "svg"] }, TEX_OPT));
+}
+document.addEventListener("DOMContentLoaded", () => renderTex(document.body));
+</script>
+<!-- katex:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -356,7 +375,7 @@ tr.bad td{color:var(--bad)}
     <h3 id="combinatorics">Counting search spaces (Section 2.1.1)</h3>
     <div class="two">
       <div class="prose">
-        <p><b>Combinatorial</b> solutions are sets, combinations or permutations. Use the counters to see how fast combinations, TSP tours (n!) and clustering partitions (equation 2.1) grow.</p>
+        <p><b>Combinatorial</b> solutions are sets, combinations or permutations. Use the counters to see how fast combinations, TSP tours (\(n!\)) and clustering partitions (equation 2.1) grow.</p>
         <p class="more">Section 2.1.1 of the book works through these counts, compares exact and approximate TSP algorithms, and explains P, NP and NP-hard problems.</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Count it</h4></div>
@@ -377,8 +396,8 @@ tr.bad td{color:var(--bad)}
     <h3 id="nqueen">Constraint satisfaction: the n-queen problem (Listings 2.2 and 2.3)</h3>
     <div class="two">
       <div class="prose">
-        <p>A constraint-satisfaction problem has no objective, only constraints: place n queens so no two share a row, column or diagonal. Click a square to move that column’s queen there, or let <b>min-conflicts</b> move an attacked queen to its least-attacked row.</p>
-        <p class="more">Section 2.1.2 of the book repairs a 4-queen board by hand (Figure 2.5), shows why Listing 2.2 cycles for n = 6, and solves it with CP-SAT (Listing 2.3).</p>
+        <p>A constraint-satisfaction problem has no objective, only constraints: place \(n\) queens so no two share a row, column or diagonal. Click a square to move that column’s queen there, or let <b>min-conflicts</b> move an attacked queen to its least-attacked row.</p>
+        <p class="more">Section 2.1.2 of the book repairs a 4-queen board by hand (Figure 2.5), shows why Listing 2.2 cycles for \(n = 6\), and solves it with CP-SAT (Listing 2.3).</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Place the queens</h4></div>
         <div class="stage"><div id="nqCtl"></div><div class="board" id="nqBoard"></div><div class="btns"><button id="nqMc" class="primary small">Min-conflicts move</button><button id="nqSolve" class="small">Solve</button><button id="nqBook" class="small">Listing 2.2 step</button><button id="nqRand" class="small">Random</button></div><div class="stats" id="nqStats"></div><p class="cap" id="nqNote"></p></div></div>
@@ -387,7 +406,7 @@ tr.bad td{color:var(--bad)}
     <h3 id="lagrange">Constraints and Lagrange multipliers (Listings 2.4 and 2.5)</h3>
     <div class="two">
       <div class="prose">
-        <p>Splitting tickets between x in-person and y online sales under a package limit <b>x + y = 10,000</b> is an equality-constrained problem. Move along the constraint line and watch the profit; the <b>Lagrangian</b> finds the peak analytically.</p>
+        <p>Splitting tickets between \(x\) in-person and \(y\) online sales under a package limit <b>\(x + y = 10{,}000\)</b> is an equality-constrained problem. Move along the constraint line and watch the profit; the <b>Lagrangian</b> finds the peak analytically.</p>
         <p class="more">Section 2.1.3 of the book derives the profit model (equation 2.2) and solves the Lagrangian conditions with SymPy in Listing 2.5 (Figure 2.8).</p>
       </div>
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Split 10,000 tickets</h4></div>
@@ -489,8 +508,8 @@ tr.bad td{color:var(--bad)}
     <div class="colab-grid">
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Ch2_Lab_Companion.ipynb"><em>All examples</em><b>Problems and Algorithms Lab companion notebook</b><span>The from-scratch code below, ready to run</span></a>
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.1_ObjFcn.ipynb"><em>Chapter 2</em><b>Listing 2.1</b><span>Unimodal, multimodal and deceptive functions</span></a>
-      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.2_NQueen.ipynb"><em>Chapter 2</em><b>Listing 2.2</b><span>n-queen by sliding placement</span></a>
-      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.3_NQueen_OR.ipynb"><em>Chapter 2</em><b>Listing 2.3</b><span>n-queen with OR-Tools CP-SAT</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.2_NQueen.ipynb"><em>Chapter 2</em><b>Listing 2.2</b><span>\(n\)-queen by sliding placement</span></a>
+      <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.3_NQueen_OR.ipynb"><em>Chapter 2</em><b>Listing 2.3</b><span>\(n\)-queen with OR-Tools CP-SAT</span></a>
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.4_TicketPrice.ipynb"><em>Chapter 2</em><b>Listing 2.4</b><span>Ticket pricing with SciPy</span></a>
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.5_Lagrange.ipynb"><em>Chapter 2</em><b>Listing 2.5</b><span>Lagrange multipliers with SymPy</span></a>
       <a class="colab" target="_blank" rel="noopener" href="https://colab.research.google.com/github/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%202/Listing%202.6_AnimalFeedMix.ipynb"><em>Chapter 2</em><b>Listing 2.6</b><span>Animal feed mix with PuLP</span></a>
@@ -924,7 +943,7 @@ const newSeed = () => Math.floor(Math.random() * 1e9);
 const gauss = rnd => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
 const VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
 const ramp = t => { t = Math.max(0, Math.min(1, t)) * (VIR.length - 1); const i = Math.min(VIR.length - 2, Math.floor(t)), u = t - i; return VIR[i].map((v, k) => Math.round(v + (VIR[i + 1][k] - v) * u)); };
-const big = b => { const s = b.toString(); return s.length <= 15 ? Number(b).toLocaleString("en-US") : `${s[0]}.${s.slice(1, 4)} × 10<sup>${s.length - 1}</sup>`; };
+const big = b => { const s = b.toString(); return s.length <= 15 ? Number(b).toLocaleString("en-US") : tex(String.raw`${s[0]}.${s.slice(1, 4)} \times 10^{${s.length - 1}}`); };
 const factB = n => { let r = 1n; for (let i = 2n; i <= BigInt(n); i++) r *= i; return r; };
 const combB = (n, k) => { if (k < 0 || k > n) return 0n; let r = 1n; for (let i = 0; i < k; i++) r = r * BigInt(n - i) / BigInt(i + 1); return r; };
 
@@ -962,25 +981,25 @@ function drawBoardCanvas(cv, q, cap) {
 (function classifier() {
   const K = ["Decision variables", "Variable type", "Objectives", "Landscape", "Constraints", "Linearity", "Time and quality"];
   const EX = {
-    ticket: ["Ticket pricing (Section 1.3.1)", ["Univariate: price x", "Continuous", "Mono-objective: profit", "Unimodal (concave)", "Boundary only: 0 ≤ x ≤ 250", "Nonlinear (quadratic: QP)", "Not time-critical"], "Solved exactly by setting the derivative to zero, or with SciPy (Listing 2.4)."],
-    online: ["Ticket pricing with online sales (Listing 2.5)", ["Bivariate: x in person, y online", "Continuous (treated as such)", "Mono-objective: profit", "Unimodal along the constraint", "Equality: x + y = 10,000", "Nonlinear objective", "Not time-critical"], "The equality constraint is handled with a Lagrange multiplier."],
+    ticket: ["Ticket pricing (Section 1.3.1)", [`Univariate: price ${tex("x")}`, "Continuous", "Mono-objective: profit", "Unimodal (concave)", `Boundary only: ${tex(String.raw`0 \le x \le 250`)}`, "Nonlinear (quadratic: QP)", "Not time-critical"], "Solved exactly by setting the derivative to zero, or with SciPy (Listing 2.4)."],
+    online: ["Ticket pricing with online sales (Listing 2.5)", [`Bivariate: ${tex("x")} in person, ${tex("y")} online`, "Continuous (treated as such)", "Mono-objective: profit", "Unimodal along the constraint", `Equality: ${tex(String.raw`x + y = 10{,}000`)}`, "Nonlinear objective", "Not time-critical"], "The equality constraint is handled with a Lagrange multiplier."],
     fuel: ["Vehicle fuel economy (Section 2.1.1)", ["Univariate (speed), bivariate (+ acceleration) or multivariate (+ tire pressure)", "Continuous", "Mono-objective: distance per unit of fuel", "Not stated", "Boundary", "Nonlinear", "Depends on use"], "The number of decision variables alone changes the class."],
     ev: ["Electric vehicle design (Figure 1.6)", ["Multivariate: wheel size, motor power, battery", "Mixed", "Multi-objective: acceleration, EPA range", "Conflicting objectives", "Design bounds", "Nonlinear", "Design: high quality, long search"], "Handled by weighting the objectives or by finding the Pareto front (Chapter 8)."],
-    tsp: ["Traveling salesman, 13 GTA cities (Figure 2.2)", ["Multivariate: the visiting order", "Discrete, combinatorial (permutation)", "Mono-objective: tour length or time", "Multimodal", "Hard: visit every city once, return home", "NP-hard", "Planning"], "13! = 6,227,020,800 tours for the asymmetric version."],
+    tsp: ["Traveling salesman, 13 GTA cities (Figure 2.2)", ["Multivariate: the visiting order", "Discrete, combinatorial (permutation)", "Mono-objective: tour length or time", "Multimodal", "Hard: visit every city once, return home", "NP-hard", "Planning"], `${tex(String.raw`13! = 6{,}227{,}020{,}800`)} tours for the asymmetric version.`],
     queens: ["n-queen (Figure 2.5)", ["Multivariate: one row per column", "Discrete", "None: constraint-satisfaction problem", "Not applicable", "Hard: no shared row, column or diagonal", "Not applicable", "Toy problem"], "Any configuration with zero conflicts is a solution; none is better than another."],
     feed: ["Animal feed mix (Table 2.1)", ["Multivariate: 3 proportions", "Continuous", "Mono-objective: cost per kg", "Unimodal (linear)", "Equality (sum = 1) and inequalities (nutrients)", "Linear: LP", "Design or planning"], "Solved exactly with PuLP and CBC (Listing 2.6)."],
-    plant: ["Plant layout (Figure 2.9)", ["Multivariate: a location per department", "Discrete assignment", "Mono-objective: material handling cost", "Multimodal", "Hard: one department per location", "Quadratic: QAP", "Design"], "TMHC = trace(W X D Xᵀ) in matrix form."],
-    wheel: ["MineProbe wheel design (Figure 2.10)", ["Multivariate: diameter, width, loading", "Continuous", "Multi-objective: sinkage, resistance, torque, power, slope", "Not stated", "Boundary: [4, 8.2], [3, 5], [22, 24]", "Nonlinear", "Design"], "Sinkage depends nonlinearly on the soil and wheel parameters (equation 2.4)."],
+    plant: ["Plant layout (Figure 2.9)", ["Multivariate: a location per department", "Discrete assignment", "Mono-objective: material handling cost", "Multimodal", "Hard: one department per location", "Quadratic: QAP", "Design"], `${tex(String.raw`\mathrm{TMHC} = \operatorname{trace}(\mathbf{W}\mathbf{X}\mathbf{D}\mathbf{X}^{\mathsf{T}})`)} in matrix form.`],
+    wheel: ["MineProbe wheel design (Figure 2.10)", ["Multivariate: diameter, width, loading", "Continuous", "Multi-objective: sinkage, resistance, torque, power, slope", "Not stated", `Boundary: ${tex(String.raw`[4, 8.2],\ [3, 5],\ [22, 24]`)}`, "Nonlinear", "Design"], "Sinkage depends nonlinearly on the soil and wheel parameters (equation 2.4)."],
     catenary: ["Finite catenary (Figure 2.11)", ["Multivariate: joint coordinates", "Continuous", "Mono-objective: potential energy", "Not stated", "Equality: fixed beam lengths", "Linear objective, nonlinear constraints: NLP", "Design"], "One nonlinear constraint is enough to make the problem nonlinear."],
     district: ["Political districting (Figure 2.13)", ["Multivariate: a district per basic unit", "Discrete", "Multi-objective, combined by weights (equation 2.7)", "Multimodal", "Contiguity, compactness, near-equal population", "Nonlinear", "Design: run offline, rarely"], "Try the districting lab below."],
     ride: ["Ride-sharing (Figure 2.14)", ["Multivariate: rider order per driver", "Discrete (mixed in practice)", "Multi-objective: distance, wait, earnings, matches…", "Multimodal", "Hard (serve each rider once, time windows) and soft (ratings)", "Nonlinear", "Planning: seconds to minutes"], "Slow answers mean lost trips."],
     mav: ["MAV communication relay (Figure 2.15)", ["Multivariate: positions of the swarm", "Continuous", "Multi-objective: coverage, visibility, short relay path", "Dynamic", "Range 100 m, no hovering, battery", "Nonlinear", "Control: milliseconds, repeated"], "Speed beats accuracy: errors are corrected in the next cycle."],
-    elevator: ["Elevator dispatching (Figure 1.9)", ["Multivariate: car assignments", "Discrete", "Multi-objective: waiting time, system time, fairness", "Dynamic, partially observable", "Capacity, direction", "Nonlinear", "Control"], "About 2.88 × 10²¹ states: an ill-structured problem."],
+    elevator: ["Elevator dispatching (Figure 1.9)", ["Multivariate: car assignments", "Discrete", "Multi-objective: waiting time, system time, fairness", "Dynamic, partially observable", "Capacity, direction", "Nonlinear", "Control"], `About ${tex(String.raw`2.88 \times 10^{21}`)} states: an ill-structured problem.`],
     cargo: ["Cargo bike loading (Figure 1.7)", ["10 binary variables", "Discrete (0/1)", "Multi-objective: maximize profit, minimize weight", "Multimodal", "Soft: penalty above 100 kg", "Linear objectives", "Planning"], "Revisited in Section 2.3 with three search strategies."],
-    carts: ["Smart cart clustering (Figure 2.3)", ["Multivariate: a group per cart", "Discrete partition", "Mono-objective: distance to assembly points", "Multimodal", "k non-empty groups", "Nonlinear", "Planning"], "S(50, 4) ≈ 5.3 × 10²⁸ partitions."]
+    carts: ["Smart cart clustering (Figure 2.3)", ["Multivariate: a group per cart", "Discrete partition", "Mono-objective: distance to assembly points", "Multimodal", `${tex("k")} non-empty groups`, "Nonlinear", "Planning"], `${tex(String.raw`S(50, 4) \approx 5.3 \times 10^{28}`)} partitions.`]
   };
   const ctl = makeControls($("#clCtl"), [{ key: "ex", id: "clEx", type: "select", label: "Example problem", value: "tsp", options: Object.entries(EX).map(([k, v]) => [k, v[0]]) }], () => show());
-  function show() { const [, t, note] = EX[ctl.ex]; $("#clTags").innerHTML = K.map((k, i) => `<div><small>${k}</small><b>${t[i]}</b></div>`).join(""); $("#clNote").textContent = note; }
+  function show() { const [, t, note] = EX[ctl.ex]; $("#clTags").innerHTML = K.map((k, i) => `<div><small>${k}</small><b>${t[i]}</b></div>`).join(""); $("#clNote").innerHTML = note; }
   show();
 })();
 
@@ -992,10 +1011,10 @@ function drawBoardCanvas(cv, q, cap) {
   const stirling = (n, k) => { let s = 0n; for (let i = 0; i <= k; i++) s += (i % 2 ? -1n : 1n) * combB(k, i) * BigInt(k - i) ** BigInt(n); return s / factB(k); };
   function upd() {
     const n = c1.n, r = c1.r;
-    $("#cbOut").innerHTML = `combinations with repetition (n + r − 1)! / r!(n − 1)! = <b>${big(combB(n + r - 1, r))}</b><br>combinations without repetition n! / r!(n − r)! = <b>${big(combB(n, r))}</b><br>permutations with repetition nʳ = <b>${big(BigInt(n) ** BigInt(r))}</b><br>permutations without repetition n! / (n − r)! = <b>${r > n ? 0 : big(factB(n) / factB(n - r))}</b>`;
+    $("#cbOut").innerHTML = `combinations with repetition ${tex(String.raw`\frac{(n + r - 1)!}{r!\,(n - 1)!}`)} = <b>${big(combB(n + r - 1, r))}</b><br>combinations without repetition ${tex(String.raw`\frac{n!}{r!\,(n - r)!}`)} = <b>${big(combB(n, r))}</b><br>permutations with repetition ${tex("n^r")} = <b>${big(BigInt(n) ** BigInt(r))}</b><br>permutations without repetition ${tex(String.raw`\frac{n!}{(n - r)!}`)} = <b>${r > n ? 0 : big(factB(n) / factB(n - r))}</b>`;
     const t = c2.n;
-    $("#cbTsp").innerHTML = `brute force, asymmetric: ${t}! = <b>${big(factB(t))}</b> tours<br>symmetric: (${t} − 1)! / 2 = <b>${big(factB(t - 1) / 2n)}</b><br>Bellman-Held-Karp: 2ⁿn² ≈ <b>${big(2n ** BigInt(t) * BigInt(t * t))}</b> steps`;
-    $("#cbStir").innerHTML = `S(${c3.n}, ${c3.k}) = <b>${big(stirling(c3.n, c3.k))}</b> ways to split ${c3.n} carts into ${c3.k} non-empty groups`;
+    $("#cbTsp").innerHTML = `brute force, asymmetric: ${tex(String.raw`${t}!`)} = <b>${big(factB(t))}</b> tours<br>symmetric: ${tex(String.raw`(${t} - 1)!/2`)} = <b>${big(factB(t - 1) / 2n)}</b><br>Bellman-Held-Karp: ${tex(String.raw`2^n n^2 \approx`)} <b>${big(2n ** BigInt(t) * BigInt(t * t))}</b> steps`;
+    $("#cbStir").innerHTML = `${tex(String.raw`S(${c3.n}, ${c3.k})`)} = <b>${big(stirling(c3.n, c3.k))}</b> ways to split ${c3.n} carts into ${c3.k} non-empty groups`;
   }
   upd();
 })();
@@ -1038,8 +1057,8 @@ function drawBoardCanvas(cv, q, cap) {
     if (start) { const [sx, sy] = P(...start); ctx.fillStyle = "#fff"; ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(sx, sy, 6, 0, 7); ctx.fill(); ctx.stroke(); }
     ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.font = `11px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText(`x, y ∈ [${lo}, ${hi}]`, ox + 6, oy + s - 5);
     const last = runs[runs.length - 1], ends = runs.map(r => r.path[r.path.length - 1]), same = runs.length > 1 && ends.every(e => Math.hypot(e[0] - ends[0][0], e[1] - ends[0][1]) < 1e-9);
-    stats($("#lsStats"), [["Runs shown", runs.length], ["Last end point", last ? `(${last.path[last.path.length - 1].map(v => v.toFixed(2)).join(", ")})` : "click the map"], ["Last f", last ? last.best.toFixed(4) : "–"], ["Global minimum", `f(${gmin.map(v => v.toFixed(2)).join(", ")}) = ${f(...gmin).toFixed(3)}`]]);
-    $("#lsNote").textContent = !start ? "Click anywhere on the map to start a search there (white dot). The green ring marks the global minimum." : (runs.length > 1 ? (same ? "All runs from this start ended at the same point: the search is deterministic. " : "The runs ended at different points: randomness changes the path. ") : "") + (ctl.fn.startsWith("dec") ? "On the deceptive function the global minimum (2, 2) sits in a narrow valley, while the wide basin pulls local searches toward (7, 7)." : ctl.fn === "multi" ? "sin(x) cos(y) has several valleys; a local search finds the one nearest its start." : "With a single valley, every local search finds the global minimum.");
+    stats($("#lsStats"), [["Runs shown", runs.length], ["Last end point", last ? `(${last.path[last.path.length - 1].map(v => v.toFixed(2)).join(", ")})` : "click the map"], ["Last f", last ? last.best.toFixed(4) : "–"], ["Global minimum", tex(String.raw`f(${gmin.map(v => v.toFixed(2)).join(", ")}) = ${f(...gmin).toFixed(3)}`)]]);
+    $("#lsNote").innerHTML = !start ? "Click anywhere on the map to start a search there (white dot). The green ring marks the global minimum." : (runs.length > 1 ? (same ? "All runs from this start ended at the same point: the search is deterministic. " : "The runs ended at different points: randomness changes the path. ") : "") + (ctl.fn.startsWith("dec") ? "On the deceptive function the global minimum (2, 2) sits in a narrow valley, while the wide basin pulls local searches toward (7, 7)." : ctl.fn === "multi" ? tex(String.raw`\sin(x)\cos(y)`) + " has several valleys; a local search finds the one nearest its start." : "With a single valley, every local search finds the global minimum.");
   }
   $("#lsCv").addEventListener("click", e => { const r = $("#lsCv").getBoundingClientRect(), s = Math.min(r.width, r.height), [, , lo, hi] = F(), x = lo + (e.clientX - r.left - (r.width - s) / 2) / s * (hi - lo), y = hi - (e.clientY - r.top - (r.height - s) / 2) / s * (hi - lo); if (x < lo || x > hi || y < lo || y > hi) return; start = [x, y]; runs = []; run(); draw(); });
   $("#lsRun").addEventListener("click", () => { if (!start) { const [, , lo, hi] = F(); start = [lo + .85 * (hi - lo), lo + .85 * (hi - lo)]; } run(); draw(); });
@@ -1099,7 +1118,8 @@ function drawBoardCanvas(cv, q, cap) {
     [[xs, c.accent, 8], [ctl.x, c.gold, 6]].forEach(([x, col, r]) => { ctx.fillStyle = col; ctx.strokeStyle = c.bg; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(x), Y(g(x) / 1e6), r, 0, 7); ctx.fill(); ctx.stroke(); });
     const x = ctl.x, y = 1e4 - x, fx = 155 + .0015 * Math.sqrt(x) * y, fy = .001 * x ** 1.5 + 70;
     stats($("#lgStats"), [["In person x", x.toLocaleString("en-US")], ["Online y", y.toLocaleString("en-US")], ["Profit", "$" + Math.round(f(x, y)).toLocaleString("en-US")], ["∂f/∂x", fx.toFixed(1)], ["∂f/∂y", fy.toFixed(1)]]);
-    $("#lgNote").innerHTML = `Optimum (blue): x = ${Math.round(xs).toLocaleString("en-US")}, y = ${Math.round(1e4 - xs).toLocaleString("en-US")}, profit $${Math.round(g(xs)).toLocaleString("en-US")}. There ∂f/∂x = ∂f/∂y = λ ≈ ${(.001 * xs ** 1.5 + 70).toFixed(1)}: one more ticket earns the same whichever way it is sold, so shifting sales cannot help. ${Math.abs(fx - fy) < 2 ? "You are at the optimum." : fx > fy ? "Here an in-person ticket earns more: move right." : "Here an online ticket earns more: move left."}`;
+    const tc = v => Math.round(v).toLocaleString("en-US").replace(/,/g, "{,}"), xo = tc(xs), yo = tc(1e4 - xs);
+    $("#lgNote").innerHTML = `Optimum (blue): ${tex(String.raw`x = ${xo},\ y = ${yo}`)}, profit $${Math.round(g(xs)).toLocaleString("en-US")}. There ${tex(String.raw`\partial f/\partial x = \partial f/\partial y = \lambda \approx ${(.001 * xs ** 1.5 + 70).toFixed(1)}`)}: one more ticket earns the same whichever way it is sold, so shifting sales cannot help. ${Math.abs(fx - fy) < 2 ? "You are at the optimum." : fx > fy ? "Here an in-person ticket earns more: move right." : "Here an online ticket earns more: move left."}`;
   }
   ro.observe($("#lgCv")); onRedraw(draw); draw();
 })();
@@ -1130,7 +1150,7 @@ function drawBoardCanvas(cv, q, cap) {
     ctx.restore();
     ctx.font = `600 11px ${MONO}`; [["protein ≥ 22%", .45, (.22 - .09 * .45) / .5, c.s2], ["fiber ≤ 5%", .32, (.05 - .02 * .32) / .08, c.bad], ["calcium limits", .78, (.372 - .379 * .78) / .378, c.s3]].forEach(([t, x, y, col]) => { ctx.fillStyle = col; ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText(t, X(x) + 4, Y(y) - 4); });
     [[OPT, c.good, 8], [pick, c.gold, 6]].forEach(([p, col, r]) => { ctx.fillStyle = col; ctx.strokeStyle = c.bg; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), r, 0, 7); ctx.fill(); ctx.stroke(); });
-    const [pc, ps] = pick, nu = nutr(pc, ps), rows = [["Corn", (pc * 100).toFixed(1) + "%", "", true], ["Limestone", (nu.l * 100).toFixed(1) + "%", "≥ 0", nu.l >= -1e-9], ["Soybean meal", (ps * 100).toFixed(1) + "%", "", true], ["Calcium", (nu.ca * 100).toFixed(2) + "%", "0.8% to 1.2%", nu.ca >= .008 - 1e-9 && nu.ca <= .012 + 1e-9], ["Protein", (nu.pr * 100).toFixed(1) + "%", "≥ 22%", nu.pr >= .22 - 1e-9], ["Fiber", (nu.fi * 100).toFixed(2) + "%", "≤ 5%", nu.fi <= .05 + 1e-9]];
+    const [pc, ps] = pick, nu = nutr(pc, ps), rows = [["Corn", (pc * 100).toFixed(1) + "%", "", true], ["Limestone", (nu.l * 100).toFixed(1) + "%", tex(String.raw`\ge 0`), nu.l >= -1e-9], ["Soybean meal", (ps * 100).toFixed(1) + "%", "", true], ["Calcium", (nu.ca * 100).toFixed(2) + "%", "0.8% to 1.2%", nu.ca >= .008 - 1e-9 && nu.ca <= .012 + 1e-9], ["Protein", (nu.pr * 100).toFixed(1) + "%", tex(String.raw`\ge 22\%`), nu.pr >= .22 - 1e-9], ["Fiber", (nu.fi * 100).toFixed(2) + "%", tex(String.raw`\le 5\%`), nu.fi <= .05 + 1e-9]];
     const ok = rows.every(r => r[3]);
     $("#lpTbl").innerHTML = `<thead><tr><th>Your mix</th><th class="n">Value</th><th>Limit</th><th>OK</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r[3] ? "" : "bad"}"><td>${r[0]}</td><td class="n">${r[1]}</td><td>${r[2]}</td><td>${r[3] ? "yes" : "no"}</td></tr>`).join("") + `<tr class="best"><td>Cost per kg</td><td class="n">$${(cost(pc, ps) / 100).toFixed(4)}</td><td colspan="2">${ok ? "feasible" : "infeasible"}</td></tr></tbody>`;
     $("#lpNote").textContent = `Optimum: corn ${(OPT[0] * 100).toFixed(2)}%, limestone ${((1 - OPT[0] - OPT[1]) * 100).toFixed(2)}%, soybean meal ${(OPT[1] * 100).toFixed(2)}%, $${(cost(...OPT) / 100).toFixed(4)} per kg. The two calcium limits are nearly parallel and close together, so they squeeze the feasible region into a thin band: limestone must stay near 2 to 3%. Dashed gray lines are equal-cost lines; cost falls toward the lower left.`;
@@ -1230,7 +1250,7 @@ function drawBoardCanvas(cv, q, cap) {
       ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.strokeRect(ox, oy, cell * W, cell * Hh);
     });
   }
-  $("#ctNote").textContent = "Each object goes into the first free spot, scanning each row from left to right and the rows from the bottom up, and is rotated by 90° as a last resort (as in the book, the container is flipped so the first row is at the bottom). Sorting by area puts the 5×1 object last, when no 5-long gap is left; sorting by width first places everything (Figures 2.19 and 2.20).";
+  $("#ctNote").innerHTML = "Each object goes into the first free spot, scanning each row from left to right and the rows from the bottom up, and is rotated by 90° as a last resort (as in the book, the container is flipped so the first row is at the bottom). Sorting by area puts the " + tex(String.raw`5 \times 1`) + " object last, when no 5-long gap is left; sorting by width first places everything (Figures 2.19 and 2.20).";
   ro.observe($("#ctCv")); onRedraw(draw); draw();
 })();
 
@@ -1248,7 +1268,7 @@ function drawBoardCanvas(cv, q, cap) {
     const t = tot(x);
     stats($("#sgStats"), [["Weight", t.w.toFixed(2) + " / 100 kg"], ["Profit", "$" + t.p.toFixed(2)], ["Feasible", t.w <= 100 + 1e-9 ? "yes" : "no"]]);
     $("#sgTbl").innerHTML = log.length ? `<thead><tr>${log[0].map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>` + log.slice(1).map(r => `<tr class="${r[2] === "No" ? "dim" : ""}">${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("") + "</tbody>" : "";
-    $("#sgNote").textContent = note;
+    $("#sgNote").innerHTML = note;
   }
   $("#sgCons").addEventListener("click", () => {
     x = Array(10).fill(0); let w = 0, p = 0; log = [["Step", "Item", "Add?", "Total weight (kg)", "Total profit ($)"]];
@@ -1256,7 +1276,7 @@ function drawBoardCanvas(cv, q, cap) {
     note = "Table 2.3: add items in order of efficiency while the load stays within 100 kg. In the book, the last row reads 113.67 for item 5, which adds item 5 to the rejected item 3; after rejecting item 3 the load would be 105.17 kg."; draw();
   });
   $("#sgMod").addEventListener("click", () => { const before = x.slice(); x[8] = 0; x[4] = 1; log = [["", "Solution"], ["before", fmt(before)], ["after", fmt(x)]]; note = "Repeated modification: take item 9 out and put item 5 in. Starting from the greedy solution, this gives $102.22 at 96.4 kg, which is in fact the best possible load."; draw(); });
-  $("#sgRec").addEventListener("click", () => { const k = ctl.k; x = S1.slice(0, k).concat(S2.slice(k)); log = [["", "Solution"], ["S1", fmt(S1)], ["S2", fmt(S2)], [`S1[:${k}] + S2[${k}:]`, fmt(x)]]; note = `Recombination: the first ${k} genes of S1 and the last ${10 - k} of S2.` + (k === 2 ? " With k = 2 this is S3 of Figure 2.21: 95.57 kg and $101.42. Note that S1 as printed weighs 90.4 kg with a profit of $90.32, not 75.8 kg and $75.78 as the book states." : ""); draw(); });
+  $("#sgRec").addEventListener("click", () => { const k = ctl.k; x = S1.slice(0, k).concat(S2.slice(k)); log = [["", "Solution"], ["S1", fmt(S1)], ["S2", fmt(S2)], [`S1[:${k}] + S2[${k}:]`, fmt(x)]]; note = `Recombination: the first ${k} genes of S1 and the last ${10 - k} of S2.` + (k === 2 ? ` With ${tex("k = 2")} this is S3 of Figure 2.21: 95.57 kg and $101.42. Note that S1 as printed weighs 90.4 kg with a profit of $90.32, not 75.8 kg and $75.78 as the book states.` : ""); draw(); });
   $("#sgBest").addEventListener("click", () => { let b = null, bp = -1; for (let m = 0; m < 1024; m++) { const s = [...Array(10)].map((_, i) => m >> i & 1), t = tot(s); if (t.w <= 100 && t.p > bp) { bp = t.p; b = s; } } x = b; log = [["", "Solution"], ["optimum", fmt(x)]]; note = "Exhaustive search over all 1,024 subsets."; draw(); });
   draw();
 })();
@@ -1309,7 +1329,7 @@ document.addEventListener("click", e => {
   const q = o.closest(".mcq"), opts = [...q.querySelectorAll(".mcq-o")], fb = q.querySelector(".mcq-fb");
   const ok = opts.indexOf(o) === +q.dataset.a;
   o.classList.add(ok ? "right" : "wrong"); o.disabled = true;
-  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; }
+  if (ok) { opts.forEach(b => b.disabled = true); fb.innerHTML = '<span class="ok">Correct.</span> ' + q.querySelector("template").innerHTML; renderTex(fb); }
   else fb.innerHTML = '<span class="no">Not quite.</span> Try another answer.';
 });
 /* quiz:js-end */</script>
