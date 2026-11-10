@@ -273,7 +273,7 @@ tr.bad td{color:var(--bad)}
 .tags b{font-size:.88rem;font-weight:600}
 .bigcount{font-family:var(--f-mono);font-size:.95rem;line-height:1.7;word-break:break-all;background:var(--sunk);border-radius:8px;padding:.6rem .8rem}
 .board{display:grid;gap:0;margin:0 auto;border:2px solid var(--ink);width:min(100%,360px);aspect-ratio:1/1}
-.board span{display:grid;place-items:center;cursor:pointer;font-size:1.5rem;user-select:none;position:relative}
+.board span{display:grid;place-items:center;min-width:0;min-height:0;overflow:hidden;line-height:1;cursor:pointer;font-size:1.5rem;user-select:none;position:relative}
 .board span.l{background:var(--surface)} .board span.d{background:var(--sunk)}
 .board span.hit{box-shadow:inset 0 0 0 3px var(--bad)}
 .board span.q{color:var(--ink)} .board span.q.bad{color:var(--bad)}
@@ -1071,7 +1071,7 @@ function drawBoardCanvas(cv, q, cap) {
   }
   function draw() {
     const n = q.length, el = $("#nqBoard"), pairs = conflictPairs(q), bad = new Set(pairs.flat());
-    el.style.gridTemplateColumns = `repeat(${n},1fr)`;
+    el.style.gridTemplateColumns = el.style.gridTemplateRows = `repeat(${n},minmax(0,1fr))`;   // equal squares, whatever they hold
     el.innerHTML = Array.from({ length: n * n }, (_, k) => { const r = Math.floor(k / n), c = k % n, has = q[c] === r; return `<span class="${(r + c) % 2 ? "d" : "l"}${has ? " q" + (bad.has(c) ? " bad" : "") : ""}" data-r="${r}" data-c="${c}" style="font-size:${Math.round(150 / n) / 10}rem">${has ? "♛" : ""}</span>`; }).join("");
     el.querySelectorAll("span").forEach(sp => sp.addEventListener("click", () => { clearInterval(timer); fill(); q[+sp.dataset.c] = +sp.dataset.r; moves++; note = ""; draw(); }));
     stats($("#nqStats"), [["Attacking pairs", pairs.length], ["Pairs", pairs.length ? pairs.slice(0, 6).map(([i, j]) => `Q${i + 1}-Q${j + 1}`).join(", ") + (pairs.length > 6 ? " …" : "") : q.includes(null) ? "partial board" : "none: solved"], ["Moves", moves], [`Solutions for n = ${n}`, SOL[n]]]);
