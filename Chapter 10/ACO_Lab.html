@@ -297,7 +297,12 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
       <li><a href="#tsp-lab">Colony lab</a></li>
       <li><a href="#tsp-compare">Variant comparison</a></li></ol></li>
     <li><a href="#continuous"><b>6</b>Continuous ACO</a></li>
-    <li><a href="#adaptive"><b>7</b>Adaptive ACO</a></li>
+    <li><a href="#adaptive"><b>7</b>Adaptive ACO</a><ol>
+      <li><a href="#ad-params">Dynamic parameters</a></li>
+      <li><a href="#ad-deposit">Quality-sensitive deposit</a></li>
+      <li><a href="#ad-switch">Best-so-far or iteration-best</a></li>
+      <li><a href="#ad-r0">r₀ in ACS</a></li>
+      <li><a href="#ad-limits">MMAS limits</a></li></ol></li>
     <li><a href="#applications"><b>8</b>Applications</a></li>
     <li><a href="#python"><b>9</b>Python and Colab</a><ol>
       <li><a href="#notebooks">Notebooks</a></li>
@@ -544,8 +549,115 @@ Set parameters, initialize pheromone trails
     <span class="eyebrow">Part 7 · Adaptation</span>
     <h2>Adaptive ACO</h2>
     <div class="prose">
-      <p>Instead of fixing ρ, α, β and r₀, adapt them as the search progresses, for example by lowering evaporation or raising r₀ over time. Pick an <b>Adaptation</b> option in the <a href="#tsp-lab">colony lab</a> to see the effect.</p>
-      <p class="more">Chapter 10 describes more strategies, such as switching which ant deposits or tightening the MMAS limits.</p>
+      <p>Instead of fixing ρ, α, β and r₀, adapt them as the search progresses: explore early, exploit late. The panels below try five ways to do it. The last three run live on the 20-city open route from the <a href="#tsp-lab">colony lab</a>.</p>
+      <p class="more">Chapter 10 describes these adaptation strategies, such as switching which ant deposits or tightening the MMAS limits, and when each one helps.</p>
+    </div>
+
+    <h3 id="ad-params">Dynamic parameter control</h3>
+    <p class="prose">Start with strong evaporation, ρ(t) = ρ<sub>min</sub> + (ρ<sub>max</sub> − ρ<sub>min</sub>) e<sup>−λt</sup>, and let it decay. Raise the heuristic weight, β(t) = β<sub>start</sub> + (β<sub>end</sub> − β<sub>start</sub>) t/T, so ants grow greedier. Drag t to watch one ant switch from the strong trail (exit B) to the shortest edge (exit A).</p>
+    <div class="bench" id="a1Box">
+      <div class="bench-head"><h4>ρ(t) and β(t) schedules</h4><span class="eyebrow">Drag t or press Play</span></div>
+      <div class="bench-body">
+        <div class="side" id="a1Ctl"></div>
+        <div class="stage">
+          <div class="btns"><button id="a1Play" class="primary">Play t from 0 to T</button></div>
+          <canvas id="a1Cv" class="cv-chart" style="height:200px" aria-label="Evaporation rate and heuristic weight over the iterations"></canvas>
+          <div class="stage-grid">
+            <div><canvas id="a1Ex" class="cv-chart" style="height:140px" aria-label="Choice probabilities of one ant at a city with four exits"></canvas>
+            <p class="cap">One ant at a city with four exits: p ∝ τ · (100/d)<sup>β(t)</sup>, with α = 1.</p></div>
+            <div class="stats" id="a1Stats"></div>
+          </div>
+          <div class="btns"><button id="a1Cmp">Try it on the 20-city route</button><span class="cap" id="a1Status" style="align-self:center"></span></div>
+          <canvas id="a1CmpCv" class="cv-chart" style="height:200px" hidden aria-label="Mean best route per setting"></canvas>
+          <div class="tbl-wrap" hidden><table id="a1CmpTbl"></table></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 id="ad-deposit">Quality-sensitive deposition</h3>
+    <p class="prose">Make the deposit nonlinear in solution quality, Δτ ∝ 1/cost<sup>k</sup>, and raise k over time. A small k lets every ant leave a similar amount (exploration); a large k gives almost all of it to the best ant (exploitation).</p>
+    <div class="bench" id="a2Box">
+      <div class="bench-head"><h4>Deposit vs. solution cost</h4><span class="eyebrow">Five ants, costs 2 to 6</span></div>
+      <div class="bench-body">
+        <div class="side" id="a2Ctl"></div>
+        <div class="stage">
+          <div class="btns"><button id="a2Play" class="primary">Grow k over a run: 0.5 → 4</button></div>
+          <canvas id="a2Cv" class="cv-chart" style="height:200px" aria-label="Pheromone deposit as a function of solution cost for several exponents k"></canvas>
+          <div class="stage-grid">
+            <div><canvas id="a2Bars" class="cv-chart" style="height:150px" aria-label="Share of the deposit left by each ant"></canvas>
+            <p class="cap">Each ant’s share of the total deposit. Green: the best ant. In the chart above, the x axis is the solution cost.</p></div>
+            <div class="stats" id="a2Stats"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 id="ad-switch">Best-so-far or iteration-best?</h3>
+    <p class="prose">Switch which ant deposits based on how varied the colony’s solutions are. In this example rule, a high coefficient of variation (CV) of the ants’ route lengths means the colony is still spread out, so the iteration-best ant deposits and the search keeps exploring. A low CV means it is converging, so the best-so-far ant deposits to exploit the best route found.</p>
+    <div class="bench" id="a3Box">
+      <div class="bench-head"><h4>Switching the depositing ant</h4><span class="eyebrow">Max-min ant system · 20 ants</span></div>
+      <div class="bench-body">
+        <div class="side" id="a3Ctl"></div>
+        <div class="stage">
+          <div class="btns"><button id="a3Run" class="primary">Run</button><button id="a3Step">Step</button><button id="a3Reset">New colony</button></div>
+          <div class="stage-grid">
+            <div><canvas id="a3Cv" class="cv-chart" style="height:190px" aria-label="Coefficient of variation of the route lengths per iteration"></canvas>
+            <p class="cap">CV of the ants’ route lengths. Ticks along the bottom: who deposited (blue: iteration-best, gold: best-so-far).</p></div>
+            <div><canvas id="a3Ln" class="cv-chart" style="height:190px" aria-label="Best route length per iteration"></canvas>
+            <p class="cap">Best route so far.</p></div>
+          </div>
+          <div class="stats" id="a3Stats"></div>
+          <div class="btns"><button id="a3Cmp">Compare the three rules</button><span class="cap" id="a3Status" style="align-self:center"></span></div>
+          <canvas id="a3CmpCv" class="cv-chart" style="height:200px" hidden aria-label="Mean best route per rule"></canvas>
+          <div class="tbl-wrap" hidden><table id="a3CmpTbl"></table></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 id="ad-r0">Time-varying and performance-triggered r₀ in ACS</h3>
+    <p class="prose">In ACS each ant draws a random r: if r ≤ r₀ it exploits the best edge, otherwise it explores. Raise r₀ over time, r₀(t) = r<sub>0,start</sub> + (r<sub>0,end</sub> − r<sub>0,start</sub>) t/T, or steer it by performance: r₀ + δ after an improvement, r₀ − δ after stagnation (here, several iterations in a row without one).</p>
+    <div class="bench" id="a4Box">
+      <div class="bench-head"><h4>Exploration vs. exploitation with r₀</h4><span class="eyebrow">Ant colony system · 10 ants</span></div>
+      <div class="bench-body">
+        <div class="side" id="a4Ctl"></div>
+        <div class="stage">
+          <div class="btns"><button id="a4Run" class="primary">Run</button><button id="a4Step">Step</button><button id="a4Reset">New colony</button></div>
+          <canvas id="a4G" class="cv-chart" style="height:80px" aria-label="Random draws r against the threshold r0"></canvas>
+          <p class="cap">Ant 1’s random draws r in the latest iteration, against r₀.</p>
+          <div class="stage-grid">
+            <div><canvas id="a4R" class="cv-chart" style="height:170px" aria-label="r0 per iteration"></canvas>
+            <p class="cap">r₀ per iteration.</p></div>
+            <div><canvas id="a4Ln" class="cv-chart" style="height:170px" aria-label="Best route length per iteration"></canvas>
+            <p class="cap">Best route so far.</p></div>
+          </div>
+          <div class="stats" id="a4Stats"></div>
+          <div class="btns"><button id="a4Cmp">Compare the three r₀ rules</button><span class="cap" id="a4Status" style="align-self:center"></span></div>
+          <canvas id="a4CmpCv" class="cv-chart" style="height:200px" hidden aria-label="Mean best route per r0 rule"></canvas>
+          <div class="tbl-wrap" hidden><table id="a4CmpTbl"></table></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 id="ad-limits">Dynamic pheromone limits in MMAS</h3>
+    <p class="prose">Instead of fixed limits, tighten the upper one as the search converges: τ<sub>max</sub>(t) = (1 − t/T)(τ<sub>max,init</sub> − τ<sub>min</sub>) + τ<sub>min</sub>. Watch the pheromone on the best route get squeezed toward τ<sub>min</sub>. Tightened all the way, the trails stop guiding the ants at the end, so compare it with fixed limits.</p>
+    <div class="bench" id="a5Box">
+      <div class="bench-head"><h4>Tightening τ<sub>max</sub></h4><span class="eyebrow">Max-min ant system · 20 ants</span></div>
+      <div class="bench-body">
+        <div class="side" id="a5Ctl"></div>
+        <div class="stage">
+          <div class="btns"><button id="a5Run" class="primary">Run</button><button id="a5Step">Step</button><button id="a5Reset">New colony</button></div>
+          <canvas id="a5Cv" class="cv-chart" style="height:200px" aria-label="Pheromone limits and pheromone levels per iteration"></canvas>
+          <p class="cap"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--bad)"></i>τ<sub>max</sub>(t) <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--s3)"></i>τ<sub>min</sub> <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--gold)"></i>mean τ on the best route’s edges <i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 .25rem 0 .1rem;background:var(--muted)"></i>mean τ on all other edges. All relative to τ<sub>max,init</sub> = 1 / (ρ · best route).</p>
+          <div class="stage-grid">
+            <div><canvas id="a5Ln" class="cv-chart" style="height:170px" aria-label="Best route length per iteration"></canvas>
+            <p class="cap">Best route so far.</p></div>
+            <div class="stats" id="a5Stats"></div>
+          </div>
+          <div class="btns"><button id="a5Cmp">Compare fixed and tightening limits</button><span class="cap" id="a5Status" style="align-self:center"></span></div>
+          <canvas id="a5CmpCv" class="cv-chart" style="height:200px" hidden aria-label="Mean best route with fixed and tightening limits"></canvas>
+          <div class="tbl-wrap" hidden><table id="a5CmpTbl"></table></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1436,6 +1548,247 @@ function acoStep(S, P) {
   }
   ro.observe($("#ctCv")); onRedraw(render); render();
 })();
+
+/* ---------- adaptive ACO on the open TSP: dynamic parameters, online updates, r₀ in ACS, MMAS limits ---------- */
+function adaNew(o) {
+  const n = NC, tau0 = o.variant === "ACS" ? 1 / (n * 8000) : o.variant === "MMAS" ? 1 / (.1 * 8000) : 1;
+  return { o, rnd: mulberry32(o.seed), tau: Array.from({ length: n }, () => new Float64Array(n).fill(tau0)), tau0, t: 0, best: null, bestL: Infinity, q0: o.q0 != null ? o.q0 : .9, rs: [],
+    hist: [], tr: { rho: [], beta: [], q0: [], cv: [], dep: [], tmax: [], tmin: [], on: [], off: [] } };
+}
+function adaStep(S) {
+  const o = S.o, n = NC, r = S.rnd, tau = S.tau, t = S.t, T = o.T;
+  const rho = o.rho ? o.rho(t) : .1, beta = o.beta ? o.beta(t) : 2;
+  if (o.q0t) S.q0 = o.q0t(t);
+  const q0 = S.q0, paths = [], Ls = []; S.rs = [];
+  for (let a = 0; a < o.ants; a++) {
+    const p = [0], free = new Uint8Array(n).fill(1); free[0] = 0;
+    for (let s = 1; s < n; s++) {
+      const i = p[p.length - 1], cand = [], w = [];
+      for (let j = 0; j < n; j++) if (free[j]) { cand.push(j); w.push(tau[i][j] * Math.pow(1 / DIST[i][j], beta)); }
+      let idx;
+      if (o.variant === "ACS") {
+        const u = r(); if (a === 0) S.rs.push(u);
+        if (u <= q0) { idx = 0; for (let q = 1; q < w.length; q++) if (w[q] > w[idx]) idx = q; }   // r ≤ r₀: exploit the best edge
+        else idx = pick(r, w);                                                                    // r > r₀: explore
+      } else idx = pick(r, w);
+      const j = cand[idx];
+      if (o.variant === "ACS") tau[i][j] = tau[j][i] = .9 * tau[i][j] + .1 * S.tau0;
+      p.push(j); free[j] = 0;
+    }
+    paths.push(p); Ls.push(openLen(p));
+  }
+  let b = 0; for (let k = 1; k < Ls.length; k++) if (Ls[k] < Ls[b]) b = k;
+  const improved = Ls[b] < S.bestL - 1e-9; if (improved) { S.bestL = Ls[b]; S.best = paths[b].slice(); }
+  const mean = Ls.reduce((x, y) => x + y, 0) / Ls.length, cv = Math.sqrt(Ls.reduce((x, y) => x + (y - mean) ** 2, 0) / Ls.length) / mean;
+  const dep = (p, amt) => { for (let k = 1; k < p.length; k++) { tau[p[k - 1]][p[k]] += amt; tau[p[k]][p[k - 1]] += amt; } };
+  let bsf = 0, ti = 0, tmax = 0, tmin = 0;
+  if (o.variant === "AS") {
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) tau[i][j] *= 1 - rho;
+    paths.forEach((p, a) => dep(p, 100 / Ls[a]));
+  } else if (o.variant === "ACS") {
+    for (let k = 1; k < S.best.length; k++) { const i = S.best[k - 1], j = S.best[k]; tau[i][j] = tau[j][i] = (1 - rho) * tau[i][j] + rho / S.bestL; }
+    if (o.delta) {                                                                                 // performance-triggered r₀
+      S.stag = improved ? 0 : (S.stag || 0) + 1;
+      if (improved) S.q0 = Math.min(o.q0hi, S.q0 + o.delta);
+      else if (S.stag >= o.patience) { S.q0 = Math.max(o.q0lo, S.q0 - o.delta); S.stag = 0; }    // stagnation: no improvement for `patience` iterations
+    }
+  } else {
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) tau[i][j] *= 1 - rho;
+    bsf = o.depositor === "bsf" || (o.depositor === "switch" && cv < o.cvTh) ? 1 : 0;               // diverse colony: iteration-best; converging: best-so-far
+    dep(bsf ? S.best : paths[b], 1 / (bsf ? S.bestL : Ls[b]));
+    ti = 1 / (rho * S.bestL); tmin = ti * o.minRatio;
+    tmax = o.tighten ? (1 - Math.min(1, t / T)) * (ti - tmin) + tmin : ti;                             // τmax(t) = (1 − t/T)(τmax,init − τmin) + τmin
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) tau[i][j] = Math.min(tmax, Math.max(tmin, tau[i][j]));
+    const onB = new Set(); for (let k = 1; k < S.best.length; k++) onB.add(Math.min(S.best[k - 1], S.best[k]) * n + Math.max(S.best[k - 1], S.best[k]));
+    let sOn = 0, sOff = 0, nOff = 0; for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { if (onB.has(i * n + j)) sOn += tau[i][j]; else { sOff += tau[i][j]; nOff++; } }
+    S.tr.on.push(sOn / onB.size / ti); S.tr.off.push(sOff / nOff / ti); S.tr.tmax.push(tmax / ti); S.tr.tmin.push(tmin / ti);
+  }
+  S.tr.rho.push(rho); S.tr.beta.push(beta); S.tr.q0.push(q0); S.tr.cv.push(cv); S.tr.dep.push(bsf);
+  S.t++; S.hist.push(S.bestL);
+}
+const adaFmt = L => isFinite(L) ? L.toLocaleString("en-US", { maximumFractionDigits: 1 }) + " km" : "n/a";
+function adaCompare(rows, T, done) {
+  setTimeout(() => {
+    const R = 6, out = rows.map(row => {
+      const mean = new Array(T).fill(0), fin = [];
+      for (let s = 0; s < R; s++) { const S = adaNew(Object.assign({ seed: 500 + s, T }, row.o)); for (let k = 0; k < T; k++) adaStep(S); S.hist.forEach((x, k) => mean[k] += x / R); fin.push(S.bestL); }
+      return Object.assign({}, row, { mean, m: fin.reduce((a, b) => a + b, 0) / R, best: Math.min(...fin) });
+    });
+    done(out, R);
+  }, 30);
+}
+function adaCmpShow(id, out, R, note) {
+  const c = colors(), cv = $(`#${id}CmpCv`), tw = $(`#${id}CmpTbl`);
+  cv.hidden = false; tw.parentElement.hidden = false;
+  lineChart(cv, out.map(r => ({ data: r.mean, color: c[r.col], label: r.short })), { refs: [{ v: OPT_LEN, color: c.bad, label: "optimum 7,909" }], labels: true });
+  const bm = Math.min(...out.map(r => r.m));
+  tw.innerHTML = `<thead><tr><th>Setting</th><th class="n">Mean best (km)</th><th class="n">Best run (km)</th><th class="n">Mean gap</th></tr></thead><tbody>` + out.map(r => `<tr class="${r.m === bm ? "hl" : ""}"><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.4rem;background:var(--${r.col})"></i>${r.name}</td><td class="n">${r.m.toFixed(1)}</td><td class="n">${r.best.toFixed(1)}</td><td class="n">${((r.m - OPT_LEN) / OPT_LEN * 100).toFixed(2)}%</td></tr>`).join("") + "</tbody>";
+  $(`#${id}Status`).textContent = `${R} runs per setting with the same seeds. ${note}`;
+}
+// a live run with Run / Step / New colony, shared by the last three panels
+function adaPanel(id, specs, build, draw, cmp) {
+  let seed = 7, S;
+  const ctl = makeControls($(`#${id}Ctl`), specs, () => { run.stop(); reset(); });
+  function reset() { S = adaNew(Object.assign({ seed }, build(ctl))); draw(S, ctl); }
+  const run = runner(() => adaStep(S), () => draw(S, ctl), () => 12, () => S.t >= S.o.T, $(`#${id}Run`));
+  $(`#${id}Step`).addEventListener("click", () => { if (S.t < S.o.T) { adaStep(S); draw(S, ctl); } });
+  $(`#${id}Reset`).addEventListener("click", () => { run.stop(); seed++; reset(); });
+  $(`#${id}Cmp`).addEventListener("click", () => { const { rows, note } = cmp(ctl); $(`#${id}Status`).textContent = "Running…"; adaCompare(rows, ctl.T, (out, R) => adaCmpShow(id, out, R, note)); });
+  document.querySelectorAll(`#${id}Box canvas`).forEach(cv => ro.observe(cv)); onRedraw(() => draw(S, ctl)); reset();
+}
+function adaStrip(cv, S, T, line, o) {   // a trace chart, with an optional strip of colored ticks along the bottom
+  lineChart(cv, line, o);
+  if (!o.strip) return;
+  const { ctx, w, h } = setupCanvas(cv), c = colors(), x0 = 58, x1 = w - 12;
+  o.strip.forEach((v, i) => { ctx.fillStyle = v ? c.gold : c.accent; ctx.fillRect(x0 + (x1 - x0) * i / T, h - 26, Math.max(1, (x1 - x0) / T), 4); });
+}
+
+/* 1. dynamic parameter control: ρ(t) and β(t) */
+(function adaParams() {
+  const ctl = makeControls($("#a1Ctl"), [
+    { type: "group", label: "Evaporation" },
+    { key: "rMax", id: "a1RMax", label: "ρmax", min: .2, max: 1, step: .05, value: .9 },
+    { key: "rMin", id: "a1RMin", label: "ρmin", min: 0, max: .5, step: .05, value: .1 },
+    { key: "lam", id: "a1Lam", label: "Decay rate λ", min: .01, max: .2, step: .01, value: .05 },
+    { type: "group", label: "Heuristic weight" },
+    { key: "bS", id: "a1BS", label: "βstart", min: 0, max: 3, step: .5, value: 1 },
+    { key: "bE", id: "a1BE", label: "βend", min: 1, max: 6, step: .5, value: 5 },
+    { type: "group", label: "Time" },
+    { key: "T", id: "a1T", label: "Max iterations T", min: 50, max: 200, step: 10, value: 100 },
+    { key: "t", id: "a1t", label: "Iteration t", min: 0, max: 200, step: 1, value: 0 }
+  ], () => render());
+  const rhoT = t => ctl.rMin + (ctl.rMax - ctl.rMin) * Math.exp(-ctl.lam * t), betaT = t => ctl.bS + (ctl.bE - ctl.bS) * Math.min(1, t / ctl.T);
+  const EX = [["A", 200, .4], ["B", 350, 1], ["C", 500, .7], ["D", 800, .5]];   // exit, distance (km), pheromone τ
+  function render() {
+    $("#a1t").max = ctl.T; if (ctl.t > ctl.T) ctl.t = ctl.T;
+    const c = colors(), t = ctl.t, rho = rhoT(t), beta = betaT(t);
+    { const cv = $("#a1Cv"), { ctx, w, h } = setupCanvas(cv); ctx.clearRect(0, 0, w, h);
+      const pad = { l: 40, r: 40, t: 30, b: 24 }, X = s => pad.l + (w - pad.l - pad.r) * s / ctl.T, YR = v => h - pad.b - (h - pad.t - pad.b) * v, YB = v => h - pad.b - (h - pad.t - pad.b) * v / 6;
+      ctx.font = `11px ${MONO}`; ctx.lineWidth = 1;
+      for (let k = 0; k <= 4; k++) { const y = YR(k / 4); ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+        ctx.textBaseline = "middle"; ctx.fillStyle = c.s3; ctx.textAlign = "right"; ctx.fillText((k / 4).toFixed(2), pad.l - 5, y); ctx.fillStyle = c.s4; ctx.textAlign = "left"; ctx.fillText((k * 1.5).toFixed(1), w - pad.r + 5, y); }
+      ctx.fillStyle = c.muted; ctx.textAlign = "center"; ctx.textBaseline = "top"; for (let k = 0; k <= 4; k++) { const s = Math.round(ctl.T * k / 4); ctx.fillText(s, X(s), h - pad.b + 5); }
+      [[rhoT, YR, c.s3], [betaT, YB, c.s4]].forEach(([f, Y, col]) => { ctx.strokeStyle = col; ctx.lineWidth = 2.2; ctx.beginPath(); for (let s = 0; s <= ctl.T; s++) s ? ctx.lineTo(X(s), Y(f(s))) : ctx.moveTo(X(s), Y(f(s))); ctx.stroke(); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(X(t), Y(f(t)), 4.5, 0, 7); ctx.fill(); });
+      ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = c.ink; ctx.globalAlpha = .5; ctx.beginPath(); ctx.moveTo(X(t), pad.t); ctx.lineTo(X(t), h - pad.b); ctx.stroke(); ctx.restore();
+      ctx.textBaseline = "top"; ctx.textAlign = "left"; const wide = w > 460; ctx.fillStyle = c.s3; ctx.fillText(wide ? "■ ρ(t), left axis" : "■ ρ(t)", pad.l, 4); ctx.fillStyle = c.s4; ctx.textAlign = "right"; ctx.fillText(wide ? "β(t), right axis ■" : "β(t) ■", w - pad.r, 4); }
+    // one ant at a city with four exits: p ∝ τ · (1/d)^β(t)
+    const v = EX.map(([, d, tau]) => tau * Math.pow(100 / d, beta)), tot = v.reduce((a, b) => a + b, 0), p = v.map(x => x / tot), top = p.indexOf(Math.max(...p));
+    { const cv = $("#a1Ex"), { ctx, w, h } = setupCanvas(cv); ctx.clearRect(0, 0, w, h);
+      const row = (h - 8) / 4, x0 = 132, bw = w - x0 - 52; ctx.font = `11px ${MONO}`; ctx.textBaseline = "middle";
+      EX.forEach(([n, d, tau], i) => { const y = 4 + row * i + row / 2; ctx.fillStyle = c.ink; ctx.textAlign = "left"; ctx.fillText(`${n}: ${d} km, τ = ${tau}`, 6, y);
+        ctx.fillStyle = c.line; ctx.fillRect(x0, y - 8, bw, 16); ctx.fillStyle = i === top ? c.accent : c.muted; ctx.fillRect(x0, y - 8, bw * p[i], 16);
+        ctx.fillStyle = c.ink; ctx.fillText((p[i] * 100).toFixed(0) + "%", x0 + bw * p[i] + 5, y); }); }
+    const kept = (1 - rho) ** 10;
+    stats($("#a1Stats"), [["Evaporation rate", rho.toFixed(3)], ["Heuristic weight", beta.toFixed(2)], ["Trail left after 10 idle iterations", kept < .001 ? "< 0.1%" : (kept * 100).toFixed(1) + "%"], ["Most likely exit", EX[top][0]]]);
+  }
+  let anim = 0;
+  $("#a1Play").addEventListener("click", () => {
+    if (anim) { clearInterval(anim); anim = 0; $("#a1Play").textContent = "Play t from 0 to T"; return; }
+    ctl.t = 0; render(); $("#a1Play").textContent = "Pause";
+    anim = setInterval(() => { if (ctl.t >= ctl.T) { clearInterval(anim); anim = 0; $("#a1Play").textContent = "Play t from 0 to T"; return; } ctl.t = Math.min(ctl.T, ctl.t + 2); render(); }, 60);
+  });
+  $("#a1Cmp").addEventListener("click", () => {
+    $("#a1Status").textContent = "Running…";
+    const T = ctl.T, A = { variant: "AS", ants: 20 };
+    adaCompare([
+      { name: `Fixed at the start: ρ = ${ctl.rMax}, β = ${ctl.bS}`, short: "start", col: "s1", o: Object.assign({ rho: () => ctl.rMax, beta: () => ctl.bS }, A) },
+      { name: `Fixed at the end: ρ = ${ctl.rMin}, β = ${ctl.bE}`, short: "end", col: "s2", o: Object.assign({ rho: () => ctl.rMin, beta: () => ctl.bE }, A) },
+      { name: "Adaptive ρ(t) and β(t)", short: "adaptive", col: "s3", o: Object.assign({ rho: rhoT, beta: betaT }, A) }
+    ], T, (out, R) => adaCmpShow("a1", out, R, `Ant system with 20 ants and ${T} iterations on the 20-city open route. Results depend on the problem: on this small route, greedy settings already do well.`));
+  });
+  ["#a1Cv", "#a1Ex"].forEach(s => ro.observe($(s))); onRedraw(render); render();
+})();
+
+/* 2. quality-sensitive deposition: Δτ ∝ 1 / cost^k */
+(function adaDeposit() {
+  const ctl = makeControls($("#a2Ctl"), [{ key: "k", id: "a2K", label: "Exponent k", min: .25, max: 5, step: .25, value: 1 }], () => render());
+  const COST = [2, 2.5, 3, 4, 6];
+  function render() {
+    const c = colors(), k = ctl.k, d = COST.map(x => 1 / x ** k), tot = d.reduce((a, b) => a + b, 0);
+    { const cv = $("#a2Cv"), { ctx, w, h } = setupCanvas(cv); ctx.clearRect(0, 0, w, h);
+      const pad = { l: 40, r: 12, t: 30, b: 24 }, X = x => pad.l + (w - pad.l - pad.r) * (x - 1) / 9, Y = v => h - pad.b - (h - pad.t - pad.b) * v;
+      ctx.font = `11px ${MONO}`; ctx.lineWidth = 1;
+      for (let q = 0; q <= 4; q++) { const y = Y(q / 4); ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke(); ctx.fillStyle = c.muted; ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText((q / 4).toFixed(2), pad.l - 5, y); }
+      ctx.textAlign = "center"; ctx.textBaseline = "top"; for (let x = 2; x <= 10; x += 2) ctx.fillText(x, X(x), h - pad.b + 5);
+      const curve = (kk, col, lw, a) => { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.globalAlpha = a; ctx.beginPath(); for (let s = 0; s <= 180; s++) { const x = 1 + 9 * s / 180; s ? ctx.lineTo(X(x), Y(1 / x ** kk)) : ctx.moveTo(X(x), Y(1 / x ** kk)); } ctx.stroke(); ctx.globalAlpha = 1; };
+      [.5, 1, 2, 3, 4].forEach(kk => curve(kk, c.muted, 1, .45)); curve(k, c.accent, 2.6, 1);
+      COST.forEach((x, i) => { ctx.fillStyle = i ? c.gold : c.good; ctx.beginPath(); ctx.arc(X(x), Y(d[i]), 4.5, 0, 7); ctx.fill(); });
+      ctx.fillStyle = c.accent; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(`Δτ vs. cost: k = ${k} (faint: 0.5 to 4)`, 4, 4); }
+    { const cv = $("#a2Bars"), { ctx, w, h } = setupCanvas(cv); ctx.clearRect(0, 0, w, h);
+      const row = (h - 8) / COST.length, x0 = 112, bw = w - x0 - 52; ctx.font = `11px ${MONO}`; ctx.textBaseline = "middle";
+      COST.forEach((x, i) => { const y = 4 + row * i + row / 2, s = d[i] / tot; ctx.fillStyle = c.ink; ctx.textAlign = "left"; ctx.fillText(`ant ${i + 1}: cost ${x}`, 6, y);
+        ctx.fillStyle = c.line; ctx.fillRect(x0, y - 7, bw, 14); ctx.fillStyle = i ? c.gold : c.good; ctx.fillRect(x0, y - 7, bw * s, 14); ctx.fillStyle = c.ink; ctx.fillText((s * 100).toFixed(0) + "%", x0 + bw * s + 5, y); }); }
+    stats($("#a2Stats"), [["Total deposit", tot.toFixed(3)], ["Best ant’s share", (d[0] / tot * 100).toFixed(0) + "%"], ["Best vs. worst deposit", (d[0] / d[4]).toFixed(1) + " ×"], ["Favors", k < 1.5 ? "exploration" : k < 3 ? "a balance" : "exploitation"]]);
+  }
+  let anim = 0;
+  $("#a2Play").addEventListener("click", () => {
+    if (anim) { clearInterval(anim); anim = 0; $("#a2Play").textContent = "Grow k over a run: 0.5 → 4"; return; }
+    ctl.k = .5; render(); $("#a2Play").textContent = "Pause";
+    anim = setInterval(() => { if (ctl.k >= 4) { clearInterval(anim); anim = 0; $("#a2Play").textContent = "Grow k over a run: 0.5 → 4"; return; } ctl.k = ctl.k + .25; render(); }, 280);
+  });
+  ["#a2Cv", "#a2Bars"].forEach(s => ro.observe($(s))); onRedraw(render); render();
+})();
+
+/* 3. best-so-far or iteration-best ant, switched on solution quality variance */
+adaPanel("a3", [
+  { key: "dep", id: "a3Dep", type: "select", label: "Ant that deposits", value: "switch", options: [["switch", "Switch on variance"], ["ib", "Always iteration-best"], ["bsf", "Always best-so-far"]] },
+  { key: "cvTh", id: "a3Th", label: "Switch threshold (CV of route lengths)", min: .04, max: .2, step: .01, value: .1, fmt: v => v.toFixed(2), hint: "CV at or above it: iteration-best deposits; below it: best-so-far." },
+  { key: "T", id: "a3T", label: "Iterations T", min: 50, max: 300, step: 10, value: 150 }
+], ctl => ({ variant: "MMAS", ants: 20, T: ctl.T, depositor: ctl.dep, cvTh: ctl.cvTh, minRatio: .005 }),
+(S, ctl) => {
+  const c = colors(), tr = S.tr, nb = tr.dep.filter(Boolean).length;
+  adaStrip($("#a3Cv"), S, ctl.T, [{ data: tr.cv, color: c.s3 }], { refs: [{ v: ctl.cvTh, color: c.bad, label: "threshold" }], xmax: ctl.T, strip: tr.dep });
+  lineChart($("#a3Ln"), [{ data: S.hist, color: c.accent }], { refs: [{ v: OPT_LEN, color: c.bad, label: "optimum 7,909" }], xmax: ctl.T });
+  stats($("#a3Stats"), [["Iteration", S.t + " / " + ctl.T], ["Best route", adaFmt(S.bestL)], ["CV now", tr.cv.length ? tr.cv[tr.cv.length - 1].toFixed(2) : "n/a"], ["Deposits by best-so-far", tr.dep.length ? Math.round(nb / tr.dep.length * 100) + "%" : "n/a"]]);
+}, ctl => ({ note: "Max-min ant system, 20 ants, ρ = 0.1, β = 2, τmin = τmax / 200.", rows: [
+  { name: "Always iteration-best", short: "iteration-best", col: "s1", o: { variant: "MMAS", ants: 20, depositor: "ib", minRatio: .005 } },
+  { name: "Always best-so-far", short: "best-so-far", col: "s2", o: { variant: "MMAS", ants: 20, depositor: "bsf", minRatio: .005 } },
+  { name: `Switch on variance (CV threshold ${ctl.cvTh.toFixed(2)})`, short: "switch", col: "s3", o: { variant: "MMAS", ants: 20, depositor: "switch", cvTh: ctl.cvTh, minRatio: .005 } }] }));
+
+/* 4. r₀ in ACS: fixed, time-varying, or performance-triggered */
+adaPanel("a4", [
+  { key: "mode", id: "a4Mode", type: "select", label: "r₀ rule", value: "time", options: [["fixed", "Fixed r₀"], ["time", "Time-varying: r₀,start → r₀,end"], ["perf", "Performance-triggered: ±δ"]] },
+  { key: "r0", id: "a4R0", label: "r₀ (fixed, or start value)", min: 0, max: 1, step: .05, value: .5 },
+  { key: "r1", id: "a4R1", label: "Final r₀ (time-varying)", min: 0, max: 1, step: .01, value: .98 },
+  { key: "delta", id: "a4D", label: "δ (performance-triggered)", min: .01, max: .1, step: .01, value: .02, fmt: v => v.toFixed(2) },
+  { key: "pat", id: "a4P", label: "Stagnation: iterations without improvement", min: 1, max: 20, step: 1, value: 5, hint: "r₀ stays between 0.3 and 0.98." },
+  { key: "T", id: "a4T", label: "Iterations T", min: 50, max: 300, step: 10, value: 150 }
+], ctl => ({ variant: "ACS", ants: 10, T: ctl.T, q0: ctl.r0, q0t: ctl.mode === "time" ? t => ctl.r0 + (ctl.r1 - ctl.r0) * Math.min(1, t / ctl.T) : ctl.mode === "fixed" ? () => ctl.r0 : null, delta: ctl.mode === "perf" ? ctl.delta : 0, patience: ctl.pat, q0lo: .3, q0hi: .98 }),
+(S, ctl) => {
+  const c = colors(), q0 = S.t ? S.tr.q0[S.t - 1] : S.q0;
+  { const cv = $("#a4G"), { ctx, w, h } = setupCanvas(cv); ctx.clearRect(0, 0, w, h);
+    const x0 = 12, x1 = w - 12, X = v => x0 + (x1 - x0) * v, y = 30;
+    ctx.fillStyle = c.accent; ctx.globalAlpha = .22; ctx.fillRect(X(0), y, X(q0) - X(0), 18); ctx.fillStyle = c.gold; ctx.fillRect(X(q0), y, X(1) - X(q0), 18); ctx.globalAlpha = 1;
+    S.rs.forEach(u => { ctx.fillStyle = u <= q0 ? c.accent : c.gold; ctx.fillRect(X(u) - 1, y + 2, 2.5, 14); });
+    ctx.fillStyle = c.ink; ctx.fillRect(X(q0) - 1.5, y - 6, 3, 30);
+    ctx.font = `11px ${MONO}`; ctx.textBaseline = "bottom"; ctx.textAlign = "left"; ctx.fillStyle = c.accent; ctx.fillText("r ≤ r₀: exploit the best edge", X(0), y - 4);
+    ctx.textAlign = "right"; ctx.fillStyle = c.gold; ctx.fillText("r > r₀: explore (roulette)", X(1), y - 4);
+    ctx.textBaseline = "top"; ctx.fillStyle = c.ink; ctx.textAlign = q0 > .85 ? "right" : q0 < .15 ? "left" : "center"; ctx.fillText(`r₀ = ${q0.toFixed(2)}`, X(q0), y + 24);
+    ctx.fillStyle = c.muted; ctx.textAlign = "left"; ctx.fillText("0", X(0), y + 24); ctx.textAlign = "right"; ctx.fillText("1", X(1), y + 24); }
+  lineChart($("#a4R"), [{ data: S.tr.q0, color: c.s4 }], { xmax: ctl.T });
+  lineChart($("#a4Ln"), [{ data: S.hist, color: c.accent }], { refs: [{ v: OPT_LEN, color: c.bad, label: "optimum 7,909" }], xmax: ctl.T });
+  const ex = S.rs.filter(u => u <= q0).length;
+  stats($("#a4Stats"), [["Iteration", S.t + " / " + ctl.T], ["Best route", adaFmt(S.bestL)], ["Threshold now", q0.toFixed(2)], ["Exploit moves (ant 1)", S.rs.length ? `${ex} of ${S.rs.length}` : "n/a"]]);
+}, ctl => ({ note: "Ant colony system, 10 ants, ρ = 0.1, β = 2.", rows: [
+  { name: `Fixed r₀ = ${ctl.r0}`, short: "fixed", col: "s1", o: { variant: "ACS", ants: 10, q0: ctl.r0, q0t: () => ctl.r0 } },
+  { name: `Time-varying r₀: ${ctl.r0} → ${ctl.r1}`, short: "time-varying", col: "s2", o: { variant: "ACS", ants: 10, q0: ctl.r0, q0t: t => ctl.r0 + (ctl.r1 - ctl.r0) * Math.min(1, t / ctl.T) } },
+  { name: `Performance-triggered r₀ (start ${ctl.r0}, δ = ${ctl.delta}, stagnation after ${ctl.pat})`, short: "performance", col: "s3", o: { variant: "ACS", ants: 10, q0: ctl.r0, delta: ctl.delta, patience: ctl.pat, q0lo: .3, q0hi: .98 } }] }));
+
+/* 5. MMAS with a tightening upper limit τmax(t) */
+adaPanel("a5", [
+  { key: "mode", id: "a5Mode", type: "select", label: "Pheromone limits", value: "tight", options: [["tight", "Tightening τmax(t)"], ["fixed", "Fixed τmax and τmin"]] },
+  { key: "ratio", id: "a5Ra", label: "τmin / τmax,init", min: .02, max: .3, step: .01, value: .1 },
+  { key: "T", id: "a5T", label: "Iterations T", min: 50, max: 300, step: 10, value: 100 }
+], ctl => ({ variant: "MMAS", ants: 20, T: ctl.T, depositor: "ib", minRatio: ctl.ratio, tighten: ctl.mode === "tight" }),
+(S, ctl) => {
+  const c = colors(), tr = S.tr;
+  lineChart($("#a5Cv"), [{ data: tr.off, color: c.muted, label: "other edges" }, { data: tr.on, color: c.gold, label: "best route" }, { data: tr.tmax, color: c.bad, label: "τmax(t)" }, { data: tr.tmin, color: c.s3, label: "τmin" }], { xmax: ctl.T });
+  lineChart($("#a5Ln"), [{ data: S.hist, color: c.accent }], { refs: [{ v: OPT_LEN, color: c.bad, label: "optimum 7,909" }], xmax: ctl.T });
+  const L = tr.tmax.length - 1;
+  stats($("#a5Stats"), [["Iteration", S.t + " / " + ctl.T], ["Best route", adaFmt(S.bestL)], ["Upper limit (relative)", L >= 0 ? tr.tmax[L].toFixed(2) : "n/a"], ["Upper / lower limit", L >= 0 ? (tr.tmax[L] / tr.tmin[L]).toFixed(1) + " ×" : "n/a"]]);
+}, ctl => ({ note: "Max-min ant system, 20 ants, ρ = 0.1, β = 2, iteration-best deposits.", rows: [
+  { name: "Fixed limits", short: "fixed", col: "s1", o: { variant: "MMAS", ants: 20, depositor: "ib", minRatio: ctl.ratio, tighten: false } },
+  { name: "Tightening τmax(t)", short: "tightening", col: "s2", o: { variant: "MMAS", ants: 20, depositor: "ib", minRatio: ctl.ratio, tighten: true } }] }));
 
 /* ---------- code tabs ---------- */
 (function codeTabs() {
