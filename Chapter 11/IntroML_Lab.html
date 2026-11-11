@@ -240,7 +240,7 @@ canvas{display:block;width:100%;max-width:100%}
 .stage-grid > div{min-width:0;display:flex;flex-direction:column;gap:.7rem}
 .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem}
 .stat{background:var(--sunk);border-radius:8px;padding:.45rem .6rem}
-.stat span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat>span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .stat b{font-family:var(--f-mono);font-weight:500;font-size:.95rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.78rem;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.3rem;vertical-align:-1px}
@@ -362,6 +362,80 @@ tr.dim td{color:var(--muted)}
 .matrix td.on{background:var(--accent-soft)}
 .kbd{font-family:var(--f-mono);font-size:.8rem;border:1px solid var(--line);border-radius:4px;padding:0 .3rem;background:var(--surface)}
 
+/* Part 5: the 7-step procedure (complementary material) */
+.btns button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.flow span.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.pills{display:flex;flex-wrap:wrap;gap:.4rem}
+.pill{display:inline-block;padding:.12rem .6rem;border-radius:999px;font-size:.8rem;font-weight:600;background:var(--sunk);color:var(--muted)}
+.pill.good{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+button.card{display:block;width:100%;text-align:left;font-weight:400;line-height:1.5}
+button.card[aria-pressed="true"],.op.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.card .chk{display:flex;flex-wrap:wrap;gap:.25rem .9rem;margin:.5rem 0;font-size:.84rem}
+.card .chk label{display:inline-flex;align-items:center;gap:.3rem}
+td.pos{color:var(--good);font-weight:600} td.neg{color:var(--bad)}
+tr.click{cursor:pointer}
+.tbl-wrap.scroll{max-height:340px;overflow:auto}
+.splitbar{display:flex;height:2.2rem;border-radius:8px;overflow:hidden;font-size:.8rem;font-weight:600}
+.splitbar div{display:grid;place-items:center;color:var(--accent-ink);min-width:0;overflow:hidden}
+.mx-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:.35rem .5rem;align-items:center;padding:.45rem 0;border-bottom:1px solid var(--line)}
+.mx-row select{width:auto}
+.mx-badge{font-family:var(--f-mono);font-size:.76rem;width:1.6rem;height:1.6rem;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink)}
+.mx-levels{grid-column:2 / -1;display:flex;flex-wrap:wrap;gap:.3rem}
+.mx-chip{display:inline-block;font-size:.74rem;padding:.02rem .45rem;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.mx-chip.l0{background:color-mix(in srgb,var(--s1) 20%,transparent)} .mx-chip.l1{background:color-mix(in srgb,var(--s2) 20%,transparent)}
+.mx-chip.l2{background:color-mix(in srgb,var(--s3) 20%,transparent)} .mx-chip.l3{background:color-mix(in srgb,var(--s4) 20%,transparent)}
+.mx-chip.l4{background:color-mix(in srgb,var(--bad) 18%,transparent)}
+/* ordering game */
+.og-label{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 .4rem}
+.og-pile{display:flex;flex-wrap:wrap;gap:.5rem;min-height:4.2rem;padding:.6rem;border:2px dashed var(--line);border-radius:10px;background:var(--sunk)}
+.og-pile:empty::before{content:"All cards placed. Check your order, or drag a card back here.";color:var(--muted);font-size:.84rem;margin:auto}
+.og-pile .og-card{width:150px}
+.og-track{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.75rem}
+.og-slot{position:relative;min-height:6.5rem;border:2px dashed var(--line);border-radius:10px;padding:1.5rem .35rem .35rem;display:flex;background:var(--bg)}
+.og-slot:not(:last-child)::after{content:"";position:absolute;right:-.62rem;top:50%;width:.45rem;height:.45rem;border-top:2px solid var(--muted);border-right:2px solid var(--muted);transform:translateY(-50%) rotate(45deg)}
+.og-num{position:absolute;top:.3rem;left:.45rem;width:1.15rem;height:1.15rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-family:var(--f-mono);font-size:.68rem;display:grid;place-items:center}
+.og-slot .og-card{width:100%}
+.og-slot.target,.og-pile.target{border-color:var(--accent);background:var(--accent-soft)}
+.og-slot.ok{border-style:solid;border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,var(--surface))}
+.og-slot.bad{border-style:solid;border-color:var(--bad);background:color-mix(in srgb,var(--bad) 9%,var(--surface))}
+.og-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;padding:.6rem .45rem;border-radius:8px;background:var(--surface);border:1px solid var(--line);box-shadow:0 2px 6px rgba(0,0,0,.08);cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;font-size:.82rem;font-weight:600;line-height:1.25;text-align:center;overflow-wrap:anywhere}
+.og-card:focus-visible,.og-card.sel{outline:3px solid var(--accent);outline-offset:2px}
+.og-card small{font-weight:500;font-size:.7rem;color:var(--good)}
+.og-card.dragging{opacity:.3}
+.og-ghost{position:fixed;z-index:60;pointer-events:none;transform:rotate(3deg) scale(1.04);box-shadow:0 14px 30px rgba(0,0,0,.28);cursor:grabbing}
+.og-meter{flex:1 1 120px;height:8px;border-radius:6px;background:var(--sunk);border:1px solid var(--line);overflow:hidden}
+.og-meter i{display:block;width:0;height:100%;background:var(--accent);transition:width .25s}
+@media (max-width:1100px){.og-track{grid-template-columns:repeat(4,minmax(0,1fr))}.og-slot:not(:last-child)::after{display:none}}
+@media (max-width:560px){.og-track{grid-template-columns:repeat(2,minmax(0,1fr))}.og-pile .og-card{width:calc(50% - .25rem)}}
+/* IID warm-up */
+.iw-box{border:1px solid var(--line);border-radius:8px;padding:.6rem .75rem;background:var(--bg);min-width:0}
+.iw-grid{display:flex;flex-wrap:wrap;gap:.35rem;min-height:3rem;align-items:center}
+.iw-tile{width:2.6rem;height:2.6rem;border-radius:8px;display:grid;place-items:center;background:var(--sunk);border:1px solid var(--line);font-size:1.35rem;line-height:1}
+.iw-tile.night{background:#07150d;border-color:#1f3a2a}
+.iw-tile.night span{filter:grayscale(1) sepia(1) hue-rotate(60deg) saturate(4) brightness(.85)}
+.iw-tile.human{width:3.8rem;height:3.8rem;font-size:2rem}
+.iw-row{display:grid;grid-template-columns:minmax(110px,220px) minmax(0,1fr) 3rem;align-items:center;gap:.5rem;margin:.35rem 0;font-size:.84rem}
+.iw-row b{font-family:var(--f-mono);font-weight:500;text-align:right}
+.iw-meter{height:12px;border-radius:6px;background:var(--sunk);border:1px solid var(--line);overflow:hidden}
+.iw-meter i{display:block;height:100%}
+.iw-frame{position:relative;flex:0 0 auto;width:57px;height:40px;padding:0;border-radius:6px;border:1px solid var(--line);overflow:hidden;font-size:inherit;color:#24382c}
+.iw-frame.tr{box-shadow:0 0 0 2px var(--s1)}
+.iw-frame.te{box-shadow:0 0 0 2px var(--s3);cursor:pointer}
+.iw-frame.hl{box-shadow:0 0 0 3px var(--gold)}
+.iw-frame.now{outline:2px solid var(--ink);outline-offset:2px}
+.iw-frame em{position:absolute;top:1px;left:3px;font-size:.56rem;font-style:normal;font-weight:700}
+.iw-cat{position:absolute;line-height:1;transform:translate(-50%,-100%);pointer-events:none}
+.iw-strip{display:flex;gap:.55rem;overflow-x:auto;padding:.4rem .3rem .5rem}
+.iw-screen{position:relative;height:150px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.iw-screen em{position:absolute;top:.4rem;left:.6rem;font-size:.75rem;font-style:normal;font-weight:600;color:#24382c}
+.iw-pctl{display:flex;align-items:center;gap:.6rem;margin-top:.45rem}
+@media (max-width:560px){.iw-row{grid-template-columns:minmax(0,1fr) 3rem}.iw-row .iw-meter{grid-column:1 / -1;grid-row:2}}
+.p7-svg{width:100%;max-width:440px;height:auto;display:block}
+.p7-svg [role=button]{cursor:pointer}
+.p7-svg [role=button]:focus{outline:none}
+.p7-svg [role=button]:focus-visible rect,.p7-svg [role=button]:focus-visible circle{stroke:var(--gold);stroke-width:3}
+
 </style>
 </head>
 <body>
@@ -374,7 +448,15 @@ tr.dim td{color:var(--muted)}
     <li><a href="#learning"><b>2</b>What is learning?</a></li>
     <li><a href="#fitting"><b>3</b>Learning as optimization</a></li>
     <li><a href="#paradigms"><b>4</b>Learning paradigms</a></li>
-    <li><a href="#procedure"><b>5</b>The ML procedure</a></li>
+    <li><a href="#procedure"><b>5</b>The ML procedure</a><ol>
+      <li><a href="#seven-steps">The seven steps</a></li>
+      <li><a href="#step1">1. Problem characterization</a></li>
+      <li><a href="#step2">2. Data collection</a></li>
+      <li><a href="#step3">3. Data preparation</a></li>
+      <li><a href="#step4">4. Data exploration</a></li>
+      <li><a href="#step5">5. Model development</a></li>
+      <li><a href="#step6">6. Evaluation and optimization</a></li>
+      <li><a href="#step7">7. Deployment</a></li></ol></li>
     <li><a href="#ml4co"><b>6</b>ML for optimization</a><ol>
       <li><a href="#configure">Learning to configure</a></li>
       <li><a href="#construct">Construct or improve</a></li></ol></li>
@@ -474,10 +556,255 @@ tr.dim td{color:var(--muted)}
 <section class="chapter" id="procedure">
   <div class="wrap">
     <span class="eyebrow">Part 5 · The ML procedure</span>
-    <h2>When and how to use ML</h2>
-    <div class="flow"><span>1. Collect data</span><i>→</i><span>2. Prepare data</span><i>→</i><span>3. Choose a model</span><i>→</i><span>4. Train</span><i>→</i><span>5. Evaluate</span><i>→</i><span>6. Tune parameters</span><i>→</i><span>7. Predict</span></div>
-    <p class="prose">Use ML when a pattern exists, no cheap exact model is available, and you have data.</p>
-    <p class="more">Chapter 11 of the book details each step and what to do when data is scarce.</p>
+    <h2>The 7-step procedure of machine learning</h2>
+    <div class="prose">
+      <p>A machine learning project is more than training a model: it starts with a well-posed problem and ends with a model that keeps working in service. The process is highly iterative, so expect to loop back and try many ideas before one satisfies you.</p>
+    </div>
+    <div class="note warn prose"><b>Complementary material, not part of the book.</b> This part follows a seven-step view of an ML project from the book's author, Alaa Khamis, <a href="https://alaakhamis.medium.com/the-7-step-procedure-of-machine-learning-c15c922e7300" target="_blank" rel="noopener">“The 7-Step Procedure of Machine Learning,”</a> <i>Towards Data Science</i>, 2019. Each step has a memorable nickname, from “Characterize the problem” to “Deploy the model.”</div>
+
+    <h3 id="seven-steps">The seven steps at a glance</h3>
+    <p class="prose">Click a step to see what it covers, then test yourself: drag the shuffled cards into the right order.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Explore the seven steps</h4><span class="eyebrow">Explore</span></div>
+      <div class="stage"><div id="p7StepsX"></div></div>
+    </div>
+    <div class="bench" id="p7Og">
+      <div class="bench-head"><h4>Put the steps in order</h4><span class="eyebrow">Game</span></div>
+      <div class="stage">
+        <p class="cap">Drag each card from the deck onto its place in the pipeline. On a phone, tap a card and then tap a slot. Drop a card on a filled slot to swap them. With the keyboard, focus a card and press 1 to 7 to place it, or Delete to send it back.</p>
+        <div><div class="og-label">Shuffled deck</div><div class="og-pile" id="p7OgPile"></div></div>
+        <div><div class="og-label">Machine learning pipeline</div><div class="og-track" id="p7OgTrack"></div></div>
+        <div class="btns" style="align-items:center"><button type="button" class="primary" id="p7OgCheck">Check order</button><button type="button" id="p7OgShuffle">Shuffle</button><button type="button" id="p7OgReveal">Show answer</button><div class="og-meter"><i id="p7OgMeter"></i></div><span id="p7OgMsg" class="cap" aria-live="polite"></span></div>
+      </div>
+    </div>
+
+    <h3 id="step1">Step 1: Problem characterization</h3>
+    <div class="prose">
+      <p>Right problems lead to opportunities. Data-driven ML is appropriate only when <b>three requirements</b> hold:</p>
+      <ol>
+        <li><b>A pattern exists.</b> Without regularities in the data, there is nothing to learn.</li>
+        <li><b>The pattern cannot be pinned down mathematically</b> with a tractable model. Pedestrians usually follow a linear motion model that a Kalman filter handles, but jaywalking and other human behavior are too complex to model.</li>
+        <li><b>Data is available.</b> The intelligence is in the data: garbage in, garbage out.</li>
+      </ol>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Requirements checker</h4><span class="eyebrow">Exercise</span></div>
+      <div class="stage"><p class="cap">For each scenario, tick the requirements you think hold, then check.</p><div class="cards3" id="p7Req" style="margin:0"></div></div>
+    </div>
+    <p class="prose">When the third requirement fails, there are several ways to make up for missing data.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>What if data is lacking?</h4><span class="eyebrow">Explore</span></div>
+      <div class="stage"><div id="p7Lack"></div></div>
+    </div>
+    <p class="prose">A <b>parameter diagram</b> (P-diagram) defines the problem around the system being modeled: what drives it, what you can set, what you cannot control, what you predict and how the prediction can fail. Click each block of this tire treadwear example.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>P-diagram: tire treadwear prediction model</h4><span class="eyebrow">Explore</span></div>
+      <div class="stage"><div class="two"><div id="p7Pd"></div><div class="card" id="p7PdTxt" aria-live="polite"></div></div></div>
+    </div>
+    <p class="prose">Be aware of uncertainty. Crossing what we know about the domain with what we know about our own knowledge gives four quadrants. The last one is where adversarial and edge cases hide.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Knowns and unknowns</h4><span class="eyebrow">Explore</span></div>
+      <div class="stage"><div class="cards3" id="p7Ku" style="margin:0"></div><div class="note" id="p7KuTxt" aria-live="polite" style="margin:0">Click a quadrant.</div></div>
+    </div>
+    <div class="card"><h5>Edge cases from autonomous driving</h5><p>Construction zones and sudden lane shifts; banners with life-size pictures of people; a car nearly hitting a moving train in fog; a police officer overriding the traffic lights; traffic lights swinging in the wind; snow covering every lane marking; the moon mistaken for a traffic light; sandstorms; a pedestrian dressed in the same color as a pole; a plastic bag filled with air.</p></div>
+    <div class="cards3">
+      <div class="card"><h5>Target performance</h5><p>Accuracy, false alarm rate and false negative rate, memory footprint, inference time.</p></div>
+      <div class="card"><h5>Deployment tier</h5><p>Edge, fog or cloud. Decide early, because the tier constrains model size and latency (Step 7).</p></div>
+    </div>
+
+    <h3 id="step2">Step 2: Data collection</h3>
+    <p class="prose"><b>Design of experiments</b> (DOE) plans which combinations of factor levels to run. Both breadth (how many factors) and depth (how many levels) matter. A full factorial design with \(k\) factors at \(L\) levels needs \(L^k\) runs; a regular fractional design \(L^{k-p}\) runs only a fraction of them.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>DOE run calculator</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7DoeCtl"></div><div class="stats" id="p7DoeStats"></div></div>
+        <div class="stage"><p class="cap" id="p7DoeTitle"></p><div class="tbl-wrap scroll" id="p7DoeDm"></div></div>
+      </div>
+    </div>
+    <p class="prose">Real experiments rarely give every factor the same number of levels. A <b>mixed-level full factorial</b> runs every combination, so the run count is the product of the level counts, \(N = L_1 \times L_2 \times \cdots \times L_k\). Two 3-level factors, two 2-level factors and one 4-level factor need \(3 \cdot 3 \cdot 2 \cdot 2 \cdot 4 = 144\) runs.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Mixed-level DOE planner</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7MxCtl"></div><div class="stats" id="p7MxStats"></div></div>
+        <div class="stage">
+          <div><div class="og-label">Factors and levels</div><div id="p7MxF"></div>
+            <div class="btns" style="align-items:center;margin-top:.5rem"><button type="button" class="small" id="p7MxAdd">Add factor</button><span class="cap">Up to 7 factors, 2 to 5 levels each.</span></div></div>
+          <div class="note" id="p7MxMsg" style="margin:0"></div>
+          <p class="cap" id="p7MxTitle"></p><div class="tbl-wrap scroll" id="p7MxDm"></div>
+        </div>
+      </div>
+    </div>
+    <p class="prose">A <b>pairwise (all-pairs) screening design</b> makes every combination of levels for every <i>pair</i> of factors appear at least once, so all main effects and two-factor combinations are exercised with far fewer runs; higher-order interactions are not covered. Another standard option for mixed levels is an <b>orthogonal array</b>, such as the Taguchi \(L_{18}\) array, which studies one 2-level factor and up to seven 3-level factors in only 18 balanced runs.</p>
+    <div class="tbl-wrap" style="margin:1rem 0">
+      <table>
+        <thead><tr><th></th><th>Full factorial</th><th>Fractional factorial</th></tr></thead>
+        <tbody>
+          <tr><td><b>Pros</b></td><td>Every combination is covered. Analysis is straightforward because nothing is aliased.</td><td>Less effort, memory and time. Runs can be added later to remove confounding.</td></tr>
+          <tr><td><b>Cons</b></td><td>The cost grows quickly with the number of factors.</td><td>Higher-order interactions are hard to analyze. Confounding (aliasing) can mask factor and interaction effects.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note prose">A two-level fractional design \(2^{k-p}\) builds the extra factors from products of the base factors, for example \(D = ABC\). The price is aliasing: you cannot tell the effect of \(D\) apart from the \(ABC\) interaction. Three-level fractional designs \(3^{k-p}\) follow the same idea.</div>
+
+    <h3 id="step3">Step 3: Data preparation</h3>
+    <p class="prose">Nickname: <b>massage your data.</b> Preparation may include cleansing, labeling, dealing with missing and inconsistent data, normalization, balancing, fusion, aggregation and flattening, and finally splitting the data into training, development (dev) and test sets.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Clean a raw sensor log</h4><span class="eyebrow">Step by step</span></div>
+      <div class="stage">
+        <p class="cap">Apply the preparation steps one at a time and watch the table change.</p>
+        <div class="btns" id="p7CleanBtns"><button type="button" data-a="impute">1. Impute missing values</button><button type="button" data-a="outlier">2. Remove outliers</button><button type="button" data-a="norm">3. Min-max normalize</button><button type="button" data-a="label">4. Add labels</button><button type="button" data-a="reset">Reset</button></div>
+        <div class="tbl-wrap" id="p7CleanTbl"></div><p class="cap" id="p7CleanMsg" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Split the collected data</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7SplitCtl"></div></div>
+        <div class="stage"><div class="splitbar" id="p7SplitBar"></div><div class="cards3" id="p7SplitTxt" style="margin:0"></div></div>
+      </div>
+    </div>
+
+    <h3 id="step4">Step 4: Data exploration</h3>
+    <p class="prose">Nickname: <b>know better your enemy.</b> Univariate and multivariate analyses reveal <b>separability</b> (can the classes be told apart?), <b>linearity</b> (can a straight boundary or line do it?) and <b>monotonicity</b> (does the target consistently rise or fall with a feature?). These insights tell you which models are worth trying.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Explore a two-feature dataset</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7ExCtl"></div><div class="stats" id="p7ExStats"></div></div>
+        <div class="stage"><div class="stage-grid"><div><canvas id="p7ExScatter" aria-label="Scatter plot of the two features"></canvas></div><div><canvas id="p7ExHist" aria-label="Histogram of feature x1"></canvas></div></div><p class="cap" id="p7ExNote" aria-live="polite"></p></div>
+      </div>
+    </div>
+
+    <h3 id="step5">Step 5: Model development</h3>
+    <p class="prose">Nickname: <b>torture your data until it confesses</b>, using the right tools. A predictive model needs good features: either an expert hand-crafts a feature extractor that feeds a separate classifier, or a deep network learns the features with trainable kernels in its hidden layers.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Hand-crafted versus learned features</h4><span class="eyebrow">Explore</span></div>
+      <div class="stage"><div id="p7FeSeg"></div><div class="flow" id="p7FeFlow" style="margin:0"></div><p class="cap" id="p7FeTxt"></p></div>
+    </div>
+    <div class="prose">
+      <p>Use the right tool: <b>scikit-learn</b> for classical ML, <b>MLflow</b> for experiment tracking, and Keras, PyTorch or TensorFlow for deep learning.</p>
+      <p>Which algorithm? The <b>No Free Lunch theorem</b> says there is no universally superior one: averaged over all possible problems, every learning algorithm performs the same (D. H. Wolpert, <i>Neural Computation</i>, 1996). An algorithm that excels on one kind of structure pays for it on another.</p>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>No Free Lunch in action</h4><span class="eyebrow">Illustrative accuracies</span></div>
+      <div class="stage"><p class="cap">Click an algorithm to highlight it. Each one wins somewhere and loses somewhere else; the best score in each column is in green.</p><div class="tbl-wrap" id="p7Nfl"></div><div class="note" id="p7NflMsg" aria-live="polite" style="margin:0">Select a row.</div></div>
+    </div>
+
+    <h3 id="step6">Step 6: Evaluation and optimization</h3>
+    <p class="prose">Nickname: <b>evaluate the confession.</b> Compare against a baseline or target values, not against perfection. Key questions are the probability of detection (PD), the probability of false alarm (PFA), and how much confidence you can place in them. The tools are generalization checks, the confusion matrix, ROC and DET curves, error analysis and robustness tests.</p>
+    <p class="prose">A model that is too simple has <b>high bias and low variance</b>: it underfits. A model that is too complex has <b>low bias and high variance</b>: it overfits. The best balance gives the smallest testing error with an acceptable training error, the same trade-off as the <a href="#fitting">curve fitting playground</a> in Part 3.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Bias versus variance: find the sweet spot</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7BvCtl"></div><div class="btns"><button type="button" id="p7BvNew">New sample</button></div><div class="stats" id="p7BvStats"></div></div>
+        <div class="stage"><div class="stage-grid"><div><canvas id="p7BvFit" aria-label="Polynomial fit"></canvas></div><div><canvas id="p7BvErr" aria-label="Training and testing error by degree"></canvas></div></div><p class="cap" id="p7BvMsg" aria-live="polite"></p></div>
+      </div>
+    </div>
+    <p class="prose">A <b>confusion matrix</b> (contingency table, error matrix) shows how a classifier performs class by class. Correct guesses lie on the diagonal, so errors stand out off the diagonal.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Face recognizer: Wallace, Darwin or Turing?</h4><span class="eyebrow">Explore</span></div>
+      <div class="stage">
+        <p class="cap">27 photos: 8 of Alfred Russel Wallace, 6 of Charles Darwin and 13 of Alan Turing (one Turing photo wears Darwin’s beard). Rows are the actual class, columns the predicted class. Pick a class.</p>
+        <div id="p7CmSeg"></div>
+        <div class="two"><div class="tbl-wrap" id="p7CmTbl"></div><div><div class="stats" id="p7CmStats"></div><p class="cap" id="p7CmTxt" style="margin-top:.5rem"></p></div></div>
+      </div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Binary metrics calculator</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7MetCtl"></div></div>
+        <div class="stage"><div class="tbl-wrap"><table class="ttab" id="p7MetCm"></table></div><p class="cap">FP is a Type I error (false alarm). FN is a Type II error (miss).</p><div class="tbl-wrap" id="p7MetOut"></div></div>
+      </div>
+    </div>
+    <p class="prose">A <b>receiver operating characteristic</b> (ROC) curve plots the true-positive rate (sensitivity, recall) against the false-positive rate (\(1 -\) specificity) as the decision threshold varies. The <b>area under the curve</b> (AUC) compares classifiers: close to 1 is excellent, while 0.5, the diagonal, carries no information. A <b>detection error trade-off</b> (DET) curve plots the two error rates (miss versus false alarm) on normal-deviate axes, where the curves become nearly straight lines.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Threshold explorer</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7RocCtl"></div><div class="stats" id="p7RocStats"></div></div>
+        <div class="stage"><div class="stage-grid"><div><canvas id="p7RocDist" aria-label="Score distributions of the two classes"></canvas></div><div><canvas id="p7RocCv" aria-label="ROC or DET curve"></canvas></div></div><p class="cap">Raising the threshold makes the classifier more conservative: fewer false alarms, more misses.</p></div>
+      </div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Reading ROC space</h4><span class="eyebrow">Explore</span></div>
+      <div class="stage"><div class="two"><div><canvas id="p7RsCv" aria-label="ROC space with landmark classifiers"></canvas></div><div id="p7RsX"></div></div><p class="cap">After T. Fawcett, “An introduction to ROC analysis,” <i>Pattern Recognition Letters</i>, 2006.</p></div>
+    </div>
+    <p class="prose"><b>Robustness.</b> A model should not be overly sensitive to small perturbations. The <i>one-pixel attack</i> showed that changing a single pixel can flip the prediction of a deep network (J. Su, D. Vargas and K. Sakurai, 2017), so robustness tests with perturbed inputs belong in every evaluation plan.</p>
+
+    <h3 id="step7">Step 7: Deployment</h3>
+    <p class="prose">Nickname: <b>deploy the model.</b> Choose where it runs, check that the data it meets in service still looks like the data it learned from, plan for change over time (there is no “set and forget”), and make it explainable.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Where should the model run?</h4><span class="eyebrow">Interactive</span></div>
+      <div class="stage"><div class="opgrid" id="p7Tiers"></div><div class="group-label">Requirements</div><div class="btns" id="p7TierReq"></div><div class="note" id="p7TierRec" aria-live="polite" style="margin:0"></div></div>
+    </div>
+    <p class="prose">Almost every learning algorithm assumes that the data it learns from, and the data it meets in service, are <b>independent and identically distributed</b> (IID). Start with a simple picture classifier.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Warm-up: a cats-versus-dogs classifier</h4><span class="eyebrow">Explore</span></div>
+      <div class="stage">
+        <p class="cap">The model was trained on thousands of daylight photos of many different cats and dogs. Pick what it is tested on.</p>
+        <div id="p7IwSeg"></div>
+        <div class="iw-box" id="p7IwVideo" hidden>
+          <div class="og-label">The whole video, in time order</div>
+          <div class="iw-screen" id="p7IwScreen"><span class="iw-cat" id="p7IwCat" aria-hidden="true">🐈</span><em id="p7IwFrameNo">Frame 1 of 16</em></div>
+          <div class="iw-pctl"><button type="button" class="small" id="p7IwPlay">Pause</button><div class="og-meter"><i id="p7IwProg"></i></div></div>
+          <div class="iw-strip" id="p7IwStrip"></div>
+          <p class="cap">Neighboring frames are near-copies; frames far apart in time look clearly different. Blue outline: training frame. Green outline: test frame.</p>
+        </div>
+        <div class="two"><div class="iw-box"><div class="og-label">Training data</div><div class="iw-grid" id="p7IwTrain"></div><p class="cap" id="p7IwTrainCap"></p></div><div class="iw-box"><div class="og-label">Test data</div><div class="iw-grid" id="p7IwTest"></div><p class="cap" id="p7IwTestCap"></p></div></div>
+        <div class="iw-box"><div class="og-label">What the model reports</div><div id="p7IwRes"></div></div>
+        <div class="pills" id="p7IwVerdict"></div><div class="note" id="p7IwMsg" aria-live="polite" style="margin:0"></div><p class="cap">Accuracy and confidence values are illustrative.</p>
+      </div>
+    </div>
+    <div class="two">
+      <div class="card"><h5>1. Independence</h5><p>Knowing one reading tells you nothing about another, so \(p(x_1, \dots, x_n) = \prod_i p(x_i)\). Readings taken one second apart from the <b>same pump</b> break this: a bearing that vibrates strongly now will almost certainly still vibrate strongly a second later.</p></div>
+      <div class="card"><h5>2. Identical distribution</h5><p>Every reading follows the <b>same distribution</b> \(f(x; \mu, \sigma^2)\), with the same \(\mu\) and \(\sigma^2\) in training and in service. A model trained on new pumps in a cool plant, then deployed on aged pumps in a hot plant, breaks this.</p></div>
+    </div>
+    <p class="prose">Now move the idea to industry. A predictive maintenance model watches pump bearings: each observation is one vibration reading (RMS velocity in mm/s), and the model raises an alarm when a reading looks abnormal. Consecutive readings from one pump play the role of the video frames, and a new site or an aging fleet plays the role of the night-vision camera.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Is your vibration data IID?</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7IidCtl"></div><div class="pills" id="p7IidVerdict"></div></div>
+        <div class="stage"><canvas id="p7IidTs" aria-label="Vibration readings in training and in service"></canvas>
+          <div class="stage-grid"><div><div class="og-label">Independence check: lag plot</div><canvas id="p7IidLag" aria-label="Lag plot"></canvas></div><div><div class="og-label">Distribution check: training versus service</div><canvas id="p7IidHist" aria-label="Histograms"></canvas></div></div>
+          <div class="stats" id="p7IidStats"></div><p class="cap" id="p7IidOut" aria-live="polite"></p></div>
+      </div>
+    </div>
+    <div class="two">
+      <div class="card"><h5>If readings are not independent</h5><p>Split the data <b>by time or by machine</b>, never at random, or near-identical neighbors land in both the training and test sets and inflate the test score. Summarize windows into features (RMS, kurtosis, trend), or use a sequence model that expects dependence.</p></div>
+      <div class="card"><h5>If the distribution is not identical</h5><p><b>Monitor drift</b> by comparing live statistics with the training data. Recalibrate sensors, collect data from the new site or older machines, and retrain or adapt the model.</p></div>
+    </div>
+    <div class="note prose"><b>IID = independence + identical distribution.</b> When either part fails, the accuracy you measured during development no longer predicts the accuracy you will get in the field.</div>
+    <p class="prose">IID also implies that behavior does not change over time. In many applications that assumption is simply false, so a deployed model must cope with:</p>
+    <div class="cards3">
+      <div class="card"><h5>Sensor imperfection</h5><p>Faults, aging and miscalibration.</p></div>
+      <div class="card"><h5>Nonstationarity</h5><p>The data-generating process itself changes.</p></div>
+      <div class="card"><h5>Drift over time</h5><p>Gradual concept drift from wear or seasons.</p></div>
+      <div class="card"><h5>Evolving data</h5><p>New classes and new operating regimes.</p></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Concept drift: static versus adaptive model</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7DrCtl"></div><div class="stats" id="p7DrStats"></div></div>
+        <div class="stage"><canvas id="p7DrCv" aria-label="Rolling accuracy over time"></canvas><p class="cap">Both are nearest-centroid classifiers. The static model is trained once on the first 200 samples. The adaptive model (passive approach) retrains every 25 samples on the most recent window of labeled samples.</p></div>
+      </div>
+    </div>
+    <div class="note prose">Two families of adaptation (G. Ditzler, M. Roveri, C. Alippi and R. Polikar, <i>IEEE Computational Intelligence Magazine</i>, 2015): the <b>active</b> approach uses a change detector and adapts only when drift is detected; the <b>passive</b> approach updates the model continuously as new data arrive. Related ideas include domain adaptation, transfer learning and continual learning.</div>
+    <p class="prose"><b>Explainability matters.</b> In regulated industries such as automotive, banking and insurance, interpretability is often a legal requirement, especially for safety-critical features.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Today’s AI versus explainable AI</h4><span class="eyebrow">After the DARPA XAI concept</span></div>
+      <div class="stage"><div id="p7XaiSeg"></div><div class="two"><div class="flow" id="p7XaiFlow" style="margin:0"></div><div class="card" id="p7XaiQ"></div></div></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Prediction accuracy versus explainability</h4><span class="eyebrow">Notional</span></div>
+      <div class="stage"><div class="two"><div id="p7XaiChart"></div><div class="card" id="p7XaiTxt" aria-live="polite">Click a technique.</div></div>
+        <div class="opgrid"><div class="op"><h4>Deep explanation</h4><p class="cap">Modified deep learning techniques that learn explainable features.</p></div><div class="op"><h4>Interpretable models</h4><p class="cap">Techniques that learn more structured, interpretable, causal models.</p></div><div class="op"><h4>Model induction</h4><p class="cap">Infer an explainable model from any black-box model.</p></div></div>
+        <p class="cap">After D. Gunning, “Explainable Artificial Intelligence (XAI),” DARPA, 2016.</p></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h4>Safe “dumb” model or risky intelligent model?</h4><span class="eyebrow">Interactive</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="p7MdlCtl"></div></div>
+        <div class="stage"><div class="cards3" id="p7Mdl" style="margin:0"></div><div class="note warn" style="margin:0">In safety-critical applications, a safe “dumb” model is better than a risky intelligent one.</div></div>
+      </div>
+    </div>
     <!-- kc --><div class="kc" data-sec="procedure"></div>
   </div>
 </section>
@@ -1106,6 +1433,598 @@ function shade(ax, f, n = 70) {
   make(); ro.observe($("#ciCv")); onRedraw(draw); draw(); $("#ciNote").textContent = "Press Construct, then Improve.";
 })();
 
+/* ---------- Part 5: the 7-step procedure (complementary material) ---------- */
+(function mlProcedure() {
+  const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const rgba = (hex, a) => { let h = String(hex).trim().replace("#", ""); if (h.length === 3) h = h.split("").map(x => x + x).join(""); const n = parseInt(h, 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
+  const SANS = '"IBM Plex Sans", "Segoe UI", system-ui, sans-serif';
+  const pill = (ok, txt) => `<span class="pill ${ok ? "good" : "bad"}">${txt}</span>`;
+  // a 2D plot on a canvas of fixed height: data-to-pixel maps, axes, lines, dots, bands and a legend
+  function plot(cv, o) {
+    const h = o.height || 250; cv.style.height = h + "px";
+    const { ctx, w } = setupCanvas(cv, h), c = colors(); ctx.clearRect(0, 0, w, h);
+    const pad = Object.assign({ l: 54, r: 12, t: 12, b: 38 }, o.pad || {});
+    const P = { ctx, w, h, c, pad, xmin: o.xmin, xmax: o.xmax, ymin: o.ymin, ymax: o.ymax };
+    P.x = v => pad.l + (v - P.xmin) / (P.xmax - P.xmin) * (w - pad.l - pad.r);
+    P.y = v => h - pad.b - (v - P.ymin) / (P.ymax - P.ymin) * (h - pad.t - pad.b);
+    const nice = v => { const a = Math.abs(v); if (a < 1e-9) return "0"; if (a >= 1000) return (v / 1000).toFixed(a >= 10000 ? 0 : 1) + "k"; if (a >= 10) return v.toFixed(0); if (a >= 1) return v.toFixed(1).replace(/\.0$/, ""); return v.toFixed(2); };
+    const clip = () => { ctx.beginPath(); ctx.rect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b); ctx.clip(); };
+    P.axes = (a = {}) => {
+      const nx = a.nx || 5, ny = a.ny || 4; ctx.save(); ctx.lineWidth = 1; ctx.font = "11px " + MONO; ctx.fillStyle = c.muted;
+      for (let i = 0; i <= nx; i++) { const v = P.xmin + i * (P.xmax - P.xmin) / nx, X = P.x(v); ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(X, pad.t); ctx.lineTo(X, h - pad.b); ctx.stroke(); ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText(a.xfmt ? a.xfmt(v) : nice(v), X, h - pad.b + 5); }
+      for (let i = 0; i <= ny; i++) { const v = P.ymin + i * (P.ymax - P.ymin) / ny, Y = P.y(v); ctx.strokeStyle = c.grid; ctx.beginPath(); ctx.moveTo(pad.l, Y); ctx.lineTo(w - pad.r, Y); ctx.stroke(); ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(a.yfmt ? a.yfmt(v) : nice(v), pad.l - 5, Y); }
+      ctx.strokeStyle = c.muted; ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      ctx.font = "12px " + SANS;
+      if (a.xlabel) { ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.fillText(a.xlabel, pad.l + (w - pad.l - pad.r) / 2, h - 2); }
+      if (a.ylabel) { ctx.translate(11, pad.t + (h - pad.t - pad.b) / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(a.ylabel, 0, 0); }
+      ctx.restore();
+    };
+    P.line = (xs, ys, col, lw = 2, dash = null) => { ctx.save(); clip(); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.setLineDash(dash || []); ctx.beginPath(); let on = false;
+      for (let i = 0; i < xs.length; i++) { if (ys[i] == null || !isFinite(ys[i])) { on = false; continue; } const X = P.x(xs[i]), Y = P.y(ys[i]); if (on) ctx.lineTo(X, Y); else { ctx.moveTo(X, Y); on = true; } }
+      ctx.stroke(); ctx.restore(); };
+    P.fn = (f, col, lw, dash, n = 300) => { const xs = [], ys = []; for (let i = 0; i <= n; i++) { const x = P.xmin + i * (P.xmax - P.xmin) / n; xs.push(x); ys.push(f(x)); } P.line(xs, ys, col, lw, dash); };
+    P.dot = (x, y, col, r = 4, stroke = null, square = false) => { ctx.save(); ctx.fillStyle = col; const X = P.x(x), Y = P.y(y); ctx.beginPath(); if (square) ctx.rect(X - r, Y - r, 2 * r, 2 * r); else ctx.arc(X, Y, r, 0, 7); ctx.fill(); if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke(); } ctx.restore(); };
+    P.band = (xs, y1, y2, col) => { if (!xs.length) return; ctx.save(); clip(); ctx.fillStyle = col; ctx.beginPath(); xs.forEach((x, i) => i ? ctx.lineTo(P.x(x), P.y(y1[i])) : ctx.moveTo(P.x(x), P.y(y1[i]))); for (let i = xs.length - 1; i >= 0; i--) ctx.lineTo(P.x(xs[i]), P.y(y2[i])); ctx.closePath(); ctx.fill(); ctx.restore(); };
+    P.vline = (x, col, dash = [5, 4]) => P.line([x, x], [P.ymin, P.ymax], col, 1.5, dash);
+    P.hline = (y, col, dash = [5, 4]) => P.line([P.xmin, P.xmax], [y, y], col, 1.5, dash);
+    P.text = (s, x, y, col, align = "left", font = "12px " + SANS) => { ctx.save(); ctx.fillStyle = col || c.ink; ctx.font = font; ctx.textAlign = align; ctx.textBaseline = "alphabetic"; ctx.fillText(s, P.x(x), P.y(y)); ctx.restore(); };
+    P.legend = (items, x0, y0) => { ctx.save(); ctx.font = "11.5px " + SANS; const X = x0 ?? pad.l + 8; let Y = y0 ?? pad.t + 12;
+      const wMax = Math.max(...items.map(([l]) => ctx.measureText(l).width)) + 34; ctx.fillStyle = rgba(c.surface, .85); ctx.fillRect(X - 4, Y - 11, wMax, items.length * 16 + 4);
+      items.forEach(([label, col, dash]) => { ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(X, Y - 4); ctx.lineTo(X + 18, Y - 4); ctx.stroke(); ctx.fillStyle = c.ink; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText(label, X + 24, Y); Y += 16; });
+      ctx.restore(); };
+    return P;
+  }
+  // a row of buttons, one per item, that shows the picked item's text below
+  function explorer(host, items, onPick) {
+    host.innerHTML = `<div class="btns" role="group">${items.map((it, i) => `<button type="button" data-i="${i}">${it.t}</button>`).join("")}</div><div class="note" aria-live="polite" style="margin:.7rem 0 0"></div>`;
+    const btns = [...host.querySelectorAll("button")], det = host.querySelector(".note");
+    const show = i => { btns.forEach((b, j) => b.setAttribute("aria-pressed", String(i === j))); det.innerHTML = items[i].d; if (onPick) onPick(i); };
+    btns.forEach(b => b.addEventListener("click", () => show(+b.dataset.i))); show(0);
+  }
+  // a row of buttons that acts as one choice (a segmented control)
+  function seg(host, opts, value, cb) {
+    host.classList.add("btns"); host.setAttribute("role", "group");
+    host.innerHTML = opts.map(([v, t]) => `<button type="button" data-v="${v}">${t}</button>`).join("");
+    const set = v => host.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === v)));
+    host.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { set(b.dataset.v); cb(b.dataset.v); }));
+    set(value); return set;
+  }
+  // make SVG groups with role=button respond to Enter and Space like buttons
+  const keyClick = el => el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.dispatchEvent(new MouseEvent("click", { bubbles: true })); } });
+
+  const STEPS = [
+    { n: "Characterize the problem", f: "Problem characterization", d: "<b>Characterize the problem.</b> Check that ML is appropriate (a pattern exists, it cannot be pinned down mathematically, and data is available). Define control factors, signals, noise factors, responses, error states, edge cases, target performance and the deployment tier." },
+    { n: "Collect data", f: "Data collection", d: "<b>Collect data.</b> Plan the experiments with design of experiments (DOE). Breadth and depth both matter: cover the factor space with full or fractional factorial designs." },
+    { n: "Massage the data", f: "Data preparation", d: "<b>Massage the data</b> (data preparation). Cleansing, labeling, handling missing and inconsistent data, normalization, balancing, fusion, aggregation, flattening, and splitting into training, dev and test sets." },
+    { n: "Know better your enemy", f: "Data exploration", d: "<b>Know better your enemy</b> (data exploration). Univariate and multivariate analyses reveal separability, linearity and monotonicity, which guide the choice of model." },
+    { n: "Torture your data until it confesses", f: "Model development", d: "<b>Torture your data until it confesses</b> (model development). Extract or learn features and use the right tools. The No Free Lunch theorem says no algorithm wins on every problem." },
+    { n: "Evaluate the confession", f: "Evaluation and optimization", d: "<b>Evaluate the confession</b> (evaluation and optimization). Use confusion matrices, ROC and DET curves, generalization checks, error analysis and robustness tests. Compare against a baseline, not perfection." },
+    { n: "Deploy the model", f: "Deployment", d: "<b>Deploy the model.</b> Choose cloud, fog or edge. Plan for data that is not IID and for nonstationary environments (no “set and forget”), and for explainability." }
+  ];
+
+  /* overview: explorer and ordering game */
+  explorer($("#p7StepsX"), STEPS.map((s, i) => ({ t: `${i + 1}. ${s.n}`, d: `${s.d} <a href="#step${i + 1}">Go to Step ${i + 1}</a>.` })));
+  (function orderGame() {
+    const host = $("#p7Og"), pileEl = $("#p7OgPile"), trackEl = $("#p7OgTrack"), msg = $("#p7OgMsg"), meter = $("#p7OgMeter"), K = STEPS.length;
+    let slots = [], pile = [], sel = null, checked = false;
+    const card = k => `<div class="og-card" tabindex="0" role="button" data-k="${k}" aria-label="${STEPS[k].n}"><span>${STEPS[k].n}</span>${checked && slots.indexOf(k) === k ? `<small>${STEPS[k].f}</small>` : ""}</div>`;
+    const draw = () => {
+      pileEl.innerHTML = pile.map(card).join("");
+      trackEl.innerHTML = slots.map((k, i) => `<div class="og-slot ${checked && k !== null ? (k === i ? "ok" : "bad") : ""}" data-s="${i}"><span class="og-num">${i + 1}</span>${k === null ? "" : card(k)}</div>`).join("");
+      const placed = slots.filter(k => k !== null).length; meter.style.width = (placed / K * 100) + "%";
+      if (!checked) msg.textContent = `${placed} of ${K} placed`;
+      if (sel !== null) { const c = host.querySelector(`.og-card[data-k="${sel}"]`); if (c) c.classList.add("sel"); }
+    };
+    const where = k => { const s = slots.indexOf(k); return s >= 0 ? { slot: s } : { pile: pile.indexOf(k) }; };
+    const moveTo = (k, dest) => { // dest: a slot index or "pile"
+      const from = where(k); checked = false;
+      if (dest === "pile") { if (from.slot !== undefined) { slots[from.slot] = null; pile.push(k); } }
+      else { const other = slots[dest]; if (from.slot !== undefined) slots[from.slot] = other; else { pile.splice(from.pile, 1); if (other !== null) pile.push(other); } slots[dest] = k; }
+      sel = null; draw();
+    };
+    const shuffle = () => { pile = STEPS.map((_, i) => i); do { for (let i = pile.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pile[i], pile[j]] = [pile[j], pile[i]]; } } while (pile.every((v, i) => v === i)); slots = STEPS.map(() => null); sel = null; checked = false; draw(); };
+    // pointer dragging works with mouse, pen and touch; a press without movement is a tap that selects the card
+    let drag = null;
+    const targetAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && (el.closest("#p7OgTrack .og-slot") || el.closest("#p7OgPile")); };
+    host.addEventListener("pointerdown", e => { const c = e.target.closest(".og-card"); if (!c || e.button > 0) return; drag = { k: +c.dataset.k, el: c, x0: e.clientX, y0: e.clientY, ghost: null, over: null }; try { c.setPointerCapture(e.pointerId); } catch (err) {} });
+    host.addEventListener("pointermove", e => { if (!drag) return;
+      if (!drag.ghost) { if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 6) return; const r = drag.el.getBoundingClientRect(), g = drag.el.cloneNode(true); g.classList.add("og-ghost"); g.style.width = r.width + "px"; g.style.left = r.left + "px"; g.style.top = r.top + "px"; document.body.appendChild(g); drag.ghost = g; drag.ox = drag.x0 - r.left; drag.oy = drag.y0 - r.top; drag.el.classList.add("dragging"); }
+      drag.ghost.style.left = (e.clientX - drag.ox) + "px"; drag.ghost.style.top = (e.clientY - drag.oy) + "px";
+      const t = targetAt(e.clientX, e.clientY); if (t !== drag.over) { if (drag.over) drag.over.classList.remove("target"); if (t) t.classList.add("target"); drag.over = t; } });
+    const endDrag = e => { if (!drag) return; const d = drag; drag = null;
+      if (!d.ghost) { sel = sel === d.k ? null : d.k; draw(); return; }
+      d.ghost.remove(); d.el.classList.remove("dragging"); if (d.over) d.over.classList.remove("target");
+      const t = e.type === "pointerup" ? targetAt(e.clientX, e.clientY) : null;
+      if (t) moveTo(d.k, t.id === "p7OgPile" ? "pile" : +t.dataset.s); else draw(); };
+    host.addEventListener("pointerup", endDrag); host.addEventListener("pointercancel", endDrag);
+    // tap a slot or the deck to drop the selected card there
+    host.addEventListener("click", e => { if (sel === null || e.target.closest(".og-card")) return; const t = e.target.closest("#p7OgTrack .og-slot") || e.target.closest("#p7OgPile"); if (t) moveTo(sel, t.id === "p7OgPile" ? "pile" : +t.dataset.s); });
+    // keyboard: Enter places a deck card in the first free slot, keys 1 to 7 send a card to that slot, Delete returns it to the deck
+    host.addEventListener("keydown", e => { const c = e.target.closest(".og-card"); if (!c) return; const k = +c.dataset.k;
+      if (e.key >= "1" && e.key <= String(K)) { e.preventDefault(); moveTo(k, +e.key - 1); }
+      else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); const free = slots.indexOf(null); if (where(k).pile !== undefined && free >= 0) moveTo(k, free); else { sel = sel === k ? null : k; draw(); } }
+      else if (e.key === "Backspace" || e.key === "Delete") { e.preventDefault(); moveTo(k, "pile"); }
+      else return;
+      const f = host.querySelector(`.og-card[data-k="${k}"]`); if (f) f.focus(); });
+    $("#p7OgShuffle").addEventListener("click", shuffle);
+    $("#p7OgReveal").addEventListener("click", () => { slots = STEPS.map((_, i) => i); pile = []; sel = null; checked = true; draw(); msg.innerHTML = '<span class="pill">Here is the correct order.</span>'; });
+    $("#p7OgCheck").addEventListener("click", () => { const placed = slots.filter(k => k !== null).length;
+      if (placed < K) { msg.innerHTML = `<span class="pill">Place all ${K} cards first (${placed} placed).</span>`; return; }
+      checked = true; draw(); const ok = slots.filter((k, i) => k === i).length;
+      msg.innerHTML = ok === K ? pill(true, "Perfect order! Each card now shows the formal step name.") : `${pill(false, `${ok} of ${K} in the right place.`)} Move the red cards and check again.`; });
+    shuffle();
+  })();
+
+  /* step 1: problem characterization */
+  (function step1() {
+    const sc = [["Predict the next reading of pure electrical noise from a disconnected sensor.", [0, 1, 1], "No pattern exists: the readings are random, so ML cannot help however much data you collect."],
+      ["Predict where a projectile lands in a vacuum.", [1, 0, 1], "A pattern exists, but physics gives an exact, tractable model. Use the equations."],
+      ["Predict whether a pedestrian will jaywalk, using thousands of labeled dashcam clips.", [1, 1, 1], "All three requirements hold. This is a good ML problem."],
+      ["Predict a brand-new failure mode that has never been observed or recorded.", [1, 1, 0], "No data is available yet. Consider simulation, augmentation, few-shot or transfer learning."]];
+    const req = ["Pattern exists", "No tractable math model", "Data available"];
+    $("#p7Req").innerHTML = sc.map((s, i) => `<div class="card" data-i="${i}"><b style="font-size:.92rem">${s[0]}</b><div class="chk">${req.map((r, j) => `<label><input type="checkbox" data-j="${j}">${r}</label>`).join("")}</div><button type="button" class="small">Check</button><p class="cap" aria-live="polite" style="margin-top:.45rem"></p></div>`).join("");
+    $("#p7Req").querySelectorAll(".card").forEach(m => m.querySelector("button").addEventListener("click", () => {
+      const s = sc[+m.dataset.i], v = [...m.querySelectorAll("input")].map(x => x.checked ? 1 : 0), ok = v.every((x, j) => x === s[1][j]);
+      m.querySelector(".cap").innerHTML = pill(ok, ok ? "Correct" : "Not quite") + " " + s[2]; }));
+    explorer($("#p7Lack"), [
+      { t: "Collect data", d: "Collect more real data. The most reliable fix, but often expensive." },
+      { t: "Data augmentation", d: "Increase data diversity without collecting new data: flips, crops, rotations, color jitter, noise. A convolutional network can learn invariance to translation, viewpoint, size or illumination this way." },
+      { t: "Simulation", d: "High-fidelity simulators (for example the CARLA driving simulator) and augmented reality produce labeled synthetic data, including rare edge cases." },
+      { t: "One-shot or few-shot", d: "People learn from a few examples. One-shot learning learns a similarity (or difference) function between two examples, so one or a few labeled images per class suffice." },
+      { t: "Unsupervised learning", d: "Clustering and dimensionality reduction (PCA, ICA, t-SNE) on unlabeled data. Choosing a good representation can be harder than labeling the data." },
+      { t: "Transfer learning", d: "A model trained on a large source dataset passes its knowledge to a model that is fine-tuned on a small target dataset. Useful when the domains are similar but not identical." },
+      { t: "Active learning", d: "The model asks an annotator (a person or a machine) to label the most informative samples from an unlabeled pool, then retrains on the growing labeled set." }]);
+    const blocks = { sig: ["Signals", "Inputs that drive the system in use: vehicle speed, acceleration, steering wheel angle, normal and tractive forces."],
+      ctl: ["Control factors", "Design choices you can set: tire type, production date, cords, section side tread, rolling resistance, wheel diameter, load, duration of usage."],
+      noi: ["Noise factors", "Influences you cannot control: vehicle maneuvers, tire temperature and pressure, road conditions, weather conditions."],
+      res: ["Response", "What the model predicts: estimated tread depth, tire deformation or projected lifespan."],
+      err: ["Error states", "Ways the prediction can fail: false alarms and false negatives."] };
+    const ln = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:var(--muted)" marker-end="url(#p7Arrow)"/>`;
+    $("#p7Pd").innerHTML = `<svg class="p7-svg" viewBox="0 0 360 260" role="group" aria-label="P-diagram"><defs><marker id="p7Arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" style="fill:var(--muted)"/></marker></defs>
+      <rect x="120" y="95" width="120" height="70" rx="10" style="fill:var(--accent)"/><text x="180" y="125" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--accent-ink)">Treadwear</text><text x="180" y="142" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--accent-ink)">prediction model</text>
+      ${[["sig", 10, 105, "Signals"], ["res", 265, 85, "Response"], ["err", 265, 140, "Error states"], ["ctl", 120, 10, "Control factors"], ["noi", 120, 210, "Noise factors"]].map(([k, x, y, t]) => { const wd = k === "ctl" || k === "noi" ? 120 : 88; return `<g role="button" tabindex="0" data-k="${k}" aria-label="${t}"><rect x="${x}" y="${y}" width="${wd}" height="38" rx="8" style="fill:var(--sunk);stroke:var(--line);stroke-width:1.5"/><text x="${x + wd / 2}" y="${y + 23}" text-anchor="middle" font-size="12" style="fill:var(--ink)">${t}</text></g>`; }).join("")}
+      ${ln(98, 124, 118, 124)}${ln(240, 110, 263, 104)}${ln(240, 148, 263, 158)}${ln(180, 48, 180, 93)}${ln(180, 208, 180, 167)}</svg>`;
+    const gs = [...$("#p7Pd").querySelectorAll("g[data-k]")];
+    const show = k => { $("#p7PdTxt").innerHTML = `<h5>${blocks[k][0]}</h5><p>${blocks[k][1]}</p>`; gs.forEach(g => { const r = g.querySelector("rect"); r.style.stroke = g.dataset.k === k ? "var(--accent)" : "var(--line)"; r.style.strokeWidth = g.dataset.k === k ? "2.5" : "1.5"; }); };
+    gs.forEach(g => { g.addEventListener("click", () => show(g.dataset.k)); keyClick(g); }); show("ctl");
+    const ku = [["Known knowns", "Information that we have and know that we have.", "documented failure modes in your training data."], ["Known unknowns", "Information that we do not have and know that we lack.", "you know you have no data for sandstorms, so you plan to collect or simulate it."],
+      ["Unknown knowns", "Information that we have but do not know we have.", "a sensor channel already logged that predicts failure, but nobody has analyzed it."], ["Unknown unknowns", "Relevant information that we do not know we lack.", "a plastic bag full of air, or the moon mistaken for a traffic light: surprises nobody thought to test."]];
+    $("#p7Ku").innerHTML = ku.map((k, i) => `<button type="button" class="card" data-i="${i}" aria-pressed="false"><h5>${k[0]}</h5><p>Meta-knowledge: ${i < 2 ? "known" : "unknown"} · Domain: ${i % 2 ? "unknown" : "known"}</p></button>`).join("");
+    $("#p7Ku").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { $("#p7Ku").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); const k = ku[+b.dataset.i]; $("#p7KuTxt").innerHTML = `<b>${k[0]}:</b> ${k[1]} Example: ${k[2]}`; }));
+  })();
+
+  /* step 2: design of experiments */
+  (function step2() {
+    const ctl = makeControls($("#p7DoeCtl"), [
+      { key: "k", id: "p7DoeK", label: "Factors " + tex("k"), min: 3, max: 10, step: 1, value: 4 },
+      { type: "select", key: "L", id: "p7DoeL", label: "Levels per factor " + tex("L"), options: [["2", "2"], ["3", "3"]], value: "2" },
+      { key: "p", id: "p7DoeP", label: "Fraction exponent " + tex("p"), min: 0, max: 4, step: 1, value: 1 }
+    ], () => upd());
+    function upd() {
+      const k = ctl.k, L = +ctl.L, pEl = $("#p7DoeP"); pEl.max = k === 3 ? 1 : Math.min(k - 3, 4); if (ctl.p > +pEl.max) ctl.p = +pEl.max; const p = ctl.p;
+      const full = L ** k, frac = L ** (k - p);
+      stats($("#p7DoeStats"), [["Full factorial", `${full.toLocaleString("en-US")} runs, ${tex(`${L}^{${k}}`)}`], ["Fractional", `${frac.toLocaleString("en-US")} runs, ${tex(`${L}^{${k}-${p}}`)}`], ["Savings", (100 * (1 - frac / full)).toFixed(0) + "% fewer runs"]]);
+      const letters = "ABCDEFGHIJ";
+      if (L === 2 && k <= 5) {
+        const base = k - p, rows = [];
+        for (let r = 0; r < 2 ** base; r++) { const row = []; for (let j = 0; j < base; j++) row.push(((r >> (base - 1 - j)) & 1) ? 1 : -1);
+          const gens = []; for (let g = 0; g < p; g++) { let prod = 1; for (let j = 0; j < base; j++) if (j !== g % base || base < 3) prod *= row[j]; gens.push(prod); } // generator: product of the base factors except one (cycled)
+          rows.push(row.concat(gens)); }
+        const hdr = letters.slice(0, k).split("").map((ch, j) => j < base ? ch : ch + " = " + letters.slice(0, base).split("").filter((_, q) => base < 3 || q !== (j - base) % base).join(""));
+        $("#p7DoeTitle").textContent = `Design matrix: ${rows.length} runs (-1 = low level, +1 = high level)` + (p ? ". Each generated factor is a product of base factors, so it is aliased with that interaction." : ".");
+        $("#p7DoeDm").innerHTML = `<table class="ttab"><thead><tr><th>Run</th>${hdr.map(x => `<th class="n">${x}</th>`).join("")}</tr></thead><tbody>${rows.map((r, i) => `<tr><td>${i + 1}</td>${r.map(v => `<td class="n ${v > 0 ? "pos" : "neg"}">${v > 0 ? "+1" : "-1"}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+      } else { $("#p7DoeTitle").textContent = "The design matrix is shown for two-level designs with up to 5 factors."; $("#p7DoeDm").innerHTML = ""; }
+    }
+    upd();
+
+    // mixed-level planner
+    const PRE = {
+      motor: [["Load", ["Low", "Medium", "High"]], ["Speed (RPM)", ["1200", "1500", "1800"]], ["Ambient temp.", ["20 °C", "40 °C"]], ["Lubricant", ["Grease A", "Grease B"]], ["Bearing brand", ["B1", "B2", "B3", "B4"]]],
+      pump: [["Flow rate", ["Low", "Nominal", "High"]], ["Inlet pressure", ["1 bar", "2 bar"]], ["Impeller", ["Open", "Closed"]], ["Fluid", ["Water", "Glycol", "Oil"]]],
+      blank: [["Factor A", ["L1", "L2"]], ["Factor B", ["L1", "L2", "L3"]]]
+    };
+    let F = [];
+    const mx = makeControls($("#p7MxCtl"), [
+      { type: "select", key: "pre", id: "p7MxPre", label: "Example", options: [["motor", "Motor test rig"], ["pump", "Pump trial"], ["blank", "Start small"]], value: "motor" },
+      { type: "select", key: "des", id: "p7MxDes", label: "Design", options: [["full", "Full factorial"], ["pair", "Pairwise screening"]], value: "full" },
+      { key: "rep", id: "p7MxRep", label: "Replicates (repeat each run)", min: 1, max: 5, step: 1, value: 1 },
+      { key: "min", id: "p7MxMin", label: "Minutes per run", min: 5, max: 240, step: 5, value: 30 }
+    ], k => { if (k === "pre") load(mx.pre); else calc(); });
+    const lvNames = (f, n) => Array.from({ length: n }, (_, q) => (f.names && f.names[q]) || ("L" + (q + 1)));
+    // greedy all-pairs design: add rows until every pair of levels of every pair of factors appears
+    const pairwise = Ls => { const n = Ls.length; if (n < 2) return Ls.length ? Array.from({ length: Ls[0] }, (_, a) => [a]) : [];
+      const key = (i, a, j, b) => i + ":" + a + "|" + j + ":" + b, unc = new Set();
+      for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) for (let a = 0; a < Ls[i]; a++) for (let b = 0; b < Ls[j]; b++) unc.add(key(i, a, j, b));
+      const rng = mulberry32(11), rows = [];
+      const gain = (row, i, v) => { let g = 0; for (let j = 0; j < n; j++) { if (j === i || row[j] < 0) continue; if (unc.has(i < j ? key(i, v, j, row[j]) : key(j, row[j], i, v))) g++; } return g; };
+      while (unc.size && rows.length < 500) { let best = null, bestG = -1; const first = [...unc][0].split("|").map(t => t.split(":").map(Number));
+        for (let t = 0; t < 30; t++) { const row = Array(n).fill(-1); row[first[0][0]] = first[0][1]; row[first[1][0]] = first[1][1];
+          const order = Array.from({ length: n }, (_, q) => q).filter(q => row[q] < 0).sort(() => rng() - .5);
+          order.forEach(i => { let bv = 0, bg = -1; for (let v = 0; v < Ls[i]; v++) { const g = gain(row, i, v) + rng() * .01; if (g > bg) { bg = g; bv = v; } } row[i] = bv; });
+          let g = 0; for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) if (unc.has(key(i, row[i], j, row[j]))) g++;
+          if (g > bestG) { bestG = g; best = row; } }
+        for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) unc.delete(key(i, best[i], j, best[j])); rows.push(best); }
+      return rows; };
+    const fullRows = Ls => { let rows = [[]]; Ls.forEach(l => { const nx = []; rows.forEach(r => { for (let v = 0; v < l; v++) nx.push(r.concat([v])); }); rows = nx; }); return rows; };
+    const drawFactors = () => {
+      $("#p7MxF").innerHTML = F.map((f, i) => `<div class="mx-row"><span class="mx-badge">${String.fromCharCode(65 + i)}</span><input type="text" class="mx-name" data-i="${i}" value="${esc(f.name)}" aria-label="Factor name"><select class="mx-lv" data-i="${i}" aria-label="Number of levels">${[2, 3, 4, 5].map(n => `<option value="${n}"${n === f.L ? " selected" : ""}>${n} levels</option>`).join("")}</select><button type="button" class="small mx-del" data-i="${i}"${F.length <= 2 ? " disabled" : ""} aria-label="Remove factor">✕</button><span class="mx-levels">${lvNames(f, f.L).map((t, q) => `<span class="mx-chip l${q}">${esc(t)}</span>`).join("")}</span></div>`).join("");
+      $("#p7MxF").querySelectorAll(".mx-name").forEach(e => e.addEventListener("input", () => { if (!F[+e.dataset.i]) return; F[+e.dataset.i].name = e.value; calc(); }));
+      $("#p7MxF").querySelectorAll(".mx-lv").forEach(e => e.addEventListener("change", () => { if (!F[+e.dataset.i]) return; F[+e.dataset.i].L = +e.value; drawFactors(); calc(); }));
+      $("#p7MxF").querySelectorAll(".mx-del").forEach(e => e.addEventListener("click", () => { F.splice(+e.dataset.i, 1); drawFactors(); calc(); }));
+      $("#p7MxAdd").disabled = F.length >= 7; };
+    const calc = () => {
+      const Ls = F.map(f => f.L), rep = mx.rep, mins = mx.min, des = mx.des;
+      const full = Ls.reduce((a, b) => a * b, 1), pr = pairwise(Ls), lb = Ls.length > 1 ? [...Ls].sort((a, b) => b - a).slice(0, 2).reduce((a, b) => a * b, 1) : Ls[0];
+      const runs = (des === "full" ? full : pr.length) * rep, hrs = runs * mins / 60;
+      stats($("#p7MxStats"), [["Full factorial", `${full.toLocaleString("en-US")} runs`], ["Pairwise screening", `${pr.length} runs (at least ${lb})`], ["Test time, selected design", hrs < 48 ? `${hrs.toFixed(1)} h` : `${(hrs / 24).toFixed(1)} days`]]);
+      $("#p7MxMsg").innerHTML = (des === "full" ? `<b>Full factorial:</b> ${tex(Ls.join(" \\times ") + " = " + full)} runs, so every combination is tested and all main effects and interactions can be estimated. Adding a 3-level factor multiplies the work by 3.`
+        : `<b>Pairwise screening:</b> ${pr.length} runs (${(100 * (1 - pr.length / full)).toFixed(0)}% fewer than the full factorial) still cover every pair of levels for every pair of factors. At least ${lb} runs are needed, the two largest level counts multiplied. Use it to screen which factors matter, then run a full factorial on the few important ones.`)
+        + ` Total: ${runs.toLocaleString("en-US")} runs × ${mins} min${rep > 1 ? ` (${rep} replicates)` : ""}, running around the clock.`;
+      const rows = des === "full" ? fullRows(Ls) : pr, show = rows.slice(0, 60);
+      $("#p7MxTitle").textContent = `Design matrix: ${des === "full" ? "full factorial" : "pairwise screening"} (${rows.length} runs${rows.length > 60 ? ", first 60 shown" : ""})`;
+      $("#p7MxDm").innerHTML = `<table class="ttab"><thead><tr><th>Run</th>${F.map((f, i) => `<th>${String.fromCharCode(65 + i)}: ${esc(f.name)}</th>`).join("")}</tr></thead><tbody>${show.map((r, k) => `<tr><td>${k + 1}</td>${r.map((v, i) => `<td><span class="mx-chip l${v}">${esc(lvNames(F[i], F[i].L)[v])}</span></td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    };
+    const load = v => { F = PRE[v].map(([name, names]) => ({ name, L: names.length, names })); drawFactors(); calc(); };
+    $("#p7MxAdd").addEventListener("click", () => { if (F.length < 7) { F.push({ name: "Factor " + String.fromCharCode(65 + F.length), L: 2, names: [] }); drawFactors(); calc(); } });
+    load("motor");
+  })();
+
+  /* step 3: data preparation */
+  (function step3() {
+    const raw = [["08:00", 2.1, 68, null, "OK"], ["09:00", 2.4, 70, 45, "OK"], ["10:00", 2.2, null, 46, "ok"], ["11:00", 25.0, 71, 47, "OK"], ["12:00", 2.6, 72, 49, "OK"], ["13:00", 8.9, 103, 76, "FAIL"], ["14:00", 9.4, 106, 78, "Fail"], ["15:00", 9.1, null, 77, "FAIL"]];
+    let d, cols, msg = "";
+    const draw = () => { $("#p7CleanTbl").innerHTML = `<table class="ttab"><thead><tr>${cols.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>${d.map(r => `<tr>${r.map(v => `<td class="${v === null ? "neg" : typeof v === "number" ? "n" : ""}">${v === null ? "missing" : typeof v === "number" ? +v.toFixed(3) : v}</td>`).join("")}</tr>`).join("")}</tbody></table>`; $("#p7CleanMsg").textContent = msg; };
+    const reset = () => { d = raw.map(r => r.slice()); cols = ["Hour", "Vibration (mm/s)", "Temp (°C)", "Acoustic (dB)", "Log status"]; msg = "Raw log: missing values, an impossible vibration spike (25 mm/s) and inconsistent status text."; draw(); };
+    const num = [1, 2, 3];
+    $("#p7CleanBtns").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { const a = b.dataset.a;
+      if (a === "reset") return reset();
+      if (a === "impute") { num.forEach(j => { const vals = d.map(r => r[j]).filter(v => typeof v === "number").sort((x, y) => x - y), m = vals[Math.floor(vals.length / 2)]; d.forEach(r => { if (r[j] === null) r[j] = m; }); }); msg = "Missing values replaced by the column median, which is robust to the spike."; }
+      if (a === "outlier") { const v = d.map(r => r[1]).filter(x => typeof x === "number").sort((x, y) => x - y), q1 = v[Math.floor(v.length / 4)], q3 = v[Math.floor(3 * v.length / 4) - 1], iqr = q3 - q1, before = d.length; d = d.filter(r => typeof r[1] !== "number" || (r[1] >= q1 - 1.5 * iqr && r[1] <= q3 + 1.5 * iqr)); msg = `Removed ${before - d.length} row(s) outside 1.5 × IQR on vibration (the 25 mm/s spike).`; }
+      if (a === "norm") { let done = 0; num.forEach(j => { const v = d.map(r => r[j]); if (v.some(x => typeof x !== "number")) return; const mn = Math.min(...v), mxv = Math.max(...v); d.forEach(r => r[j] = (r[j] - mn) / (mxv - mn || 1)); done++; }); msg = done === 3 ? "Each numeric column rescaled to [0, 1], so no feature dominates because of its units." : "Some columns still have missing values: impute them first, then normalize."; }
+      if (a === "label") { if (cols.length === 5 && cols[4] === "Log status") { cols = cols.slice(0, 4).concat(["failure"]); d.forEach(r => r[4] = /fail/i.test(r[4]) ? 1 : 0); } msg = "Inconsistent status text mapped to a clean label: failure = 1, no failure = 0."; }
+      draw(); }));
+    reset();
+    const ctl = makeControls($("#p7SplitCtl"), [
+      { type: "select", key: "N", id: "p7SplitN", label: "Samples N", options: [["1000", "1,000"], ["10000", "10,000"], ["100000", "100,000"], ["1000000", "1,000,000"]], value: "10000" },
+      { key: "tr", id: "p7SplitTr", label: "Training %", min: 40, max: 90, step: 5, value: 60 },
+      { key: "dv", id: "p7SplitDv", label: "Dev %", min: 5, max: 40, step: 5, value: 20 }
+    ], () => upd());
+    function upd() {
+      if (ctl.tr + ctl.dv > 95) ctl.dv = 95 - ctl.tr;
+      const tr = ctl.tr, dv = ctl.dv, te = 100 - tr - dv, N = +ctl.N;
+      const parts = [["Training", tr, "var(--s1)", "to train the learning algorithm."], ["Dev", dv, "var(--s2)", "to tune parameters, select features and make other decisions."], ["Test", te, "var(--s3)", "to evaluate the performance of the final model."]];
+      $("#p7SplitBar").innerHTML = parts.map(s => `<div style="width:${s[1]}%;background:${s[2]}">${s[1]}%</div>`).join("");
+      $("#p7SplitTxt").innerHTML = parts.map(s => `<div class="card"><h5>${s[0]} set: ${Math.round(N * s[1] / 100).toLocaleString("en-US")}</h5><p>Used ${s[3]}</p></div>`).join("");
+    }
+    upd();
+  })();
+
+  /* step 4: data exploration */
+  (function step4() {
+    const ctl = makeControls($("#p7ExCtl"), [
+      { type: "select", key: "kind", id: "p7ExKind", label: "Dataset", options: [["lin", "Linearly separable"], ["ovl", "Overlapping"], ["ring", "Nonlinear (ring)"], ["mono", "Monotonic trend"]], value: "lin" },
+      { key: "sp", id: "p7ExSp", label: "Class spread", min: .3, max: 2.5, step: .1, value: 1, fmt: v => v.toFixed(1) }
+    ], () => draw());
+    function draw() {
+      const sp = ctl.sp, kind = ctl.kind, rng = mulberry32(11), A = [], B = [];
+      for (let i = 0; i < 70; i++) {
+        if (kind === "lin") { A.push([3 + gauss(rng) * sp * .7, 3 + gauss(rng) * sp * .7]); B.push([7 + gauss(rng) * sp * .7, 7 + gauss(rng) * sp * .7]); }
+        if (kind === "ovl") { A.push([4.3 + gauss(rng) * sp * 1.2, 4.6 + gauss(rng) * sp * 1.2]); B.push([5.7 + gauss(rng) * sp * 1.2, 5.4 + gauss(rng) * sp * 1.2]); }
+        if (kind === "ring") { const t = rng() * 6.283, r = 1.2 * rng() * sp; A.push([5 + r * Math.cos(t), 5 + r * Math.sin(t)]); const r2 = 3.3 + gauss(rng) * .3 * sp; B.push([5 + r2 * Math.cos(t + 1), 5 + r2 * Math.sin(t + 1)]); }
+        if (kind === "mono") { const x = rng() * 10; A.push([x, 1 + .8 * x + gauss(rng) * sp * .6]); }
+      }
+      const P = plot($("#p7ExScatter"), { xmin: 0, xmax: 10, ymin: 0, ymax: 10, height: 270 }), c = P.c; P.axes({ xlabel: "Feature x1", ylabel: kind === "mono" ? "Target y" : "Feature x2" });
+      A.forEach(p => P.dot(p[0], p[1], rgba(c.s1, .75), 4)); B.forEach(p => P.dot(p[0], p[1], rgba(c.s2, .8), 3.6, null, true));
+      const H = plot($("#p7ExHist"), { xmin: 0, xmax: 10, ymin: 0, ymax: kind === "mono" ? 20 : 30, height: 270 }); H.axes({ xlabel: "x1 alone (univariate view)", ylabel: "Count" });
+      const bins = 20, bw = 10 / bins, hist = a => { const h = new Array(bins).fill(0); a.forEach(p => h[clamp(Math.floor(p[0] / bw), 0, bins - 1)]++); return h; };
+      [[A, c.s1], [B, c.s2]].forEach(([arr, col]) => { if (!arr.length) return; hist(arr).forEach((v, i) => { H.ctx.fillStyle = rgba(col, .45); const x0 = H.x(i * bw), x1 = H.x((i + 1) * bw); H.ctx.fillRect(x0 + 1, H.y(v), x1 - x0 - 2, H.y(0) - H.y(v)); }); });
+      if (kind !== "mono") P.legend([["Class A", c.s1], ["Class B", c.s2]]);
+      if (kind === "mono") {
+        const xs = A.map(p => p[0]), ys = A.map(p => p[1]), mx = avg(xs), my = avg(ys);
+        const r = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0) / Math.sqrt(xs.reduce((s, x) => s + (x - mx) ** 2, 0) * ys.reduce((s, y) => s + (y - my) ** 2, 0));
+        stats($("#p7ExStats"), [["Pearson r", r.toFixed(3)]]);
+        $("#p7ExNote").textContent = "The target rises steadily with x1: the relation is monotonic and roughly linear, so a linear regression is a sensible first model.";
+      } else { // best single straight boundary along the direction joining the class means
+        const mA = [avg(A.map(p => p[0])), avg(A.map(p => p[1]))], mB = [avg(B.map(p => p[0])), avg(B.map(p => p[1]))], w = [mB[0] - mA[0], mB[1] - mA[1]];
+        const proj = p => p[0] * w[0] + p[1] * w[1], all = A.map(p => [proj(p), 0]).concat(B.map(p => [proj(p), 1])).sort((a, b) => a[0] - b[0]); let best = 0;
+        for (let i = 0; i <= all.length; i++) { let ok = 0; all.forEach((q, j) => { if ((j < i && q[1] === 0) || (j >= i && q[1] === 1)) ok++; }); best = Math.max(best, ok, all.length - ok); }
+        const acc = best / all.length;
+        stats($("#p7ExStats"), [["Best straight boundary", (100 * acc).toFixed(1) + "%"]]);
+        $("#p7ExNote").textContent = (acc > .98 ? "The classes are linearly separable: simple linear models will do." : acc > .8 ? "The classes overlap: expect some irreducible error; probabilistic models help." : "No straight line separates the classes. Use a nonlinear model (kernel SVM, tree, k-NN, neural network) or engineer a feature such as the distance from the center.")
+          + (kind === "ring" ? " Note the histogram: x1 alone hides the ring structure." : "");
+      }
+    }
+    ro.observe($("#p7ExScatter")); onRedraw(draw); draw();
+  })();
+
+  /* step 5: model development */
+  (function step5() {
+    const set = v => { const a = v === "hand" ? ["Input data", "Feature extractor (hand-crafted)", "Feature vector", "Classifier", "Output"] : ["Input layer", "Hidden layer 1", "Hidden layer 2", "…", "Hidden layer M", "Classifier (output layer)"];
+      $("#p7FeFlow").innerHTML = a.map((x, i) => `<span${i === a.length - 1 ? ' class="on"' : ""}>${x}</span>`).join("<i>→</i>");
+      $("#p7FeTxt").textContent = v === "hand" ? "An expert designs the features (for example vibration RMS, kurtosis, spectral peaks). The classifier only learns the decision rule." : "Each hidden layer acts as a learnable kernel. The network learns the features and the classifier jointly from data."; };
+    seg($("#p7FeSeg"), [["hand", "Feature extractor + classifier"], ["learn", "Trainable feature extractor (deep)"]], "hand", set); set("hand");
+    const algs = ["Naive Bayes", "k-NN", "Decision tree", "Neural network"], probs = ["Text, many independent words", "Small, low-dimensional, local clusters", "Tabular with axis-aligned rules", "Images with spatial structure"];
+    const acc = [[92, 71, 74, 60], [70, 93, 78, 68], [73, 76, 94, 63], [68, 72, 77, 95]];
+    let sel = -1;
+    const draw = () => {
+      $("#p7Nfl").innerHTML = `<table class="ttab"><thead><tr><th>Algorithm</th>${probs.map(p => `<th class="n" style="white-space:normal">${p}</th>`).join("")}<th class="n">Average</th></tr></thead><tbody>${algs.map((a, i) => `<tr class="click${i === sel ? " hl" : ""}" data-i="${i}" tabindex="0"><td><b>${a}</b></td>${acc[i].map((v, j) => `<td class="n${v === Math.max(...acc.map(r => r[j])) ? " pos" : ""}">${v}%</td>`).join("")}<td class="n">${avg(acc[i]).toFixed(1)}%</td></tr>`).join("")}</tbody></table>`;
+      $("#p7Nfl").querySelectorAll("tr[data-i]").forEach(tr => { const pick = () => { const hadFocus = document.activeElement === tr; sel = +tr.dataset.i; draw(); const j = acc[sel].indexOf(Math.max(...acc[sel])); $("#p7NflMsg").innerHTML = `<b>${algs[sel]}</b> is best on “${probs[j]}”, but its average (${avg(acc[sel]).toFixed(1)}%) is about the same as everyone else’s. Choose by matching the algorithm’s assumptions to your data.`; const f = $(`#p7Nfl tr[data-i="${sel}"]`); if (f && hadFocus) f.focus(); };
+        tr.addEventListener("click", pick); tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } }); });
+    };
+    draw();
+  })();
+
+  /* step 6: evaluation and optimization */
+  const erf = x => { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + .3275911 * x), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - .284496736) * t + .254829592) * t * Math.exp(-x * x); return s * y; };
+  const Phi = x => .5 * (1 + erf(x / Math.SQRT2));
+  function probit(p) { // inverse normal CDF (Acklam)
+    p = clamp(p, 1e-9, 1 - 1e-9); const a = [-39.6968302866538, 220.946098424521, -275.928510446969, 138.357751867269, -30.6647980661472, 2.50662827745924], b = [-54.4760987982241, 161.585836858041, -155.698979859887, 66.8013118877197, -13.2806815528857], c = [-.00778489400243029, -.322396458041136, -2.40075827716184, -2.54973253934373, 4.37466414146497, 2.93816398269878], d = [.00778469570904146, .32246712907004, 2.445134137143, 3.75440866190742];
+    const pl = .02425; let q, r;
+    if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    if (p > 1 - pl) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    q = p - .5; r = q * q; return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+  }
+  (function biasVariance() {
+    const truth = x => Math.sin(Math.PI * x) * .9 + .3 * x;
+    const solve = (A, b) => { const n = b.length; A = A.map((r, i) => r.concat([b[i]]));
+      for (let c = 0; c < n; c++) { let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r; [A[c], A[p]] = [A[p], A[c]];
+        for (let r = 0; r < n; r++) { if (r === c) continue; const f = A[r][c] / (A[c][c] || 1e-12); for (let k = c; k <= n; k++) A[r][k] -= f * A[c][k]; } }
+      return A.map((r, i) => r[n] / (r[i] || 1e-12)); };
+    const polyFit = (xs, ys, deg) => { const n = deg + 1, G = Array.from({ length: n }, () => new Array(n).fill(0)), r = new Array(n).fill(0);
+      xs.forEach((x, i) => { const p = []; for (let k = 0; k < n; k++) p.push(x ** k); for (let a = 0; a < n; a++) { r[a] += p[a] * ys[i]; for (let b = 0; b < n; b++) G[a][b] += p[a] * p[b]; } });
+      for (let a = 0; a < n; a++) G[a][a] += 1e-9; return solve(G, r); };
+    const pe = (c, x) => c.reduce((s, ci, k) => s + ci * x ** k, 0);
+    let seed = 3, D, curve = [];
+    const ctl = makeControls($("#p7BvCtl"), [
+      { key: "deg", id: "p7BvDeg", label: "Model complexity (degree)", min: 0, max: 12, step: 1, value: 3 },
+      { key: "nz", id: "p7BvNz", label: "Noise", min: .05, max: .6, step: .05, value: .25, fmt: v => v.toFixed(2) }
+    ], k => { if (k === "nz") compute(); draw(); });
+    const gen = () => { const r = mulberry32(seed), tx = [], ty = [], vx = [], vy = []; for (let i = 0; i < 14; i++) { const x = -1 + 2 * (i + r() * .8) / 14; tx.push(x); ty.push(truth(x) + gauss(r) * ctl.nz); } for (let i = 0; i < 200; i++) { const x = -1 + 2 * r(); vx.push(x); vy.push(truth(x) + gauss(r) * ctl.nz); } return { tx, ty, vx, vy }; };
+    const mse = (c, xs, ys) => avg(xs.map((x, i) => (pe(c, x) - ys[i]) ** 2));
+    const compute = () => { D = gen(); curve = []; for (let d = 0; d <= 12; d++) { const c = polyFit(D.tx, D.ty, d); curve.push([mse(c, D.tx, D.ty), mse(c, D.vx, D.vy)]); } };
+    function draw() {
+      const deg = ctl.deg, cf = polyFit(D.tx, D.ty, deg);
+      const P = plot($("#p7BvFit"), { xmin: -1, xmax: 1, ymin: -1.8, ymax: 1.8, height: 260 }), c = P.c; P.axes({ xlabel: "x", ylabel: "y" });
+      P.fn(truth, c.s3, 2, [5, 4]); D.vx.forEach((x, i) => { if (i % 3 === 0) P.dot(x, D.vy[i], rgba(c.muted, .35), 2.5); }); P.fn(x => clamp(pe(cf, x), -5, 5), c.s1, 2.5); D.tx.forEach((x, i) => P.dot(x, D.ty[i], c.s2, 5, c.surface));
+      P.legend([["True function", c.s3, [5, 4]], ["Fitted model", c.s1], ["Training points", c.s2]]);
+      const ymax = Math.min(1.2, Math.max(...curve.map(v => v[1])) * 1.1);
+      const E = plot($("#p7BvErr"), { xmin: 0, xmax: 12, ymin: 0, ymax, height: 260 }); E.axes({ xlabel: "Model complexity (degree)", ylabel: "Mean squared error", nx: 6 });
+      const ds = curve.map((_, i) => i), best = curve.reduce((b, v, i) => v[1] < curve[b][1] ? i : b, 0);
+      E.line(ds, curve.map(v => v[0]), c.s1, 2.5); E.line(ds, curve.map(v => Math.min(v[1], ymax * 1.5)), c.bad, 2.5); E.vline(best, c.s3);
+      E.dot(deg, Math.min(curve[deg][1], ymax), c.bad, 6, c.surface); E.dot(deg, curve[deg][0], c.s1, 6, c.surface);
+      E.legend([["Training error", c.s1], ["Testing error", c.bad], ["Best balance", c.s3, [5, 4]]], E.w - 150);
+      stats($("#p7BvStats"), [["Training MSE", curve[deg][0].toFixed(3)], ["Testing MSE", curve[deg][1].toFixed(3)], ["Best degree", best]]);
+      $("#p7BvMsg").innerHTML = deg < best - 1 ? `${pill(false, "Underfitting")} High bias, low variance: the model is too simple.` : deg > best + 2 ? `${pill(false, "Overfitting")} Low bias, high variance: training error keeps falling while testing error rises.` : `${pill(true, "Good balance")} The testing error is near its minimum.`;
+    }
+    $("#p7BvNew").addEventListener("click", () => { seed++; compute(); draw(); });
+    compute(); ro.observe($("#p7BvFit")); onRedraw(draw); draw();
+  })();
+  (function confusion() {
+    const cls = ["Wallace", "Darwin", "Turing"], M = [[5, 3, 0], [2, 3, 1], [0, 2, 11]]; let sel = 0;
+    const sumA = a => a.reduce((s, v) => s + v, 0);
+    const draw = () => {
+      $("#p7CmTbl").innerHTML = `<table class="ttab"><thead><tr><th>Actual \\ Predicted</th>${cls.map(c => `<th class="n">${c}</th>`).join("")}</tr></thead><tbody>${M.map((r, i) => `<tr><th>${cls[i]}</th>${r.map((v, j) => { const p = Math.round(v / 11 * 85); return `<td class="n" style="background:color-mix(in srgb,var(--accent) ${p}%,var(--surface));color:${p > 50 ? "var(--accent-ink)" : "var(--ink)"};${i === sel || j === sel ? "outline:2px solid var(--gold);outline-offset:-2px" : ""}">${v}</td>`; }).join("")}</tr>`).join("")}</tbody></table>`;
+      const tp = M[sel][sel], rowS = sumA(M[sel]), colS = sumA(M.map(r => r[sel])), diag = sumA(M.map((r, i) => r[i]));
+      stats($("#p7CmStats"), [["Actual " + cls[sel], rowS], ["Recognized (TP)", tp], ["Recall", `${tp}/${rowS} = ${(tp / rowS).toFixed(3)}`], ["Precision", `${tp}/${colS} = ${(tp / colS).toFixed(3)}`], ["Overall accuracy", `${diag}/27 = ${(diag / 27).toFixed(3)}`]]);
+      $("#p7CmTxt").textContent = "Recall divides by the row (actual photos of the class), precision by the column (photos predicted as the class). " + (sel === 2 ? "Turing is separated well from the other two." : "Wallace and Darwin are often confused with each other.");
+    };
+    seg($("#p7CmSeg"), cls.map((c, i) => [String(i), c]), "0", v => { sel = +v; draw(); }); draw();
+  })();
+  (function metrics() {
+    const ctl = makeControls($("#p7MetCtl"), ["TP", "FP", "FN", "TN"].map((k, i) => ({ key: k, id: "p7Met" + k, label: { TP: "True positives TP", FP: "False positives FP", FN: "False negatives FN", TN: "True negatives TN" }[k], min: 0, max: 100, step: 1, value: [40, 10, 5, 45][i] })), () => draw());
+    function draw() {
+      const { TP, FP, FN, TN } = ctl, d = (a, b) => b ? a / b : NaN;
+      $("#p7MetCm").innerHTML = `<thead><tr><th></th><th class="n">Actual +</th><th class="n">Actual -</th></tr></thead><tbody><tr><th>Predicted +</th><td class="n pos">TP ${TP}</td><td class="n neg">FP ${FP}</td></tr><tr><th>Predicted -</th><td class="n neg">FN ${FN}</td><td class="n pos">TN ${TN}</td></tr></tbody>`;
+      const P = d(TP, TP + FP), R = d(TP, TP + FN), Sp = d(TN, TN + FP), A = d(TP + TN, TP + TN + FP + FN), F1 = d(2 * P * R, P + R), FPR = d(FP, FP + TN);
+      const rows = [["Accuracy (overall correct fraction)", tex(String.raw`\frac{TP+TN}{TP+TN+FP+FN}`), A], ["Precision (positive predictive value)", tex(String.raw`\frac{TP}{TP+FP}`), P], ["Recall, sensitivity, TPR, PD", tex(String.raw`\frac{TP}{TP+FN}`), R], ["Specificity (true negative rate)", tex(String.raw`\frac{TN}{TN+FP}`), Sp], ["False alarm rate (FPR, PFA)", tex(String.raw`\frac{FP}{FP+TN}`), FPR], ["F1 (harmonic mean of P and R)", tex(String.raw`\frac{2PR}{P+R}`), F1]];
+      $("#p7MetOut").innerHTML = `<table class="ttab"><thead><tr><th>Metric</th><th>Formula</th><th class="n">Value</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="n"><b>${isNaN(r[2]) ? "n/a" : r[2].toFixed(3)}</b></td></tr>`).join("")}</tbody></table>`;
+    }
+    draw();
+  })();
+  (function rocDet() {
+    const ctl = makeControls($("#p7RocCtl"), [
+      { key: "dp", id: "p7RocDp", label: "Class separation " + tex("d'"), min: 0, max: 4, step: .1, value: 1.8, fmt: v => v.toFixed(1) },
+      { key: "th", id: "p7RocTh", label: "Threshold", min: -3, max: 6, step: .05, value: .9, fmt: v => v.toFixed(2) },
+      { type: "select", key: "mode", id: "p7RocMode", label: "Curve", options: [["roc", "ROC"], ["det", "DET"]], value: "roc" }
+    ], () => draw());
+    function draw() {
+      const dp = ctl.dp, th = ctl.th;
+      const P = plot($("#p7RocDist"), { xmin: -4, xmax: 7, ymin: 0, ymax: .45, height: 250 }), c = P.c; P.axes({ xlabel: "Classifier score", ylabel: "Density" });
+      const pdf = (x, m) => Math.exp(-((x - m) ** 2) / 2) / Math.sqrt(2 * Math.PI);
+      const xs = []; for (let x = -4; x <= 7.001; x += .05) xs.push(x);
+      const sx = xs.filter(x => x >= th); P.band(sx, sx.map(x => pdf(x, 0)), sx.map(() => 0), rgba(c.bad, .25)); P.band(sx, sx.map(x => pdf(x, dp)), sx.map(() => 0), rgba(c.s3, .3));
+      P.line(xs, xs.map(x => pdf(x, 0)), c.bad, 2); P.line(xs, xs.map(x => pdf(x, dp)), c.s3, 2); P.vline(th, c.ink, []);
+      P.legend([["Negatives (healthy)", c.bad], ["Positives (faulty)", c.s3]]);
+      const tpr = 1 - Phi(th - dp), fpr = 1 - Phi(th), auc = Phi(dp / Math.SQRT2);
+      if (ctl.mode === "roc") {
+        const R = plot($("#p7RocCv"), { xmin: 0, xmax: 1, ymin: 0, ymax: 1, height: 250 }); R.axes({ xlabel: "False-positive rate (1 - specificity)", ylabel: "True-positive rate" });
+        R.band([0, 1], [0, 1], [0, 0], rgba(c.muted, .1)); R.line([0, 1], [0, 1], c.muted, 1.5, [5, 4]);
+        const rx = [], ry = []; for (let t = 8; t >= -5; t -= .05) { rx.push(1 - Phi(t)); ry.push(1 - Phi(t - dp)); } R.line(rx, ry, c.s1, 2.5);
+        R.dot(fpr, tpr, c.gold, 6, c.surface); R.dot(0, 1, c.good, 4); R.text("Ideal (0, 1)", .04, .93, c.good);
+      } else {
+        const lo = probit(.001), hi = probit(.95), R = plot($("#p7RocCv"), { xmin: lo, xmax: hi, ymin: lo, ymax: hi, height: 250, pad: { l: 60 } }), f = v => (Phi(v) * 100).toFixed(1) + "%";
+        R.axes({ xlabel: "False alarm rate (normal-deviate scale)", ylabel: "Miss rate", xfmt: f, yfmt: f, nx: 4, ny: 4 });
+        const rx = [], ry = []; for (let t = 8; t >= -5; t -= .05) { rx.push(probit(1 - Phi(t))); ry.push(probit(Phi(t - dp))); } R.line(rx, ry, c.s1, 2.5); R.dot(probit(fpr), probit(1 - tpr), c.gold, 6, c.surface);
+      }
+      stats($("#p7RocStats"), [["TPR (recall, PD)", tpr.toFixed(3)], ["FPR (PFA)", fpr.toFixed(3)], ["Miss rate", (1 - tpr).toFixed(3)], ["AUC", auc.toFixed(3) + (auc > .9 ? " excellent" : auc > .75 ? " good" : auc > .6 ? " fair" : " near chance")]]);
+    }
+    ro.observe($("#p7RocDist")); onRedraw(draw); draw();
+  })();
+  (function rocSpace() {
+    let pick = 0;
+    const items = [
+      { t: "A (0, 0)", d: "Never labels anything positive: no false positives, but every positive case is a false negative." },
+      { t: "B (0, 1)", d: "The ideal classifier: perfect classification." },
+      { t: "C (1, 1)", d: "The converse of A: labels everything positive, so there are no false negatives." },
+      { t: "D (1, 0)", d: "Labels every case incorrectly. Inverting its predictions gives a perfect classifier." },
+      { t: "Diagonal A to C", d: "Chance performance: tossing a coin gives the same result. Classifiers below the diagonal (the gray area) are worse than chance; those near the line can be tested for significance." },
+      { t: "Conservative or liberal", d: "Better classifiers lie toward the top left. <b>Conservative</b> ones (toward the lower left) say positive only with strong evidence: few false positives, many misses. <b>Liberal</b> ones (toward the upper right) say positive on weak evidence, catching positives at the cost of many false positives." }];
+    function draw() {
+      const P = plot($("#p7RsCv"), { xmin: 0, xmax: 1, ymin: 0, ymax: 1, height: 280 }), c = P.c, ctx = P.ctx; P.axes({ xlabel: "False-positive rate", ylabel: "True-positive rate" });
+      P.band([0, 1], [0, 1], [0, 0], rgba(c.muted, pick === 4 ? .28 : .12)); P.line([0, 1], [0, 1], pick === 4 ? c.gold : c.muted, pick === 4 ? 3 : 1.5, [5, 4]);
+      const pts = [["A", 0, 0], ["B", 0, 1], ["C", 1, 1], ["D", 1, 0]];
+      pts.forEach(([l, x, y], i) => { const on = pick === i; P.dot(x, y, on ? c.gold : c.s1, on ? 8 : 5.5, c.surface); P.text(l, x + (x ? -.05 : .04), y + (y ? -.07 : .04), c.ink, x ? "right" : "left", "600 13px " + SANS); });
+      if (pick === 5) {
+        P.dot(.08, .5, c.s2, 6, c.surface); P.text("conservative", .12, .48, c.s2); P.dot(.55, .93, c.s4, 6, c.surface); P.text("liberal", .56, .84, c.s4);
+        ctx.save(); ctx.strokeStyle = c.ink; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(P.x(.75), P.y(.45)); ctx.lineTo(P.x(.25), P.y(.95)); ctx.stroke(); ctx.restore();
+      }
+    }
+    explorer($("#p7RsX"), items, i => { pick = i; draw(); });
+    ro.observe($("#p7RsCv")); onRedraw(draw); draw();
+  })();
+
+  /* step 7: deployment */
+  (function tiers() {
+    const T = [["Cloud", "Internet", "Big data processing and mining, cloud ML models, advanced visualization, data warehousing.", "High latency · Lower privacy · Highly scalable · Easy updates"],
+      ["Fog", "Intranet (LAN or WAN)", "On-premises analytics, real-time processing, data filtering, machine-to-machine communication.", "Medium latency · Data stays on site · Moderate scale · Moderate updates"],
+      ["Edge", "In the machine", "ML models running inside the machine, next to the sensors.", "Lowest latency · Highest privacy · Limited compute · Hard updates"]];
+    $("#p7Tiers").innerHTML = T.map(t => `<div class="op"><h4>${t[0]} <span class="pill">${t[1]}</span></h4><p class="cap" style="color:var(--ink)">${t[2]}</p><p class="cap">${t[3]}</p></div>`).join("");
+    const R0 = [["rt", "Real-time response (under 10 ms)"], ["priv", "Raw data must stay on site"], ["big", "Fleet-wide big-data analytics"], ["ota", "Frequent model updates"], ["off", "Must work without connectivity"]], on = {};
+    $("#p7TierReq").innerHTML = R0.map(r => `<button type="button" data-k="${r[0]}" aria-pressed="false">${r[1]}</button>`).join("");
+    const rec = () => { const s = [0, 0, 0]; if (on.rt) { s[2] += 3; s[1] += 1; } if (on.priv) { s[2] += 2; s[1] += 2; } if (on.big) s[0] += 3; if (on.ota) { s[0] += 2; s[1] += 1; } if (on.off) { s[2] += 3; s[1] += 1; }
+      const any = Object.values(on).some(Boolean), best = s.indexOf(Math.max(...s));
+      $("#p7Tiers").querySelectorAll(".op").forEach((m, i) => m.classList.toggle("sel", any && i === best));
+      $("#p7TierRec").innerHTML = any ? `Recommended tier: <b>${T[best][0]}</b> (scores: cloud ${s[0]}, fog ${s[1]}, edge ${s[2]}). Real systems often split the work: edge for inference, cloud for retraining.` : "Toggle requirements to get a recommendation."; };
+    $("#p7TierReq").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { on[b.dataset.k] = !on[b.dataset.k]; b.setAttribute("aria-pressed", String(!!on[b.dataset.k])); rec(); })); rec();
+  })();
+  (function iidWarmUp() {
+    const EMO = { cat: "🐈", dog: "🐕", human: "🧑" };
+    const tile = (a, cls = "") => `<span class="iw-tile ${cls}" title="${a}"><span aria-hidden="true">${EMO[a]}</span></span>`;
+    // one video frame: the cat walks left to right while the light and camera slowly change, so neighbors look alike and distant frames differ
+    const bg = t => { const hue = (48 + 162 * t).toFixed(0); return `linear-gradient(hsl(${hue},70%,${(93 - 12 * t).toFixed(0)}%) 0 68%,hsl(${hue},35%,${(80 - 14 * t).toFixed(0)}%) 68% 100%)`; };
+    const pos = t => ({ x: 14 + 70 * t, y: 92 - 26 * Math.sin(t * Math.PI) - 8 * t, s: .75 + .55 * t });
+    const frame = (n, cls) => { const t = (n - 1) / 15, p = pos(t), tag = cls === "te" ? "button" : "span";
+      return `<${tag} ${tag === "button" ? 'type="button" ' : ""}class="iw-frame ${cls}" data-f="${n}" title="Frame ${n}" style="background:${bg(t)}"><span class="iw-cat" style="left:${p.x.toFixed(1)}%;top:${p.y.toFixed(1)}%;font-size:${(15 * p.s).toFixed(1)}px">🐈</span><em>#${n}</em></${tag}>`; };
+    const row = (label, v, col) => `<div class="iw-row"><span>${label}</span><div class="iw-meter"><i style="width:${v}%;background:var(${col})"></i></div><b>${v}%</b></div>`;
+    const MIX = ["cat", "dog", "cat", "dog", "dog", "cat", "cat", "dog"];
+    const SC = {
+      iid: { train: "Many different cats and dogs, daylight photos.", test: "Different cats and dogs, also in daylight.", ind: true, ide: true,
+        tiles: () => ["cat", "dog", "dog", "cat", "cat", "dog", "cat", "dog"].map(a => tile(a)).join(""),
+        res: () => row("Development test accuracy", 92, "--s1") + row("Accuracy in the field", 91, "--good"),
+        msg: "IID holds: the test photos are new animals drawn from the same kind of data. The test score is an honest preview of field performance." },
+      night: { train: "Many different cats and dogs, daylight photos.", test: "The same kinds of cats, filmed by night-vision cameras.", ind: true, ide: false,
+        tiles: () => Array(8).fill(0).map(() => tile("cat", "night")).join(""),
+        res: () => row("Development test accuracy (daylight)", 92, "--s1") + row("Accuracy at night", 61, "--bad"),
+        msg: "Not identically distributed: the task is unchanged, but the inputs look different (grainy, green, low contrast). This is <b>distribution shift</b>, the same thing that happens when a sensor model moves to a new site." },
+      human: { train: "Many different cats and dogs, daylight photos.", test: "A photo of a person.", ind: true, ide: false,
+        tiles: () => tile("human", "human"),
+        res: () => row("Model says: dog", 87, "--s3") + row("Model says: cat", 13, "--s1"),
+        msg: "Far outside the training distribution: the model has only two possible answers, so it still says “dog” with 87% confidence. A high confidence score does <b>not</b> mean the input is familiar. In maintenance, a failure mode never seen in training is just as invisible." },
+      video: { train: "Odd-numbered frames from a 30-second video of one cat walking across a room (frames split at random).", test: "", ind: false, ide: true,
+        trainTiles: () => [1, 3, 5, 7, 9, 11, 13, 15].map(n => frame(n, "tr")).join(""),
+        tiles: () => [2, 4, 6, 8, 10, 12, 14, 16].map(n => frame(n, "te")).join(""),
+        res: () => row("Development test accuracy", 99, "--s1") + row("Accuracy on a different cat", 70, "--bad"),
+        msg: "Not independent: neighboring frames are near-copies (the highlighted frames), while frames far apart in time look clearly different. A random split puts a near-twin of every test frame into training, so the 99% score is inflated. Split by video (or by animal) instead of by frame, just as pump readings should be split by time or by machine." }
+    };
+    const box = $("#p7IwVideo"), scr = $("#p7IwScreen"), cat = $("#p7IwCat"), no = $("#p7IwFrameNo"), prog = $("#p7IwProg"), btn = $("#p7IwPlay"), DUR = 6000, HOLD = 700;
+    let t0 = 0, paused = reduceMotion, pauseAt = 0, last = -1, playing = false;
+    const paint = t => { const p = pos(t); scr.style.background = bg(t); cat.style.left = p.x + "%"; cat.style.top = p.y + "%"; cat.style.fontSize = (40 * p.s).toFixed(1) + "px"; prog.style.width = (t * 100) + "%";
+      const f = Math.min(16, 1 + Math.floor(t * 15.999)); if (f !== last) { last = f; no.textContent = `Frame ${f} of 16`; box.querySelectorAll(".iw-frame").forEach(e => e.classList.toggle("now", +e.dataset.f === f)); } };
+    const loop = now => { if (box.hidden) { playing = false; return; } if (!paused) paint(Math.min(1, ((now - t0) % (DUR + HOLD)) / DUR)); requestAnimationFrame(loop); };
+    btn.textContent = paused ? "Play" : "Pause";
+    btn.addEventListener("click", () => { paused = !paused; if (paused) pauseAt = performance.now(); else t0 += performance.now() - pauseAt; btn.textContent = paused ? "Play" : "Pause"; });
+    const pickFrame = n => { $("#p7IwStrip").parentNode.parentNode.querySelectorAll(".iw-frame").forEach(f => f.classList.toggle("hl", [n - 1, n, n + 1].includes(+f.dataset.f)));
+      const tw = n < 16 ? `training frames <b>#${n - 1}</b> and <b>#${n + 1}</b>` : `training frame <b>#${n - 1}</b>`;
+      $("#p7IwTestCap").innerHTML = `Click any green test frame. <b>Test frame #${n}</b> is almost identical to ${tw} (outlined in gold): the cat has moved only one step and the light has barely changed. The model has effectively already seen this picture.`; };
+    const show = v => { const c = SC[v];
+      $("#p7IwTrain").innerHTML = c.trainTiles ? c.trainTiles() : MIX.map(a => tile(a)).join("");
+      $("#p7IwTrainCap").textContent = c.train; $("#p7IwTest").innerHTML = c.tiles(); $("#p7IwTestCap").textContent = c.test; $("#p7IwRes").innerHTML = c.res();
+      $("#p7IwVerdict").innerHTML = pill(c.ind, c.ind ? "Independent" : "Not independent") + pill(c.ide, c.ide ? "Identically distributed" : "Not identically distributed") + pill(c.ind && c.ide, c.ind && c.ide ? "IID holds" : "IID is violated");
+      $("#p7IwMsg").innerHTML = c.msg;
+      box.hidden = v !== "video";
+      if (v === "video") {
+        $("#p7IwStrip").innerHTML = Array.from({ length: 16 }, (_, k) => frame(k + 1, (k + 1) % 2 ? "tr" : "te")).join("");
+        box.parentNode.querySelectorAll("button.iw-frame").forEach(f => f.addEventListener("click", () => pickFrame(+f.dataset.f)));
+        last = -1; paint(0); pickFrame(8);
+        if (!playing) { playing = true; t0 = performance.now(); if (paused) pauseAt = t0; requestAnimationFrame(loop); }
+      }
+    };
+    seg($("#p7IwSeg"), [["iid", "☀️ New cats and dogs"], ["night", "🌙 Night-vision cats"], ["human", "🧑 A human"], ["video", "🎞️ Frames from one video"]], "iid", show); show("iid");
+  })();
+  (function iidVibration() {
+    const N = 200, MU = 2, SD = .35, rng = mulberry32(42), eT = Array.from({ length: N }, () => gauss(rng)), eS = Array.from({ length: N }, () => gauss(rng));
+    const PRE = { iid: [0, 0, 1], dep: [.9, 0, 1], shift: [0, .8, 1.6], both: [.9, .8, 1.6] };
+    const ctl = makeControls($("#p7IidCtl"), [
+      { type: "select", key: "sc", id: "p7IidSc", label: "Scenario", options: [["iid", "IID (ideal)"], ["dep", "Consecutive readings"], ["shift", "New site, aging fleet"], ["both", "Both"]], value: "iid" },
+      { key: "rho", id: "p7IidRho", label: "Correlation of consecutive readings " + tex(String.raw`\rho`), min: 0, max: .95, step: .05, value: 0, fmt: v => v.toFixed(2), hint: "0 means no memory (independent); near 1 means each reading almost repeats the last." },
+      { key: "dm", id: "p7IidMu", label: "Mean shift in service " + tex(String.raw`\Delta\mu`) + " (mm/s)", min: 0, max: 1.5, step: .05, value: 0, fmt: v => v.toFixed(2), hint: "How far the average vibration in service has moved from the training average, for example at a hotter site or with older pumps." },
+      { key: "k", id: "p7IidSd", label: "Spread ratio " + tex(String.raw`\sigma_{\text{service}} / \sigma_{\text{train}}`), min: 1, max: 2.5, step: .1, value: 1, fmt: v => v.toFixed(1), hint: "1 means the same spread in service as in training; 2 means twice as spread out." }
+    ], key => { if (key === "sc") { const p = PRE[ctl.sc]; ctl.rho = p[0]; ctl.dm = p[1]; ctl.k = p[2]; } draw(); });
+    const corr = (a, b) => { const ma = avg(a), mb = avg(b); let sab = 0, sa = 0, sb = 0; a.forEach((v, i) => { sab += (v - ma) * (b[i] - mb); sa += (v - ma) ** 2; sb += (b[i] - mb) ** 2; }); return sab / Math.sqrt(sa * sb); };
+    const sdv = a => { const m = avg(a); return Math.sqrt(avg(a.map(v => (v - m) ** 2))); };
+    function draw() {
+      const rho = ctl.rho, dm = ctl.dm, k = ctl.k, cc = Math.sqrt(1 - rho * rho);
+      let z = eT[0]; const tr = eT.map((e, i) => { if (i) z = rho * z + cc * e; return MU + SD * z; }), sv = eS.map(e => { z = rho * z + cc * e; return MU + dm + SD * k * z; });
+      const mT = avg(tr), sT = sdv(tr), thr = mT + 3 * sT, lo = Math.min(...tr, ...sv) - .1, hi = Math.max(...tr, ...sv, thr) + .1;
+      const P = plot($("#p7IidTs"), { xmin: 0, xmax: 2 * N - 1, ymin: lo, ymax: hi + (hi - lo) * .45, height: 240 }), c = P.c; P.axes({ xlabel: "Reading number (training, then service)", ylabel: "Vibration (mm/s)", nx: 8 });
+      P.ctx.fillStyle = rgba(c.s3, .08); P.ctx.fillRect(P.x(N), P.pad.t, P.x(2 * N - 1) - P.x(N), P.h - P.pad.t - P.pad.b);
+      P.line(tr.map((_, i) => i), tr, c.s1, 1.4); P.line(sv.map((_, i) => N + i), sv, c.s3, 1.4); P.line([0, 2 * N - 1], [thr, thr], c.bad, 1.5, [6, 4]);
+      P.legend([["Training (healthy pumps)", c.s1], ["In service (also healthy)", c.s3], ["Alarm threshold: mean + 3 SD", c.bad, [6, 4]]]);
+      const L = plot($("#p7IidLag"), { xmin: lo, xmax: hi, ymin: lo, ymax: hi, height: 220 }); L.axes({ xlabel: "Reading t (mm/s)", ylabel: "Reading t+1", nx: 4, ny: 4 });
+      for (let i = 0; i < N - 1; i++) L.dot(tr[i], tr[i + 1], rgba(c.s1, .55), 2.6);
+      const r = corr(tr.slice(0, -1), tr.slice(1)); L.text(`r = ${r.toFixed(2)}`, lo + (hi - lo) * .05, hi - (hi - lo) * .08, c.ink, "left", "600 13px " + SANS);
+      const B = 24, bw = (hi - lo) / B, cnt = a => { const h = Array(B).fill(0); a.forEach(v => h[clamp(Math.floor((v - lo) / bw), 0, B - 1)]++); return h; }, hT = cnt(tr), hS = cnt(sv);
+      const H = plot($("#p7IidHist"), { xmin: lo, xmax: hi, ymin: 0, ymax: Math.max(...hT, ...hS) * 1.15, height: 220 }); H.axes({ xlabel: "Vibration (mm/s)", ylabel: "Count", nx: 4, ny: 4 });
+      [[hT, c.s1], [hS, c.s3]].forEach(([h, col]) => h.forEach((n, b) => { if (!n) return; H.ctx.fillStyle = rgba(col, .4); H.ctx.fillRect(H.x(lo + b * bw) + 1, H.y(n), H.x(lo + (b + 1) * bw) - H.x(lo + b * bw) - 2, H.y(0) - H.y(n)); }));
+      H.vline(thr, c.bad, [6, 4]); H.legend([["Training", c.s1], ["In service", c.s3]]);
+      const mS = avg(sv), sS = sdv(sv), faT = tr.filter(v => v > thr).length / N, faS = sv.filter(v => v > thr).length / N, nEff = Math.max(1, Math.round(N * (1 - rho) / (1 + rho)));
+      const indep = Math.abs(r) < .2, ident = dm < .15 && k < 1.2;
+      $("#p7IidVerdict").innerHTML = pill(indep, (indep ? "Independent" : "Not independent") + ` (lag-1 r = ${r.toFixed(2)})`) + pill(ident, ident ? "Identically distributed" : "Not identically distributed") + pill(indep && ident, indep && ident ? "IID holds" : "IID is violated");
+      stats($("#p7IidStats"), [["Training mean, SD", `${mT.toFixed(2)}, ${sT.toFixed(2)}`], ["Service mean, SD", `${mS.toFixed(2)}, ${sS.toFixed(2)}`], ["False alarms, training", (faT * 100).toFixed(1) + "%"], ["False alarms, service", (faS * 100).toFixed(1) + "%"]]);
+      $("#p7IidOut").textContent = (indep ? `The ${N} training readings carry ${N} independent pieces of information. ` : `Because neighbors are correlated, the ${N} training readings carry about as much information as ${nEff} independent ones, and a random train/test split would leak near-duplicates into the test set. `)
+        + (ident ? "Service data look like training data, so development accuracy should carry over to the field." : `Service data no longer match training data: the fixed threshold now flags ${(faS * 100).toFixed(0)}% of healthy readings. Operators learn to ignore alarms, and real faults get missed.`);
+    }
+    ro.observe($("#p7IidTs")); onRedraw(draw); draw();
+  })();
+  (function drift() {
+    const ctl = makeControls($("#p7DrCtl"), [
+      { type: "select", key: "type", id: "p7DrType", label: "Drift type", options: [["grad", "Gradual"], ["abr", "Abrupt"], ["none", "None (IID)"]], value: "grad" },
+      { key: "sp", id: "p7DrSp", label: "Drift speed", min: .2, max: 3, step: .1, value: 1.2, fmt: v => v.toFixed(1) },
+      { key: "win", id: "p7DrWin", label: "Adaptive window (samples)", min: 50, max: 600, step: 25, value: 200 }
+    ], () => draw());
+    function draw() {
+      const sp = ctl.sp, W = ctl.win, dtype = ctl.type, r = mulberry32(5), N = 2000, data = [];
+      for (let t = 0; t < N; t++) { let ang = 0; if (dtype === "grad") ang = sp * 1.4 * t / N; if (dtype === "abr") ang = t > 1000 ? sp * .9 : 0; const y = r() < .5 ? 0 : 1, cc = y ? [Math.cos(ang), Math.sin(ang)] : [-Math.cos(ang), -Math.sin(ang)]; data.push({ x: [1.6 * cc[0] + gauss(r) * .8, 1.6 * cc[1] + gauss(r) * .8], y }); }
+      const cent = arr => [0, 1].map(k => { const s = arr.filter(d => d.y === k); return [avg(s.map(d => d.x[0])), avg(s.map(d => d.x[1]))]; });
+      const pred = (C, x) => ((x[0] - C[0][0]) ** 2 + (x[1] - C[0][1]) ** 2) < ((x[0] - C[1][0]) ** 2 + (x[1] - C[1][1]) ** 2) ? 0 : 1;
+      const C0 = cent(data.slice(0, 200)), sc = [], ad = []; let Ca = C0;
+      for (let t = 200; t < N; t++) { if (t % 25 === 0) Ca = cent(data.slice(Math.max(0, t - W), t)); sc.push(pred(C0, data[t].x) === data[t].y ? 1 : 0); ad.push(pred(Ca, data[t].x) === data[t].y ? 1 : 0); }
+      const roll = a => { const out = []; let s = 0; a.forEach((v, i) => { s += v; if (i >= 100) s -= a[i - 100]; out.push(s / Math.min(i + 1, 100)); }); return out; };
+      const P = plot($("#p7DrCv"), { xmin: 200, xmax: N, ymin: 0, ymax: 1, height: 260 }), c = P.c; P.axes({ xlabel: "Time (samples)", ylabel: "Rolling accuracy", yfmt: v => (v * 100).toFixed(0) + "%" });
+      const xs = sc.map((_, i) => i + 200), rs = roll(sc), ra = roll(ad); P.hline(.5, c.muted); P.line(xs, rs, c.bad, 2.2); P.line(xs, ra, c.s3, 2.2); if (dtype === "abr") P.vline(1000, c.gold);
+      P.legend([["Static model (set and forget)", c.bad], ["Adaptive model (sliding window)", c.s3]], P.pad.l + 10, P.h - P.pad.b - 30);
+      stats($("#p7DrStats"), [["Static, last 100", (rs[rs.length - 1] * 100).toFixed(0) + "%"], ["Adaptive, last 100", (ra[ra.length - 1] * 100).toFixed(0) + "%"]]);
+    }
+    ro.observe($("#p7DrCv")); onRedraw(draw); draw();
+  })();
+  (function xai() {
+    const X = { t: { f: ["Training data", "Machine learning process", "Learned function", "Decision or recommendation", "User"], q: ["Why did you do that?", "Why not something else?", "When do you succeed?", "When do you fail?", "When can I trust you?", "How do I correct an error?"] },
+      x: { f: ["Training data", "New machine learning process", "Explainable model", "Explanation interface", "User"], q: ["I understand why.", "I understand why not.", "I know when you succeed.", "I know when you fail.", "I know when to trust you.", "I know why you erred."] } };
+    const sx = v => { $("#p7XaiFlow").innerHTML = X[v].f.map((b, i) => `<span${i === X[v].f.length - 1 ? ' class="on"' : ""}>${b}</span>`).join("<i>→</i>"); $("#p7XaiQ").innerHTML = `<h5>${v === "t" ? "The user asks" : "The user can say"}</h5><ul style="margin:.3rem 0 0;padding-left:1.2rem;font-size:.88rem">${X[v].q.map(q => `<li>${q}</li>`).join("")}</ul>`; };
+    seg($("#p7XaiSeg"), [["t", "Today"], ["x", "With XAI"]], "t", sx); sx("t");
+    const techs = [["Neural nets and deep learning", 95, 12, "Highest accuracy today, but hard to explain."], ["Ensemble methods and random forests", 85, 30, "Strong accuracy; an explanation must aggregate many trees."], ["SVMs", 78, 38, "Good accuracy; the decision depends on support vectors in a kernel space."], ["Graphical models (Bayesian belief nets, CRFs, MLNs)", 68, 55, "Structured probabilistic models with more transparent dependencies."], ["Statistical and Markov models", 58, 68, "Interpretable parameters, moderate accuracy."], ["Decision trees", 50, 88, "The most explainable: rules a person can read."]];
+    const col = ["--s1", "--s2", "--s3", "--s4", "--gold", "--bad"];
+    $("#p7XaiChart").innerHTML = `<svg class="p7-svg" viewBox="0 0 320 240" role="group" aria-label="Accuracy versus explainability"><line x1="30" y1="210" x2="310" y2="210" style="stroke:var(--muted)"/><line x1="30" y1="10" x2="30" y2="210" style="stroke:var(--muted)"/><text x="170" y="232" text-anchor="middle" font-size="11" style="fill:var(--muted)">Explainability →</text><text x="12" y="110" font-size="11" transform="rotate(-90 12 110)" text-anchor="middle" style="fill:var(--muted)">Prediction accuracy →</text>${techs.map((t, i) => `<g role="button" tabindex="0" data-i="${i}" aria-label="${t[0]}"><circle cx="${30 + t[2] * 2.8}" cy="${210 - t[1] * 2}" r="9" style="fill:var(${col[i]});opacity:.85;stroke:var(--surface);stroke-width:2"/></g>`).join("")}</svg>`;
+    $("#p7XaiChart").querySelectorAll("g[data-i]").forEach(g => { g.addEventListener("click", () => { const t = techs[+g.dataset.i]; $("#p7XaiTxt").innerHTML = `<h5>${t[0]}</h5><p>${t[3]}</p>`; $("#p7XaiChart").querySelectorAll("circle").forEach((cc, j) => cc.style.stroke = j === +g.dataset.i ? "var(--ink)" : "var(--surface)"); }); keyClick(g); });
+  })();
+  (function safeModel() {
+    const M = [["Deep model", 95, 3000, 530, false], ["Interpretable small model", 81, 30, 3, true]];
+    const ctl = makeControls($("#p7MdlCtl"), [
+      { key: "lat", id: "p7MdlLat", label: "Latency budget (ms)", min: 10, max: 5000, step: 10, value: 100 },
+      { key: "mem", id: "p7MdlMem", label: "Memory budget (MB)", min: 1, max: 1000, step: 1, value: 50 },
+      { key: "acc", id: "p7MdlAcc", label: "Minimum accuracy (%)", min: 50, max: 99, step: 1, value: 80 },
+      { type: "check", key: "nx", id: "p7MdlX", label: "Must be interpretable", value: false }
+    ], () => draw());
+    function draw() {
+      $("#p7Mdl").innerHTML = M.map(m => { const fails = []; if (m[1] < ctl.acc) fails.push("accuracy"); if (m[2] > ctl.lat) fails.push("latency"); if (m[3] > ctl.mem) fails.push("memory"); if (ctl.nx && !m[4]) fails.push("interpretability");
+        return `<div class="card"><h5>${m[0]}</h5><p>Accuracy ${m[1]}%<br>Inference time ${m[2] >= 1000 ? m[2] / 1000 + " s" : m[2] + " ms"}<br>Memory ${m[3]} MB<br>Interpretable: ${m[4] ? "yes" : "no"}</p><div class="pills" style="margin-top:.5rem">${fails.length ? pill(false, "Fails: " + fails.join(", ")) : pill(true, "Meets all constraints")}</div></div>`; }).join("");
+    }
+    draw();
+  })();
+})();
+
 codeTabs({ f: "Least-squares polynomial fits, overfitting, more data, and a line fitted by gradient descent", p: "Logistic regression, k-means and self-training on the same two-class data", c: "A UCB bandit choosing the step size of a random search on Rastrigin, against fixed step sizes", t: "TSP search-space size, nearest-neighbor construction and 2-opt improvement" }, "f");
 
 /* ---------- side menu ---------- */
@@ -1135,7 +2054,7 @@ codeTabs({ f: "Least-squares polynomial fits, overfitting, more data, and a line
 })();
 
 </script>
-<script type="application/json" id="kc-data">{"ai": [{"type": "order", "q": "Put these fields in order from the broadest to the most specific, following the nesting on the page.", "items": ["Artificial intelligence", "Machine learning", "Neural networks", "Deep learning", "Generative AI", "Transformers", "Large language models"], "why": "Each field sits inside the one before it, so a large language model is a transformer, a generative model, a deep network, a neural network, an ML model and an AI system all at once.", "hint": "Start with the umbrella field that the whole lab belongs to and end with the systems behind today's chat assistants."}, {"type": "mcq", "q": "Given the nesting AI \\(\\supset\\) ML \\(\\supset\\) neural networks \\(\\supset\\) deep learning, which statement must be true?", "options": [{"t": "Every deep-learning model is a machine learning model", "why": "Deep learning sits inside neural networks, which sit inside machine learning, so the containment carries through."}, {"t": "Every machine learning model is a neural network", "why": "The containment runs the other way: neural networks are one family inside ML, alongside trees, SVMs and others."}, {"t": "Every AI system learns from data", "why": "AI is the broadest field and also covers areas such as reasoning and search that need not learn from data."}, {"t": "Deep learning and machine learning are separate fields", "why": "Deep learning is a subset of machine learning, not a separate field beside it."}], "answer": 0}, {"type": "mcq", "q": "According to the lab, what role did machine learning play for AI as a whole?", "options": [{"t": "It brought AI into everyday products", "why": "Voice assistants, navigation, recommendations and translation are all examples of ML-powered products in daily life."}, {"t": "It replaced every other subfield of AI", "why": "Other subfields such as reasoning, knowledge representation and search and optimization still exist next to ML."}, {"t": "It removed the need for any optimization", "why": "Training an ML model is itself an optimization problem, so ML relies on optimization rather than removing it."}, {"t": "It limited AI to systems that generate text", "why": "Text generation is only one recent application; ML also powers vision, routing, scheduling and many other tasks."}], "answer": 0}], "learning": [{"type": "match", "q": "Apply Tom Mitchell's definition of learning to a spam filter: match each symbol to what it stands for.", "pairs": [{"l": "Task \\(T\\)", "r": "Labeling each email as spam or not", "why": "The task is the job the program is supposed to do, here sorting incoming email."}, {"l": "Performance \\(P\\)", "r": "Fraction of emails labeled correctly", "why": "The performance measure scores how well the task is done, so it must be something we can compute."}, {"l": "Experience \\(E\\)", "r": "A set of emails labeled by people", "why": "The experience is the data the program learns from, and learning means \\(P\\) at \\(T\\) improves as \\(E\\) grows."}]}, {"type": "mcq", "q": "A chess program plays 1,000 more games, but its win rate against the same opponents stays flat. Under Mitchell's definition, has it learned?", "options": [{"t": "No, since its performance did not improve", "why": "Learning requires \\(P\\) at \\(T\\) to improve with \\(E\\), and here more experience left performance unchanged."}, {"t": "Yes, because it gained a lot of experience", "why": "Experience alone is not enough; the definition asks for performance to improve as experience grows."}, {"t": "Yes, because playing chess is a well-defined task", "why": "Having a task \\(T\\) is only one ingredient; without improvement in \\(P\\) there is no learning."}, {"t": "It cannot be judged, since a win rate is not a measure", "why": "A win rate is a perfectly good performance measure \\(P\\), and it shows no gain here."}], "answer": 0}, {"type": "mcq", "q": "Why does every school of ML, in Domingos' view, need an optimizer?", "options": [{"t": "Learning means searching for the model that scores best", "why": "Whatever the representation, training has to pick the best model by some evaluation, which is an optimization problem."}, {"t": "Optimizers are needed only to store the training data", "why": "Storing data takes no optimizer; the optimizer is what chooses a model from the data."}, {"t": "Without an optimizer the model could not make predictions", "why": "A finished model predicts without any optimizer; the optimizer is needed to train it."}, {"t": "Every school uses gradient descent on neural networks", "why": "The schools differ in representation and optimizer, so not all of them use neural networks or gradients."}], "answer": 0}], "fitting": [{"type": "mcq", "q": "What does training in the curve fitting playground actually minimize?", "options": [{"t": "The average loss on the training sample", "why": "The expected loss over all data is unknown, so the learner minimizes its sample average, \\(S(f) = \\frac{1}{n}\\sum L(y_i, f(x_i))\\), within the model class."}, {"t": "The error on the test points", "why": "The test points are held back to measure generalization; optimizing on them would hide overfitting."}, {"t": "The distance between the fit and the true function \\(\\sin(2\\pi x)\\)", "why": "The learner never sees the true function, only the noisy sample drawn from it."}, {"t": "The degree of the polynomial", "why": "The degree fixes the model class; it is chosen by the user, not by the least-squares search."}], "answer": 0}, {"type": "fill", "q": "A degree-\\(d\\) polynomial has \\(d + 1\\) coefficients. With \\(n = 8\\) training points at distinct \\(x\\) values, what is the smallest degree that lets least squares pass exactly through every point?", "answer": 7, "tol": 0, "unit": "", "hint": "Exact interpolation needs as many free coefficients as there are points.", "why": "With \\(d + 1 = 8\\) coefficients the polynomial can match all 8 points, so \\(d = 7\\), and it then memorizes the noise along with the signal."}, {"type": "classify", "q": "Sort each fitting result into what it shows.", "cats": ["Underfitting", "Overfitting", "Good fit"], "items": [{"t": "Degree 0 on the sine data: high training error and high test error", "cat": 0, "why": "A constant cannot follow the wave, so even the training points are fitted badly."}, {"t": "Degree 1 on the sine data: both errors stay high as \\(n\\) grows", "cat": 0, "why": "A straight line is too simple for one period of a sine, and more data cannot fix a model class that is too narrow."}, {"t": "Degree 10 on 12 points: almost zero training error, large test error", "cat": 1, "why": "With nearly as many coefficients as points the curve threads through the noise and swings wildly between points."}, {"t": "Degree 9 on 15 points: training error far below test error", "cat": 1, "why": "The gap between training and test error is the signature of a model that memorized its sample."}, {"t": "Degree 3 on 15 points: low training error and low test error", "cat": 2, "why": "A cubic is flexible enough for one sine period yet too stiff to chase the noise."}, {"t": "Degree 9 on 300 points: low training error and low test error", "cat": 2, "why": "With plenty of data even a flexible model cannot bend toward individual noisy points."}]}], "paradigms": [{"type": "classify", "q": "The paradigms differ in the feedback they get. Sort each setting by its paradigm.", "cats": ["Supervised", "Unsupervised", "Semi-supervised", "Reinforcement"], "items": [{"t": "A neural network trained on points that are all labeled", "cat": 0, "why": "Every example comes with its label, which is the feedback of supervised learning."}, {"t": "Emails that are each tagged spam or not spam", "cat": 0, "why": "A label for every example is exactly what supervised learning needs."}, {"t": "K-means grouping the points with no labels at all", "cat": 1, "why": "It gets no labels and can only find structure such as compact groups."}, {"t": "Customer records grouped into segments, with no labels", "cat": 1, "why": "Nobody says which segment is right, so the learner works from the data alone."}, {"t": "Label propagation from 4 labeled points to the rest", "cat": 2, "why": "A few labels are given and the unlabeled data does the rest of the work."}, {"t": "A few hundred labeled photos among millions of unlabeled ones", "cat": 2, "why": "Only a small fraction of the data is labeled, the defining trait of semi-supervised learning."}, {"t": "An agent that learns a game from the score it earns", "cat": 3, "why": "The feedback is a reward for its actions, not a label for each input."}, {"t": "A thermostat rewarded for saving energy while keeping comfort", "cat": 3, "why": "It learns from rewards by trial and error, which is reinforcement learning."}]}, {"type": "mcq", "q": "On the two moons data, k-means splits the points into two groups that do not match the true classes. Why?", "options": [{"t": "It forms compact groups; the moons are not compact", "why": "Each point joins its nearest centroid, so the split is a straight boundary that cuts across the curved moons."}, {"t": "It was given far too few labeled points to learn from", "why": "K-means uses no labels at all; that is what makes it unsupervised."}, {"t": "It needs many more training epochs to converge", "why": "K-means converges quickly; its problem here is the shape of the groups it can represent, not training time."}, {"t": "It can only find a single cluster in any data", "why": "The panel asks for two clusters and k-means returns two, they just do not follow the moons."}], "answer": 0}, {"type": "mcq", "q": "In semi-supervised mode only 4 points are labeled, yet the result agrees well with the true classes on the two moons. What does the work?", "options": [{"t": "Labels spread to near points along the data's shape", "why": "Label propagation passes each label to close neighbors repeatedly, so it flows along each moon rather than across the gap."}, {"t": "The 4 labels are copied to the points farthest from them", "why": "Labels go to nearby points, not distant ones, which is why the moon shapes are followed."}, {"t": "A neural network is trained on all the hidden labels", "why": "Only the supervised mode uses every label; semi-supervised mode never sees the other labels."}, {"t": "Rewards are handed out for every correct label it gives", "why": "Rewards belong to reinforcement learning; label propagation uses no reward signal."}], "answer": 0}], "procedure": [{"type": "order", "q": "Put the steps of the ML procedure in order.", "items": ["Collect data", "Prepare data", "Choose a model", "Train", "Evaluate", "Tune parameters", "Predict"], "why": "Data comes first, a model is trained and evaluated on it, its parameters are tuned on the results, and only then is it used to predict.", "hint": "You cannot train before choosing a model, and you should not predict before you have evaluated and tuned it."}, {"type": "classify", "q": "Following the lab's three conditions for using ML, sort each case.", "cats": ["A good fit for ML", "Not a good fit for ML"], "items": [{"t": "Predicting machine failures from years of logged sensor readings", "cat": 0, "why": "A pattern likely exists, no exact physical model is cheap, and plenty of data is available."}, {"t": "Recognizing traffic signs from a large set of labeled images", "cat": 0, "why": "The pattern is real but hard to write down by hand, and labeled data exists."}, {"t": "Predicting a fair coin toss from the time of day", "cat": 1, "why": "The output is random with respect to the input, so there is no pattern to learn."}, {"t": "Computing the area of a rectangle from its side lengths", "cat": 1, "why": "An exact and cheap mathematical model already exists, so it should be used instead."}, {"t": "Forecasting sales of a product that has never been sold, with no related data", "cat": 1, "why": "Without data the model has no experience to learn from."}]}, {"type": "mcq", "q": "Why does the procedure evaluate the trained model before using it to predict?", "options": [{"t": "To check that it works on data it was not trained on", "why": "A low training error can hide overfitting, as the curve fitting panel shows, so the model is first tested on held-out data."}, {"t": "Because evaluation is what trains the weights", "why": "Training adjusts the weights; evaluation only measures the result without changing it."}, {"t": "Because predictions cannot be computed until evaluation ends", "why": "A trained model can predict at any time, but its predictions are not yet trustworthy."}, {"t": "To collect more data for the next training round", "why": "Data is collected in the first step; evaluation measures quality on data already in hand."}], "answer": 0}], "ml4co": [{"type": "classify", "q": "Sort each example into one of the three ways of combining ML with combinatorial optimization.", "cats": ["End-to-end learning", "Learning to configure algorithms", "ML alongside optimization"], "items": [{"t": "A pointer network outputs a TSP tour directly", "cat": 0, "why": "The model itself produces the solution, with no separate optimizer."}, {"t": "A pretrained graph network predicts which edges form the tour", "cat": 0, "why": "The learned model produces the solution itself, and only a light decoding step turns its output into a tour."}, {"t": "A model sets the temperature schedule of simulated annealing", "cat": 1, "why": "The learner tunes a parameter of an existing algorithm instead of producing solutions."}, {"t": "A model chooses the evaporation rate of an ant colony algorithm", "cat": 1, "why": "Evaporation is an algorithm parameter, so learning it is configuration."}, {"t": "A tree search asks a deep network for a decision at every node it expands", "cat": 2, "why": "The optimizer stays in charge and keeps consulting the same model during the search."}]}, {"type": "mcq", "q": "In the construct-or-improve panel, what happens when you press Improve (2-opt) after Construct (nearest neighbor)?", "options": [{"t": "It reverses segments until none shortens the tour", "why": "Nearest neighbor already gives a decent tour, so 2-opt only has to repair a few long detours before it reaches a local optimum."}, {"t": "It is guaranteed to reach the optimal tour", "why": "2-opt stops at a local optimum, a tour no single segment reversal can improve, which need not be the global optimum."}, {"t": "It builds a new tour one city at a time", "why": "Building city by city is construction, which nearest neighbor does; 2-opt changes a complete tour."}, {"t": "It lengthens the tour so that it can escape local optima", "why": "This 2-opt accepts only reversals that shorten the tour, so the length never grows."}], "answer": 0}, {"type": "fill", "q": "Fixing the start city, a TSP with \\(n\\) cities has \\((n - 1)!\\) directed tours. How many directed tours does a 10-city TSP have?", "answer": 362880, "tol": 0, "unit": "tours", "hint": "Multiply all whole numbers from 1 up to one less than the number of cities.", "why": "\\((10 - 1)! = 9! = 362{,}880\\), and the count explodes so quickly with \\(n\\) that heuristics and learned policies are needed for larger instances."}], "quiz": [{"type": "mcq", "q": "A degree-12 polynomial fitted to 15 noisy points reaches almost zero training error but a large test error. What is going on?", "options": [{"t": "The model overfits: it memorizes the noise", "why": "A very flexible model can pass through every training point, noise included, and more data tames it."}, {"t": "The model underfits: it is too simple for the data", "why": "Underfitting would show a high training error too, not almost zero."}, {"t": "The least-squares search failed to find the minimum", "why": "Near-zero training error shows the search did find the minimum of the training loss."}, {"t": "The loss should be the test error instead", "why": "Training on the test error would use up the test set and hide the overfitting rather than cure it."}], "answer": 0}, {"type": "mcq", "q": "Using a UCB bandit to choose the step size of a random search while the search runs is an example of which way of combining ML with optimization?", "options": [{"t": "Learning to configure algorithms", "why": "The bandit does not output solutions itself; it sets a parameter of an existing algorithm based on how well each choice has paid off."}, {"t": "End-to-end learning", "why": "End-to-end models output the solution directly, while here the random search still produces every point."}, {"t": "Unsupervised clustering of solutions", "why": "The bandit learns from rewards (improvements), not by grouping unlabeled solutions."}, {"t": "Amortized optimization with a pretrained network", "why": "Nothing is pretrained here: the bandit learns online, during a single run."}], "answer": 0}, {"type": "match", "q": "Learning is optimization: match each ingredient of the curve fitting playground to what it is.", "pairs": [{"l": "Model class \\(F\\)", "r": "Polynomials of a given degree", "why": "The model class is the set of candidate functions the search is allowed to choose from."}, {"l": "Loss", "r": "Mean squared error on the training points", "why": "The loss scores each candidate on the data, and training seeks its minimum."}, {"l": "Search strategy", "r": "Least squares", "why": "Least squares is the optimizer that finds the polynomial with the lowest squared error."}, {"l": "Test error", "r": "How well the fit generalizes to new data", "why": "The test error is not minimized during training; it measures whether the learned model generalizes."}]}]}</script>
+<script type="application/json" id="kc-data">{"ai": [{"type": "order", "q": "Put these fields in order from the broadest to the most specific, following the nesting on the page.", "items": ["Artificial intelligence", "Machine learning", "Neural networks", "Deep learning", "Generative AI", "Transformers", "Large language models"], "why": "Each field sits inside the one before it, so a large language model is a transformer, a generative model, a deep network, a neural network, an ML model and an AI system all at once.", "hint": "Start with the umbrella field that the whole lab belongs to and end with the systems behind today's chat assistants."}, {"type": "mcq", "q": "Given the nesting AI \\(\\supset\\) ML \\(\\supset\\) neural networks \\(\\supset\\) deep learning, which statement must be true?", "options": [{"t": "Every deep-learning model is a machine learning model", "why": "Deep learning sits inside neural networks, which sit inside machine learning, so the containment carries through."}, {"t": "Every machine learning model is a neural network", "why": "The containment runs the other way: neural networks are one family inside ML, alongside trees, SVMs and others."}, {"t": "Every AI system learns from data", "why": "AI is the broadest field and also covers areas such as reasoning and search that need not learn from data."}, {"t": "Deep learning and machine learning are separate fields", "why": "Deep learning is a subset of machine learning, not a separate field beside it."}], "answer": 0}, {"type": "mcq", "q": "According to the lab, what role did machine learning play for AI as a whole?", "options": [{"t": "It brought AI into everyday products", "why": "Voice assistants, navigation, recommendations and translation are all examples of ML-powered products in daily life."}, {"t": "It replaced every other subfield of AI", "why": "Other subfields such as reasoning, knowledge representation and search and optimization still exist next to ML."}, {"t": "It removed the need for any optimization", "why": "Training an ML model is itself an optimization problem, so ML relies on optimization rather than removing it."}, {"t": "It limited AI to systems that generate text", "why": "Text generation is only one recent application; ML also powers vision, routing, scheduling and many other tasks."}], "answer": 0}], "learning": [{"type": "match", "q": "Apply Tom Mitchell's definition of learning to a spam filter: match each symbol to what it stands for.", "pairs": [{"l": "Task \\(T\\)", "r": "Labeling each email as spam or not", "why": "The task is the job the program is supposed to do, here sorting incoming email."}, {"l": "Performance \\(P\\)", "r": "Fraction of emails labeled correctly", "why": "The performance measure scores how well the task is done, so it must be something we can compute."}, {"l": "Experience \\(E\\)", "r": "A set of emails labeled by people", "why": "The experience is the data the program learns from, and learning means \\(P\\) at \\(T\\) improves as \\(E\\) grows."}]}, {"type": "mcq", "q": "A chess program plays 1,000 more games, but its win rate against the same opponents stays flat. Under Mitchell's definition, has it learned?", "options": [{"t": "No, since its performance did not improve", "why": "Learning requires \\(P\\) at \\(T\\) to improve with \\(E\\), and here more experience left performance unchanged."}, {"t": "Yes, because it gained a lot of experience", "why": "Experience alone is not enough; the definition asks for performance to improve as experience grows."}, {"t": "Yes, because playing chess is a well-defined task", "why": "Having a task \\(T\\) is only one ingredient; without improvement in \\(P\\) there is no learning."}, {"t": "It cannot be judged, since a win rate is not a measure", "why": "A win rate is a perfectly good performance measure \\(P\\), and it shows no gain here."}], "answer": 0}, {"type": "mcq", "q": "Why does every school of ML, in Domingos' view, need an optimizer?", "options": [{"t": "Learning means searching for the model that scores best", "why": "Whatever the representation, training has to pick the best model by some evaluation, which is an optimization problem."}, {"t": "Optimizers are needed only to store the training data", "why": "Storing data takes no optimizer; the optimizer is what chooses a model from the data."}, {"t": "Without an optimizer the model could not make predictions", "why": "A finished model predicts without any optimizer; the optimizer is needed to train it."}, {"t": "Every school uses gradient descent on neural networks", "why": "The schools differ in representation and optimizer, so not all of them use neural networks or gradients."}], "answer": 0}], "fitting": [{"type": "mcq", "q": "What does training in the curve fitting playground actually minimize?", "options": [{"t": "The average loss on the training sample", "why": "The expected loss over all data is unknown, so the learner minimizes its sample average, \\(S(f) = \\frac{1}{n}\\sum L(y_i, f(x_i))\\), within the model class."}, {"t": "The error on the test points", "why": "The test points are held back to measure generalization; optimizing on them would hide overfitting."}, {"t": "The distance between the fit and the true function \\(\\sin(2\\pi x)\\)", "why": "The learner never sees the true function, only the noisy sample drawn from it."}, {"t": "The degree of the polynomial", "why": "The degree fixes the model class; it is chosen by the user, not by the least-squares search."}], "answer": 0}, {"type": "fill", "q": "A degree-\\(d\\) polynomial has \\(d + 1\\) coefficients. With \\(n = 8\\) training points at distinct \\(x\\) values, what is the smallest degree that lets least squares pass exactly through every point?", "answer": 7, "tol": 0, "unit": "", "hint": "Exact interpolation needs as many free coefficients as there are points.", "why": "With \\(d + 1 = 8\\) coefficients the polynomial can match all 8 points, so \\(d = 7\\), and it then memorizes the noise along with the signal."}, {"type": "classify", "q": "Sort each fitting result into what it shows.", "cats": ["Underfitting", "Overfitting", "Good fit"], "items": [{"t": "Degree 0 on the sine data: high training error and high test error", "cat": 0, "why": "A constant cannot follow the wave, so even the training points are fitted badly."}, {"t": "Degree 1 on the sine data: both errors stay high as \\(n\\) grows", "cat": 0, "why": "A straight line is too simple for one period of a sine, and more data cannot fix a model class that is too narrow."}, {"t": "Degree 10 on 12 points: almost zero training error, large test error", "cat": 1, "why": "With nearly as many coefficients as points the curve threads through the noise and swings wildly between points."}, {"t": "Degree 9 on 15 points: training error far below test error", "cat": 1, "why": "The gap between training and test error is the signature of a model that memorized its sample."}, {"t": "Degree 3 on 15 points: low training error and low test error", "cat": 2, "why": "A cubic is flexible enough for one sine period yet too stiff to chase the noise."}, {"t": "Degree 9 on 300 points: low training error and low test error", "cat": 2, "why": "With plenty of data even a flexible model cannot bend toward individual noisy points."}]}], "paradigms": [{"type": "classify", "q": "The paradigms differ in the feedback they get. Sort each setting by its paradigm.", "cats": ["Supervised", "Unsupervised", "Semi-supervised", "Reinforcement"], "items": [{"t": "A neural network trained on points that are all labeled", "cat": 0, "why": "Every example comes with its label, which is the feedback of supervised learning."}, {"t": "Emails that are each tagged spam or not spam", "cat": 0, "why": "A label for every example is exactly what supervised learning needs."}, {"t": "K-means grouping the points with no labels at all", "cat": 1, "why": "It gets no labels and can only find structure such as compact groups."}, {"t": "Customer records grouped into segments, with no labels", "cat": 1, "why": "Nobody says which segment is right, so the learner works from the data alone."}, {"t": "Label propagation from 4 labeled points to the rest", "cat": 2, "why": "A few labels are given and the unlabeled data does the rest of the work."}, {"t": "A few hundred labeled photos among millions of unlabeled ones", "cat": 2, "why": "Only a small fraction of the data is labeled, the defining trait of semi-supervised learning."}, {"t": "An agent that learns a game from the score it earns", "cat": 3, "why": "The feedback is a reward for its actions, not a label for each input."}, {"t": "A thermostat rewarded for saving energy while keeping comfort", "cat": 3, "why": "It learns from rewards by trial and error, which is reinforcement learning."}]}, {"type": "mcq", "q": "On the two moons data, k-means splits the points into two groups that do not match the true classes. Why?", "options": [{"t": "It forms compact groups; the moons are not compact", "why": "Each point joins its nearest centroid, so the split is a straight boundary that cuts across the curved moons."}, {"t": "It was given far too few labeled points to learn from", "why": "K-means uses no labels at all; that is what makes it unsupervised."}, {"t": "It needs many more training epochs to converge", "why": "K-means converges quickly; its problem here is the shape of the groups it can represent, not training time."}, {"t": "It can only find a single cluster in any data", "why": "The panel asks for two clusters and k-means returns two, they just do not follow the moons."}], "answer": 0}, {"type": "mcq", "q": "In semi-supervised mode only 4 points are labeled, yet the result agrees well with the true classes on the two moons. What does the work?", "options": [{"t": "Labels spread to near points along the data's shape", "why": "Label propagation passes each label to close neighbors repeatedly, so it flows along each moon rather than across the gap."}, {"t": "The 4 labels are copied to the points farthest from them", "why": "Labels go to nearby points, not distant ones, which is why the moon shapes are followed."}, {"t": "A neural network is trained on all the hidden labels", "why": "Only the supervised mode uses every label; semi-supervised mode never sees the other labels."}, {"t": "Rewards are handed out for every correct label it gives", "why": "Rewards belong to reinforcement learning; label propagation uses no reward signal."}], "answer": 0}], "procedure": [{"type": "order", "q": "Put the seven steps of the ML procedure in order.", "items": ["Problem characterization", "Data collection", "Data preparation", "Data exploration", "Model development", "Evaluation and optimization", "Deployment"], "why": "You first check that ML fits the problem, then collect, prepare and explore the data before developing, evaluating and finally deploying a model.", "hint": "Data must exist before it can be prepared, and it should be explored before you choose and build a model."}, {"type": "classify", "q": "Sort each activity from the panels into the step it belongs to.", "cats": ["Data preparation", "Data exploration", "Evaluation and optimization", "Deployment"], "items": [{"t": "Replacing missing temperature readings by the column median", "cat": 0, "why": "Imputing missing values is part of massaging the data before any model sees it."}, {"t": "Rescaling vibration and temperature to the range [0, 1]", "cat": 0, "why": "Min-max normalization keeps a feature from dominating because of its units, a preparation task."}, {"t": "Checking whether a single straight boundary separates two classes", "cat": 1, "why": "Testing separability and linearity is how exploration guides the choice of model."}, {"t": "Measuring the Pearson correlation between a feature and the target", "cat": 1, "why": "A correlation reveals monotonicity, one of the three insights exploration looks for."}, {"t": "Reading the AUC off a ROC curve", "cat": 2, "why": "The area under the ROC curve compares classifiers when you evaluate them."}, {"t": "Comparing training and testing error across polynomial degrees", "cat": 2, "why": "Finding the balance between bias and variance is part of evaluating and optimizing a model."}, {"t": "Choosing between edge, fog and cloud for a real-time controller", "cat": 3, "why": "Where the model runs is a deployment decision driven by latency, privacy and connectivity."}, {"t": "Retraining on a sliding window as the data drifts", "cat": 3, "why": "A deployed model in a nonstationary environment needs adaptation, since there is no set and forget."}]}, {"type": "mcq", "q": "In the cats-versus-dogs warm-up, frames from one video are split at random into training and test sets, and the test accuracy is 99%. Why is this score misleading?", "options": [{"t": "Neighboring frames are near-copies, so test frames leak into training", "why": "Each test frame sits between two almost identical training frames, so the frames are not independent and the model has effectively seen the test pictures."}, {"t": "The test frames follow a different distribution than training", "why": "All frames show the same cat in the same room, so the distribution matches; it is independence that fails."}, {"t": "A model with only two classes cannot exceed 90% accuracy", "why": "Two-class models can be very accurate; the problem is how the frames were split, not the number of classes."}, {"t": "Video frames are too small for an image classifier to read", "why": "Each frame is an ordinary picture the model can classify; the inflated score comes from near-duplicate frames on both sides of the split."}], "answer": 0}], "ml4co": [{"type": "classify", "q": "Sort each example into one of the three ways of combining ML with combinatorial optimization.", "cats": ["End-to-end learning", "Learning to configure algorithms", "ML alongside optimization"], "items": [{"t": "A pointer network outputs a TSP tour directly", "cat": 0, "why": "The model itself produces the solution, with no separate optimizer."}, {"t": "A pretrained graph network predicts which edges form the tour", "cat": 0, "why": "The learned model produces the solution itself, and only a light decoding step turns its output into a tour."}, {"t": "A model sets the temperature schedule of simulated annealing", "cat": 1, "why": "The learner tunes a parameter of an existing algorithm instead of producing solutions."}, {"t": "A model chooses the evaporation rate of an ant colony algorithm", "cat": 1, "why": "Evaporation is an algorithm parameter, so learning it is configuration."}, {"t": "A tree search asks a deep network for a decision at every node it expands", "cat": 2, "why": "The optimizer stays in charge and keeps consulting the same model during the search."}]}, {"type": "mcq", "q": "In the construct-or-improve panel, what happens when you press Improve (2-opt) after Construct (nearest neighbor)?", "options": [{"t": "It reverses segments until none shortens the tour", "why": "Nearest neighbor already gives a decent tour, so 2-opt only has to repair a few long detours before it reaches a local optimum."}, {"t": "It is guaranteed to reach the optimal tour", "why": "2-opt stops at a local optimum, a tour no single segment reversal can improve, which need not be the global optimum."}, {"t": "It builds a new tour one city at a time", "why": "Building city by city is construction, which nearest neighbor does; 2-opt changes a complete tour."}, {"t": "It lengthens the tour so that it can escape local optima", "why": "This 2-opt accepts only reversals that shorten the tour, so the length never grows."}], "answer": 0}, {"type": "fill", "q": "Fixing the start city, a TSP with \\(n\\) cities has \\((n - 1)!\\) directed tours. How many directed tours does a 10-city TSP have?", "answer": 362880, "tol": 0, "unit": "tours", "hint": "Multiply all whole numbers from 1 up to one less than the number of cities.", "why": "\\((10 - 1)! = 9! = 362{,}880\\), and the count explodes so quickly with \\(n\\) that heuristics and learned policies are needed for larger instances."}], "quiz": [{"type": "mcq", "q": "A degree-12 polynomial fitted to 15 noisy points reaches almost zero training error but a large test error. What is going on?", "options": [{"t": "The model overfits: it memorizes the noise", "why": "A very flexible model can pass through every training point, noise included, and more data tames it."}, {"t": "The model underfits: it is too simple for the data", "why": "Underfitting would show a high training error too, not almost zero."}, {"t": "The least-squares search failed to find the minimum", "why": "Near-zero training error shows the search did find the minimum of the training loss."}, {"t": "The loss should be the test error instead", "why": "Training on the test error would use up the test set and hide the overfitting rather than cure it."}], "answer": 0}, {"type": "mcq", "q": "Using a UCB bandit to choose the step size of a random search while the search runs is an example of which way of combining ML with optimization?", "options": [{"t": "Learning to configure algorithms", "why": "The bandit does not output solutions itself; it sets a parameter of an existing algorithm based on how well each choice has paid off."}, {"t": "End-to-end learning", "why": "End-to-end models output the solution directly, while here the random search still produces every point."}, {"t": "Unsupervised clustering of solutions", "why": "The bandit learns from rewards (improvements), not by grouping unlabeled solutions."}, {"t": "Amortized optimization with a pretrained network", "why": "Nothing is pretrained here: the bandit learns online, during a single run."}], "answer": 0}, {"type": "match", "q": "Learning is optimization: match each ingredient of the curve fitting playground to what it is.", "pairs": [{"l": "Model class \\(F\\)", "r": "Polynomials of a given degree", "why": "The model class is the set of candidate functions the search is allowed to choose from."}, {"l": "Loss", "r": "Mean squared error on the training points", "why": "The loss scores each candidate on the data, and training seeks its minimum."}, {"l": "Search strategy", "r": "Least squares", "why": "Least squares is the optimizer that finds the polynomial with the lowest squared error."}, {"l": "Test error", "r": "How well the fit generalizes to new data", "why": "The test error is not minimized during training; it measures whether the learned model generalizes."}]}]}</script>
 <script>/* kc:js */
 /* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
    classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
