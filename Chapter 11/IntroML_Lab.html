@@ -855,13 +855,6 @@ tr.click{cursor:pointer}
         <div class="opgrid"><div class="op"><h4>Deep explanation</h4><p class="cap">Modified deep learning techniques that learn explainable features.</p></div><div class="op"><h4>Interpretable models</h4><p class="cap">Techniques that learn more structured, interpretable, causal models.</p></div><div class="op"><h4>Model induction</h4><p class="cap">Infer an explainable model from any black-box model.</p></div></div>
         <p class="cap">After D. Gunning, “Explainable Artificial Intelligence (XAI),” DARPA, 2016.</p></div>
     </div>
-    <div class="bench">
-      <div class="bench-head"><h4>Safe “dumb” model or risky intelligent model?</h4><span class="eyebrow">Interactive</span></div>
-      <div class="bench-body">
-        <div class="side"><div id="p7MdlCtl"></div></div>
-        <div class="stage"><div class="cards3" id="p7Mdl" style="margin:0"></div><div class="note warn" style="margin:0">In safety-critical applications, a safe “dumb” model is better than a risky intelligent one.</div></div>
-      </div>
-    </div>
     <!-- kc --><div class="kc" data-sec="procedure"></div>
   </div>
 </section>
@@ -3126,20 +3119,6 @@ const ncoKit = (() => {
     const col = ["--s1", "--s2", "--s3", "--s4", "--gold", "--bad"];
     $("#p7XaiChart").innerHTML = `<svg class="p7-svg" viewBox="0 0 320 240" role="group" aria-label="Accuracy versus explainability"><line x1="30" y1="210" x2="310" y2="210" style="stroke:var(--muted)"/><line x1="30" y1="10" x2="30" y2="210" style="stroke:var(--muted)"/><text x="170" y="232" text-anchor="middle" font-size="11" style="fill:var(--muted)">Explainability →</text><text x="12" y="110" font-size="11" transform="rotate(-90 12 110)" text-anchor="middle" style="fill:var(--muted)">Prediction accuracy →</text>${techs.map((t, i) => `<g role="button" tabindex="0" data-i="${i}" aria-label="${t[0]}"><circle cx="${30 + t[2] * 2.8}" cy="${210 - t[1] * 2}" r="9" style="fill:var(${col[i]});opacity:.85;stroke:var(--surface);stroke-width:2"/></g>`).join("")}</svg>`;
     $("#p7XaiChart").querySelectorAll("g[data-i]").forEach(g => { g.addEventListener("click", () => { const t = techs[+g.dataset.i]; $("#p7XaiTxt").innerHTML = `<h5>${t[0]}</h5><p>${t[3]}</p>`; $("#p7XaiChart").querySelectorAll("circle").forEach((cc, j) => cc.style.stroke = j === +g.dataset.i ? "var(--ink)" : "var(--surface)"); }); keyClick(g); });
-  })();
-  (function safeModel() {
-    const M = [["Deep model", 95, 3000, 530, false], ["Interpretable small model", 81, 30, 3, true]];
-    const ctl = makeControls($("#p7MdlCtl"), [
-      { key: "lat", id: "p7MdlLat", label: "Latency budget (ms)", min: 10, max: 5000, step: 10, value: 100 },
-      { key: "mem", id: "p7MdlMem", label: "Memory budget (MB)", min: 1, max: 1000, step: 1, value: 50 },
-      { key: "acc", id: "p7MdlAcc", label: "Minimum accuracy (%)", min: 50, max: 99, step: 1, value: 80 },
-      { type: "check", key: "nx", id: "p7MdlX", label: "Must be interpretable", value: false }
-    ], () => draw());
-    function draw() {
-      $("#p7Mdl").innerHTML = M.map(m => { const fails = []; if (m[1] < ctl.acc) fails.push("accuracy"); if (m[2] > ctl.lat) fails.push("latency"); if (m[3] > ctl.mem) fails.push("memory"); if (ctl.nx && !m[4]) fails.push("interpretability");
-        return `<div class="card"><h5>${m[0]}</h5><p>Accuracy ${m[1]}%<br>Inference time ${m[2] >= 1000 ? m[2] / 1000 + " s" : m[2] + " ms"}<br>Memory ${m[3]} MB<br>Interpretable: ${m[4] ? "yes" : "no"}</p><div class="pills" style="margin-top:.5rem">${fails.length ? pill(false, "Fails: " + fails.join(", ")) : pill(true, "Meets all constraints")}</div></div>`; }).join("");
-    }
-    draw();
   })();
 })();
 
