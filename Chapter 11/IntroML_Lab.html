@@ -114,6 +114,36 @@ button.kc-chip.done{border-color:var(--good);background:color-mix(in srgb,var(--
 .pg-bot{color:var(--accent)}
 .pg-info{margin-top:.7rem;padding:.6rem .8rem;border-radius:8px;background:var(--surface);border:1px solid var(--line);font-size:.9rem;line-height:1.5;min-height:3.2em}
 @media (prefers-reduced-motion:reduce){.pg-item{transition:none}}
+/* ml4co: pipelines, tree search, cards */
+.ml-svg{display:block;width:100%;min-width:460px;height:auto}
+.ml-tree{min-width:600px}
+.tr-edge{stroke:var(--line)}
+.tr-edge.pr{opacity:.35;stroke-dasharray:3 3}
+.tr-node circle{fill:var(--surface);stroke:var(--muted);stroke-width:1.4}
+.tr-node.vis circle{fill:var(--accent-soft);stroke:var(--accent)}
+.tr-node.pr{opacity:.35}
+.tr-node.cur circle{stroke:var(--gold);stroke-width:3}
+.tr-node.inc circle{stroke:var(--good);stroke-width:2.6}
+.tr-node.opt circle{fill:color-mix(in srgb,var(--good) 28%,var(--surface));stroke:var(--good);stroke-width:2.6}
+.tr-g{font:600 10px var(--f-mono);fill:var(--ink)}
+.tr-nm{font:11px var(--f-mono);fill:var(--muted)}
+.tr-p{font:600 9.5px var(--f-mono);fill:var(--accent);paint-order:stroke;stroke:var(--sunk);stroke-width:3px}
+.ml-card{margin:0;line-height:1.5}
+.ml-dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.2rem .8rem;margin:.45rem 0}
+.ml-dl dt{font-weight:600}
+.ml-dl dd{margin:0}
+.ml-muted{color:var(--muted);font-size:.84rem}
+.ml-ul{margin:.3rem 0 .4rem;padding-left:1.2rem}
+.ml-fit{min-height:1.6em;font-size:.9rem;overflow-x:auto}
+.ml-sub{font-family:var(--f-display);font-size:1.15rem;margin:2.2rem 0 .3rem;scroll-margin-top:16px}
+.ml-refs{list-style:none;counter-reset:mlref;max-width:90ch;margin:1.8rem 0 0;padding:0;font-size:.8rem;line-height:1.45;color:var(--muted)}
+.ml-refs li{counter-increment:mlref;padding-left:2.2em;text-indent:-2.2em;margin:.15rem 0}
+.ml-refs li::before{content:"[" counter(mlref) "]";display:inline-block;width:2.2em;text-indent:0}
+@media (max-width:600px){.ml-dl{grid-template-columns:minmax(0,1fr)}}
+/* Part 7: NCO panels */
+.nco-grp{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4;opacity:.7}
+.pg-node.off{opacity:.35}
+.pg-edge.off{opacity:.35;stroke-dasharray:4 4}
 </style>
 <title>Intro to ML Lab</title>
 <!-- katex:start -->
@@ -373,8 +403,6 @@ footer.end{padding-block:2.5rem;color:var(--muted);font-size:.85rem}
 .cv-sq{aspect-ratio:4/3;border-radius:8px;background:var(--sunk)}
 .mono{font-family:var(--f-mono)}
 .ttab td,.ttab th{padding:.3rem .5rem;font-size:.82rem}
-tr.best td{background:var(--accent-soft)}
-tr.dim td{color:var(--muted)}
 .legend-row{display:flex;gap:.9rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);align-items:center}
 .legend-row i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.3rem;vertical-align:-1px}
 .flow{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:1rem 0}
@@ -481,13 +509,19 @@ tr.click{cursor:pointer}
       <li><a href="#step6">6. Evaluation and optimization</a></li>
       <li><a href="#step7">7. Deployment</a></li></ol></li>
     <li><a href="#ml4co"><b>6</b>ML for optimization</a><ol>
+      <li><a href="#endtoend">End-to-end learning</a></li>
       <li><a href="#configure">Learning to configure</a></li>
+      <li><a href="#alongside">ML alongside optimization</a></li>
       <li><a href="#construct">Construct or improve</a></li></ol></li>
-    <li><a href="#python"><b>7</b>Python and Colab</a><ol>
+    <li><a href="#nco"><b>7</b>Neural combinatorial optimization</a><ol>
+      <li><a href="#l2c">Learning to construct</a></li>
+      <li><a href="#l2i">Learning to improve</a></li>
+      <li><a href="#l2p">Learning to predict</a></li></ol></li>
+    <li><a href="#python"><b>8</b>Python and Colab</a><ol>
       <li><a href="#notebooks">Notebooks</a></li>
       <li><a href="#code">From-scratch code</a></li></ol></li>
-    <li><a href="#summary"><b>8</b>Summary</a></li>
-    <li><a href="#quiz"><b>9</b>Check your understanding</a></li>
+    <li><a href="#summary"><b>9</b>Summary</a></li>
+    <li><a href="#quiz"><b>10</b>Check your understanding</a></li>
   </ol></nav>
   <div class="toc-foot">Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning, 2024. Part V, Machine learning-based methods.</div>
 </aside>
@@ -504,7 +538,7 @@ tr.click{cursor:pointer}
       <div class="variants">
         <a class="chip" href="#fitting"><b>argmin</b> Learning as optimization</a>
         <a class="chip" href="#paradigms"><b>?</b> Paradigms</a>
-        <a class="chip" href="#configure"><b>UCB</b> Learning to configure</a>
+        <a class="chip" href="#configure"><b>&eta;*</b> Learning to configure</a>
         <a class="chip" href="#construct"><b>2-opt</b> Construct or improve</a>
       </div>
       <p class="cite">Based on Chapter 11, “Supervised and unsupervised learning,” Sections 11.1, 11.2 and 11.5, in Alaa Khamis, <a href="https://www.manning.com/books/optimization-algorithms" target="_blank" rel="noopener"><i>Optimization Algorithms: AI techniques for design, planning, and control problems</i></a>, Manning Publications, 2024 (ISBN 978-1633438835).</p>
@@ -837,21 +871,58 @@ tr.click{cursor:pointer}
     <span class="eyebrow">Part 6 · Section 11.5</span>
     <h2>Machine learning for optimization problems</h2>
     <div class="prose">
-      <p>ML can solve combinatorial problems in three ways (Figure 11.14): <b>end to end</b> (the model outputs solutions), <b>learning to configure</b> an algorithm’s parameters, or <b>alongside</b> an optimizer that keeps consulting the model.</p>
-      <p class="more">Section 11.5 of the book surveys neural combinatorial optimization, from knapsack to vehicle routing.</p>
+      <p>ML can help solve combinatorial optimization problems in three ways (Figure 11.14) [1]: <b>end to end</b>, where the model outputs the solution; <b>learning to configure</b> an algorithm; or <b>alongside</b> an algorithm that keeps consulting the model while it runs.</p>
     </div>
-    <h3 id="configure">Learning to configure: a bandit picks the step size</h3>
-    <p class="prose">A UCB bandit learns online which of four step sizes helps a random search on Rastrigin most. Press Run, or compare 30 runs.</p>
-    <p class="more">Chapter 12 of the book develops multi-armed bandits and UCB (Listing 12.1), the learner that configures this search.</p>
+
+    <h3 id="endtoend">End-to-end learning</h3>
+    <p class="prose">The ML model maps the problem definition directly to a solution [1]. Pick an example from the literature, then watch a decoder build a tour one city at a time.</p>
     <div class="bench">
-      <div class="bench-head"><h4>Configure a search while it runs</h4><span class="eyebrow">Minimize Rastrigin: brighter is lower</span></div>
+      <div class="bench-head"><h4>A model that outputs the tour</h4><span class="eyebrow">Click any block of the pipeline</span></div>
       <div class="bench-body">
-        <div class="side"><div id="lcCtl"></div><div class="btns"><button id="lcRun" class="primary">Run</button><button id="lcAll">Compare 30 runs</button></div><div class="stats" id="lcStats"></div></div>
-        <div class="stage"><div class="stage-grid"><div><canvas id="lcCv" class="cv-sq" style="aspect-ratio:1/1" aria-label="Search path on Rastrigin"></canvas></div><div><canvas id="lcBar" class="cv-chart" aria-label="Pulls per step size"></canvas><div class="tbl-wrap"><table class="ttab" id="lcTbl"></table></div></div></div><p class="cap" id="lcNote"></p></div>
+        <div class="side"><div id="e2eCtl"></div><div class="btns"><button id="e2eStep" class="primary">Step</button><button id="e2eAll">Decode all</button><button id="e2eNew">New instance</button><button id="e2eFlow">Show the flow</button></div><div class="stats" id="e2eStats"></div></div>
+        <div class="stage">
+          <div class="pg-wrap"><div id="e2ePipe"></div></div>
+          <div class="pg-info" id="e2eInfo" aria-live="polite"></div>
+          <div class="note ml-card" id="e2eCard"></div>
+          <div class="stage-grid"><div><canvas id="e2eCv" class="cv-sq" style="aspect-ratio:1/1" aria-label="Cities and the tour being decoded"></canvas></div><div><canvas id="e2eBar" class="cv-chart" style="height:230px" aria-label="Softmax probabilities of the unvisited cities"></canvas><p class="cap">Edge thickness and bars show the probability of each unvisited city being chosen next.</p></div></div>
+          <p class="cap" id="e2eNote" aria-live="polite"></p>
+        </div>
       </div>
     </div>
-    <h3 id="construct">Construct or improve: two ways to build a tour</h3>
-    <p class="prose">Learned routing methods either <b>construct</b> a tour or <b>improve</b> one. Click Construct (nearest neighbor), then Improve (2-opt).</p>
+
+    <h3 id="configure">Learning to configure algorithms</h3>
+    <p class="prose">Here the ML model augments an operations research (OR) algorithm with a valuable piece of information, such as a parametrization of the algorithm [1]. The panel learns the gradient-descent step size \(\eta\) from a feature of the problem.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Learn the step size from problem features</h4><span class="eyebrow">Minimize a quadratic bowl</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="cfgCtl"></div><div class="btns"><button id="cfgTrain" class="primary">Train the configurator</button><button id="cfgNew">New problem</button><button id="cfgRun">Run</button><button id="cfgFlow">Show the flow</button></div><div class="stats" id="cfgStats"></div></div>
+        <div class="stage">
+          <div class="pg-wrap"><div id="cfgPipe"></div></div>
+          <div class="pg-info" id="cfgInfo" aria-live="polite"></div>
+          <div class="stage-grid"><div><canvas id="cfgCv" class="cv-sq" style="aspect-ratio:1/1" aria-label="Contours of the new problem with both gradient-descent paths"></canvas></div><div><canvas id="cfgFit" class="cv-chart" style="height:190px" aria-label="Training data: best step size against curvature, with the fitted line"></canvas><div class="ml-fit" id="cfgFitTxt"></div><canvas id="cfgLoss" class="cv-chart" aria-label="Loss per iteration for both step sizes"></canvas></div></div>
+          <p class="cap" id="cfgNote" aria-live="polite"></p>
+          <div class="note ml-card" id="cfgCard"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 id="alongside">Machine learning alongside optimization algorithms</h3>
+    <p class="prose">The optimization algorithm repeatedly queries the same ML model to make decisions; the model takes the current state of the algorithm as input, which may include the problem definition [1]. In deep learning assisted heuristic tree search (DLTS), deep neural networks decide which branches to explore and how to bound nodes [7].</p>
+    <div class="bench">
+      <div class="bench-head"><h4>A learned policy guides a tree search</h4><span class="eyebrow">Find the cheapest leaf</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="trCtl"></div><div class="btns"><button id="trStep" class="primary">Step</button><button id="trRun">Run</button><button id="trNew">New tree</button><button id="trFlow">Show the flow</button></div><div class="stats" id="trStats"></div></div>
+        <div class="stage">
+          <div class="pg-wrap"><div id="trPipe"></div></div>
+          <div class="pg-info" id="trInfo" aria-live="polite"></div>
+          <div class="pg-wrap"><div id="trTree"></div></div>
+          <p class="cap" id="trNote" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="ml-sub" id="construct">Construct or improve: two ways to build a tour</h4>
+    <p class="prose">Construct-then-improve heuristics are what learned models replace or guide, so they are a second example of ML working next to optimization. Learned routing methods either <b>construct</b> a tour or <b>improve</b> one. Click Construct (nearest neighbor), then Improve (2-opt).</p>
     <p class="more">Listing 11.4 in the book solves the TSP with a pretrained graph neural network, the learned counterpart of these hand-designed heuristics.</p>
     <div class="bench">
       <div class="bench-head"><h4>Nearest neighbor, then 2-opt</h4></div>
@@ -860,13 +931,84 @@ tr.click{cursor:pointer}
         <div class="stage"><canvas id="ciCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="TSP tour"></canvas><p class="cap" id="ciNote"></p></div>
       </div>
     </div>
+
+    <ol class="ml-refs" aria-label="References">
+      <li>Bengio, Y., Lodi, A., &amp; Prouvost, A. (2021). Machine learning for combinatorial optimization: a methodological tour d’horizon. <i>European Journal of Operational Research</i>, 290(2), 405-421.</li>
+      <li>Vinyals, O., Fortunato, M., &amp; Jaitly, N. (2015). Pointer networks. arXiv:1506.03134.</li>
+      <li>Nazari, M., Oroojlooy, A., Snyder, L. V., &amp; Takáč, M. (2018). Reinforcement learning for solving the vehicle routing problem. arXiv:1802.04240.</li>
+      <li>Oda, T., &amp; Joe-Wong, C. (2018). MOVI: A model-free approach to dynamic fleet management. <i>IEEE INFOCOM 2018</i>.</li>
+      <li>Al-Abbasi, A. O., Ghosh, A., &amp; Aggarwal, V. (2019). DeepPool: Distributed model-free algorithm for ride-sharing using deep reinforcement learning. <i>IEEE Transactions on Intelligent Transportation Systems</i>, 20(12).</li>
+      <li>Chen, J., Umrawal, A. K., Lan, T., &amp; Aggarwal, V. (2021). DeepFreight: A model-free deep-reinforcement-learning-based algorithm for multi-transfer freight delivery. <i>ICAPS 2021</i>.</li>
+      <li>Hottung, A., Tanaka, S., &amp; Tierney, K. (2020). Deep learning assisted heuristic tree search for the container pre-marshalling problem. <i>Computers &amp; Operations Research</i>, 113, 104781.</li>
+    </ol>
     <!-- kc --><div class="kc" data-sec="ml4co"></div>
+  </div>
+</section>
+
+<section class="chapter" id="nco">
+  <div class="wrap">
+    <span class="eyebrow">Part 7 · Section 11.6</span>
+    <h2>Neural combinatorial optimization (NCO)</h2>
+    <div class="prose">
+      <p>Neural combinatorial optimization (NCO) uses neural networks to solve combinatorial problems such as the traveling salesman problem (TSP) and the vehicle routing problem (VRP). A recent survey groups NCO solvers for routing into three families [1]: <b>learning to construct</b> (L2C), <b>learning to improve</b> (L2I) and <b>learning to predict</b> (L2P). The panels of Part 6 show the general ways ML meets optimization; this part zooms in on neural solvers for routing.</p>
+    </div>
+
+    <h3 id="l2c">Learning to construct (L2C)</h3>
+    <p class="prose">L2C solvers use a neural network to construct solutions from scratch: the coordinates go in and a route comes out. Construction starts from an empty solution, \(\tau = \emptyset\), and ends with a complete one. Most L2C solvers have an <b>encoder</b>, which outputs embeddings of the instance, and a <b>decoder</b>, which selects nodes based on these embeddings [1]. An autoregressive (AR) decoder adds one node per call; a non-autoregressive (NAR) process predicts everything in one shot.</p>
+    <p class="more">Listing 11.4 in the book solves the TSP with a pretrained graph neural network, an L2C-style solver.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Construct a route: autoregressive or one shot</h4><span class="eyebrow">Click any block of the pipeline</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="l2cCtl"></div><div class="btns"><button id="l2cStep" class="primary">Step</button><button id="l2cAll">Construct all</button><button id="l2cNew">New instance</button><button id="l2cFlow">Show the flow</button></div><div class="stats" id="l2cStats"></div></div>
+        <div class="stage">
+          <div class="pg-wrap"><div id="l2cPipe"></div></div>
+          <div class="pg-info" id="l2cInfo" aria-live="polite"></div>
+          <div class="stage-grid"><div><canvas id="l2cCv" class="cv-sq" style="aspect-ratio:1/1" aria-label="Depot, customers and the route being constructed"></canvas></div><div><canvas id="l2cAux" class="cv-chart" style="height:230px" aria-label="Decoder probabilities or the predicted edge heatmap"></canvas><p class="cap" id="l2cAuxCap"></p></div></div>
+          <p class="cap" id="l2cNote" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <h3 id="l2i">Learning to improve (L2I)</h3>
+    <p class="prose">L2I solvers use neural networks to improve feasible solutions. They start from a complete route and iterate until a time budget runs out: a <b>regional strategy</b> selects a region, typically a pair of nodes, and a <b>repair strategy</b> repairs the sub-tours of that region [1]. The regional strategy can be a policy network or a division of the instance; the repair strategy can be a fixed operator, an operator selected for each region, or an L2C solver.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Improve a route: pick a region, repair it</h4><span class="eyebrow">Click any block of the pipeline</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="l2iCtl"></div><div class="btns"><button id="l2iStep" class="primary">Step</button><button id="l2iRun">Run until termination</button><button id="l2iReset">Reset route</button><button id="l2iNew">New instance</button><button id="l2iFlow">Show the flow</button></div><div class="stats" id="l2iStats"></div></div>
+        <div class="stage">
+          <div class="pg-wrap"><div id="l2iPipe"></div></div>
+          <div class="pg-info" id="l2iInfo" aria-live="polite"></div>
+          <div class="stage-grid"><div><canvas id="l2iCv" class="cv-sq" style="aspect-ratio:1/1" aria-label="Route with the selected region"></canvas></div><div><canvas id="l2iChart" class="cv-chart" style="height:220px" aria-label="Route length per iteration"></canvas><p class="cap">Route length after each iteration. The dashed line is plain 2-opt run to a local optimum from the same initial route.</p></div></div>
+          <p class="cap" id="l2iNote" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <h3 id="l2p">Learning to predict (L2P)</h3>
+    <p class="prose">Relying solely on neural networks is not always the best strategy, and there is a growing push to integrate them with operations research (OR) algorithms [1]. <b>L2P-O</b> solvers predict once, before the search begins, for example a heatmap of promising edges; the OR algorithm then solves the instance with this information and the problem definition. <b>L2P-M</b> solvers work with the OR algorithm throughout the search, predicting key information at each decision step from the algorithm's state.</p>
+    <div class="bench">
+      <div class="bench-head"><h4>Predict once or at every step</h4><span class="eyebrow">Click any block of the pipeline</span></div>
+      <div class="bench-body">
+        <div class="side"><div id="l2pCtl"></div><div class="btns"><button id="l2pStep" class="primary">Step</button><button id="l2pRun">Run</button><button id="l2pNew">New instance</button><button id="l2pFlow">Show the flow</button></div><div class="stats" id="l2pStats"></div></div>
+        <div class="stage">
+          <div class="pg-wrap"><div id="l2pPipe"></div></div>
+          <div class="pg-info" id="l2pInfo" aria-live="polite"></div>
+          <div class="stage-grid"><div><canvas id="l2pCv" class="cv-sq" style="aspect-ratio:1/1" aria-label="Route, candidate edges and the latest move"></canvas></div><div><canvas id="l2pCmp" class="cv-chart" style="height:200px" aria-label="Final move evaluations and route length, with the model and with the OR algorithm alone"></canvas><p class="cap">Final results of both runs on this instance, from the same starting point: with the model and with the OR algorithm alone.</p></div></div>
+          <p class="cap" id="l2pNote" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <ol class="ml-refs" aria-label="References">
+      <li>Wu, X., et al. (2024). Neural combinatorial optimization algorithms for solving vehicle routing problems: A comprehensive survey with perspectives. arXiv:2406.00415.</li>
+    </ol>
+    <!-- kc --><div class="kc" data-sec="nco"></div>
   </div>
 </section>
 
 <section class="chapter" id="python">
   <div class="wrap">
-    <span class="eyebrow">Part 7 · Code</span>
+    <span class="eyebrow">Part 8 · Code</span>
     <h2>Python in Google Colab</h2>
     <p class="prose">Open the book’s notebooks or the companion notebook with the from-scratch code below in Colab.</p>
     <h3 id="notebooks">Notebooks</h3>
@@ -1055,7 +1197,7 @@ print(f<span class="st">"random tour {L(rand):.3f} -&gt; 2-opt {L(two_opt(rand))
 
 <section class="chapter" id="summary">
   <div class="wrap">
-    <span class="eyebrow">Part 8 · Summary</span>
+    <span class="eyebrow">Part 9 · Summary</span>
     <h2>What to remember</h2>
     <div class="cards3">
       <div class="card"><h5>Learning is optimization</h5><p>Training searches a model class for the lowest loss.</p></div>
@@ -1069,7 +1211,7 @@ print(f<span class="st">"random tour {L(rand):.3f} -&gt; 2-opt {L(two_opt(rand))
 <!-- quiz:start -->
 <section class="chapter" id="quiz">
   <div class="wrap">
-    <span class="eyebrow">Part 9 · Quiz</span>
+    <span class="eyebrow">Part 10 · Quiz</span>
     <h2>Check your understanding</h2>
     <p class="prose">Three questions on Chapter 11 to review the whole chapter.</p>
     <!-- kc --><div class="kc" data-sec="quiz" data-title="Chapter review"></div>
@@ -1216,8 +1358,6 @@ function presets(el, list, apply) {
 /* ================= Machine learning labs: shared helpers ================= */
 const newSeed = () => Math.floor(Math.random() * 1e9);
 const gauss = rnd => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
-const VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
-const ramp = t => { t = Math.max(0, Math.min(1, t)) * (VIR.length - 1); const i = Math.min(VIR.length - 2, Math.floor(t)), u = t - i; return VIR[i].map((v, k) => Math.round(v + (VIR[i + 1][k] - v) * u)); };
 const classCol = c => [c.accent, c.gold, c.s3, c.s2, c.s4, c.bad, c.good, c.muted];
 function stepper(btn, step, done, rate) {
   let timer = null; const label = btn.textContent;
@@ -1572,43 +1712,323 @@ function shade(ax, f, n = 70) {
   build();
 })();
 
-/* ---------- learning to configure: UCB chooses the step size ---------- */
-(function configure() {
-  const STEPS = [.02, .1, .5, 2], R = x => 20 + x.reduce((s, v) => s + v * v - 10 * Math.cos(2 * Math.PI * v), 0), LIM = 5.12;
-  const ctl = makeControls($("#lcCtl"), [
-    { key: "c", id: "lcC", label: "UCB exploration c", min: 0, max: 3, step: .1, value: .5, fmt: v => v.toFixed(1) },
-    { key: "it", id: "lcIt", label: "Evaluations", min: 300, max: 4000, step: 100, value: 1500 }
-  ], () => {});
-  function search(choose, rnd, iters) {
-    let x = [LIM * (2 * rnd() - 1), LIM * (2 * rnd() - 1)], fx = R(x); const n = [0, 0, 0, 0], g = [0, 0, 0, 0], path = [{ x, k: -1 }], best = [fx];
-    for (let t = 0; t < iters; t++) {
-      const k = choose(t, n, g, rnd), y = x.map(v => Math.max(-LIM, Math.min(LIM, v + STEPS[k] * gauss(rnd)))), fy = R(y);
-      n[k]++; g[k] += Math.max(0, fx - fy); if (fy < fx) { x = y; fx = fy; path.push({ x, k }); } best.push(fx);
+/* ---------- Part 6: ML for combinatorial optimization, three ways ---------- */
+// an interactive pipeline diagram: click a block to read its role, play() moves a dot along the arrows
+function ml4coPipe(wrap, info, spec) {
+  const NS = "http://www.w3.org/2000/svg", P = spec.id;
+  const ICON = Object.assign({
+    doc: '<path d="M6 2.5h8l4.5 4.5v14.5H6z"/><path d="M14 2.5V7h4.5M9 11h6.5M9 14.5h6.5M9 18h4"/>',
+    net: '<circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="12" cy="12" r="2.4"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M6.8 7l3.4 3.6M6.8 17l3.4-3.6M13.8 10.6L17.3 7M13.8 13.4L17.3 17"/>',
+    flag: '<path d="M5 21.5V3"/><path d="M5 4h12.5l-2.5 4 2.5 4H5"/>',
+    gears: '<circle cx="9" cy="14" r="3"/><path d="M9 8.5v1.6M9 17.9v1.6M3.5 14h1.6M12.9 14h1.6M5.1 10.1l1.1 1.1M11.8 16.8l1.1 1.1M5.1 17.9l1.1-1.1M11.8 11.2l1.1-1.1"/><circle cx="17.2" cy="6.8" r="2"/><path d="M17.2 3.2v1.1M17.2 9.3v1.1M13.6 6.8h1.1M19.7 6.8h1.1"/>',
+    sliders: '<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="var(--surface)"/><circle cx="15.5" cy="12" r="2" fill="var(--surface)"/><circle cx="7" cy="18" r="2" fill="var(--surface)"/>'
+  }, spec.icons || {});
+  const defs = `<defs><marker id="${P}Arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--muted)"/></marker>` +
+    Object.entries(ICON).map(([k, v]) => `<symbol id="${P}-${k}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${v}</symbol>`).join("") + `</defs>`;
+  const node = n => `<g class="pg-node${n.cls ? " " + n.cls : ""}" data-n="${n.id}" tabindex="0" role="button" aria-label="${n.label}"><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="10"/>` +
+    `<use href="#${P}-${n.icon}" x="${n.x + n.w / 2 - 14}" y="${n.y + 8}" width="28" height="28"/><text class="pg-lbl" x="${n.x + n.w / 2}" y="${n.y + n.h - (n.sub ? 22 : 12)}" text-anchor="middle">${n.label}</text>` +
+    (n.sub ? `<text class="pg-sub" x="${n.x + n.w / 2}" y="${n.y + n.h - 8}" text-anchor="middle">${n.sub}</text>` : "") + `</g>`;
+  const edge = e => `<path class="pg-edge${e.cls ? " " + e.cls : ""}" id="${P}E-${e.id}" d="${e.d}" marker-end="url(#${P}Arrow)"/>` + (e.label ? `<text class="pg-sub" x="${e.lx}" y="${e.ly}" text-anchor="${e.anchor || "middle"}">${e.label}</text>` : "");
+  wrap.innerHTML = `<svg class="ml-svg" viewBox="0 0 ${spec.w} ${spec.h}" role="group" aria-label="${spec.aria}">${defs}${spec.back || ""}${spec.edges.map(edge).join("")}${spec.nodes.map(node).join("")}</svg>`;
+  let cur = null, gen = 0;
+  const select = n => { cur = n; wrap.querySelectorAll(".pg-node").forEach(e => e.classList.toggle("sel", e.dataset.n === n)); info.innerHTML = spec.info(n); if (typeof renderTex === "function") renderTex(info); };
+  wrap.querySelectorAll(".pg-node").forEach(g => { g.addEventListener("click", () => select(g.dataset.n)); g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(g.dataset.n); } }); });
+  const glow = (n, on) => wrap.querySelectorAll(`.pg-node[data-n="${n}"]`).forEach(e => e.classList.toggle("on", on));
+  function travel(g, id, ms) {
+    return new Promise(res => {
+      const p = wrap.querySelector(`#${P}E-${id}`); if (!p || g !== gen) return res();
+      p.classList.add("on");
+      if (reduceMotion) { setTimeout(() => { p.classList.remove("on"); res(); }, 150); return; }
+      const L = p.getTotalLength(), d = document.createElementNS(NS, "circle"); d.setAttribute("r", 6); d.setAttribute("class", "pg-dot"); p.parentNode.appendChild(d);
+      const t0 = performance.now(), f = t => { const u = Math.min(1, (t - t0) / ms), pt = p.getPointAtLength(L * u); d.setAttribute("cx", pt.x); d.setAttribute("cy", pt.y);
+        if (u < 1 && g === gen) requestAnimationFrame(f); else { d.remove(); p.classList.remove("on"); res(); } };
+      requestAnimationFrame(f);
+    });
+  }
+  // steps: edge ids; the node an edge points to glows when the dot arrives
+  async function play(steps, ms = 650) {
+    const g = ++gen; wrap.querySelectorAll(".pg-node.on").forEach(e => e.classList.remove("on"));
+    for (const s of steps) {
+      if (g !== gen) return;
+      if (s.say) { info.innerHTML = s.say; if (typeof renderTex === "function") renderTex(info); }
+      glow(s.from, true); await travel(g, s.e, s.ms || ms); glow(s.from, false); glow(s.to, true);
+      await new Promise(r => setTimeout(r, reduceMotion ? 0 : 120)); if (s.keep !== true) glow(s.to, false);
     }
-    return { fx, n, path, best };
+    wrap.querySelectorAll(".pg-node.on").forEach(e => e.classList.remove("on"));
   }
-  const ucb = c => (t, n, g) => { for (let k = 0; k < 4; k++) if (!n[k]) return k; let b = 0, bv = -Infinity; for (let k = 0; k < 4; k++) { const v = g[k] / n[k] + c * Math.sqrt(Math.log(t + 1) / n[k]); if (v > bv) { bv = v; b = k; } } return b; };
-  let res = null, layer = null;
-  function draw() {
-    const ax = axes($("#lcCv"), { x0: -LIM, x1: LIM, y0: -LIM, y1: LIM, bare: true, equal: true, pad: { l: 4, r: 4, t: 4, b: 4 } }), { ctx, X, Y, c } = ax, s = X(LIM) - X(-LIM);
-    if (!layer) { const n = 160; layer = document.createElement("canvas"); layer.width = layer.height = n; const l = layer.getContext("2d"), img = l.createImageData(n, n); for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const v = R([-LIM + 2 * LIM * (i + .5) / n, LIM - 2 * LIM * (j + .5) / n]), [r, g, b] = ramp(1 - Math.sqrt(v / 81)); img.data.set([r, g, b, 255], 4 * (j * n + i)); } l.putImageData(img, 0, 0); }
-    ctx.drawImage(layer, X(-LIM), Y(LIM), s, s);
-    const cols = classCol(c);
-    if (res) { ctx.lineWidth = 1.5; for (let i = 1; i < res.path.length; i++) { const a = res.path[i - 1].x, b = res.path[i].x; ctx.strokeStyle = cols[res.path[i].k]; ctx.beginPath(); ctx.moveTo(X(a[0]), Y(a[1])); ctx.lineTo(X(b[0]), Y(b[1])); ctx.stroke(); } const e = res.path[res.path.length - 1].x; dot(ctx, X(e[0]), Y(e[1]), 6, "#fff", c.ink); }
-    dot(ctx, X(0), Y(0), 5, c.good);
-    const b = setupCanvas($("#lcBar")), bc = b.ctx; bc.clearRect(0, 0, b.w, b.h); bc.font = `11px ${MONO}`;
-    if (res) { const mx = Math.max(...res.n), bw = (b.w - 40) / 4; res.n.forEach((v, k) => { const hh = (b.h - 40) * v / mx; bc.fillStyle = cols[k]; bc.fillRect(20 + k * bw + 8, b.h - 22 - hh, bw - 16, hh); bc.fillStyle = c.ink; bc.textAlign = "center"; bc.textBaseline = "bottom"; bc.fillText(v, 20 + k * bw + bw / 2, b.h - 24 - hh); bc.fillStyle = c.muted; bc.textBaseline = "top"; bc.fillText("σ = " + STEPS[k], 20 + k * bw + bw / 2, b.h - 18); }); bc.fillStyle = c.muted; bc.textAlign = "left"; bc.textBaseline = "top"; bc.fillText("times each step size was chosen", 6, 4); }
-    stats($("#lcStats"), [["Best f", res ? res.fx.toFixed(3) : "–"], ["Global minimum", tex("f(0, 0) = 0")], ["Accepted moves", res ? res.path.length - 1 : "–"]]);
-  }
-  $("#lcRun").addEventListener("click", () => { res = search(ucb(ctl.c), mulberry32(newSeed()), ctl.it); draw(); $("#lcNote").textContent = "Path colors show which step size produced each accepted move. Early on, large steps pay off by jumping between valleys; later, small steps refine. The bandit shifts its choices as the rewards change."; });
-  $("#lcAll").addEventListener("click", () => {
-    const rnd = mulberry32(newSeed()), runs = 30, rows = STEPS.map((s, k) => ["fixed " + tex(String.raw`\sigma = ${s}`), Array.from({ length: runs }, () => search(() => k, rnd, ctl.it).fx)]).concat([["UCB-chosen " + tex(String.raw`\sigma`), Array.from({ length: runs }, () => search(ucb(ctl.c), rnd, ctl.it).fx)]]);
-    const mean = a => a.reduce((s, v) => s + v, 0) / a.length, best = Math.min(...rows.map(r => mean(r[1])));
-    $("#lcTbl").innerHTML = `<thead><tr><th>Step size</th><th class="n">Mean best ${tex("f")} (${runs} runs)</th></tr></thead><tbody>` + rows.map(r => `<tr class="${r[0].startsWith("UCB") ? "best" : ""}"><td>${r[0]}</td><td class="n">${mean(r[1]).toFixed(3)}</td></tr>`).join("") + `<tr class="dim"><td>a fixed ${tex(String.raw`\sigma`)} picked blindly</td><td class="n">${mean(rows.slice(0, 4).map(r => mean(r[1]))).toFixed(3)}</td></tr></tbody>`;
-    const u = mean(rows[4][1]), blind = mean(rows.slice(0, 4).map(r => mean(r[1])));
-    $("#lcNote").textContent = `UCB reached ${u.toFixed(2)} on average, against ${best.toFixed(2)} for the best fixed step size (which it did not know in advance) and ${blind.toFixed(2)} for a blind pick: the algorithm configures itself while it runs. The best fixed step depends on the problem and the budget, so it would normally have to be found by trial runs.`;
+  const flash = (id, ms = 260) => { const p = wrap.querySelector(`#${P}E-${id}`); if (!p) return; p.classList.add("on"); setTimeout(() => p.classList.remove("on"), ms); };
+  select(null);
+  return { select, play, flash, glow, get cur() { return cur; } };
+}
+
+/* ---- 1. end-to-end learning: a constructive decoder in the spirit of a pointer network ---- */
+(function endToEnd() {
+  const EX = {
+    ptr: { name: "Pointer network for the TSP [2]",
+      def: "the coordinates of the cities of a Euclidean planar symmetric TSP",
+      out: "a permutation of the cities: at each step an attention distribution over the input points “points” to the next city",
+      train: "supervised, on example tours; trained on instances with \\(m\\) points and tested on instances with \\(n\\) points",
+      demo: "The panel below decodes tours step by step in the same way, with a simple stand-in scorer in place of the trained network." },
+    vrp: { name: "Reinforcement learning for the VRP [3]",
+      def: "the depot, the customer locations and demands, and the vehicle capacity",
+      out: "the sequence of customer visits, with returns to the depot when the vehicle is empty",
+      train: "reinforcement learning: a single model is trained for instances sampled from a given distribution, only by observing reward signals (shorter routes earn more) and following feasibility rules",
+      demo: "The panel below uses the same step-by-step decoding, on the simpler TSP; for the VRP, customers the vehicle cannot serve are masked out." },
+    dqn: { name: "Deep Q-network fleet dispatch: MOVI [4], DeepPool [5], DeepFreight [6]",
+      def: "the current state of the fleet and of the demand: where the vehicles are and where requests or freight appear",
+      out: "a dispatch decision for each vehicle, for example which zone to move to",
+      train: "deep Q-learning: the network learns the value of each dispatch decision from rewards such as demand served and travel cost, and so learns the dispatch policy directly",
+      demo: "The panel below decodes a TSP tour; a dispatch network outputs one decision per vehicle in the same direct way." }
+  };
+  let ex = "ptr";
+  const ctl = makeControls($("#e2eCtl"), [
+    { key: "ex", id: "e2eEx", type: "select", label: "Example from the literature", value: "ptr", options: [["ptr", "Ptr-Net for the TSP [2]"], ["vrp", "RL for the VRP [3]"], ["dqn", "DQN fleet dispatch [4]-[6]"]] },
+    { key: "n", id: "e2eN", label: "Test cities n", min: 5, max: 30, step: 1, value: 12 },
+    { key: "m", id: "e2eM", label: "Trained on m cities", min: 5, max: 50, step: 1, value: 12, hint: "The stand-in scorer fixes its distance scale at m cities, so it is calibrated for that size." },
+    { key: "mode", id: "e2eMode", type: "select", label: "Decoding", value: "greedy", options: [["greedy", "Greedy: most likely city"], ["sample", "Sample from the softmax"]] }
+  ], k => { if (k === "ex") { ex = ctl.ex; card(); pipe.select(pipe.cur); } else if (k === "n") { make(); draw(); } else { reset(); draw(); } });
+  const pipe = ml4coPipe($("#e2ePipe"), $("#e2eInfo"), {
+    id: "e2e", w: 600, h: 130, aria: "End-to-end learning: problem definition, ML model, solution",
+    nodes: [{ id: "prob", x: 20, y: 25, w: 140, h: 80, icon: "doc", label: "Problem", sub: "definition" }, { id: "ml", x: 230, y: 25, w: 140, h: 80, icon: "net", label: "ML model", sub: "trained" }, { id: "sol", x: 440, y: 25, w: 140, h: 80, icon: "flag", label: "Solution" }],
+    edges: [{ id: "a", d: "M160 65H228" }, { id: "b", d: "M370 65H438" }],
+    info: n => { const e = EX[ex]; return n === "prob" ? `<b>Problem definition:</b> ${e.def}.` : n === "ml" ? `<b>ML model:</b> trained once, then used on new instances with no optimizer in the loop. Training: ${e.train}.` : n === "sol" ? `<b>Solution:</b> ${e.out}.` : "<b>End-to-end learning:</b> the ML model maps the problem definition directly to a solution [1]. Click any block to see its role for the selected example."; }
   });
-  ro.observe($("#lcCv")); onRedraw(draw); res = search(ucb(.5), mulberry32(5), 1500); draw(); $("#lcAll").click();
+  function card() { const e = EX[ex]; $("#e2eCard").innerHTML = `<b>${e.name}</b><dl class="ml-dl"><dt>Problem definition</dt><dd>${e.def}</dd><dt>Model output</dt><dd>${e.out}</dd><dt>Training</dt><dd>${e.train}</dd></dl><span class="ml-muted">${e.demo}</span>`; renderTex($("#e2eCard")); }
+
+  let rnd = mulberry32(11), P = [], tour = [], probs = [], ref = 0, pick = -1;
+  const dist = (a, b) => Math.hypot(P[a][0] - P[b][0], P[a][1] - P[b][1]), len = t => t.reduce((s, v, i) => s + dist(v, t[(i + 1) % t.length]), 0);
+  function twoOpt(t) { t = t.slice(); let imp = true; const n = t.length; while (imp) { imp = false; for (let i = 1; i < n - 1; i++) for (let j = i + 1; j < n; j++) { const a = t[i - 1], b = t[i], c = t[j], d = t[(j + 1) % n]; if (dist(a, c) + dist(b, d) < dist(a, b) + dist(c, d) - 1e-12) { t.splice(i, j - i + 1, ...t.slice(i, j + 1).reverse()); imp = true; } } } return t; }
+  // stand-in for a trained network: closeness (on the distance scale of m cities) plus a small keep-going term
+  function score() {
+    const cur = tour[tour.length - 1], prev = tour.length > 1 ? tour[tour.length - 2] : null, s = .5 / Math.sqrt(ctl.m), left = P.map((_, i) => i).filter(i => !tour.includes(i));
+    const z = left.map(j => { let v = -dist(cur, j) / s; if (prev != null) { const hx = P[cur][0] - P[prev][0], hy = P[cur][1] - P[prev][1], dx = P[j][0] - P[cur][0], dy = P[j][1] - P[cur][1]; v += .3 * (hx * dx + hy * dy) / (Math.hypot(hx, hy) * Math.hypot(dx, dy) + 1e-12); } return 3 * v; });
+    const p = left.length ? softmax(z) : []; probs = left.map((j, i) => ({ j, p: p[i] }));
+  }
+  function reset() { if (run) run.stop(); tour = [0]; pick = -1; score(); }
+  function make() { P = Array.from({ length: ctl.n }, () => [rnd(), rnd()]); tour = [0]; let left = new Set(P.map((_, i) => i)); left.delete(0); const nn = [0]; while (left.size) { let b = -1; left.forEach(j => { if (b < 0 || dist(nn[nn.length - 1], j) < dist(nn[nn.length - 1], b)) b = j; }); nn.push(b); left.delete(b); } ref = len(twoOpt(nn)); reset(); }
+  const done = () => tour.length === P.length;
+  function step() {
+    if (done()) return;
+    let k = 0;
+    if (ctl.mode === "greedy") probs.forEach((o, i) => { if (o.p > probs[k].p) k = i; });
+    else { let u = rnd(), a = 0; k = probs.length - 1; for (let i = 0; i < probs.length; i++) { a += probs[i].p; if (u < a) { k = i; break; } } }
+    pick = probs[k].j; const pp = probs[k].p; tour.push(pick); score();
+    $("#e2eNote").textContent = done() ? summary() : `Step ${tour.length - 1}: the decoder chose city ${pick} with probability ${pp.toFixed(2)}${ctl.mode === "sample" ? " (sampled)" : " (the most likely city)"}. Only unvisited cities get scores, so every decoded sequence is a valid tour.`;
+    draw();
+  }
+  function summary() {
+    const L = len(tour), gap = 100 * (L / ref - 1), r = ctl.n / ctl.m;
+    return `Tour complete: length ${L.toFixed(3)}, ${gap >= 0 ? gap.toFixed(1) + "% above" : (-gap).toFixed(1) + "% below"} the 2-opt reference. ` +
+      (r > 1.5 ? `The test instance has far more cities than the training size (n = ${ctl.n}, m = ${ctl.m}): the scores are badly calibrated, and sampled tours suffer most. Trained networks show the same drop when n moves far from m.` :
+        r < .67 ? `The test instance is smaller than the training size, so the scorer is very sharp and decodes like nearest neighbor.` : "The test size is close to the training size, the setting the scorer was calibrated for.") +
+      " A real model has learned its scores from data; here they come from a fixed rule, a stand-in for the trained network.";
+  }
+  function draw() {
+    const ax = axes($("#e2eCv"), { x0: -.04, x1: 1.04, y0: -.04, y1: 1.04, bare: true, equal: true, pad: { l: 6, r: 6, t: 6, b: 6 } }), { ctx, X, Y, c } = ax;
+    const cur = tour[tour.length - 1];
+    if (!done()) probs.forEach(o => { ctx.strokeStyle = c.gold; ctx.globalAlpha = .2 + .8 * o.p; ctx.lineWidth = .6 + 7 * o.p; ctx.beginPath(); ctx.moveTo(X(P[cur][0]), Y(P[cur][1])); ctx.lineTo(X(P[o.j][0]), Y(P[o.j][1])); ctx.stroke(); });
+    ctx.globalAlpha = 1;
+    if (tour.length > 1) { ctx.strokeStyle = c.accent; ctx.lineWidth = 2.4; ctx.beginPath(); tour.forEach((v, i) => i ? ctx.lineTo(X(P[v][0]), Y(P[v][1])) : ctx.moveTo(X(P[v][0]), Y(P[v][1]))); if (done()) ctx.closePath(); ctx.stroke(); }
+    ctx.font = `10px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+    P.forEach((p, i) => { const vis = tour.includes(i); dot(ctx, X(p[0]), Y(p[1]), i === cur && !done() ? 6.5 : 4, i === 0 ? c.good : i === cur && !done() ? c.gold : vis ? c.ink : c.surface, vis && i !== 0 ? null : c.muted); ctx.fillStyle = c.muted; ctx.fillText(i, X(p[0]) + 5, Y(p[1]) - 3); });
+    // probability bars for the unvisited cities (largest first)
+    const b = setupCanvas($("#e2eBar"), 230), bc = b.ctx; bc.clearRect(0, 0, b.w, b.h); bc.font = `11px ${MONO}`; bc.fillStyle = c.muted; bc.textAlign = "left"; bc.textBaseline = "top";
+    if (done()) { bc.fillText("tour complete: no cities left to score", 8, 8); }
+    else {
+      bc.fillText(`softmax over the ${probs.length} unvisited cities, next from city ${cur}`, 8, 6);
+      const top = probs.slice().sort((u, v) => v.p - u.p).slice(0, 12), mx = Math.max(...top.map(o => o.p)), bw = (b.w - 16) / top.length;
+      top.forEach((o, i) => { const hh = (b.h - 62) * o.p / mx, x = 8 + i * bw; bc.fillStyle = c.gold; bc.globalAlpha = .35 + .65 * o.p / mx; bc.fillRect(x + 3, b.h - 22 - hh, bw - 6, hh); bc.globalAlpha = 1; bc.fillStyle = c.ink; bc.textAlign = "center"; bc.textBaseline = "bottom"; if (bw > 22) bc.fillText(o.p.toFixed(2).replace(/^0/, ""), x + bw / 2, b.h - 24 - hh); bc.fillStyle = c.muted; bc.textBaseline = "top"; bc.fillText(o.j, x + bw / 2, b.h - 18); });
+      if (probs.length > 12) { bc.textAlign = "right"; bc.fillStyle = c.muted; bc.textBaseline = "top"; bc.fillText("top 12 shown", b.w - 8, 20); }
+    }
+    stats($("#e2eStats"), [["Step", `${tour.length - 1} / ${P.length - 1}`], ["Tour length", done() ? len(tour).toFixed(3) : "…"], ["2-opt reference", ref.toFixed(3)], ["Gap", done() ? (100 * (len(tour) / ref - 1)).toFixed(1) + "%" : "…"]]);
+  }
+  $("#e2eStep").addEventListener("click", () => { if (run.on) run.stop(); if (done()) { reset(); $("#e2eNote").textContent = "Decoding again from city 0."; } step(); });
+  const run = stepper($("#e2eAll"), step, done, () => 160);
+  $("#e2eAll").addEventListener("click", () => { if (done() && !run.on) { reset(); draw(); $("#e2eAll").click(); } });
+  $("#e2eNew").addEventListener("click", () => { if (run.on) run.stop(); make(); draw(); $("#e2eNote").textContent = "New instance. Press Step to let the decoder choose the first city after city 0."; });
+  $("#e2eFlow").addEventListener("click", () => pipe.play([
+    { e: "a", from: "prob", to: "ml", say: `<b>Problem definition</b> in: ${EX[ex].def}.` },
+    { e: "b", from: "ml", to: "sol", say: `<b>Solution</b> out: ${EX[ex].out}. No separate optimizer is involved.` }]));
+  card(); make(); ro.observe($("#e2eCv")); ro.observe($("#e2eBar")); onRedraw(draw); draw();
+  $("#e2eNote").textContent = "Press Step: the decoder scores every unvisited city, turns the scores into probabilities with a softmax, and picks the next city.";
+})();
+
+/* ---- 2. learning to configure: predict the gradient-descent step size from the curvature ---- */
+(function learnToConfigure() {
+  const ALGO = {
+    gd: { name: "Gradient descent", items: ["learning rate or step size \\(\\eta\\)"], link: ["#fitting", "Learning as optimization (Part 3)"] },
+    sa: { name: "Simulated annealing", items: ["initial temperature", "cooling schedule"], link: ["../Chapter%205/SA_Lab.html", "Simulated Annealing Lab"] },
+    ga: { name: "Genetic algorithm", items: ["standard deviation of the Gaussian mutation", "selective crossover"], link: ["../Chapter%208/GA_Lab.html", "Genetic Algorithm Lab"] },
+    pso: { name: "Particle swarm optimization", items: ["inertia weight \\(w\\)", "cognitive and social acceleration coefficients \\(c_1, c_2\\)"], link: ["../Chapter%209/PSO_Lab.html", "PSO Lab"] },
+    aco: { name: "Ant colony optimization", items: ["rate of evaporation \\(\\rho\\)", "influence of the pheromone deposited \\(\\alpha\\)", "influence of the desirability of the state transition \\(\\beta\\)"], link: ["../Chapter%2010/ACO_Lab.html", "ACO Lab"] }
+  };
+  const ctl = makeControls($("#cfgCtl"), [
+    { key: "nt", id: "cfgNt", label: "Training instances", min: 5, max: 60, step: 1, value: 20 },
+    { key: "eta0", id: "cfgEta0", label: "Default step size", min: .01, max: .5, step: .01, value: .1, fmt: v => v.toFixed(2) },
+    { key: "algo", id: "cfgAlgo", type: "select", label: "Parameters ML could provide for", value: "gd", options: Object.entries(ALGO).map(([k, a]) => [k, a.name]) }
+  ], k => { if (k === "algo") card(); else if (k === "eta0") { traj(); draw(); } });
+  const pipe = ml4coPipe($("#cfgPipe"), $("#cfgInfo"), {
+    id: "cfg", w: 690, h: 130, aria: "Learning to configure: problem definition, ML model, decision, OR algorithm, solution",
+    nodes: [{ id: "prob", x: 10, y: 25, w: 110, h: 80, icon: "doc", label: "Problem", sub: "definition" }, { id: "ml", x: 150, y: 25, w: 110, h: 80, icon: "net", label: "ML model", sub: "configurator" },
+      { id: "dec", x: 290, y: 25, w: 110, h: 80, icon: "sliders", label: "Decision", sub: "parameters" }, { id: "or", x: 430, y: 25, w: 110, h: 80, icon: "gears", label: "OR algorithm", sub: "gradient descent" }, { id: "sol", x: 570, y: 25, w: 110, h: 80, icon: "flag", label: "Solution" }],
+    edges: [{ id: "a", d: "M120 65H148" }, { id: "b", d: "M260 65H288" }, { id: "c", d: "M400 65H428" }, { id: "d", d: "M540 65H568" }],
+    info: n => ({ prob: "<b>Problem definition:</b> a quadratic bowl \\(f(\\mathbf{x}) = \\tfrac12 \\mathbf{x}^\\top A \\mathbf{x}\\). The configurator only sees one feature of it, the largest curvature \\(L\\) (the largest eigenvalue of \\(A\\)).",
+      ml: "<b>ML model:</b> a line in log space, \\(\\log_{10}\\eta = a + b \\log_{10} L\\), fitted to the best step sizes of the training instances.",
+      dec: "<b>Decision:</b> the step size \\(\\eta\\) predicted for this problem. ML provides a parametrization of the algorithm, not the solution.",
+      or: "<b>OR algorithm:</b> plain gradient descent, \\(\\mathbf{x} \\leftarrow \\mathbf{x} - \\eta \\nabla f(\\mathbf{x})\\), run with the predicted step size.",
+      sol: "<b>Solution:</b> the point gradient descent reaches, here the minimum at the origin if the step size suits the problem." }[n] || "<b>Learning to configure:</b> the ML model augments an OR algorithm with valuable pieces of information [1]. Click any block to see its role.")
+  });
+  function card() { const a = ALGO[ctl.algo]; $("#cfgCard").innerHTML = `<b>${a.name}:</b> parameters an ML model could provide<ul class="ml-ul">${a.items.map(t => `<li>${t}</li>`).join("")}</ul>Try them by hand in the <a href="${a.link[0]}">${a.link[1]}</a>.`; renderTex($("#cfgCard")); }
+
+  const K = 40, KT = 25, GRID = Array.from({ length: 81 }, (_, i) => 10 ** (-3 + 4 * i / 80));
+  const inst = rnd => { const L = 10 ** (-.5 + 2 * rnd()), kap = 2 + 8 * rnd(), th = Math.PI * rnd(), a0 = 2 * Math.PI * rnd(); return { L, l2: L / kap, th, x0: [2.5 * Math.cos(a0), 2.5 * Math.sin(a0)] }; };
+  const grad = (q, x) => { const c = Math.cos(q.th), s = Math.sin(q.th), u = c * x[0] + s * x[1], v = -s * x[0] + c * x[1], gu = q.L * u, gv = q.l2 * v; return [c * gu - s * gv, s * gu + c * gv]; };
+  const f = (q, x) => { const c = Math.cos(q.th), s = Math.sin(q.th), u = c * x[0] + s * x[1], v = -s * x[0] + c * x[1]; return .5 * (q.L * u * u + q.l2 * v * v); };
+  const gd = (q, eta, k) => { let x = q.x0.slice(); const path = [x]; for (let t = 0; t < k; t++) { const g = grad(q, x); x = [x[0] - eta * g[0], x[1] - eta * g[1]]; path.push(x); if (!isFinite(x[0]) || Math.abs(x[0]) > 1e6) break; } return path; };
+  const bestEta = q => { let b = GRID[0], bv = Infinity; for (const e of GRID) { const p = gd(q, e, KT), v = p.length === KT + 1 ? f(q, p[KT]) : Infinity; if (v < bv) { bv = v; b = e; } } return b; };
+  const iters = (q, eta) => { let x = q.x0.slice(); const f0 = f(q, x); for (let t = 1; t <= 500; t++) { const g = grad(q, x); x = [x[0] - eta * g[0], x[1] - eta * g[1]]; const v = f(q, x); if (!isFinite(v) || v > 1e3 * f0) return "diverges"; if (v < 1e-4 * f0) return t; } return "> 500"; };
+  let rnd = mulberry32(21), train = [], fit = null, prob = inst(mulberry32(18)), pD = [], pL = [], shown = 0, timer = null;
+  function doFit() {
+    if (train.length < 2) { fit = null; return; }
+    const xs = train.map(t => Math.log10(t.L)), ys = train.map(t => Math.log10(t.eta)), n = xs.length, mx = xs.reduce((a, b) => a + b) / n, my = ys.reduce((a, b) => a + b) / n;
+    let sxy = 0, sxx = 0, syy = 0; xs.forEach((x, i) => { sxy += (x - mx) * (ys[i] - my); sxx += (x - mx) ** 2; syy += (ys[i] - my) ** 2; });
+    const b = sxy / sxx, a = my - b * mx; fit = { a, b, r2: syy ? sxy * sxy / (sxx * syy) : 1 };
+  }
+  const predict = L => fit ? 10 ** (fit.a + fit.b * Math.log10(L)) : null;
+  function traj() { pD = gd(prob, ctl.eta0, K); const e = predict(prob.L); pL = e ? gd(prob, e, K) : []; }
+  function trainNow() {
+    clearInterval(timer); train = []; fit = null; const r = mulberry32(newSeed()), all = Array.from({ length: ctl.nt }, () => { const q = inst(r); q.eta = bestEta(q); return q; });
+    $("#cfgNote").textContent = "Training: for each random bowl, a grid search over 81 step sizes finds the one that gets lowest after 25 iterations. Each dot is one training instance.";
+    timer = setInterval(() => { if (train.length >= all.length) return clearInterval(timer); train.push(all[train.length]); doFit(); traj(); shown = 0; draw(); if (train.length === all.length) { clearInterval(timer); $("#cfgNote").innerHTML = `Trained on ${train.length} instances. The fitted slope is ${fit.b.toFixed(2)}, close to −1: the best step size is roughly proportional to ${tex(String.raw`1/L`)}, because steep bowls need small steps. Press Run to try the configurator on the new problem.`; } }, reduceMotion ? 0 : 60);
+  }
+  function draw() {
+    const c = colors();
+    // contours of the new problem and both gradient-descent paths
+    const ax = axes($("#cfgCv"), { x0: -3, x1: 3, y0: -3, y1: 3, bare: true, equal: true, pad: { l: 6, r: 6, t: 6, b: 6 } }), { ctx, X, Y, w, h } = ax, sc = X(1) - X(0), f0 = f(prob, prob.x0);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.clip();
+    [1, .4, .12, .03, .006].forEach(k => { const lv = k * f0; ctx.strokeStyle = c.line; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(X(0), Y(0), Math.sqrt(2 * lv / prob.L) * sc, Math.sqrt(2 * lv / prob.l2) * sc, -prob.th, 0, 2 * Math.PI); ctx.stroke(); });
+    const path = (p, col) => { const k = Math.min(p.length, shown + 1); if (k < 1) return; ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i < k; i++) { const q = p[i].map(v => Math.max(-50, Math.min(50, v))); i ? ctx.lineTo(X(q[0]), Y(q[1])) : ctx.moveTo(X(q[0]), Y(q[1])); } ctx.stroke(); for (let i = 0; i < k; i++) { const q = p[i]; if (Math.abs(q[0]) < 4 && Math.abs(q[1]) < 4) dot(ctx, X(q[0]), Y(q[1]), 2.6, col); } };
+    path(pD, c.gold); path(pL, c.accent);
+    dot(ctx, X(0), Y(0), 5, c.good); dot(ctx, X(prob.x0[0]), Y(prob.x0[1]), 5, c.ink);
+    ctx.restore();
+    ctx.font = `11px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillStyle = c.gold; ctx.fillText("■ default step", 10, 8); ctx.fillStyle = c.accent; ctx.fillText("■ learned step", 10, 22);
+    // training scatter with the fitted line
+    const ys = train.map(t => Math.log10(t.eta)), y0 = Math.min(-2.5, ...ys) - .1, y1 = Math.max(.4, ...ys) + .1;
+    const fx = axes($("#cfgFit"), { x0: -.6, x1: 1.6, y0, y1, ticks: 4, xd: 1, yd: 1, xlab: "log10 L", ylab: "log10 best step", pad: { l: 40, b: 26 } });
+    train.forEach(t => dot(fx.ctx, fx.X(Math.log10(t.L)), fx.Y(Math.log10(t.eta)), 3.4, c.s3));
+    if (fit) { fx.ctx.strokeStyle = c.accent; fx.ctx.lineWidth = 2; fx.ctx.beginPath(); fx.ctx.moveTo(fx.X(-.6), fx.Y(fit.a - .6 * fit.b)); fx.ctx.lineTo(fx.X(1.6), fx.Y(fit.a + 1.6 * fit.b)); fx.ctx.stroke();
+      const lx = Math.log10(prob.L); fx.ctx.save(); fx.ctx.setLineDash([4, 3]); fx.ctx.strokeStyle = c.ink; fx.ctx.globalAlpha = .5; fx.ctx.beginPath(); fx.ctx.moveTo(fx.X(lx), fx.Y(y0)); fx.ctx.lineTo(fx.X(lx), fx.Y(y1)); fx.ctx.stroke(); fx.ctx.restore(); dot(fx.ctx, fx.X(lx), fx.Y(fit.a + fit.b * lx), 5, c.accent, c.surface); }
+    $("#cfgFitTxt").innerHTML = fit ? texLine(String.raw`\log_{10}\eta \approx ${fit.a.toFixed(2)} ${fit.b < 0 ? "-" : "+"} ${Math.abs(fit.b).toFixed(2)}\,\log_{10} L`) : "<span class='ml-muted'>Press Train the configurator.</span>";
+    // loss curves
+    const lg = p => p.slice(0, shown + 1).map(x => Math.min(3, Math.log10(Math.max(1e-12, f(prob, x) / f0))));
+    lineChart($("#cfgLoss"), [{ data: lg(pD), color: c.gold, label: "default" }, { data: pL.length ? lg(pL) : [], color: c.accent, label: "learned (log10 of f / f0)" }], { labels: true, xmax: K });
+    const e = predict(prob.L);
+    stats($("#cfgStats"), [["Largest curvature", prob.L.toFixed(2)], ["Default step", ctl.eta0.toFixed(2)], ["Learned step", e ? e.toFixed(3) : "train first"], ["Iterations, default", iters(prob, ctl.eta0)], ["Iterations, learned", e ? iters(prob, e) : "–"], ["Fit r-squared", fit ? fit.r2.toFixed(3) : "–"]]);
+  }
+  let anim = null;
+  $("#cfgRun").addEventListener("click", () => {
+    clearInterval(anim); traj(); shown = 0; draw(); pipe.glow("or", true);
+    anim = setInterval(() => { shown++; draw(); if (shown >= K) { clearInterval(anim); pipe.glow("or", false); const e = predict(prob.L), a = iters(prob, ctl.eta0), b = e ? iters(prob, e) : null;
+      $("#cfgNote").textContent = `Iterations to reduce f by a factor of 10,000: default step ${a}, learned step ${b ?? "(train first)"}. ` + (ctl.eta0 > 2 / prob.L ? `The default step is larger than 2/L = ${(2 / prob.L).toFixed(3)}, so gradient descent overshoots and diverges on this steep bowl.` : ctl.eta0 < .3 / prob.L ? "The default step is far too small for this flat bowl, so progress is slow." : "Here the default happens to suit the problem reasonably well; try New problem.") + " No one tuned anything by hand for this problem: the configurator read its curvature and chose the step."; } }, reduceMotion ? 0 : 70);
+  });
+  $("#cfgTrain").addEventListener("click", trainNow);
+  $("#cfgNew").addEventListener("click", () => { clearInterval(anim); prob = inst(rnd); traj(); shown = 0; draw(); $("#cfgNote").textContent = `New problem with largest curvature L = ${prob.L.toFixed(2)}. The learned step is read off the fitted line (blue dot). Press Run.`; });
+  $("#cfgFlow").addEventListener("click", () => { const e = predict(prob.L); pipe.play([
+    { e: "a", from: "prob", to: "ml", say: `<b>Problem definition</b> in: the configurator reads the feature \\(L = ${prob.L.toFixed(2)}\\).` },
+    { e: "b", from: "ml", to: "dec", say: e ? `<b>Decision</b> out: \\(\\eta = ${e.toFixed(3)}\\).` : "<b>Decision:</b> train the configurator first to get a predicted step size." },
+    { e: "c", from: "dec", to: "or", say: "<b>OR algorithm</b>: gradient descent runs with that step size." },
+    { e: "d", from: "or", to: "sol", say: "<b>Solution</b>: the point gradient descent reaches. Press Run to see it." }]); });
+  // initial state: a trained configurator
+  (() => { const r = mulberry32(8); train = Array.from({ length: 20 }, () => { const q = inst(r); q.eta = bestEta(q); return q; }); doFit(); })();
+  card(); traj(); shown = K; ro.observe($("#cfgCv")); ro.observe($("#cfgFit")); onRedraw(draw); draw();
+  $("#cfgNote").textContent = "Each training instance is a random bowl; its best step size was found by grid search. Press New problem, then Run to compare the default step with the learned one.";
+})();
+
+/* ---- 3. ML alongside optimization: a stand-in policy network guides a tree search ---- */
+(function guidedTreeSearch() {
+  const B = 3, DEPTH = 3, W = 720, H = 300, LY = [34, 108, 182, 252];
+  const ctl = makeControls($("#trCtl"), [
+    { key: "q", id: "trQ", label: "Policy quality", min: 0, max: 1, step: .05, value: .8, fmt: v => v === 0 ? "random" : v === 1 ? "sharp" : v.toFixed(2), hint: "0: the scores are random noise. 1: the scores point to the cheapest branch." },
+    { key: "bound", id: "trBound", type: "check", label: "Prune with the bound", value: true }
+  ], () => { policy(); reset(); draw(); });
+  const pipe = ml4coPipe($("#trPipe"), $("#trInfo"), {
+    id: "tr", w: 640, h: 245, aria: "ML alongside optimization: problem definition, OR algorithm exchanging state and decisions with an ML model, solution",
+    nodes: [{ id: "prob", x: 20, y: 150, w: 130, h: 80, icon: "doc", label: "Problem", sub: "definition" }, { id: "or", x: 255, y: 150, w: 130, h: 80, icon: "gears", label: "OR algorithm", sub: "tree search" },
+      { id: "ml", x: 255, y: 12, w: 130, h: 80, icon: "net", label: "ML model", sub: "policy network" }, { id: "sol", x: 490, y: 150, w: 130, h: 80, icon: "flag", label: "Solution" }],
+    edges: [{ id: "a", d: "M150 190H253" }, { id: "b", d: "M385 190H488" }, { id: "s", d: "M290 150V94", label: "state", lx: 282, ly: 126, anchor: "end" }, { id: "d", d: "M350 92V148", label: "decision", lx: 358, ly: 126, anchor: "start" }],
+    info: n => ({ prob: "<b>Problem definition:</b> a search tree whose edges each add a positive cost; the goal is the cheapest leaf. It can also be part of the state the model sees.",
+      or: "<b>OR algorithm:</b> a depth-first tree search with a bound. It stays in charge: it decides when to stop, keeps the best leaf found so far and prunes branches that cannot beat it.",
+      ml: "<b>ML model:</b> the same policy network is queried at every node. Its softmax output gives a probability for each child branch, and the search tries the most likely branch first. Here a stand-in rule plays the trained network.",
+      sol: "<b>Solution:</b> the cheapest leaf. With the bound, the search can also prove that no other leaf is cheaper." }[n] || "<b>ML alongside optimization:</b> the algorithm repeatedly queries the same ML model, sending its current state and receiving a decision [1]. Click any block to see its role.")
+  });
+  let rnd = mulberry32(7), T = [], opt = 0, trace = [], at = 0, stDFS = null, stBFS = null, stG = null;
+  function build() {
+    T = [{ id: 0, d: 0, g: 0, kids: [], par: -1, nm: "root" }];
+    const grow = n => { if (n.d === DEPTH) return; for (let k = 0; k < B; k++) { const m = { id: T.length, d: n.d + 1, g: n.g + 1 + Math.floor(rnd() * 9), kids: [], par: n.id, nm: n.d === 0 ? "ABC"[k] : n.d === 1 ? n.nm + (k + 1) : n.nm + "abc"[k] }; T.push(m); n.kids.push(m.id); grow(m); } };
+    grow(T[0]);
+    let leaf = 0; T.forEach(n => { if (!n.kids.length) { n.x = 22 + leaf * (W - 44) / (B ** DEPTH - 1); leaf++; } });
+    for (let d = DEPTH - 1; d >= 0; d--) T.filter(n => n.d === d).forEach(n => n.x = n.kids.reduce((s, k) => s + T[k].x, 0) / n.kids.length);
+    T.forEach(n => n.y = LY[n.d]);
+    const best = n => n.kids.length ? Math.min(...n.kids.map(k => best(T[k]))) : n.g; T.forEach(n => n.best = best(n)); opt = T[0].best;
+    T.forEach(n => n.noise = n.kids.map(() => gauss(rnd)));
+    policy();
+  }
+  // stand-in policy: mixes the true best completion of each child (what a perfect network would know) with noise
+  function policy() {
+    const q = ctl.q;
+    T.forEach(n => { if (!n.kids.length) return; const h = n.kids.map(k => T[k].best), mu = h.reduce((a, b) => a + b) / h.length, sd = Math.sqrt(h.reduce((a, b) => a + (b - mu) ** 2, 0) / h.length) + 1;
+      n.p = softmax(h.map((v, i) => q * 3 * -(v - mu) / sd + (1 - q) * 1.5 * n.noise[i])); n.order = n.kids.map((k, i) => i).sort((a, b) => n.p[b] - n.p[a]).map(i => n.kids[i]); });
+  }
+  // depth-first search with an optional bound; children in the given order. Returns the events and the counts
+  function dfs(order, bound) {
+    const ev = [], st = [0]; let inc = Infinity, vis = 0, found = null;
+    while (st.length) {
+      const n = T[st.pop()];
+      if (bound && n.id && n.g >= inc) { ev.push({ t: "prune", n: n.id, inc }); continue; }
+      vis++; if (!n.kids.length) { if (n.g < inc) inc = n.g; if (n.g === opt && found == null) found = vis; }
+      ev.push({ t: "visit", n: n.id, inc, vis });
+      if (n.kids.length) st.push(...order(n).slice().reverse());
+    }
+    return { ev, vis, found };
+  }
+  function bfs() { const qu = [0]; let vis = 0; while (qu.length) { const n = T[qu.shift()]; vis++; if (!n.kids.length && n.g === opt) return vis; qu.push(...n.kids); } return vis; }
+  function reset() { if (run) run.stop(); stG = dfs(n => n.order, ctl.bound); stDFS = dfs(n => n.kids, ctl.bound); stBFS = bfs(); trace = stG.ev; at = 0; }
+  const doneFn = () => at >= trace.length;
+  function step() {
+    if (doneFn()) return; const e = trace[at++], n = T[e.n];
+    if (e.t === "visit" && n.kids.length) { pipe.flash("s", 220); setTimeout(() => pipe.flash("d", 220), 160); }
+    const pr = n.kids.length ? n.order.map(k => `${name(k)} ${n.p[n.kids.indexOf(k)].toFixed(2)}`).join(", ") : "";
+    $("#trNote").textContent = doneFn() ? summary() : e.t === "prune" ? `Pruned node ${name(e.n)}: its cost so far (${n.g}) is already no better than the best leaf found (${e.inc}), so nothing below it can win.` :
+      n.kids.length ? `Visited node ${name(e.n)} (cost so far ${n.g}). The policy gives ${pr}; the search goes down the most likely branch first.` : `Reached leaf ${name(e.n)} with total cost ${n.g}.` + (n.g === e.inc ? " It is the best leaf so far." : "");
+    draw();
+  }
+  const name = id => T[id].nm;
+  function summary() { return `Search finished. The policy-guided search found the cheapest leaf (cost ${opt}) after ${stG.found} nodes and visited ${stG.vis} nodes in all; plain depth-first search needed ${stDFS.found} nodes to find it and breadth-first search ${stBFS}. Lower the policy quality to see guidance turn into a handicap. The probabilities come from a stand-in rule, not a trained network.`; }
+  function draw() {
+    const vis = new Set(), pruned = new Set(); let cur = -1, inc = Infinity;
+    for (let i = 0; i < at; i++) { const e = trace[i]; if (e.t === "visit") { vis.add(e.n); cur = e.n; if (!T[e.n].kids.length) inc = Math.min(inc, T[e.n].g); } else { const mark = id => { pruned.add(id); T[id].kids.forEach(mark); }; mark(e.n); cur = e.n; } }
+    const fin = doneFn();
+    let s = "";
+    T.forEach(n => n.kids.forEach((k, i) => { const m = T[k], on = vis.has(n.id), p = n.p[i]; s += `<line class="tr-edge${pruned.has(k) ? " pr" : ""}" x1="${n.x}" y1="${n.y}" x2="${m.x}" y2="${m.y}" style="stroke-width:${on ? 1 + 5 * p : 1.2};${on ? "stroke:var(--accent)" : ""}"/>`;
+      if (on) { const f = n.d === DEPTH - 1 ? .72 : .55, tx = n.x + f * (m.x - n.x), ty = n.y + f * (m.y - n.y); s += `<text class="tr-p" x="${tx}" y="${ty + 3}" text-anchor="middle">${p.toFixed(2).replace(/^0/, "")}</text>`; } }));
+    T.forEach(n => { const leaf = !n.kids.length, cls = ["tr-node", vis.has(n.id) ? "vis" : "", pruned.has(n.id) ? "pr" : "", n.id === cur && !fin ? "cur" : "", leaf && vis.has(n.id) && n.g === inc ? "inc" : "", fin && leaf && n.g === opt ? "opt" : ""].join(" ");
+      s += `<g class="${cls}"><circle cx="${n.x}" cy="${n.y}" r="${leaf ? 9 : 12}"/><text class="tr-g" x="${n.x}" y="${n.y + 3.5}" text-anchor="middle">${n.g}</text>${leaf ? "" : `<text class="tr-nm" x="${n.x + 15}" y="${n.y - 10}">${n.nm}</text>`}</g>`; });
+    $("#trTree").innerHTML = `<svg class="ml-svg ml-tree" viewBox="0 0 ${W} ${H}" role="img" aria-label="Search tree, depth 3, three children per node; numbers are the cost so far">${s}<text class="pg-sub" x="8" y="${H - 8}">numbers: cost so far (on a leaf, its total cost); edge labels: policy probabilities</text></svg>`;
+    stats($("#trStats"), [["Guided, best found", stG.found != null && (fin || at >= (stG.ev.findIndex(e => e.vis === stG.found) + 1)) ? stG.found : "…"], ["Guided, visited", at ? [...vis].length : 0], ["Depth-first, best found", stDFS.found], ["Breadth-first, best found", stBFS], ["Best leaf so far", isFinite(inc) ? inc : "–"], ["Pruned nodes", pruned.size]]);
+  }
+  $("#trStep").addEventListener("click", () => { if (run.on) run.stop(); if (doneFn()) { at = 0; } step(); });
+  const run = stepper($("#trRun"), step, doneFn, () => 260);
+  $("#trRun").addEventListener("click", () => { if (doneFn() && !run.on) { at = 0; draw(); $("#trRun").click(); } });
+  $("#trNew").addEventListener("click", () => { if (run.on) run.stop(); build(); reset(); draw(); $("#trNote").textContent = "New tree. Press Step to query the policy at the root."; });
+  $("#trFlow").addEventListener("click", () => pipe.play([
+    { e: "a", from: "prob", to: "or", say: "<b>Problem definition</b> in: the tree search starts at the root." },
+    { e: "s", from: "or", to: "ml", ms: 450, say: "<b>State</b> out: the representation of the current node goes to the policy network." },
+    { e: "d", from: "ml", to: "or", ms: 450, say: "<b>Decision</b> back: probabilities for the child branches, for example 0.1, 0.2 and 0.7; the search follows the likely branch." },
+    { e: "s", from: "or", to: "ml", ms: 450, say: "The search moves to the next node and queries the <b>same</b> model again." },
+    { e: "d", from: "ml", to: "or", ms: 450 },
+    { e: "b", from: "or", to: "sol", say: "<b>Solution</b> out: the best leaf, found and, with the bound, proven best." }]));
+  build(); reset(); draw();
+  $("#trNote").textContent = "Press Step: at each node the stand-in policy gives probabilities over the three children, and the search expands the most likely child first.";
 })();
 
 /* ---------- construct vs. improve ---------- */
@@ -1636,6 +2056,499 @@ function shade(ax, f, n = 70) {
   });
   $("#ciNew").addEventListener("click", () => { make(); draw(); $("#ciNote").textContent = ""; });
   make(); ro.observe($("#ciCv")); onRedraw(draw); draw(); $("#ciNote").textContent = "Press Construct, then Improve.";
+})();
+
+/* ---------- Part 7: neural combinatorial optimization (NCO) for routing ---------- */
+// shared by the three NCO panels: a depot plus customers in the unit square, distances, 2-opt and drawing
+const ncoKit = (() => {
+  const icons = {
+    pin: '<path d="M12 21.5s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0c0 5-6.5 11.2-6.5 11.2z"/><circle cx="12" cy="10.2" r="2.3"/>',
+    route: '<circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="5.5" r="2"/><path d="M7.5 18.5h6a3 3 0 0 0 0-6h-3a3 3 0 0 1 0-6h6"/>',
+    grid: '<rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 9.2h17M3.5 14.8h17M9.2 3.5v17M14.8 3.5v17"/><rect x="9.2" y="3.5" width="5.6" height="5.7" fill="currentColor" opacity=".55"/><rect x="3.5" y="14.8" width="5.7" height="5.7" fill="currentColor" opacity=".55"/><rect x="14.8" y="9.2" width="5.7" height="5.6" fill="currentColor" opacity=".3"/>',
+    region: '<circle cx="12" cy="12" r="8.5" stroke-dasharray="3 2.6"/><circle cx="9" cy="10" r="1.7" fill="currentColor"/><circle cx="15" cy="14.2" r="1.7" fill="currentColor"/>',
+    wrench: '<path d="M14.6 3.6a4.6 4.6 0 0 0-4.3 6.2L3.8 16.3l3.9 3.9 6.5-6.5a4.6 4.6 0 0 0 6.2-4.3l-2.8 2.8-3.2-.7-.7-3.2z"/>',
+    clock: '<circle cx="12" cy="13.2" r="7.8"/><path d="M12 9v4.4l2.8 2.2M9.4 2.6h5.2"/>'
+  };
+  const inst = (rnd, n) => { const P = [[.5, .5]]; for (let i = 0; i < n; i++) P.push([.05 + .9 * rnd(), .05 + .9 * rnd()]); return P; };
+  const dmat = P => P.map(a => P.map(b => Math.hypot(a[0] - b[0], a[1] - b[1])));
+  const len = (d, t) => t.length < 2 ? 0 : t.reduce((s, v, i) => s + d[v][t[(i + 1) % t.length]], 0);
+  // each node's local distance scale: the mean distance to its three nearest neighbors
+  const scales = d => d.map((r, i) => { const s = r.filter((_, j) => j !== i).sort((a, b) => a - b).slice(0, 3); return s.reduce((a, b) => a + b, 0) / s.length; });
+  // stand-in edge heatmap: closeness relative to each node's local scale, symmetrized, max 1
+  function heatmap(d, scl) {
+    const H = d.map((r, i) => r.map((v, j) => i === j ? 0 : Math.exp(-v / scl[i])));
+    H.forEach(r => { const s = r.reduce((a, b) => a + b, 0); r.forEach((v, j) => r[j] = v / s); });
+    const S = H.map((r, i) => r.map((v, j) => (v + H[j][i]) / 2)), mx = Math.max(...S.map(r => Math.max(...r)));
+    return S.map(r => r.map(v => v / mx));
+  }
+  // 2-opt on the route edges leaving positions p < q: reverse t[p+1..q] (position 0, the depot, never moves)
+  const rev = (t, p, q) => { const u = t.slice(); let a = p + 1, b = q; while (a < b) { [u[a], u[b]] = [u[b], u[a]]; a++; b--; } return u; };
+  const gain = (d, t, p, q) => { const n = t.length, a = t[p], b = t[(p + 1) % n], c = t[q], e = t[(q + 1) % n]; return d[a][b] + d[c][e] - d[a][c] - d[b][e]; };
+  // first-improvement 2-opt over every pair of edges; rec(t, evals, p, q) after each improving move
+  function twoOptFull(d, t0, rec) {
+    let t = t0.slice(), ev = 0, imp = true; const n = t.length;
+    while (imp) { imp = false; for (let p = 0; p < n - 2; p++) for (let q = p + 2; q < n; q++) { if (p === 0 && q === n - 1) continue; ev++; if (gain(d, t, p, q) > 1e-10) { t = rev(t, p, q); imp = true; if (rec) rec(t, ev, p, q); } } }
+    return { t, evals: ev };
+  }
+  // 2-opt restricted to candidate lists: only moves that create an edge (a, c) with c in cand[a]
+  function twoOptCand(d, t0, cand, rec) {
+    let t = t0.slice(), ev = 0, imp = true; const n = t.length, pos = new Array(n), upd = () => t.forEach((v, i) => pos[v] = i);
+    upd();
+    while (imp) {
+      imp = false;
+      for (let i = 0; i < n; i++) { const a = t[i]; for (const cn of cand[a]) for (const side of [0, 1]) {
+        // side 0 replaces the edges leaving a and c, side 1 the edges entering them; both create the edge (a, c)
+        let p = side ? (pos[a] - 1 + n) % n : pos[a], q = side ? (pos[cn] - 1 + n) % n : pos[cn];
+        if (p > q) [p, q] = [q, p];
+        if (q - p < 2 || (p === 0 && q === n - 1)) continue;
+        ev++;
+        if (gain(d, t, p, q) > 1e-10) { t = rev(t, p, q); upd(); imp = true; if (rec) rec(t, ev, p, q); }
+      } }
+    }
+    return { t, evals: ev };
+  }
+  function nnRoute(d) { const n = d.length, t = [0], left = new Set(); for (let i = 1; i < n; i++) left.add(i); while (left.size) { const a = t[t.length - 1]; let b = -1; left.forEach(j => { if (b < 0 || d[a][j] < d[a][b]) b = j; }); t.push(b); left.delete(b); } return t; }
+  const randRoute = (n, rnd) => { const t = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 1; i--) { const j = 1 + Math.floor(rnd() * i); [t[i], t[j]] = [t[j], t[i]]; } return t; };
+  const plot = cv => axes(cv, { x0: 0, x1: 1, y0: 0, y1: 1, bare: true, equal: true, pad: { l: 8, r: 8, t: 8, b: 8 } });
+  const path = (ax, P, t, closed) => { const { ctx, X, Y } = ax; ctx.beginPath(); t.forEach((v, i) => i ? ctx.lineTo(X(P[v][0]), Y(P[v][1])) : ctx.moveTo(X(P[v][0]), Y(P[v][1]))); if (closed) ctx.closePath(); ctx.stroke(); };
+  const seg = (ax, P, a, b) => { const { ctx, X, Y } = ax; ctx.beginPath(); ctx.moveTo(X(P[a][0]), Y(P[a][1])); ctx.lineTo(X(P[b][0]), Y(P[b][1])); ctx.stroke(); };
+  function depot(ax, p) {
+    const { ctx, X, Y, c } = ax, x = X(p[0]), y = Y(p[1]);
+    ctx.fillStyle = c.good; ctx.strokeStyle = c.surface; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.moveTo(x - 7, y + 6); ctx.lineTo(x - 7, y - 1.5); ctx.lineTo(x, y - 8); ctx.lineTo(x + 7, y - 1.5); ctx.lineTo(x + 7, y + 6); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  // customers as dots (o.fill, o.hollow and o.ring give per-node styles), the depot as a small house
+  function nodes(ax, P, o = {}) {
+    const { ctx, X, Y, c } = ax; ctx.font = `10px ${MONO}`; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+    for (let i = 1; i < P.length; i++) {
+      const x = X(P[i][0]), y = Y(P[i][1]);
+      if (o.ring && o.ring(i)) { ctx.strokeStyle = c.gold; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, y, 8, 0, 7); ctx.stroke(); }
+      dot(ctx, x, y, 4, o.fill ? o.fill(i) : c.ink, o.hollow && o.hollow(i) ? c.muted : null);
+      if (o.labels) { ctx.fillStyle = c.muted; ctx.fillText(i, x + 5, y - 3); }
+    }
+    depot(ax, P[0]);
+  }
+  // a small vehicle drawn just above a node
+  function car(ax, p) {
+    const { ctx, X, Y, c } = ax, x = X(p[0]), y = Y(p[1]) - 16;
+    ctx.save(); ctx.fillStyle = c.gold; ctx.strokeStyle = c.ink; ctx.lineWidth = 1.2; ctx.beginPath();
+    ctx.moveTo(x - 9, y + 3); ctx.lineTo(x - 9, y - 1); ctx.lineTo(x - 5, y - 1); ctx.lineTo(x - 3, y - 5); ctx.lineTo(x + 4, y - 5); ctx.lineTo(x + 6, y - 1); ctx.lineTo(x + 9, y - 1); ctx.lineTo(x + 9, y + 3); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = c.ink; [-5, 5].forEach(dx => { ctx.beginPath(); ctx.arc(x + dx, y + 3.5, 2, 0, 7); ctx.fill(); });
+    ctx.restore();
+  }
+  const pick = (p, rnd) => { let u = rnd(), a = 0; for (let i = 0; i < p.length; i++) { a += p[i]; if (u < a) return i; } return p.length - 1; };
+  const argmax = a => a.reduce((b, v, i) => v > a[b] ? i : b, 0);
+  const name = i => i === 0 ? "the depot" : "customer " + i;
+  // light up one pipeline block after another (ids), clearing the others
+  function lighter(getPipe, all) {
+    let tm = 0;
+    return (ids, ms = 240) => { clearTimeout(tm); const go = k => { const p = getPipe(); all.forEach(n => p.glow(n, false)); if (k < ids.length) { p.glow(ids[k], true); if (k + 1 < ids.length) tm = setTimeout(() => go(k + 1), ms); } }; go(0); };
+  }
+  return { icons, inst, dmat, len, scales, heatmap, rev, gain, twoOptFull, twoOptCand, nnRoute, randRoute, plot, path, seg, nodes, car, pick, argmax, name, lighter };
+})();
+
+/* ---- 1. learning to construct (L2C): an autoregressive decoder versus a one-shot (NAR) heatmap ---- */
+(function l2cPanel() {
+  const K = ncoKit;
+  const ctl = makeControls($("#l2cCtl"), [
+    { key: "mode", id: "l2cMode", type: "select", label: "Decoder", value: "ar", options: [["ar", "AR decoder: one node per call"], ["nar", "NAR process: one-shot heatmap"]] },
+    { key: "n", id: "l2cN", label: "Customers", min: 7, max: 29, step: 1, value: 13, hint: "With the depot, 8 to 30 nodes." }
+  ], k => { if (run.on) run.stop(); if (k === "mode") buildPipe(); else make(); reset(); draw(); say(intro()); });
+  const COMMON = {
+    coords: "<b>Coordinates:</b> the input instance, here the depot (house) and the customer locations. For a VRP the input also holds the demands and the vehicle capacity.",
+    enc: "<b>Encoder:</b> outputs embeddings of the VRP instance, one vector per node that summarizes the node and its neighborhood. Here a stand-in computes each node's local distance scale (the mean distance to its three nearest neighbors).",
+    sol: "<b>Solution:</b> a complete route. Construction starts from the empty solution \\(\\tau = \\emptyset\\) and ends with a complete solution."
+  };
+  const INFO = {
+    ar: Object.assign({}, COMMON, {
+      dec: "<b>AR decoder:</b> autoregressive. At step \\(t\\) it reads the embeddings and the partial solution \\(\\tau_t\\), gives every unvisited node a probability and appends one node. A route with \\(N\\) customers takes \\(N\\) iterations, so \\(N\\) decoder calls. Here a fixed rule (closeness, heading and, late in the route, nearness to the depot) stands in for the trained decoder.",
+      _: "<b>Learning to construct (L2C):</b> most L2C solvers have an encoder and a decoder [1]. The AR decoder builds the route in \\(N\\) steps, feeding the partial solution back each time; some solvers also update the encoder during decoding. Click any block." }),
+    nar: Object.assign({}, COMMON, {
+      heat: "<b>NAR decoder:</b> non-autoregressive. One call scores every edge at once, a heatmap of how likely each edge is to belong to a good route. Here closeness relative to each node's local scale stands in for the trained network.",
+      pass: "<b>One pass:</b> turns the heatmap into a route without calling the network again, here by always moving to the unvisited customer with the highest heatmap score. Visited customers are masked, so the route stays feasible.",
+      _: "<b>Learning to construct (L2C), NAR process:</b> the encoder and a non-autoregressive decoder predict the whole heatmap in one call, and the route comes from a one-time construction [1]. Click any block." })
+  };
+  let pipe = null;
+  const hl = K.lighter(() => pipe, ["coords", "enc", "dec", "heat", "pass", "sol"]);
+  function buildPipe() {
+    const ar = ctl.mode === "ar", info = n => INFO[ctl.mode][n] || INFO[ctl.mode]._;
+    pipe = ml4coPipe($("#l2cPipe"), $("#l2cInfo"), ar ? {
+      id: "l2cA", w: 660, h: 245, icons: K.icons, aria: "L2C with an AR decoder: coordinates, encoder, AR decoder with N-step iterations, solution", info,
+      nodes: [{ id: "coords", x: 15, y: 95, w: 125, h: 80, icon: "pin", label: "Coordinates", sub: "the instance" }, { id: "enc", x: 185, y: 95, w: 125, h: 80, icon: "net", label: "Encoder", sub: "embeddings" },
+        { id: "dec", x: 355, y: 95, w: 125, h: 80, icon: "net", label: "AR decoder", sub: "one node per call" }, { id: "sol", x: 520, y: 95, w: 125, h: 80, icon: "route", label: "Solution", sub: "complete route" }],
+      edges: [{ id: "a", d: "M140 135H183" }, { id: "b", d: "M310 135H353" }, { id: "c", d: "M480 135H518" },
+        { id: "t", d: "M450 95C450 30 385 30 385 93", label: 'N steps: partial route τ<tspan dy="3" font-size="8">t</tspan>', lx: 418, ly: 24 },
+        { id: "u", d: "M390 175C390 228 250 228 250 177", label: "updates (in some solvers)", lx: 320, ly: 236 }]
+    } : {
+      id: "l2cN", w: 660, h: 205, icons: K.icons, aria: "L2C with a NAR process: coordinates, encoder, NAR decoder predicting a heatmap once, one-pass construction, solution", info,
+      back: '<rect class="nco-grp" x="268" y="44" width="258" height="120" rx="12"/><text class="pg-sub" x="397" y="186" text-anchor="middle">NAR process: one-time construction</text>',
+      nodes: [{ id: "coords", x: 12, y: 64, w: 105, h: 80, icon: "pin", label: "Coordinates", sub: "the instance" }, { id: "enc", x: 145, y: 64, w: 105, h: 80, icon: "net", label: "Encoder", sub: "embeddings" },
+        { id: "heat", x: 278, y: 64, w: 105, h: 80, icon: "grid", label: "NAR decoder", sub: "edge heatmap" }, { id: "pass", x: 411, y: 64, w: 105, h: 80, icon: "route", label: "One pass", sub: "to a route" },
+        { id: "sol", x: 544, y: 64, w: 105, h: 80, icon: "flag", label: "Solution" }],
+      edges: [{ id: "a", d: "M117 104H143" }, { id: "b", d: "M250 104H276" }, { id: "c", d: "M383 104H409" }, { id: "d", d: "M516 104H542" }]
+    });
+  }
+  const rnd = mulberry32(23);
+  let P = [], d = [], scl = [], tour = [], probs = null, heat = null, calls = 0, ref = 0, last = -1;
+  const say = s => { $("#l2cNote").textContent = s; };
+  const intro = () => ctl.mode === "ar" ? "Press Step: each decoder call scores the unvisited customers from the current node and appends the most likely one to the partial route." :
+    "Press Step: the first call predicts the whole edge heatmap at once; the following steps turn it into a route without calling the network again.";
+  function make() { P = K.inst(rnd, ctl.n); d = K.dmat(P); scl = K.scales(d); ref = K.len(d, K.twoOptFull(d, K.nnRoute(d)).t); }
+  function reset() { tour = [0]; probs = null; heat = null; calls = 0; last = -1; hl([]); }
+  const done = () => tour.length === P.length;
+  // stand-in for the trained AR decoder: closeness on the local scale, a keep-going heading term, and a pull toward the depot late in the route
+  function arScores() {
+    const cur = tour[tour.length - 1], prev = tour.length > 1 ? tour[tour.length - 2] : null, left = [];
+    for (let j = 1; j < P.length; j++) if (!tour.includes(j)) left.push(j);
+    const late = 1 - left.length / (P.length - 1);
+    const z = left.map(j => {
+      let v = -d[cur][j] / scl[cur];
+      if (prev != null) { const hx = P[cur][0] - P[prev][0], hy = P[cur][1] - P[prev][1], dx = P[j][0] - P[cur][0], dy = P[j][1] - P[cur][1]; v += .3 * (hx * dx + hy * dy) / (Math.hypot(hx, hy) * Math.hypot(dx, dy) + 1e-12); }
+      v -= .45 * late * d[j][0] / scl[cur];
+      return 1.6 * v;
+    });
+    const p = softmax(z); return { from: cur, list: left.map((j, i) => ({ j, p: p[i] })) };
+  }
+  function step() {
+    if (done()) return;
+    let msg;
+    if (ctl.mode === "ar") {
+      calls++; probs = arScores(); const o = probs.list[K.argmax(probs.list.map(q => q.p))]; tour.push(o.j); last = o.j;
+      hl(calls === 1 ? ["enc", "dec"] : ["dec"]);
+      if (pipe) pipe.flash("t", 220);
+      msg = `Decoder call ${calls}: from ${K.name(probs.from)} the decoder scores the ${probs.list.length} unvisited customers and appends customer ${o.j} (probability ${o.p.toFixed(2)}). Visited customers are masked, so the route stays feasible.`;
+    } else if (!heat) {
+      calls = 1; heat = K.heatmap(d, scl); hl(["enc", "heat"]);
+      msg = "Decoder call 1, the only one: the NAR decoder scores every edge at once (the heatmap, gold). No node has been placed yet.";
+    } else {
+      const cur = tour[tour.length - 1]; let j = -1;
+      for (let v = 1; v < P.length; v++) if (!tour.includes(v) && (j < 0 || heat[cur][v] > heat[cur][j])) j = v;
+      tour.push(j); last = j; hl(["pass"]);
+      msg = `Pass step ${tour.length - 1}: from ${K.name(cur)} move to the unvisited customer with the highest heatmap score, customer ${j} (score ${heat[cur][j].toFixed(2)}). No network call.`;
+    }
+    if (done()) { hl(ctl.mode === "ar" ? ["dec", "sol"] : ["pass", "sol"]); msg += " " + summary(); }
+    say(msg); draw();
+  }
+  function summary() {
+    const L = K.len(d, tour), gap = 100 * (L / ref - 1);
+    return `Route complete: length ${L.toFixed(3)}, ${gap >= 0 ? gap.toFixed(1) + "% above" : (-gap).toFixed(1) + "% below"} the 2-opt reference, after ${calls} decoder call${calls === 1 ? "" : "s"}. ` +
+      (ctl.mode === "ar" ? `The AR decoder needed one call per customer (N = ${P.length - 1}).` : "The NAR process needed a single call; the pass after it is a cheap greedy rule.") +
+      " The scores come from fixed rules, stand-ins for trained encoder and decoder networks.";
+  }
+  function draw() {
+    const ax = K.plot($("#l2cCv")), { ctx, c } = ax, fin = done();
+    if (heat) { for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) { const v = heat[i][j]; if (v < .04) continue; ctx.strokeStyle = c.gold; ctx.globalAlpha = .08 + .55 * v; ctx.lineWidth = .5 + 4 * v; K.seg(ax, P, i, j); } ctx.globalAlpha = 1; }
+    if (ctl.mode === "ar" && probs && !fin) { probs.list.forEach(o => { ctx.strokeStyle = c.gold; ctx.globalAlpha = .2 + .8 * o.p; ctx.lineWidth = .6 + 7 * o.p; K.seg(ax, P, probs.from, o.j); }); ctx.globalAlpha = 1; }
+    ctx.strokeStyle = c.accent; ctx.lineWidth = 2.4; if (tour.length > 1) K.path(ax, P, tour, fin);
+    K.nodes(ax, P, { labels: true, fill: i => tour.includes(i) ? c.ink : c.surface, hollow: i => !tour.includes(i), ring: i => i === last && !fin });
+    K.car(ax, P[fin ? 0 : tour[tour.length - 1]]);
+    aux(c);
+    stats($("#l2cStats"), [["Mode", ctl.mode === "ar" ? "AR" : "NAR"], ["Steps", `${tour.length - 1} / ${P.length - 1}`], ["Decoder calls", calls], ["Route length", fin ? K.len(d, tour).toFixed(3) : "…"], ["2-opt reference", ref.toFixed(3)], ["Gap", fin ? (100 * (K.len(d, tour) / ref - 1)).toFixed(1) + "%" : "…"]]);
+  }
+  // right panel: the AR decoder's probabilities at its latest call, or the NAR heatmap as a matrix
+  function aux(c) {
+    const b = setupCanvas($("#l2cAux"), 230), x = b.ctx; x.clearRect(0, 0, b.w, b.h); x.font = `11px ${MONO}`; x.fillStyle = c.muted; x.textAlign = "left"; x.textBaseline = "top";
+    if (ctl.mode === "ar") {
+      $("#l2cAuxCap").textContent = "Bars: the decoder's probabilities at its latest call (the chosen customer in green). Edge thickness on the map shows the same numbers.";
+      if (!probs) { x.fillText("no decoder call yet", 8, 8); return; }
+      x.fillText(`call ${calls}: softmax over ${probs.list.length} customers`, 8, 6);
+      const top = probs.list.slice().sort((u, v) => v.p - u.p).slice(0, 12), mx = top[0].p, bw = (b.w - 16) / top.length;
+      top.forEach((o, i) => { const hh = (b.h - 62) * o.p / mx, xx = 8 + i * bw; x.fillStyle = o.j === last ? c.good : c.gold; x.globalAlpha = .35 + .65 * o.p / mx; x.fillRect(xx + 3, b.h - 22 - hh, bw - 6, hh); x.globalAlpha = 1;
+        x.fillStyle = c.ink; x.textAlign = "center"; x.textBaseline = "bottom"; if (bw > 22) x.fillText(o.p.toFixed(2).replace(/^0/, ""), xx + bw / 2, b.h - 24 - hh); x.fillStyle = c.muted; x.textBaseline = "top"; x.fillText(o.j, xx + bw / 2, b.h - 18); });
+      if (probs.list.length > 12) { x.textAlign = "right"; x.fillText("top 12 shown", b.w - 8, 20); }
+    } else {
+      $("#l2cAuxCap").textContent = "The heatmap from the single decoder call: row = from, column = to; darker cells are edges rated more likely to be in a good route. Columns of visited customers are masked.";
+      if (!heat) { x.fillText("heatmap not predicted yet", 8, 8); return; }
+      const n = P.length, cs = Math.max(2, Math.min((b.w - 20) / n, (b.h - 30) / n)), ox = (b.w - cs * n) / 2, oy = 22, cur = tour[tour.length - 1], fin = done();
+      x.fillText("edge heatmap (one call)", 8, 4);
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { x.fillStyle = c.gold; x.globalAlpha = heat[i][j]; x.fillRect(ox + j * cs, oy + i * cs, cs, cs); }
+      x.globalAlpha = .7; x.fillStyle = c.surface;
+      if (!fin) tour.forEach(v => x.fillRect(ox + v * cs, oy, cs, n * cs));
+      x.globalAlpha = 1; x.strokeStyle = c.line; x.lineWidth = 1; x.strokeRect(ox, oy, n * cs, n * cs);
+      if (!fin) { x.strokeStyle = c.accent; x.lineWidth = 2; x.strokeRect(ox, oy + cur * cs, n * cs, cs); }
+    }
+  }
+  $("#l2cStep").addEventListener("click", () => { if (run.on) run.stop(); if (done()) { reset(); say("Constructing again from the depot."); } step(); });
+  const run = stepper($("#l2cAll"), step, done, () => 170);
+  $("#l2cAll").addEventListener("click", () => { if (done() && !run.on) { reset(); draw(); $("#l2cAll").click(); } });
+  $("#l2cNew").addEventListener("click", () => { if (run.on) run.stop(); make(); reset(); draw(); say("New instance. " + intro()); });
+  $("#l2cFlow").addEventListener("click", () => pipe.play(ctl.mode === "ar" ? [
+    { e: "a", from: "coords", to: "enc", say: "<b>Coordinates</b> in: the encoder reads the depot and customer locations." },
+    { e: "b", from: "enc", to: "dec", say: "<b>Embeddings</b> out: one vector per node goes to the decoder." },
+    { e: "t", from: "dec", to: "dec", say: "<b>N-step iterations:</b> each decoder call appends one node to the partial solution \\(\\tau_t\\), which is fed back for the next call." },
+    { e: "t", from: "dec", to: "dec", ms: 450 },
+    { e: "u", from: "dec", to: "enc", say: "<b>Updates</b> (in some solvers): the encoder refreshes the embeddings during decoding." },
+    { e: "c", from: "dec", to: "sol", say: "<b>Solution</b> out: after \\(N\\) calls, the route is complete." }] : [
+    { e: "a", from: "coords", to: "enc", say: "<b>Coordinates</b> in: the encoder reads the depot and customer locations." },
+    { e: "b", from: "enc", to: "heat", say: "<b>Embeddings</b> out: the NAR decoder scores every edge in a single call." },
+    { e: "c", from: "heat", to: "pass", say: "<b>Heatmap</b>: one pass turns the edge scores into a route, with no further network calls." },
+    { e: "d", from: "pass", to: "sol", say: "<b>Solution</b> out: a complete route from a one-time construction." }]));
+  buildPipe(); make(); reset(); ro.observe($("#l2cCv")); ro.observe($("#l2cAux")); onRedraw(draw); draw(); say(intro());
+})();
+
+/* ---- 2. learning to improve (L2I): a regional strategy picks a region, a repair strategy fixes it ---- */
+(function l2iPanel() {
+  const K = ncoKit;
+  const ctl = makeControls($("#l2iCtl"), [
+    { key: "reg", id: "l2iReg", type: "select", label: "Regional strategy", value: "policy", options: [["policy", "Policy network: a node pair"], ["division", "Division: four spatial regions"]] },
+    { key: "rep", id: "l2iRep", type: "select", label: "Repair strategy", value: "fixed", options: [["fixed", "Fixed operator: 2-opt"], ["selected", "Selected operator"], ["l2c", "L2C solver: rebuild"]] },
+    { key: "budget", id: "l2iBudget", label: "Iteration budget", min: 10, max: 200, step: 10, value: 60 },
+    { key: "n", id: "l2iN", label: "Customers", min: 12, max: 40, step: 1, value: 24 }
+  ], k => { if (k === "budget") { draw(); return; } if (run.on) run.stop(); if (k === "n") make(); reset(); draw(); pipe.select(pipe.cur); say(intro()); });
+  const REG = {
+    policy: "a <b>policy network</b> picks the region. Here a stand-in scorer favors a long route edge \\((a, b)\\) and a customer \\(c\\) close to \\(a\\); the pair \\((a, c)\\) is the region.",
+    division: "a <b>division</b> of the instance picks the region: the square is split into four quadrants around the depot, and each iteration works on the next quadrant."
+  };
+  const REP = {
+    fixed: "a <b>fixed operator</b>, 2-opt: for a node pair it removes the edges leaving \\(a\\) and \\(c\\) and reconnects \\(a\\) to \\(c\\); in a quadrant it applies the best 2-opt move between customers of that quadrant.",
+    selected: "a <b>selected operator</b>: for each region a stand-in selector chooses among 2-opt, swap and relocate (it tries the three and keeps the best; a trained selector predicts the choice instead).",
+    l2c: "an <b>L2C solver</b> rebuilds the sub-route of the region constructively. Here a nearest-neighbor construction stands in for the trained L2C solver; the rebuilt route is kept only if it is shorter."
+  };
+  const pipe = ml4coPipe($("#l2iPipe"), $("#l2iInfo"), {
+    id: "l2i", w: 720, h: 200, icons: K.icons, aria: "L2I: initial route, regional strategy, repair strategy, termination check looping back, improved route",
+    nodes: [{ id: "init", x: 12, y: 105, w: 118, h: 80, icon: "route", label: "Initial route", sub: "complete" }, { id: "reg", x: 158, y: 105, w: 118, h: 80, icon: "region", label: "Region", sub: "regional strategy" },
+      { id: "rep", x: 304, y: 105, w: 118, h: 80, icon: "wrench", label: "Repair", sub: "repair strategy" }, { id: "term", x: 450, y: 105, w: 118, h: 80, icon: "clock", label: "Stop?", sub: "time budget" },
+      { id: "sol", x: 596, y: 105, w: 118, h: 80, icon: "flag", label: "Improved", sub: "final route" }],
+    edges: [{ id: "a", d: "M130 145H156" }, { id: "b", d: "M276 145H302" }, { id: "c", d: "M422 145H448" }, { id: "d", d: "M568 145H594", label: "yes", lx: 581, ly: 137 },
+      { id: "loop", d: "M509 105C509 35 217 35 217 103", label: "no: next iteration", lx: 363, ly: 74 }],
+    info: n => ({ init: "<b>Initial route:</b> L2I starts from a complete, feasible route. Here it is a random route, a poor starting point.",
+      reg: "<b>Regional strategy:</b> " + REG[ctl.reg] + " The other option is " + (ctl.reg === "policy" ? "a division of the instance." : "a policy network that picks a node pair."),
+      rep: "<b>Repair strategy:</b> " + REP[ctl.rep] + " The options are a fixed operator, a selected operator or an L2C solver.",
+      term: "<b>Termination:</b> the loop repeats until the time budget, here a number of iterations, runs out.",
+      sol: "<b>Improved route:</b> the best route when the budget is used up. Only changes that shorten the route are kept." }[n] ||
+      "<b>Learning to improve (L2I):</b> iterative improvement from an initial complete solution, within a given time budget: select a region, repair its sub-tours, repeat [1]. Click any block.")
+  });
+  const hl = K.lighter(() => pipe, ["init", "reg", "rep", "term", "sol"]);
+  const rnd = mulberry32(31);
+  let P = [], d = [], init = [], t = [], ref = 0, it = 0, better = 0, hist = [], region = null;
+  const say = s => { $("#l2iNote").textContent = s; };
+  const intro = () => "Press Step for one iteration: the regional strategy selects a region (gold), then the repair strategy tries to shorten the route there.";
+  const quad = i => (P[i][0] >= .5 ? 1 : 0) + (P[i][1] >= .5 ? 2 : 0);
+  const swp = (u, p, q) => { const v = u.slice(); [v[p], v[q]] = [v[q], v[p]]; return v; };
+  // move the node at position p to just after the node at position q
+  const rel = (u, p, q) => { const v = u.slice(), [x] = v.splice(p, 1); v.splice(q < p ? q + 1 : q, 0, x); return v; };
+  const L = u => K.len(d, u);
+  function make() { P = K.inst(rnd, ctl.n); d = K.dmat(P); init = K.randRoute(P.length, rnd); ref = L(K.twoOptFull(d, init).t); }
+  function reset() { t = init.slice(); it = 0; better = 0; hist = [L(t)]; region = null; hl([]); }
+  const done = () => it >= ctl.budget;
+  // stand-in policy network: sample a long route edge leaving position i, then a customer close to t[i]
+  function pickPair() {
+    const n = t.length, s = .5 / Math.sqrt(n);
+    const i = K.pick(softmax(t.map((v, k) => d[v][t[(k + 1) % n]] / s)), rnd), a = t[i], js = [], z = [];
+    for (let k = 0; k < n; k++) { if (Math.abs(k - i) < 2 || (i === 0 && k === n - 1) || (k === 0 && i === n - 1)) continue; js.push(k); z.push(-1.5 * d[a][t[k]] / s); }
+    const j = js[K.pick(softmax(z), rnd)];
+    return { kind: "pair", lo: Math.min(i, j), hi: Math.max(i, j), a, c: t[j] };
+  }
+  const best = list => list.reduce((b, o) => !b || L(o.t) < L(b.t) ? o : b, null);
+  // nearest-neighbor chain from node s through the nodes of S (the stand-in L2C solver)
+  function chain(s, S) { const out = [], left = new Set(S); let cur = s; while (left.size) { let b = -1; left.forEach(j => { if (b < 0 || d[cur][j] < d[cur][b]) b = j; }); out.push(b); left.delete(b); cur = b; } return out; }
+  function repairPair(r) {
+    const { lo, hi } = r, two = { op: "2-opt", t: K.rev(t, lo, hi) };
+    if (ctl.rep === "fixed") return two;
+    if (ctl.rep === "selected") return best([two, lo + 1 < hi ? { op: "swap", t: swp(t, lo + 1, hi) } : null, { op: "relocate", t: rel(t, hi, lo) }].filter(Boolean));
+    const segN = t.slice(lo + 1, hi + 1);
+    return { op: "rebuild", m: segN.length, t: t.slice(0, lo + 1).concat(chain(t[lo], segN), t.slice(hi + 1)) };
+  }
+  function repairCell(r) {
+    const pos = []; t.forEach((v, p) => { if (r.S.has(v)) pos.push(p); });
+    const opts = { "2-opt": [], swap: [], relocate: [] };
+    for (const p of pos) for (const q of pos) {
+      if (p < q && q - p >= 2 && !(p === 0 && q === t.length - 1)) opts["2-opt"].push({ op: "2-opt", t: K.rev(t, p, q) });
+      if (p < q) opts.swap.push({ op: "swap", t: swp(t, p, q) });
+      if (p !== q && q !== p - 1) opts.relocate.push({ op: "relocate", t: rel(t, p, q) });
+    }
+    if (ctl.rep === "fixed") return best(opts["2-opt"]) || { op: "2-opt", t: null };
+    if (ctl.rep === "selected") return best([best(opts["2-opt"]), best(opts.swap), best(opts.relocate)].filter(Boolean)) || { op: "none", t: null };
+    // L2C: take the quadrant's customers out, rebuild them as one chain and insert it where it costs least
+    if (!r.S.size) return { op: "rebuild", m: 0, t: null };
+    const rest = t.filter(v => !r.S.has(v)); let bt = null;
+    r.S.forEach(s => { const ch = [s].concat(chain(s, [...r.S].filter(v => v !== s)));
+      [ch, ch.slice().reverse()].forEach(cc => { for (let p = 0; p < rest.length; p++) { const u = rest.slice(0, p + 1).concat(cc, rest.slice(p + 1)); if (!bt || L(u) < L(bt)) bt = u; } }); });
+    return { op: "rebuild", m: r.S.size, t: bt };
+  }
+  function iterate() {
+    if (done()) return;
+    const L0 = L(t); let R;
+    if (ctl.reg === "policy") { region = pickPair(); R = repairPair(region); }
+    else { const q = it % 4, S = new Set(); for (let i = 1; i < P.length; i++) if (quad(i) === q) S.add(i); region = { kind: "cell", q, S }; R = repairCell(region); }
+    it++;
+    const L1 = R.t ? L(R.t) : L0, ok = L1 < L0 - 1e-9;
+    if (ok) { t = R.t; better++; }
+    hist.push(L(t));
+    const gainTxt = ok ? `, which shortens the route by ${(L0 - L1).toFixed(3)}.` : ", but that would not shorten the route, so it stays unchanged.";
+    let msg = `Iteration ${it}: `;
+    if (region.kind === "pair") {
+      msg += `the policy network (a stand-in scorer) picks the pair ${K.name(region.a)} and ${K.name(region.c)}. `;
+      msg += ctl.rep === "fixed" ? `2-opt reconnects them${gainTxt}` : ctl.rep === "selected" ? `The stand-in selector tries 2-opt, swap and relocate on the pair and picks ${R.op}${gainTxt}` :
+        `The stand-in L2C solver rebuilds the ${R.m} customer${R.m === 1 ? "" : "s"} of the sub-route that follows ${K.name(region.a)}${gainTxt}`;
+    } else {
+      msg += `division works on quadrant ${region.q + 1} of 4 (${region.S.size} customers). `;
+      msg += ctl.rep === "fixed" ? (R.t ? `The best 2-opt move inside it is applied${gainTxt}` : "It has no 2-opt move between its customers.") :
+        ctl.rep === "selected" ? (R.t ? `The stand-in selector picks ${R.op}, the operator with the best move inside it${gainTxt}` : "It has no move to try.") :
+          (R.t ? `The stand-in L2C solver takes its customers out and rebuilds them as one sub-route${gainTxt}` : "It has no customers to rebuild.");
+    }
+    if (done()) { msg += ` Budget used up: the route improved by ${(100 * (1 - L(t) / hist[0])).toFixed(1)}% in ${better} improving iteration${better === 1 ? "" : "s"}.`; hl(["term", "sol"], 200); }
+    else hl(["reg", "rep", "term"], 70);
+    say(msg);
+  }
+  function draw() {
+    const ax = K.plot($("#l2iCv")), { ctx, X, Y, c } = ax;
+    if (ctl.reg === "division") {
+      if (region && region.kind === "cell") { const x0 = region.q % 2 ? .5 : 0, y0 = region.q >= 2 ? .5 : 0; ctx.fillStyle = c.gold; ctx.globalAlpha = .14; ctx.fillRect(X(x0), Y(y0 + .5), X(x0 + .5) - X(x0), Y(y0) - Y(y0 + .5)); ctx.globalAlpha = 1; }
+      ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = c.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(.5), Y(0)); ctx.lineTo(X(.5), Y(1)); ctx.moveTo(X(0), Y(.5)); ctx.lineTo(X(1), Y(.5)); ctx.stroke(); ctx.restore();
+    }
+    ctx.strokeStyle = c.accent; ctx.lineWidth = 2.2; K.path(ax, P, t, true);
+    const pair = region && region.kind === "pair", cell = region && region.kind === "cell";
+    if (pair) { ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = c.gold; ctx.lineWidth = 2; K.seg(ax, P, region.a, region.c); ctx.restore(); }
+    K.nodes(ax, P, { labels: P.length <= 30, fill: i => cell && region.S.has(i) ? c.gold : c.ink, ring: i => pair && (i === region.a || i === region.c) });
+    K.car(ax, P[0]);
+    lineChart($("#l2iChart"), [{ data: hist, color: c.accent, label: "route length" }], { xmax: ctl.budget, refs: [{ v: ref, label: "full 2-opt", color: c.gold }], labels: true });
+    const cur = L(t);
+    stats($("#l2iStats"), [["Iterations", `${it} / ${ctl.budget}`], ["Initial length", hist[0].toFixed(3)], ["Current length", cur.toFixed(3)], ["Improvement", (100 * (1 - cur / hist[0])).toFixed(1) + "%"], ["Improving iterations", better], ["Full 2-opt", ref.toFixed(3)]]);
+  }
+  $("#l2iStep").addEventListener("click", () => { if (run.on) run.stop(); if (done()) { say("The iteration budget is used up. Reset the route or raise the budget."); return; } iterate(); draw(); });
+  const run = stepper($("#l2iRun"), () => { iterate(); draw(); }, done, () => 110);
+  $("#l2iRun").addEventListener("click", () => { if (done() && !run.on) { reset(); draw(); $("#l2iRun").click(); } });
+  $("#l2iReset").addEventListener("click", () => { if (run.on) run.stop(); reset(); draw(); say("Back to the initial route. " + intro()); });
+  $("#l2iNew").addEventListener("click", () => { if (run.on) run.stop(); make(); reset(); draw(); say("New instance with a new random initial route. " + intro()); });
+  $("#l2iFlow").addEventListener("click", () => pipe.play([
+    { e: "a", from: "init", to: "reg", say: "<b>Initial route</b> in: a complete, feasible route." },
+    { e: "b", from: "reg", to: "rep", say: "<b>Regional strategy</b>: " + REG[ctl.reg] },
+    { e: "c", from: "rep", to: "term", say: "<b>Repair strategy</b>: " + REP[ctl.rep] },
+    { e: "loop", from: "term", to: "reg", say: "<b>Not yet:</b> budget left, so the loop selects the next region." },
+    { e: "b", from: "reg", to: "rep", ms: 400 },
+    { e: "c", from: "rep", to: "term", ms: 400 },
+    { e: "d", from: "term", to: "sol", say: "<b>Budget used up:</b> the improved route is returned." }]));
+  make(); reset(); ro.observe($("#l2iCv")); ro.observe($("#l2iChart")); onRedraw(draw); draw(); say(intro());
+})();
+
+/* ---- 3. learning to predict (L2P): predict once (L2P-O) or at every decision step (L2P-M) ---- */
+(function l2pPanel() {
+  const K = ncoKit;
+  const ctl = makeControls($("#l2pCtl"), [
+    { key: "mode", id: "l2pMode", type: "select", label: "Solver", value: "o", options: [["o", "L2P-O: predict once, then 2-opt"], ["m", "L2P-M: predict at every step"]] },
+    { key: "alone", id: "l2pAlone", type: "check", label: "Run the OR algorithm alone", value: false, hint: "The baseline: full 2-opt for L2P-O, cheapest insertion for L2P-M." },
+    { key: "k", id: "l2pK", label: "Candidate list size k", min: 2, max: 10, step: 1, value: 5, hint: "L2P-O only: each customer keeps the k edges with the highest heatmap scores." },
+    { key: "n", id: "l2pN", label: "Customers", min: 20, max: 80, step: 5, value: 50 }
+  ], k => { if (run.on) run.stop(); if (k === "n") make(); else if (k !== "alone") solve(); buildPipe(); at = 0; hl([]); draw(); say(intro()); });
+  const INFO = {
+    o: { prob: "<b>Problem definition:</b> the depot and customer locations. The network reads it once; the OR algorithm reads it directly.",
+      nn: "<b>Neural network (L2P-O):</b> predicts once, solely before the search begins, here a heatmap of promising edges. Each customer keeps a candidate list of its \\(k\\) best-scored edges. Closeness relative to each node's local scale stands in for the trained network.",
+      or: "<b>OR algorithm:</b> 2-opt local search. With the prediction it only evaluates moves that create a candidate edge; alone it evaluates every pair of edges.",
+      sol: "<b>Solution:</b> a 2-opt local optimum: no evaluated move shortens the route any more." },
+    m: { prob: "<b>Problem definition:</b> the depot and customer locations, read by the OR algorithm and passed to the network as part of its state.",
+      nn: "<b>Neural network (L2P-M):</b> predicts until termination. At each decision step it takes the OR algorithm's state, including the problem definition, and predicts which customer to insert next. A rule (the customer farthest from the partial route) stands in for the trained network.",
+      or: "<b>OR algorithm:</b> an insertion heuristic. With the prediction it only evaluates the insertion positions of the predicted customer; alone (cheapest insertion) it evaluates every remaining customer at every position.",
+      sol: "<b>Solution:</b> a complete route once every customer is inserted." }
+  };
+  let pipe = null;
+  const hl = K.lighter(() => pipe, ["prob", "nn", "or", "sol"]);
+  function buildPipe() {
+    const o = ctl.mode === "o", off = ctl.alone ? "off" : "";
+    pipe = ml4coPipe($("#l2pPipe"), $("#l2pInfo"), {
+      id: o ? "l2pO" : "l2pM", w: 700, h: 232, icons: K.icons,
+      aria: o ? "L2P-O: problem definition to a neural network that predicts once; its prediction and the problem definition go to the OR algorithm, which outputs the solution" : "L2P-M: the OR algorithm sends its state to a neural network at every step and receives a prediction; it outputs the solution",
+      nodes: [{ id: "prob", x: 15, y: 140, w: 130, h: 80, icon: "doc", label: "Problem", sub: "definition" }, { id: "nn", x: 400, y: 10, w: 140, h: 80, icon: "net", label: "Neural network", sub: o ? "predicts once" : "predicts each step", cls: off },
+        { id: "or", x: 400, y: 140, w: 140, h: 80, icon: "gears", label: "OR algorithm", sub: o ? "2-opt search" : "insertion" }, { id: "sol", x: 585, y: 140, w: 105, h: 80, icon: "flag", label: "Solution" }],
+      edges: (o ? [{ id: "p", d: "M80 140V50H398", cls: off }, { id: "h", d: "M470 90V138", label: "heatmap, once", lx: 478, ly: 120, anchor: "start", cls: off }] :
+        [{ id: "s", d: "M440 140V92", label: "state", lx: 432, ly: 120, anchor: "end", cls: off }, { id: "dd", d: "M500 90V138", label: "prediction", lx: 508, ly: 120, anchor: "start", cls: off }])
+        .concat([{ id: "a", d: "M145 180H398", label: "problem definition", lx: 270, ly: 172 }, { id: "b", d: "M540 180H583" }]),
+      info: n => (INFO[ctl.mode][n] ? INFO[ctl.mode][n] + (ctl.alone && n === "nn" ? " (Switched off: the OR algorithm runs alone.)" : "") :
+        "<b>Learning to predict (L2P):</b> relying solely on neural networks may not be the best strategy, so L2P solvers integrate them with OR algorithms [1]. " + (o ? "L2P-O predicts once, before the search." : "L2P-M predicts at every decision step.") + " Click any block.")
+    });
+  }
+  const rnd = mulberry32(41);
+  let P = [], d = [], scl = [], start = [], H = null, cand = [], R = null, at = 0;
+  const say = s => { $("#l2pNote").textContent = s; };
+  const cur = () => R[ctl.alone ? "alone" : "model"];
+  const intro = () => ctl.mode === "o" ? (ctl.alone ? "Press Step or Run: full 2-opt improves the random starting route, evaluating every pair of edges." : "Press Step: first the network predicts a heatmap once, then 2-opt improves the random starting route using only the candidate edges.") :
+    (ctl.alone ? "Press Step or Run: cheapest insertion evaluates every remaining customer at every position before each insertion." : "Press Step: at each decision step the OR algorithm asks the network which customer to insert next, then inserts it at its cheapest position.");
+  function make() { P = K.inst(rnd, ctl.n); d = K.dmat(P); scl = K.scales(d); start = K.randRoute(P.length, rnd); solve(); }
+  function insertion(model) {
+    let t = [0], ev = 0, calls = 0; const left = new Set(); for (let i = 1; i < P.length; i++) left.add(i);
+    const tr = [{ t, ev, calls }];
+    const bestPos = j => { let b = 0, bc = Infinity; for (let p = 0; p < t.length; p++) { const a = t[p], e = t[(p + 1) % t.length], cst = d[a][j] + d[j][e] - (t.length > 1 ? d[a][e] : 0); ev++; if (cst < bc) { bc = cst; b = p; } } return [b, bc]; };
+    while (left.size) {
+      let j = -1, p = 0;
+      if (model) { calls++; let bd = -1; left.forEach(v => { const m = Math.min(...t.map(u => d[u][v])); if (m > bd) { bd = m; j = v; } }); p = bestPos(j)[0]; }
+      else { let bc = Infinity; left.forEach(v => { const [pp, cst] = bestPos(v); if (cst < bc) { bc = cst; j = v; p = pp; } }); }
+      t = t.slice(); t.splice(p + 1, 0, j); left.delete(j); tr.push({ t, ev, calls, node: j, mv: [[t[p], j], [j, t[(p + 2) % t.length]]] });
+    }
+    return { trace: tr, evals: ev, len: K.len(d, t), calls };
+  }
+  function solve() {
+    if (ctl.mode === "o") {
+      H = K.heatmap(d, scl);
+      cand = H.map((r, i) => r.map((v, j) => [v, j]).filter(o => o[1] !== i).sort((a, b) => b[0] - a[0]).slice(0, ctl.k).map(o => o[1]));
+      const mv = (t, p, q) => [[t[p], t[p + 1]], [t[q], t[(q + 1) % t.length]]];
+      const tm = [{ t: start, ev: 0, calls: 0 }, { t: start, ev: 0, calls: 1, predict: true }], ta = [{ t: start, ev: 0, calls: 0 }];
+      const rm = K.twoOptCand(d, start, cand, (t, ev, p, q) => tm.push({ t, ev, calls: 1, mv: mv(t, p, q) }));
+      const ra = K.twoOptFull(d, start, (t, ev, p, q) => ta.push({ t, ev, calls: 0, mv: mv(t, p, q) }));
+      tm.push({ t: rm.t, ev: rm.evals, calls: 1, end: true }); ta.push({ t: ra.t, ev: ra.evals, calls: 0, end: true });
+      R = { model: { trace: tm, evals: rm.evals, len: K.len(d, rm.t), calls: 1 }, alone: { trace: ta, evals: ra.evals, len: K.len(d, ra.t), calls: 0 } };
+    } else { H = null; R = { model: insertion(true), alone: insertion(false) }; }
+  }
+  const done = () => at >= cur().trace.length - 1;
+  function step() {
+    if (done()) return;
+    at++; const e = cur().trace[at], o = ctl.mode === "o", Lc = K.len(d, e.t);
+    let msg;
+    if (e.predict) { hl(["prob", "nn"]); if (pipe) pipe.flash("h", 300); msg = `One model call before the search: the stand-in heatmap scores every edge, and each customer keeps its k = ${ctl.k} best-scored edges as candidates (gold). The network is not called again.`; }
+    else if (e.end) { msg = o ? `No ${ctl.alone ? "" : "candidate "}move shortens the route any more: a 2-opt local optimum after ${e.ev.toLocaleString("en-US")} move evaluations.` : "Every customer is inserted."; }
+    else if (o) { hl(["or"]); msg = `Improving 2-opt move after ${e.ev.toLocaleString("en-US")} evaluations: two edges are replaced by the gold ones${ctl.alone ? "" : " (one of them a candidate edge)"}. Route length ${Lc.toFixed(3)}.`; }
+    else if (!ctl.alone) { hl(["nn", "or"], 110); if (pipe) { pipe.flash("s", 200); setTimeout(() => pipe.flash("dd", 200), 120); } msg = `Model call ${e.calls}: the stand-in predicts ${K.name(e.node)}, the customer farthest from the partial route. The OR algorithm evaluates its ${e.t.length - 1} insertion positions and inserts it at the cheapest one (gold).`; }
+    else { hl(["or"]); msg = `Cheapest insertion tries every remaining customer at every position (${e.ev.toLocaleString("en-US")} evaluations so far) and inserts ${K.name(e.node)}, the cheapest (gold).`; }
+    if (done()) { hl(["or", "sol"], 200); msg += " " + summary(); }
+    say(msg); draw();
+  }
+  function summary() {
+    const A = R.model, B = R.alone, dl = 100 * (A.len / B.len - 1), de = 100 * (1 - A.evals / B.evals);
+    return `With the model: ${A.calls} model call${A.calls === 1 ? "" : "s"}, ${A.evals.toLocaleString("en-US")} OR move evaluations, length ${A.len.toFixed(3)}. OR alone (${ctl.mode === "o" ? "full 2-opt" : "cheapest insertion"}): ${B.evals.toLocaleString("en-US")} evaluations, length ${B.len.toFixed(3)}. ` +
+      `The model ${de >= 0 ? "saves " + de.toFixed(0) + "% of the evaluations" : "costs " + (-de).toFixed(0) + "% more evaluations"} and its route is ${Math.abs(dl) < .05 ? "as long" : Math.abs(dl).toFixed(1) + "% " + (dl > 0 ? "longer" : "shorter")}. The predictions come from stand-in rules, not trained networks.`;
+  }
+  function draw() {
+    const run_ = cur(), e = run_.trace[at], ax = K.plot($("#l2pCv")), { ctx, c } = ax, fin = done(), o = ctl.mode === "o";
+    if (o && !ctl.alone && at >= 1) { cand.forEach((js, i) => js.forEach(j => { ctx.strokeStyle = c.gold; ctx.globalAlpha = .12 + .45 * H[i][j]; ctx.lineWidth = 1 + 2 * H[i][j]; K.seg(ax, P, i, j); })); ctx.globalAlpha = 1; }
+    ctx.strokeStyle = c.accent; ctx.lineWidth = 2.2; if (e.t.length > 1) K.path(ax, P, e.t, true);
+    if (e.mv && !fin) { ctx.strokeStyle = c.gold; ctx.lineWidth = 3.5; e.mv.forEach(([a, b]) => K.seg(ax, P, a, b)); }
+    const inT = new Set(e.t);
+    K.nodes(ax, P, { fill: i => inT.has(i) ? c.ink : c.surface, hollow: i => !inT.has(i), ring: i => i === e.node && !fin });
+    K.car(ax, P[0]);
+    cmp(c);
+    const other = ctl.alone ? R.model : R.alone, oth = ctl.alone ? "With the model" : "OR alone";
+    stats($("#l2pStats"), [["Solver", ctl.alone ? (o ? "Full 2-opt" : "Cheapest insertion") : o ? "L2P-O" : "L2P-M"], ["Model calls", e.calls], ["OR move evaluations", e.ev.toLocaleString("en-US")],
+      ["Route length", o || fin ? K.len(d, e.t).toFixed(3) : "…"], [oth + ": evaluations", other.evals.toLocaleString("en-US")], [oth + ": length", other.len.toFixed(3)]]);
+  }
+  // final results of both runs on this instance
+  function cmp(c) {
+    const b = setupCanvas($("#l2pCmp"), 200), x = b.ctx; x.clearRect(0, 0, b.w, b.h); x.font = `11px ${MONO}`;
+    const A = R.model, B = R.alone, G = [["OR move evaluations", A.evals, B.evals, v => v.toLocaleString("en-US")], ["Final route length", A.len, B.len, v => v.toFixed(2)]];
+    x.textBaseline = "top"; x.textAlign = "left"; x.fillStyle = c.accent; x.fillText("■ with the model", 8, 6); x.fillStyle = c.muted; x.fillText("■ OR alone", 8 + x.measureText("■ with the model").width + 12, 6);
+    const gw = (b.w - 16) / 2, top = 40, bot = b.h - 34, bw = Math.min(46, gw / 3.4);
+    G.forEach(([lab, a, bb, f], g) => {
+      const cx = 8 + gw * g + gw / 2, mx = Math.max(a, bb) || 1;
+      [[a, c.accent, -1], [bb, c.muted, 1]].forEach(([v, col, s]) => { const hh = (bot - top) * v / mx, xx = cx + (s < 0 ? -bw - 3 : 3); x.fillStyle = col; x.fillRect(xx, bot - hh, bw, hh); x.fillStyle = c.ink; x.textAlign = "center"; x.textBaseline = "bottom"; x.fillText(f(v), xx + bw / 2, bot - hh - 2); });
+      x.fillStyle = c.muted; x.textAlign = "center"; x.textBaseline = "top"; x.fillText(lab, cx, bot + 8);
+    });
+    x.strokeStyle = c.line; x.lineWidth = 1; x.beginPath(); x.moveTo(8, bot + .5); x.lineTo(b.w - 8, bot + .5); x.stroke();
+  }
+  $("#l2pStep").addEventListener("click", () => { if (run.on) run.stop(); if (done()) { at = 0; hl([]); say("Starting again. " + intro()); draw(); return; } step(); });
+  const run = stepper($("#l2pRun"), step, done, () => ctl.mode === "o" ? 40 : 100);
+  $("#l2pRun").addEventListener("click", () => { if (done() && !run.on) { at = 0; draw(); $("#l2pRun").click(); } });
+  $("#l2pNew").addEventListener("click", () => { if (run.on) run.stop(); make(); at = 0; hl([]); draw(); say("New instance. " + intro()); });
+  $("#l2pFlow").addEventListener("click", () => { const o = ctl.mode === "o", A = ctl.alone; pipe.play(
+    A ? [{ e: "a", from: "prob", to: "or", say: "<b>Problem definition</b> in: the OR algorithm works alone, with no network." }, { e: "b", from: "or", to: "sol", say: "<b>Solution</b> out, found with no prediction." }] :
+    o ? [{ e: "p", from: "prob", to: "nn", say: "<b>Problem definition</b> goes to the network, once." },
+      { e: "h", from: "nn", to: "or", say: "<b>Prediction, once:</b> a heatmap, turned into candidate lists, reaches the OR algorithm before the search begins." },
+      { e: "a", from: "prob", to: "or", say: "The OR algorithm solves the instance with the predicted information and the <b>problem definition</b>." },
+      { e: "b", from: "or", to: "sol", say: "<b>Solution</b> out: 2-opt stops when no candidate move helps." }] :
+    [{ e: "a", from: "prob", to: "or", say: "<b>Problem definition</b> in: the insertion heuristic starts from the depot." },
+      { e: "s", from: "or", to: "nn", ms: 450, say: "<b>State</b> out: the partial route and the problem definition go to the network." },
+      { e: "dd", from: "nn", to: "or", ms: 450, say: "<b>Prediction</b> back: which customer to insert next." },
+      { e: "s", from: "or", to: "nn", ms: 450, say: "At the next decision step the OR algorithm asks the network again, until termination." },
+      { e: "dd", from: "nn", to: "or", ms: 450 },
+      { e: "b", from: "or", to: "sol", say: "<b>Solution</b> out: every customer is inserted." }]); });
+  make(); buildPipe(); ro.observe($("#l2pCv")); ro.observe($("#l2pCmp")); onRedraw(draw); draw(); say(intro());
 })();
 
 /* ---------- Part 5: the 7-step procedure (complementary material) ---------- */
@@ -2259,7 +3172,7 @@ codeTabs({ f: "Least-squares polynomial fits, overfitting, more data, and a line
 })();
 
 </script>
-<script type="application/json" id="kc-data">{"ai": [{"type": "order", "q": "Put these fields in order from the broadest to the most specific, following the nesting on the page.", "items": ["Artificial intelligence", "Machine learning", "Neural networks", "Deep learning", "Generative AI", "Transformers", "Large language models"], "why": "Each field sits inside the one before it, so a large language model is a transformer, a generative model, a deep network, a neural network, an ML model and an AI system all at once.", "hint": "Start with the umbrella field that the whole lab belongs to and end with the systems behind today's chat assistants."}, {"type": "mcq", "q": "Given the nesting AI \\(\\supset\\) ML \\(\\supset\\) neural networks \\(\\supset\\) deep learning, which statement must be true?", "options": [{"t": "Every deep-learning model is a machine learning model", "why": "Deep learning sits inside neural networks, which sit inside machine learning, so the containment carries through."}, {"t": "Every machine learning model is a neural network", "why": "The containment runs the other way: neural networks are one family inside ML, alongside trees, SVMs and others."}, {"t": "Every AI system learns from data", "why": "AI is the broadest field and also covers areas such as reasoning and search that need not learn from data."}, {"t": "Deep learning and machine learning are separate fields", "why": "Deep learning is a subset of machine learning, not a separate field beside it."}], "answer": 0}, {"type": "mcq", "q": "According to the lab, what role did machine learning play for AI as a whole?", "options": [{"t": "It brought AI into everyday products", "why": "Voice assistants, navigation, recommendations and translation are all examples of ML-powered products in daily life."}, {"t": "It replaced every other subfield of AI", "why": "Other subfields such as reasoning, knowledge representation and search and optimization still exist next to ML."}, {"t": "It removed the need for any optimization", "why": "Training an ML model is itself an optimization problem, so ML relies on optimization rather than removing it."}, {"t": "It limited AI to systems that generate text", "why": "Text generation is only one recent application; ML also powers vision, routing, scheduling and many other tasks."}], "answer": 0}], "learning": [{"type": "match", "q": "Apply Tom Mitchell's definition of learning to a spam filter: match each symbol to what it stands for.", "pairs": [{"l": "Task \\(T\\)", "r": "Labeling each email as spam or not", "why": "The task is the job the program is supposed to do, here sorting incoming email."}, {"l": "Performance \\(P\\)", "r": "Fraction of emails labeled correctly", "why": "The performance measure scores how well the task is done, so it must be something we can compute."}, {"l": "Experience \\(E\\)", "r": "A set of emails labeled by people", "why": "The experience is the data the program learns from, and learning means \\(P\\) at \\(T\\) improves as \\(E\\) grows."}]}, {"type": "mcq", "q": "A chess program plays 1,000 more games, but its win rate against the same opponents stays flat. Under Mitchell's definition, has it learned?", "options": [{"t": "No, since its performance did not improve", "why": "Learning requires \\(P\\) at \\(T\\) to improve with \\(E\\), and here more experience left performance unchanged."}, {"t": "Yes, because it gained a lot of experience", "why": "Experience alone is not enough; the definition asks for performance to improve as experience grows."}, {"t": "Yes, because playing chess is a well-defined task", "why": "Having a task \\(T\\) is only one ingredient; without improvement in \\(P\\) there is no learning."}, {"t": "It cannot be judged, since a win rate is not a measure", "why": "A win rate is a perfectly good performance measure \\(P\\), and it shows no gain here."}], "answer": 0}, {"type": "mcq", "q": "Why does every school of ML, in Domingos' view, need an optimizer?", "options": [{"t": "Learning means searching for the model that scores best", "why": "Whatever the representation, training has to pick the best model by some evaluation, which is an optimization problem."}, {"t": "Optimizers are needed only to store the training data", "why": "Storing data takes no optimizer; the optimizer is what chooses a model from the data."}, {"t": "Without an optimizer the model could not make predictions", "why": "A finished model predicts without any optimizer; the optimizer is needed to train it."}, {"t": "Every school uses gradient descent on neural networks", "why": "The schools differ in representation and optimizer, so not all of them use neural networks or gradients."}], "answer": 0}], "fitting": [{"type": "mcq", "q": "What does training in the curve fitting playground actually minimize?", "options": [{"t": "The average loss on the training sample", "why": "The expected loss over all data is unknown, so the learner minimizes its sample average, \\(S(f) = \\frac{1}{n}\\sum L(y_i, f(x_i))\\), within the model class."}, {"t": "The error on the test points", "why": "The test points are held back to measure generalization; optimizing on them would hide overfitting."}, {"t": "The distance between the fit and the true function \\(\\sin(2\\pi x)\\)", "why": "The learner never sees the true function, only the noisy sample drawn from it."}, {"t": "The degree of the polynomial", "why": "The degree fixes the model class; it is chosen by the user, not by the least-squares search."}], "answer": 0}, {"type": "fill", "q": "A degree-\\(d\\) polynomial has \\(d + 1\\) coefficients. With \\(n = 8\\) training points at distinct \\(x\\) values, what is the smallest degree that lets least squares pass exactly through every point?", "answer": 7, "tol": 0, "unit": "", "hint": "Exact interpolation needs as many free coefficients as there are points.", "why": "With \\(d + 1 = 8\\) coefficients the polynomial can match all 8 points, so \\(d = 7\\), and it then memorizes the noise along with the signal."}, {"type": "classify", "q": "Sort each fitting result into what it shows.", "cats": ["Underfitting", "Overfitting", "Good fit"], "items": [{"t": "Degree 0 on the sine data: high training error and high test error", "cat": 0, "why": "A constant cannot follow the wave, so even the training points are fitted badly."}, {"t": "Degree 1 on the sine data: both errors stay high as \\(n\\) grows", "cat": 0, "why": "A straight line is too simple for one period of a sine, and more data cannot fix a model class that is too narrow."}, {"t": "Degree 10 on 12 points: almost zero training error, large test error", "cat": 1, "why": "With nearly as many coefficients as points the curve threads through the noise and swings wildly between points."}, {"t": "Degree 9 on 15 points: training error far below test error", "cat": 1, "why": "The gap between training and test error is the signature of a model that memorized its sample."}, {"t": "Degree 3 on 15 points: low training error and low test error", "cat": 2, "why": "A cubic is flexible enough for one sine period yet too stiff to chase the noise."}, {"t": "Degree 9 on 300 points: low training error and low test error", "cat": 2, "why": "With plenty of data even a flexible model cannot bend toward individual noisy points."}]}], "paradigms": [{"type": "classify", "q": "The paradigms differ in the feedback they get. Sort each setting by its paradigm.", "cats": ["Supervised", "Unsupervised", "Semi-supervised", "Reinforcement"], "items": [{"t": "A neural network trained on points that are all labeled", "cat": 0, "why": "Every example comes with its label, which is the feedback of supervised learning."}, {"t": "Emails that are each tagged spam or not spam", "cat": 0, "why": "A label for every example is exactly what supervised learning needs."}, {"t": "K-means grouping the points with no labels at all", "cat": 1, "why": "It gets no labels and can only find structure such as compact groups."}, {"t": "Customer records grouped into segments, with no labels", "cat": 1, "why": "Nobody says which segment is right, so the learner works from the data alone."}, {"t": "Label propagation from 4 labeled points to the rest", "cat": 2, "why": "A few labels are given and the unlabeled data does the rest of the work."}, {"t": "A few hundred labeled photos among millions of unlabeled ones", "cat": 2, "why": "Only a small fraction of the data is labeled, the defining trait of semi-supervised learning."}, {"t": "An agent that learns a game from the score it earns", "cat": 3, "why": "The feedback is a reward for its actions, not a label for each input."}, {"t": "A thermostat rewarded for saving energy while keeping comfort", "cat": 3, "why": "It learns from rewards by trial and error, which is reinforcement learning."}]}, {"type": "mcq", "q": "In the supervised diagram, what does the supervisor contribute?", "options": [{"t": "The training data set and the desired output for each example", "why": "That is what makes it supervised: every example comes with the answer, so each error can be measured."}, {"t": "Rewards after each action the model takes", "why": "Rewards drive reinforcement learning, where there is an agent acting in an environment."}, {"t": "Group names after the clustering has finished", "why": "Naming discovered groups happens after unsupervised learning, not during supervised training."}, {"t": "The new, unlabeled items the model classifies", "why": "New data arrives after training; the supervisor only shapes the training."}], "answer": 0}, {"type": "fill", "q": "In the reinforcement learning panel the agent earns \\(+10\\) for reaching the star and \\(-1\\) for every other step. What is the total reward of the shortest route from cell 1, which takes 5 steps?", "answer": 6, "tol": 0, "unit": "", "hint": "Four steps cost \\(-1\\) each and the fifth step reaches the star.", "why": "\\(4 \\times (-1) + 10 = 6\\), which is why the agent learns to head straight for the star."}], "procedure": [{"type": "order", "q": "Put the seven steps of the ML procedure in order.", "items": ["Problem characterization", "Data collection", "Data preparation", "Data exploration", "Model development", "Evaluation and optimization", "Deployment"], "why": "You first check that ML fits the problem, then collect, prepare and explore the data before developing, evaluating and finally deploying a model.", "hint": "Data must exist before it can be prepared, and it should be explored before you choose and build a model."}, {"type": "classify", "q": "Sort each activity from the panels into the step it belongs to.", "cats": ["Data preparation", "Data exploration", "Evaluation and optimization", "Deployment"], "items": [{"t": "Replacing missing temperature readings by the column median", "cat": 0, "why": "Imputing missing values is part of massaging the data before any model sees it."}, {"t": "Rescaling vibration and temperature to the range [0, 1]", "cat": 0, "why": "Min-max normalization keeps a feature from dominating because of its units, a preparation task."}, {"t": "Checking whether a single straight boundary separates two classes", "cat": 1, "why": "Testing separability and linearity is how exploration guides the choice of model."}, {"t": "Measuring the Pearson correlation between a feature and the target", "cat": 1, "why": "A correlation reveals monotonicity, one of the three insights exploration looks for."}, {"t": "Reading the AUC off a ROC curve", "cat": 2, "why": "The area under the ROC curve compares classifiers when you evaluate them."}, {"t": "Comparing training and testing error across polynomial degrees", "cat": 2, "why": "Finding the balance between bias and variance is part of evaluating and optimizing a model."}, {"t": "Choosing between edge, fog and cloud for a real-time controller", "cat": 3, "why": "Where the model runs is a deployment decision driven by latency, privacy and connectivity."}, {"t": "Retraining on a sliding window as the data drifts", "cat": 3, "why": "A deployed model in a nonstationary environment needs adaptation, since there is no set and forget."}]}, {"type": "mcq", "q": "In the cats-versus-dogs warm-up, frames from one video are split at random into training and test sets, and the test accuracy is 99%. Why is this score misleading?", "options": [{"t": "Neighboring frames are near-copies, so test frames leak into training", "why": "Each test frame sits between two almost identical training frames, so the frames are not independent and the model has effectively seen the test pictures."}, {"t": "The test frames follow a different distribution than training", "why": "All frames show the same cat in the same room, so the distribution matches; it is independence that fails."}, {"t": "A model with only two classes cannot exceed 90% accuracy", "why": "Two-class models can be very accurate; the problem is how the frames were split, not the number of classes."}, {"t": "Video frames are too small for an image classifier to read", "why": "Each frame is an ordinary picture the model can classify; the inflated score comes from near-duplicate frames on both sides of the split."}], "answer": 0}], "ml4co": [{"type": "classify", "q": "Sort each example into one of the three ways of combining ML with combinatorial optimization.", "cats": ["End-to-end learning", "Learning to configure algorithms", "ML alongside optimization"], "items": [{"t": "A pointer network outputs a TSP tour directly", "cat": 0, "why": "The model itself produces the solution, with no separate optimizer."}, {"t": "A pretrained graph network predicts which edges form the tour", "cat": 0, "why": "The learned model produces the solution itself, and only a light decoding step turns its output into a tour."}, {"t": "A model sets the temperature schedule of simulated annealing", "cat": 1, "why": "The learner tunes a parameter of an existing algorithm instead of producing solutions."}, {"t": "A model chooses the evaporation rate of an ant colony algorithm", "cat": 1, "why": "Evaporation is an algorithm parameter, so learning it is configuration."}, {"t": "A tree search asks a deep network for a decision at every node it expands", "cat": 2, "why": "The optimizer stays in charge and keeps consulting the same model during the search."}]}, {"type": "mcq", "q": "In the construct-or-improve panel, what happens when you press Improve (2-opt) after Construct (nearest neighbor)?", "options": [{"t": "It reverses segments until none shortens the tour", "why": "Nearest neighbor already gives a decent tour, so 2-opt only has to repair a few long detours before it reaches a local optimum."}, {"t": "It is guaranteed to reach the optimal tour", "why": "2-opt stops at a local optimum, a tour no single segment reversal can improve, which need not be the global optimum."}, {"t": "It builds a new tour one city at a time", "why": "Building city by city is construction, which nearest neighbor does; 2-opt changes a complete tour."}, {"t": "It lengthens the tour so that it can escape local optima", "why": "This 2-opt accepts only reversals that shorten the tour, so the length never grows."}], "answer": 0}, {"type": "fill", "q": "Fixing the start city, a TSP with \\(n\\) cities has \\((n - 1)!\\) directed tours. How many directed tours does a 10-city TSP have?", "answer": 362880, "tol": 0, "unit": "tours", "hint": "Multiply all whole numbers from 1 up to one less than the number of cities.", "why": "\\((10 - 1)! = 9! = 362{,}880\\), and the count explodes so quickly with \\(n\\) that heuristics and learned policies are needed for larger instances."}], "quiz": [{"type": "mcq", "q": "A degree-12 polynomial fitted to 15 noisy points reaches almost zero training error but a large test error. What is going on?", "options": [{"t": "The model overfits: it memorizes the noise", "why": "A very flexible model can pass through every training point, noise included, and more data tames it."}, {"t": "The model underfits: it is too simple for the data", "why": "Underfitting would show a high training error too, not almost zero."}, {"t": "The least-squares search failed to find the minimum", "why": "Near-zero training error shows the search did find the minimum of the training loss."}, {"t": "The loss should be the test error instead", "why": "Training on the test error would use up the test set and hide the overfitting rather than cure it."}], "answer": 0}, {"type": "mcq", "q": "Using a UCB bandit to choose the step size of a random search while the search runs is an example of which way of combining ML with optimization?", "options": [{"t": "Learning to configure algorithms", "why": "The bandit does not output solutions itself; it sets a parameter of an existing algorithm based on how well each choice has paid off."}, {"t": "End-to-end learning", "why": "End-to-end models output the solution directly, while here the random search still produces every point."}, {"t": "Unsupervised clustering of solutions", "why": "The bandit learns from rewards (improvements), not by grouping unlabeled solutions."}, {"t": "Amortized optimization with a pretrained network", "why": "Nothing is pretrained here: the bandit learns online, during a single run."}], "answer": 0}, {"type": "match", "q": "Learning is optimization: match each ingredient of the curve fitting playground to what it is.", "pairs": [{"l": "Model class \\(F\\)", "r": "Polynomials of a given degree", "why": "The model class is the set of candidate functions the search is allowed to choose from."}, {"l": "Loss", "r": "Mean squared error on the training points", "why": "The loss scores each candidate on the data, and training seeks its minimum."}, {"l": "Search strategy", "r": "Least squares", "why": "Least squares is the optimizer that finds the polynomial with the lowest squared error."}, {"l": "Test error", "r": "How well the fit generalizes to new data", "why": "The test error is not minimized during training; it measures whether the learned model generalizes."}]}]}</script>
+<script type="application/json" id="kc-data">{"ai": [{"type": "order", "q": "Put these fields in order from the broadest to the most specific, following the nesting on the page.", "items": ["Artificial intelligence", "Machine learning", "Neural networks", "Deep learning", "Generative AI", "Transformers", "Large language models"], "why": "Each field sits inside the one before it, so a large language model is a transformer, a generative model, a deep network, a neural network, an ML model and an AI system all at once.", "hint": "Start with the umbrella field that the whole lab belongs to and end with the systems behind today's chat assistants."}, {"type": "mcq", "q": "Given the nesting AI \\(\\supset\\) ML \\(\\supset\\) neural networks \\(\\supset\\) deep learning, which statement must be true?", "options": [{"t": "Every deep-learning model is a machine learning model", "why": "Deep learning sits inside neural networks, which sit inside machine learning, so the containment carries through."}, {"t": "Every machine learning model is a neural network", "why": "The containment runs the other way: neural networks are one family inside ML, alongside trees, SVMs and others."}, {"t": "Every AI system learns from data", "why": "AI is the broadest field and also covers areas such as reasoning and search that need not learn from data."}, {"t": "Deep learning and machine learning are separate fields", "why": "Deep learning is a subset of machine learning, not a separate field beside it."}], "answer": 0}, {"type": "mcq", "q": "According to the lab, what role did machine learning play for AI as a whole?", "options": [{"t": "It brought AI into everyday products", "why": "Voice assistants, navigation, recommendations and translation are all examples of ML-powered products in daily life."}, {"t": "It replaced every other subfield of AI", "why": "Other subfields such as reasoning, knowledge representation and search and optimization still exist next to ML."}, {"t": "It removed the need for any optimization", "why": "Training an ML model is itself an optimization problem, so ML relies on optimization rather than removing it."}, {"t": "It limited AI to systems that generate text", "why": "Text generation is only one recent application; ML also powers vision, routing, scheduling and many other tasks."}], "answer": 0}], "learning": [{"type": "match", "q": "Apply Tom Mitchell's definition of learning to a spam filter: match each symbol to what it stands for.", "pairs": [{"l": "Task \\(T\\)", "r": "Labeling each email as spam or not", "why": "The task is the job the program is supposed to do, here sorting incoming email."}, {"l": "Performance \\(P\\)", "r": "Fraction of emails labeled correctly", "why": "The performance measure scores how well the task is done, so it must be something we can compute."}, {"l": "Experience \\(E\\)", "r": "A set of emails labeled by people", "why": "The experience is the data the program learns from, and learning means \\(P\\) at \\(T\\) improves as \\(E\\) grows."}]}, {"type": "mcq", "q": "A chess program plays 1,000 more games, but its win rate against the same opponents stays flat. Under Mitchell's definition, has it learned?", "options": [{"t": "No, since its performance did not improve", "why": "Learning requires \\(P\\) at \\(T\\) to improve with \\(E\\), and here more experience left performance unchanged."}, {"t": "Yes, because it gained a lot of experience", "why": "Experience alone is not enough; the definition asks for performance to improve as experience grows."}, {"t": "Yes, because playing chess is a well-defined task", "why": "Having a task \\(T\\) is only one ingredient; without improvement in \\(P\\) there is no learning."}, {"t": "It cannot be judged, since a win rate is not a measure", "why": "A win rate is a perfectly good performance measure \\(P\\), and it shows no gain here."}], "answer": 0}, {"type": "mcq", "q": "Why does every school of ML, in Domingos' view, need an optimizer?", "options": [{"t": "Learning means searching for the model that scores best", "why": "Whatever the representation, training has to pick the best model by some evaluation, which is an optimization problem."}, {"t": "Optimizers are needed only to store the training data", "why": "Storing data takes no optimizer; the optimizer is what chooses a model from the data."}, {"t": "Without an optimizer the model could not make predictions", "why": "A finished model predicts without any optimizer; the optimizer is needed to train it."}, {"t": "Every school uses gradient descent on neural networks", "why": "The schools differ in representation and optimizer, so not all of them use neural networks or gradients."}], "answer": 0}], "fitting": [{"type": "mcq", "q": "What does training in the curve fitting playground actually minimize?", "options": [{"t": "The average loss on the training sample", "why": "The expected loss over all data is unknown, so the learner minimizes its sample average, \\(S(f) = \\frac{1}{n}\\sum L(y_i, f(x_i))\\), within the model class."}, {"t": "The error on the test points", "why": "The test points are held back to measure generalization; optimizing on them would hide overfitting."}, {"t": "The distance between the fit and the true function \\(\\sin(2\\pi x)\\)", "why": "The learner never sees the true function, only the noisy sample drawn from it."}, {"t": "The degree of the polynomial", "why": "The degree fixes the model class; it is chosen by the user, not by the least-squares search."}], "answer": 0}, {"type": "fill", "q": "A degree-\\(d\\) polynomial has \\(d + 1\\) coefficients. With \\(n = 8\\) training points at distinct \\(x\\) values, what is the smallest degree that lets least squares pass exactly through every point?", "answer": 7, "tol": 0, "unit": "", "hint": "Exact interpolation needs as many free coefficients as there are points.", "why": "With \\(d + 1 = 8\\) coefficients the polynomial can match all 8 points, so \\(d = 7\\), and it then memorizes the noise along with the signal."}, {"type": "classify", "q": "Sort each fitting result into what it shows.", "cats": ["Underfitting", "Overfitting", "Good fit"], "items": [{"t": "Degree 0 on the sine data: high training error and high test error", "cat": 0, "why": "A constant cannot follow the wave, so even the training points are fitted badly."}, {"t": "Degree 1 on the sine data: both errors stay high as \\(n\\) grows", "cat": 0, "why": "A straight line is too simple for one period of a sine, and more data cannot fix a model class that is too narrow."}, {"t": "Degree 10 on 12 points: almost zero training error, large test error", "cat": 1, "why": "With nearly as many coefficients as points the curve threads through the noise and swings wildly between points."}, {"t": "Degree 9 on 15 points: training error far below test error", "cat": 1, "why": "The gap between training and test error is the signature of a model that memorized its sample."}, {"t": "Degree 3 on 15 points: low training error and low test error", "cat": 2, "why": "A cubic is flexible enough for one sine period yet too stiff to chase the noise."}, {"t": "Degree 9 on 300 points: low training error and low test error", "cat": 2, "why": "With plenty of data even a flexible model cannot bend toward individual noisy points."}]}], "paradigms": [{"type": "classify", "q": "The paradigms differ in the feedback they get. Sort each setting by its paradigm.", "cats": ["Supervised", "Unsupervised", "Semi-supervised", "Reinforcement"], "items": [{"t": "A neural network trained on points that are all labeled", "cat": 0, "why": "Every example comes with its label, which is the feedback of supervised learning."}, {"t": "Emails that are each tagged spam or not spam", "cat": 0, "why": "A label for every example is exactly what supervised learning needs."}, {"t": "K-means grouping the points with no labels at all", "cat": 1, "why": "It gets no labels and can only find structure such as compact groups."}, {"t": "Customer records grouped into segments, with no labels", "cat": 1, "why": "Nobody says which segment is right, so the learner works from the data alone."}, {"t": "Label propagation from 4 labeled points to the rest", "cat": 2, "why": "A few labels are given and the unlabeled data does the rest of the work."}, {"t": "A few hundred labeled photos among millions of unlabeled ones", "cat": 2, "why": "Only a small fraction of the data is labeled, the defining trait of semi-supervised learning."}, {"t": "An agent that learns a game from the score it earns", "cat": 3, "why": "The feedback is a reward for its actions, not a label for each input."}, {"t": "A thermostat rewarded for saving energy while keeping comfort", "cat": 3, "why": "It learns from rewards by trial and error, which is reinforcement learning."}]}, {"type": "mcq", "q": "In the supervised diagram, what does the supervisor contribute?", "options": [{"t": "The training data set and the desired output for each example", "why": "That is what makes it supervised: every example comes with the answer, so each error can be measured."}, {"t": "Rewards after each action the model takes", "why": "Rewards drive reinforcement learning, where there is an agent acting in an environment."}, {"t": "Group names after the clustering has finished", "why": "Naming discovered groups happens after unsupervised learning, not during supervised training."}, {"t": "The new, unlabeled items the model classifies", "why": "New data arrives after training; the supervisor only shapes the training."}], "answer": 0}, {"type": "fill", "q": "In the reinforcement learning panel the agent earns \\(+10\\) for reaching the star and \\(-1\\) for every other step. What is the total reward of the shortest route from cell 1, which takes 5 steps?", "answer": 6, "tol": 0, "unit": "", "hint": "Four steps cost \\(-1\\) each and the fifth step reaches the star.", "why": "\\(4 \\times (-1) + 10 = 6\\), which is why the agent learns to head straight for the star."}], "procedure": [{"type": "order", "q": "Put the seven steps of the ML procedure in order.", "items": ["Problem characterization", "Data collection", "Data preparation", "Data exploration", "Model development", "Evaluation and optimization", "Deployment"], "why": "You first check that ML fits the problem, then collect, prepare and explore the data before developing, evaluating and finally deploying a model.", "hint": "Data must exist before it can be prepared, and it should be explored before you choose and build a model."}, {"type": "classify", "q": "Sort each activity from the panels into the step it belongs to.", "cats": ["Data preparation", "Data exploration", "Evaluation and optimization", "Deployment"], "items": [{"t": "Replacing missing temperature readings by the column median", "cat": 0, "why": "Imputing missing values is part of massaging the data before any model sees it."}, {"t": "Rescaling vibration and temperature to the range [0, 1]", "cat": 0, "why": "Min-max normalization keeps a feature from dominating because of its units, a preparation task."}, {"t": "Checking whether a single straight boundary separates two classes", "cat": 1, "why": "Testing separability and linearity is how exploration guides the choice of model."}, {"t": "Measuring the Pearson correlation between a feature and the target", "cat": 1, "why": "A correlation reveals monotonicity, one of the three insights exploration looks for."}, {"t": "Reading the AUC off a ROC curve", "cat": 2, "why": "The area under the ROC curve compares classifiers when you evaluate them."}, {"t": "Comparing training and testing error across polynomial degrees", "cat": 2, "why": "Finding the balance between bias and variance is part of evaluating and optimizing a model."}, {"t": "Choosing between edge, fog and cloud for a real-time controller", "cat": 3, "why": "Where the model runs is a deployment decision driven by latency, privacy and connectivity."}, {"t": "Retraining on a sliding window as the data drifts", "cat": 3, "why": "A deployed model in a nonstationary environment needs adaptation, since there is no set and forget."}]}, {"type": "mcq", "q": "In the cats-versus-dogs warm-up, frames from one video are split at random into training and test sets, and the test accuracy is 99%. Why is this score misleading?", "options": [{"t": "Neighboring frames are near-copies, so test frames leak into training", "why": "Each test frame sits between two almost identical training frames, so the frames are not independent and the model has effectively seen the test pictures."}, {"t": "The test frames follow a different distribution than training", "why": "All frames show the same cat in the same room, so the distribution matches; it is independence that fails."}, {"t": "A model with only two classes cannot exceed 90% accuracy", "why": "Two-class models can be very accurate; the problem is how the frames were split, not the number of classes."}, {"t": "Video frames are too small for an image classifier to read", "why": "Each frame is an ordinary picture the model can classify; the inflated score comes from near-duplicate frames on both sides of the split."}], "answer": 0}], "ml4co": [{"type": "classify", "q": "Sort each example into one of the three ways of combining ML with combinatorial optimization.", "cats": ["End-to-end learning", "Learning to configure algorithms", "ML alongside optimization"], "items": [{"t": "A pointer network trained on \\(m\\) cities outputs tours for \\(n\\) cities", "cat": 0, "why": "The network maps the city coordinates directly to a tour, with no separate optimizer."}, {"t": "One RL model builds VRP routes from rewards and feasibility rules", "cat": 0, "why": "The trained model itself produces the routes for new instances drawn from the same distribution."}, {"t": "A deep Q-network learns the vehicle dispatch policy, as in MOVI or DeepPool", "cat": 0, "why": "The network outputs the dispatch decisions directly, so the model is the solver."}, {"t": "A model predicts the gradient-descent step size from the curvature", "cat": 1, "why": "The model supplies a parameter, and gradient descent still computes the solution."}, {"t": "A model chooses the initial temperature and cooling schedule of SA", "cat": 1, "why": "These are parameters of the algorithm, so learning them is configuration."}, {"t": "A tree search asks a policy network which branch to explore at every node", "cat": 2, "why": "The algorithm stays in charge and keeps querying the same model with its current state, as in DLTS."}, {"t": "A network bounds the nodes of a heuristic tree search while it runs", "cat": 2, "why": "The model is consulted repeatedly during the search, which is ML alongside the algorithm."}]}, {"type": "mcq", "q": "In the configurator panel, the line fitted to \\(\\log_{10}\\) best step size against \\(\\log_{10} L\\) has a slope close to \\(-1\\). What does the configurator learn?", "options": [{"t": "The best step size is roughly proportional to \\(1/L\\)", "why": "A slope of \\(-1\\) in log space means \\(\\eta \\propto L^{-1}\\), so steep bowls get small steps and flat bowls large ones."}, {"t": "The best step size grows with the curvature", "why": "A growing step would need a positive slope, and a large step on a steep bowl overshoots and diverges."}, {"t": "The best step size does not depend on the problem", "why": "A slope of zero would mean that; the fitted line shows a strong dependence on \\(L\\)."}, {"t": "The default step size of 0.1 suits every problem", "why": "The panel shows the default diverging on steep bowls and crawling on flat ones."}], "answer": 0}, {"type": "fill", "q": "The tree in the guided-search panel has depth 3 and 3 children per node. Breadth-first search visits it level by level. How many nodes has it visited before it reaches the first leaf?", "answer": 13, "tol": 0, "unit": "nodes", "hint": "Count the root and every node on the two levels above the leaves.", "why": "It must first visit \\(1 + 3 + 9 = 13\\) internal nodes, which is one reason uninformed search needs many more nodes than a search guided by a good policy."}], "nco": [{"type":"classify","q":"Sort each routing solver into its NCO family.","cats":["L2C","L2I","L2P"],"items":[{"t":"An encoder embeds the instance and a decoder appends one customer per call until the route is complete","cat":0,"why":"The network builds the route from an empty solution to a complete one, which is learning to construct."},{"t":"A network scores every edge in one call, and a single greedy pass turns the scores into a route with no search afterward","cat":0,"why":"This is a NAR process: the model's output is turned directly into a route, so the network still constructs the solution."},{"t":"A policy network picks a pair of customers in a complete route, and 2-opt repairs that part","cat":1,"why":"It starts from a feasible route and improves it region by region, the loop of learning to improve."},{"t":"Starting from a feasible route, the solver keeps rebuilding one spatial region until the time budget runs out","cat":1,"why":"A division picks the region and a repair rebuilds it, iterating until termination, which is L2I."},{"t":"A network predicts an edge heatmap once, and 2-opt only evaluates moves that add high-scoring edges","cat":2,"why":"The prediction guides an OR algorithm that still does the search, so this is L2P-O."},{"t":"An insertion heuristic asks a network at every step which customer to insert next","cat":2,"why":"The network works with the OR algorithm at each decision step, so this is L2P-M."}]},{"type":"match","q":"Match each kind of neural solver to what it does.","pairs":[{"l":"AR decoder","r":"Adds one node per call, reading the partial route","why":"An autoregressive decoder feeds the partial solution \\(\\tau_t\\) back at every step, so \\(N\\) customers need \\(N\\) calls."},{"l":"NAR process","r":"Scores all edges at once, then builds the route in one pass","why":"A non-autoregressive model predicts a heatmap in a single call, and a one-time construction turns it into a route."},{"l":"L2P-O","r":"Predicts once, before the OR search begins","why":"Its prediction, such as a heatmap, is handed to the OR algorithm solely before the search starts."},{"l":"L2P-M","r":"Predicts at every decision step of the OR search","why":"It takes the OR algorithm's state as input and keeps predicting until termination."}]},{"type":"fill","q":"In the L2C panel with 13 customers, how many more decoder calls does the AR decoder make than the NAR process to build a complete route?","answer":12,"tol":0,"unit":"calls","hint":"The AR decoder needs one call per customer; the NAR process needs one call in total.","why":"The AR decoder makes 13 calls and the NAR process 1, so the difference is \\(13 - 1 = 12\\), which is why NAR solvers are much faster to decode."}], "quiz": [{"type": "mcq", "q": "A degree-12 polynomial fitted to 15 noisy points reaches almost zero training error but a large test error. What is going on?", "options": [{"t": "The model overfits: it memorizes the noise", "why": "A very flexible model can pass through every training point, noise included, and more data tames it."}, {"t": "The model underfits: it is too simple for the data", "why": "Underfitting would show a high training error too, not almost zero."}, {"t": "The least-squares search failed to find the minimum", "why": "Near-zero training error shows the search did find the minimum of the training loss."}, {"t": "The loss should be the test error instead", "why": "Training on the test error would use up the test set and hide the overfitting rather than cure it."}], "answer": 0}, {"type": "mcq", "q": "In Part 6, a model predicts the step size of gradient descent from the curvature of the bowl, once, before the run starts. Which way of combining ML with optimization is this?", "options": [{"t": "Learning to configure algorithms", "why": "The model never outputs a solution; it hands gradient descent a parameter, and gradient descent still does the search."}, {"t": "End-to-end learning", "why": "An end-to-end model would output the minimizer directly, with no gradient descent run at all."}, {"t": "Machine learning alongside the algorithm", "why": "That would query the model again and again during the run; here it is asked once, before the run."}, {"t": "Unsupervised clustering of problems", "why": "The model is fitted to the best step sizes found on training problems, a supervised regression, not a clustering."}], "answer": 0}, {"type": "match", "q": "Learning is optimization: match each ingredient of the curve fitting playground to what it is.", "pairs": [{"l": "Model class \\(F\\)", "r": "Polynomials of a given degree", "why": "The model class is the set of candidate functions the search is allowed to choose from."}, {"l": "Loss", "r": "Mean squared error on the training points", "why": "The loss scores each candidate on the data, and training seeks its minimum."}, {"l": "Search strategy", "r": "Least squares", "why": "Least squares is the optimizer that finds the polynomial with the lowest squared error."}, {"l": "Test error", "r": "How well the fit generalizes to new data", "why": "The test error is not minimized during training; it measures whether the learned model generalizes."}]}]}</script>
 <script>/* kc:js */
 /* Knowledge checks: every .kc[data-sec] box is filled from #kc-data with multiple-choice, ordering, matching,
    classification and fill-in questions. Options are shuffled on every load and every answer gets feedback. */
