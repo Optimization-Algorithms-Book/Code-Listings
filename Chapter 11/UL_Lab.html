@@ -510,7 +510,7 @@ tr.dim td{color:var(--muted)}
       <div class="bench" style="margin-top:0"><div class="bench-head"><h4>Neighborhood functions (equation 11.6)</h4></div><div class="stage"><div id="nbCtl"></div><canvas id="nbCv" class="cv-chart" style="height:180px" aria-label="Neighborhood functions"></canvas></div></div>
     </div>
     <div class="bench">
-      <div class="bench-head"><h4>A 2D map unfolding over data</h4><span class="eyebrow">Neurons drawn at their weights</span></div>
+      <div class="bench-head"><h4>A 2D map unfolding over data</h4><span class="eyebrow">Three blobs · winners and clusters after training</span></div>
       <div class="bench-body">
         <div class="side"><div id="smCtl"></div><div class="btns"><button id="smRun" class="primary">Train</button><button id="smReset">Reset</button></div><div class="stats" id="smStats"></div></div>
         <div class="stage"><canvas id="smCv" class="cv-sq" style="aspect-ratio:16/10" aria-label="SOM lattice in data space"></canvas><p class="cap" id="smNote"></p></div>
@@ -1236,23 +1236,83 @@ function drawQatar(cv, S, route, o = {}) {
   }
   ro.observe($("#nbCv")); onRedraw(nbDraw); nbDraw();
   const ctl = makeControls($("#smCtl"), [
-    { key: "data", id: "smD", type: "select", label: "Data", value: "ring", options: [["ring", "Ring"], ["square", "Uniform square"], ["blobs", "Three blobs"], ["l", "L-shape"]] },
+    { key: "nb", id: "smNb", type: "select", label: "Neighborhood function", value: "gauss", options: [["gauss", "Gaussian"], ["hat", "Mexican hat"], ["cone", "Cone"], ["bubble", "Bubble"]] },
     { key: "g", id: "smG", label: "Lattice size", min: 4, max: 16, step: 1, value: 10, fmt: v => `${v} × ${v}` },
     { key: "a", id: "smA", label: "Initial learning rate α", min: .05, max: 1, step: .05, value: .5, fmt: v => v.toFixed(2) },
     { key: "it", id: "smI", label: "Iterations", min: 500, max: 8000, step: 500, value: 3000 }
-  ], k => { if (k === "data") make(); reset(); });
-  let rnd = mulberry32(4), P = [], W, step = 0, timer = null;
-  function make() { P = Array.from({ length: 600 }, () => { if (ctl.data === "square") return [rnd(), rnd()]; if (ctl.data === "blobs") { const c = [[.25, .25], [.75, .3], [.5, .78]][Math.floor(rnd() * 3)]; return [c[0] + .07 * gauss(rnd), c[1] + .07 * gauss(rnd)]; } if (ctl.data === "l") { const t = rnd(); return t < .5 ? [.15 + .2 * rnd(), .1 + .8 * rnd()] : [.15 + .75 * rnd(), .1 + .2 * rnd()]; } const a = 2 * Math.PI * rnd(), r = .3 + .12 * rnd(); return [.5 + r * Math.cos(a), .5 + r * Math.sin(a)]; }); }
-  function reset() { clearInterval(timer); timer = null; $("#smRun").textContent = "Train"; const g = ctl.g; W = Array.from({ length: g * g }, () => [.45 + .1 * rnd(), .45 + .1 * rnd()]); step = 0; draw(); }
-  function train(k) { const g = ctl.g, T = ctl.it; for (let s = 0; s < k && step < T; s++, step++) { const x = P[Math.floor(rnd() * P.length)], frac = step / T, a = ctl.a * (1 - frac), sig = Math.max(.5, g / 2 * (1 - frac)); let u = 0, bd = Infinity; W.forEach((w, i) => { const d = d2(w, x); if (d < bd) { bd = d; u = i; } }); const ur = Math.floor(u / g), uc = u % g; W.forEach((w, i) => { const r = Math.floor(i / g), c = i % g, th = Math.exp(-((r - ur) ** 2 + (c - uc) ** 2) / (2 * sig * sig)); w[0] += a * th * (x[0] - w[0]); w[1] += a * th * (x[1] - w[1]); }); } }
+  ], () => reset());
+  // the same four shapes as the chart above, as a function of the lattice distance d to the winner
+  const NB = { gauss: (d, s) => Math.exp(-d * d / (2 * s * s)), hat: (d, s) => (1 - d * d / (s * s)) * Math.exp(-d * d / (2 * s * s)), cone: (d, s) => Math.max(0, 1 - d / (2 * s)), bubble: (d, s) => d <= s ? 1 : 0 };
+  const NBNAME = { gauss: "Gaussian", hat: "Mexican hat", cone: "cone", bubble: "bubble" };
+  let rnd = mulberry32(4), P = [], W, step = 0, timer = null, last = null;
+  function make() { P = Array.from({ length: 600 }, () => { const c = [[.25, .25], [.75, .3], [.5, .78]][Math.floor(rnd() * 3)]; return [c[0] + .07 * gauss(rnd), c[1] + .07 * gauss(rnd)]; }); }
+  function reset() { clearInterval(timer); timer = null; $("#smRun").textContent = "Train"; const g = ctl.g; W = Array.from({ length: g * g }, () => [.45 + .1 * rnd(), .45 + .1 * rnd()]); step = 0; last = null; draw(); }
+  function train(k) {
+    const g = ctl.g, T = ctl.it, h = NB[ctl.nb];
+    for (let s = 0; s < k && step < T; s++, step++) {
+      const x = P[Math.floor(rnd() * P.length)], frac = step / T, a = ctl.a * (1 - frac), sig = Math.max(.5, g / 2 * (1 - frac));
+      let u = 0, bd = Infinity; W.forEach((w, i) => { const d = d2(w, x); if (d < bd) { bd = d; u = i; } }); last = { x, u };
+      const ur = Math.floor(u / g), uc = u % g;
+      W.forEach((w, i) => { let th = h(Math.hypot(Math.floor(i / g) - ur, i % g - uc), sig); if (!th) return; if (th < 0) th *= .03;   // a weak push-away (Mexican hat): at full strength it would scatter the map
+        w[0] = Math.min(1.1, Math.max(-.1, w[0] + a * th * (x[0] - w[0]))); w[1] = Math.min(1.1, Math.max(-.1, w[1] + a * th * (x[1] - w[1]))); });
+    }
+  }
+  const bmu = x => { let u = 0, bd = Infinity; W.forEach((w, i) => { const d = d2(w, x); if (d < bd) { bd = d; u = i; } }); return u; };
+  // clusters of neurons: lattice neighbors that both win data and have close weights join; neurons that win nothing separate them
+  function clusters(hits) {
+    const g = ctl.g, n = g * g, par = [...Array(n).keys()], find = i => par[i] === i ? i : (par[i] = find(par[i])), E = [];
+    for (let i = 0; i < n; i++) { if (i % g < g - 1) E.push([i, i + 1]); if (Math.floor(i / g) < g - 1) E.push([i, i + g]); }
+    const live = E.filter(([i, j]) => hits[i] && hits[j]).map(([i, j]) => [i, j, Math.sqrt(d2(W[i], W[j]))]);
+    const med = live.map(e => e[2]).sort((a, b) => a - b)[Math.floor(live.length / 2)] || 0;
+    live.forEach(([i, j, d]) => { if (d <= 2.2 * med) par[find(i)] = find(j); });
+    const size = {}; for (let i = 0; i < n; i++) if (hits[i]) size[find(i)] = (size[find(i)] || 0) + hits[i];
+    const big = Object.keys(size).filter(k => size[k] >= .05 * P.length).map(Number);
+    const id = new Array(n).fill(-1), bigN = [];
+    for (let i = 0; i < n; i++) if (hits[i] && big.includes(find(i))) { id[i] = big.indexOf(find(i)); bigN.push(i); }
+    for (let i = 0; i < n; i++) if (hits[i] && id[i] < 0 && bigN.length) { let b = bigN[0], bd = Infinity; bigN.forEach(j => { const d = d2(W[i], W[j]); if (d < bd) { bd = d; b = j; } }); id[i] = id[b]; }
+    // order the clusters left to right, and find each one's winner: the neuron that wins the cluster's center
+    const K = big.length, cen = Array.from({ length: K }, () => [0, 0, 0]);
+    P.forEach(p => { const k = id[bmu(p)]; if (k >= 0) { cen[k][0] += p[0]; cen[k][1] += p[1]; cen[k][2]++; } });
+    const order = [...Array(K).keys()].sort((a, b) => cen[a][0] / cen[a][2] - cen[b][0] / cen[b][2]), rank = []; order.forEach((k, r) => rank[k] = r);
+    const ids = id.map(v => v < 0 ? -1 : rank[v]), cl = order.map(k => { const ctr = [cen[k][0] / cen[k][2], cen[k][1] / cen[k][2]], w = bmu(ctr); return { ctr, w, pts: cen[k][2] }; });
+    return { id: ids, cl };
+  }
   function draw() {
     const ax = axes($("#smCv"), { x0: 0, x1: 1, y0: 0, y1: 1, bare: true, equal: true, pad: { l: 8, r: 8, t: 8, b: 8 } }), { ctx, X, Y, c } = ax, g = ctl.g;
-    P.forEach(p => dot(ctx, X(p[0]), Y(p[1]), 2, c.muted)); ctx.strokeStyle = c.accent; ctx.lineWidth = 1.4;
-    for (let r = 0; r < g; r++) for (let q = 0; q < g; q++) { const w = W[r * g + q]; if (q < g - 1) { const v = W[r * g + q + 1]; ctx.beginPath(); ctx.moveTo(X(w[0]), Y(w[1])); ctx.lineTo(X(v[0]), Y(v[1])); ctx.stroke(); } if (r < g - 1) { const v = W[(r + 1) * g + q]; ctx.beginPath(); ctx.moveTo(X(w[0]), Y(w[1])); ctx.lineTo(X(v[0]), Y(v[1])); ctx.stroke(); } }
-    W.forEach(w => dot(ctx, X(w[0]), Y(w[1]), 3, c.gold));
-    const frac = step / ctl.it, qe = P.reduce((s, p) => s + Math.sqrt(Math.min(...W.map(w => d2(w, p)))), 0) / P.length;
-    stats($("#smStats"), [["Step", `${step} / ${ctl.it}`], ["α", (ctl.a * (1 - frac)).toFixed(3)], ["Neighborhood σ", Math.max(.5, ctl.g / 2 * (1 - frac)).toFixed(2)], ["Quantization error", qe.toFixed(4)]]);
-    $("#smNote").textContent = step === 0 ? "All neurons start in a small clump. Press Train." : step >= ctl.it ? "The lattice has unfolded over the data while keeping its grid structure: neighbors on the lattice represent nearby regions of the input space. Neurons stranded between clusters represent no data at all." : "Early on the neighborhood is wide, so the whole map moves together and unfolds; later it narrows and neurons specialize.";
+    const frac = step / ctl.it, sigNow = Math.max(.5, g / 2 * (1 - frac)), done = step >= ctl.it, win = P.map(bmu), hits = new Array(g * g).fill(0); win.forEach(u => hits[u]++);
+    const CL = done ? clusters(hits) : null, pal = [c.accent, c.gold, c.s3, c.s2, c.s4, c.bad], col = k => k < 0 ? c.muted : pal[k % pal.length];
+    const line = (i, j) => { ctx.beginPath(); ctx.moveTo(X(W[i][0]), Y(W[i][1])); ctx.lineTo(X(W[j][0]), Y(W[j][1])); ctx.stroke(); };
+    // data
+    if (CL) ctx.globalAlpha = .45; P.forEach((p, k) => dot(ctx, X(p[0]), Y(p[1]), CL ? 2.3 : 2, CL ? col(CL.id[win[k]]) : c.muted)); ctx.globalAlpha = 1;
+    // lattice
+    ctx.strokeStyle = CL ? c.line : c.accent; ctx.lineWidth = CL ? 1 : 1.4;
+    for (let i = 0; i < g * g; i++) { if (i % g < g - 1) line(i, i + 1); if (Math.floor(i / g) < g - 1) line(i, i + g); }
+    if (!CL) {
+      // training: neurons in gold, the current input's winner in green with the neighbors that move with it
+      if (last) { const ur = Math.floor(last.u / g), uc = last.u % g, h = NB[ctl.nb];
+        W.forEach((w, i) => { const th = h(Math.hypot(Math.floor(i / g) - ur, i % g - uc), sigNow); if (Math.abs(th) > .05) { ctx.globalAlpha = .45 * Math.min(1, Math.abs(th)); ctx.fillStyle = th > 0 ? c.good : c.bad; ctx.beginPath(); ctx.arc(X(w[0]), Y(w[1]), 10, 0, 7); ctx.fill(); } }); ctx.globalAlpha = 1; }
+      W.forEach(w => dot(ctx, X(w[0]), Y(w[1]), 3, c.gold));
+      if (last) { const w = W[last.u]; dot(ctx, X(w[0]), Y(w[1]), 7, c.good, c.ink); ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(last.x[0]), Y(last.x[1]), 6, 0, 7); ctx.stroke(); }
+    } else {
+      // trained: neurons by cluster; each cluster's winner, its lattice neighbors, then the rest
+      const nbOf = u => { const r = Math.floor(u / g), q = u % g, out = []; for (let dr = -1; dr <= 1; dr++) for (let dq = -1; dq <= 1; dq++) { const rr = r + dr, qq = q + dq; if ((dr || dq) && rr >= 0 && rr < g && qq >= 0 && qq < g) out.push(rr * g + qq); } return out; };
+      const role = new Array(g * g).fill(0); CL.cl.forEach(k => { role[k.w] = 2; nbOf(k.w).forEach(j => { if (role[j] < 2) role[j] = 1; }); });
+      W.forEach((w, i) => { if (role[i]) return; if (hits[i]) dot(ctx, X(w[0]), Y(w[1]), 3.4, col(CL.id[i]), c.surface); else { ctx.strokeStyle = c.muted; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(X(w[0]), Y(w[1]), 3, 0, 7); ctx.stroke(); } });
+      CL.cl.forEach((k, ci) => {
+        const cc = col(ci), wn = k.w; ctx.strokeStyle = cc; ctx.lineWidth = 3; nbOf(wn).forEach(j => line(wn, j));
+        nbOf(wn).forEach(j => { const w = W[j]; dot(ctx, X(w[0]), Y(w[1]), 6, c.surface); ctx.strokeStyle = cc; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.arc(X(w[0]), Y(w[1]), 6, 0, 7); ctx.stroke(); });
+        const w = W[wn]; dot(ctx, X(w[0]), Y(w[1]), 9.5, cc, c.ink);
+        ctx.font = `600 12px ${MONO}`; ctx.fillStyle = c.ink; ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.lineWidth = 3; ctx.strokeStyle = c.sunk;
+        const tx = X(w[0]) + 13, ty = Y(w[1]) - 12; ctx.strokeText(`winner ${ci + 1}`, tx, ty); ctx.fillText(`winner ${ci + 1}`, tx, ty);
+      });
+    }
+    const qe = P.reduce((s, p) => s + Math.sqrt(Math.min(...W.map(w => d2(w, p)))), 0) / P.length, alive = hits.filter(h => h).length;
+    const items = [["Step", `${step} / ${ctl.it}`], ["Learning rate", (ctl.a * (1 - frac)).toFixed(3)], ["Neighborhood width", sigNow.toFixed(2)], ["Quantization error", qe.toFixed(4)], ["Neurons that win data", `${alive} of ${g * g}`]];
+    if (CL) { items.push(["Clusters found", CL.cl.length]); CL.cl.forEach((k, ci) => items.push([`Cluster ${ci + 1} winner (row, column)`, `(${Math.floor(k.w / g) + 1}, ${k.w % g + 1}), ${CL.id.filter(v => v === ci).length} neurons`])); }
+    stats($("#smStats"), items);
+    $("#smNote").textContent = step === 0 ? `Three blobs of data; all neurons start in a small clump. Pick a neighborhood function and press Train.` :
+      !done ? `Training with the ${NBNAME[ctl.nb]} neighborhood: the green neuron wins the ringed input, and the halo shows how strongly its lattice neighbors move with it${ctl.nb === "hat" ? " (red: the Mexican hat gently pushes farther neighbors away)" : ""}. The neighborhood shrinks as training goes on.` :
+      `After training, the map has formed ${CL.cl.length} cluster${CL.cl.length === 1 ? "" : "s"}, one color each. In each cluster, the large outlined neuron is its winner (the neuron that wins the cluster’s center), the white ringed neurons linked to it are its lattice neighbors, the small dots are the cluster’s other neurons, and every data point takes its cluster’s color. A cluster is a group of neurons, not a single one; hollow neurons win no data and lie between the clusters.`;
   }
   $("#smRun").addEventListener("click", () => { if (timer) { clearInterval(timer); timer = null; $("#smRun").textContent = "Train"; return; } if (step >= ctl.it) reset(); $("#smRun").textContent = "Pause"; timer = setInterval(() => { train(Math.max(10, ctl.it / 150)); draw(); if (step >= ctl.it) { clearInterval(timer); timer = null; $("#smRun").textContent = "Train"; } }, 30); });
   $("#smReset").addEventListener("click", reset);
