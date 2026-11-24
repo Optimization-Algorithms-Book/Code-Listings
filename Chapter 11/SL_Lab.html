@@ -538,7 +538,7 @@ a.src-card b::after{content:"\00a0\2197";color:var(--accent);font-weight:400}
       <li><a href="#tabular">Tabular data to a graph</a></li>
       <li><a href="#eta">Predicting ETA</a></li></ol></li>
     <li><a href="#embedding"><b>4</b>Graph embedding</a><ol>
-      <li><a href="#emb-gnn">Grids and sentences to graphs</a></li>
+      <li><a href="#emb-gnn">Grids to graphs</a></li>
       <li><a href="#emb-why">Why embeddings?</a></li>
       <li><a href="#emb-enc">Encoders and similarity</a></li>
       <li><a href="#emb-walk">DeepWalk on the karate club</a></li>
@@ -729,16 +729,16 @@ a.src-card b::after{content:"\00a0\2197";color:var(--accent);font-weight:400}
       <p class="more">Section 11.3 of the book explains why graph data is non-Euclidean and compares graph-embedding methods.</p>
     </div>
 
-    <h3 id="emb-gnn">From grids and sentences to graphs</h3>
+    <h3 id="emb-gnn">From grids to graphs</h3>
     <p class="prose">A generic five-step pipeline uses graph neural networks to solve combinatorial problems, and it has been applied to the TSP, minimum vertex cover, MaxCut, maximum independent set, vehicle routing, SAT and more. Its second step, <b>Embed</b>, is the subject of this part; the <a href="#tsp">TSP part</a> runs the whole pipeline. Click a step.</p>
     <div class="bench">
       <div class="bench-head"><h4>An end-to-end pipeline for OR problems</h4><span class="eyebrow">After Joshi, Laurent and Bresson (2019) · click a step</span></div>
       <div class="stage"><div class="emb-steps" id="egSteps" role="group" aria-label="The five steps of the pipeline"></div><div class="gd-def" id="egDef" aria-live="polite"></div></div>
     </div>
-    <p class="prose">The embed step is a <b>convolution on graphs</b>. A CNN slides a discrete kernel, one weight per relative position, over a grid. A GNN cannot do that, because a node’s neighborhood is irregular, so it passes messages through a continuous kernel: one shared function applied to every neighbor. A Transformer is message passing on a <b>fully connected</b> graph, where attention computes how much word \(i\) influences word \(j\). The <a href="#euclid">Euclidean vs non-Euclidean</a> panel compares the neighborhoods, and the <a href="#attention">attention part</a> derives the weights.</p>
+    <p class="prose">The embed step is a <b>convolution on graphs</b>. A CNN slides a discrete kernel, one weight per relative position, over a grid. A GNN cannot do that, because a node’s neighborhood is irregular, so it passes messages through a continuous kernel: one shared function applied to every neighbor. The <a href="#euclid">Euclidean vs non-Euclidean</a> panel compares the neighborhoods.</p>
     <div class="bench">
-      <div class="bench-head"><h4>Convolution on graphs</h4><span class="eyebrow">Pick a view, then click a pixel, node or word</span></div>
-      <div class="stage"><div class="tokens" id="ecMode" role="group" aria-label="View"></div><canvas id="ecCv" class="cv-sq" style="aspect-ratio:16/10;cursor:pointer" aria-label="A grid kernel, a graph neighborhood or a sentence as a fully connected graph"></canvas><p class="cap" id="ecNote" aria-live="polite"></p></div>
+      <div class="bench-head"><h4>Convolution on graphs</h4><span class="eyebrow">Pick a view, then click a pixel or a node</span></div>
+      <div class="stage"><div class="tokens" id="ecMode" role="group" aria-label="View"></div><canvas id="ecCv" class="cv-sq" style="aspect-ratio:16/10;cursor:pointer" aria-label="A grid kernel or a graph neighborhood"></canvas><p class="cap" id="ecNote" aria-live="polite"></p></div>
     </div>
 
     <h3 id="emb-why">Why embeddings?</h3>
@@ -2289,16 +2289,14 @@ const embVec = (v, d = 2) => "(" + v.map(x => x.toFixed(d)).join(", ") + ")";
 
 
 
-/* ---------- convolution on a grid, a graph and a sentence ---------- */
+/* ---------- convolution on a grid and on a graph ---------- */
 (function embConv() {
-  const cv = $("#ecCv"), note = $("#ecNote"), M = [["grid", "CNN: image grid"], ["graph", "GNN: graph"], ["sent", "Transformer: sentence"]];
+  const cv = $("#ecCv"), note = $("#ecNote"), M = [["grid", "CNN: image grid"], ["graph", "GNN: graph"]];
   const rnd = mulberry32(31), PIX = Array.from({ length: 25 }, () => .15 + .7 * rnd());
   const GN = [[.5, .5], [.22, .26], [.3, .82], [.66, .12], [.82, .6], [.94, .24], [.04, .56], [.62, .92]];
   const GE = [[0, 1], [0, 2], [0, 3], [0, 4], [1, 6], [2, 6], [2, 7], [3, 5], [4, 5], [4, 7], [1, 3]];
   const NB = GN.map((_, i) => GE.filter(e => e.includes(i)).map(e => e[0] === i ? e[1] : e[0]));
-  const W = ["This", "is", "another", "sentence"], V = [[.9, .5], [.2, .3], [.5, .9], [1, .8]], WP = [[.18, .2], [.82, .2], [.82, .8], [.18, .8]];   // illustrative 2D word vectors
-  const att = q => softmax(V.map(k => (V[q][0] * k[0] + V[q][1] * k[1]) * 3 / Math.SQRT2));
-  let mode = "sent", g = [2, 2], nSel = 0, wSel = 3, fr = null;
+  let mode = "grid", g = [2, 2], nSel = 0, fr = null;
   const bar = $("#ecMode");
   bar.innerHTML = M.map(([k, t]) => `<button type="button" class="small" data-m="${k}" aria-pressed="${k === mode}">${t}</button>`).join("");
   bar.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; mode = b.dataset.m; bar.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); draw(); });
@@ -2326,29 +2324,12 @@ const embVec = (v, d = 2) => "(" + v.map(x => x.toFixed(d)).join(", ") + ")";
     const degs = NB.map(v => v.length);
     return `Node ${nSel + 1} receives ${NB[nSel].length} message${NB[nSel].length === 1 ? "" : "s"}. Degrees in this graph range from ${Math.min(...degs)} to ${Math.max(...degs)} and neighbors come in no order, so there is no slot for a per-position weight. A GNN uses a <b>continuous</b> kernel instead: the same weights ${tex("W")} transform every neighbor’s features, and the messages are summed or averaged.`;
   }
-  function drawSent() {
-    fr = gdFrame(cv, { x0: 0, x1: 1, y0: 0, y1: 1, stretch: true }, 18); const { ctx, X, Y, c, w } = fr, a = att(wSel), fs = Math.max(11, Math.min(14, w / 40));
-    ctx.font = `600 ${fs}px ${MONO}`;
-    const B = WP.map(([x, y], i) => [X(x), Y(y), (ctx.measureText(W[i]).width + 18) / 2, fs]);   // center and half sizes of each word box
-    const clip = (i, dx, dy) => { const L = Math.hypot(dx, dy) || 1; return Math.min(B[i][2] / (Math.abs(dx) / L || 1e-9), B[i][3] / (Math.abs(dy) / L || 1e-9)) + 3; };
-    ctx.strokeStyle = c.line; ctx.lineWidth = 1.2;
-    for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) gdLine(ctx, B[i][0], B[i][1], B[j][0], B[j][1]);
-    const [qx, qy] = B[wSel];
-    W.forEach((_, j) => { if (j === wSel) return; gdArrow(ctx, B[j][0], B[j][1], qx, qy, clip(wSel, qx - B[j][0], qy - B[j][1]), c.accent, 1 + 12 * a[j]); });
-    ctx.strokeStyle = c.accent; ctx.lineWidth = 1 + 12 * a[wSel]; const up = qy < fr.h / 2 ? -1 : 1;
-    ctx.beginPath(); ctx.ellipse(qx, qy + up * (B[wSel][3] + 14), 16, 14, 0, 0, 7); ctx.stroke();
-    const lab = (t, x, y) => { ctx.font = `600 11px ${MONO}`; const tw = ctx.measureText(t).width + 8; ctx.fillStyle = c.surface; ctx.fillRect(x - tw / 2, y - 8, tw, 16); ctx.fillStyle = c.accent; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(t, x, y); };
-    W.forEach((_, j) => { if (j !== wSel) lab(a[j].toFixed(2), B[j][0] * .55 + qx * .45, B[j][1] * .55 + qy * .45); });
-    lab(a[wSel].toFixed(2), qx + 30, qy + up * (B[wSel][3] + 14));
-    W.forEach((t, i) => { const [x, y, hw, hh] = B[i], on = i === wSel; ctx.fillStyle = on ? c.accent : c.surface; ctx.strokeStyle = on ? c.accent : c.ink; ctx.lineWidth = 1.5; ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x - hw, y - hh, 2 * hw, 2 * hh, 7); else ctx.rect(x - hw, y - hh, 2 * hw, 2 * hh); ctx.fill(); ctx.stroke(); ctx.fillStyle = on ? css("--accent-ink") : c.ink; ctx.font = `600 ${fs}px ${MONO}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(t, x, y); });
-    return `“${W[wSel]}” is updated from every word of the sentence, itself included, with attention weights ${W.map((t, j) => `${t} ${a[j].toFixed(2)}`).join(", ")} that sum to 1. Every pair of words is linked, so a Transformer passes messages on a <b>fully connected</b> graph. The word vectors here are illustrative, not a trained model.`;
-  }
-  function draw() { note.innerHTML = mode === "grid" ? drawGrid() : mode === "graph" ? drawGraph() : drawSent(); }
+  function draw() { note.innerHTML = mode === "grid" ? drawGrid() : drawGraph(); }
   cv.addEventListener("click", e => {
     if (!fr) return; const [px, py] = gdPos(cv, e);
     const nearest = P => P.reduce((b, p, i) => Math.hypot(fr.X(p[0]) - px, fr.Y(p[1]) - py) < Math.hypot(fr.X(P[b][0]) - px, fr.Y(P[b][1]) - py) ? i : b, 0);
     if (mode === "grid") { const q = Math.floor(fr.iX(px)), r = Math.floor(fr.iY(py)); if (q < 0 || q > 4 || r < 0 || r > 4) return; g = [r, q]; }
-    else if (mode === "graph") nSel = nearest(GN); else wSel = nearest(WP);
+    else nSel = nearest(GN);
     draw();
   });
   ro.observe(cv); onRedraw(draw); draw();
@@ -2370,7 +2351,7 @@ const embVec = (v, d = 2) => "(" + v.map(x => x.toFixed(d)).join(", ") + ")";
     { key: "an", id: "ewA", type: "check", label: "Show the analogy arrows", value: true }], () => { useSet(); draw(); });
   let names, V, P, sel, ax = null;
   const ix = k => names.indexOf(k), d2 = (i, j) => Math.hypot(P[i][0] - P[j][0], P[i][1] - P[j][1]);
-  function useSet() { names = SETS[ctl.set]; V = names.map(k => WV[k]); P = embPCA(V); sel = ctl.set === "pets" ? [ix("cat"), ix("houses")] : [ix("man"), ix("woman")]; }
+  function useSet() { names = SETS[ctl.set]; V = names.map(k => WV[k]); P = embPCA(V); sel = ctl.set === "pets" ? [ix("houses"), ix("cat")] : [ix("man"), ix("woman")]; }
   const cell = v => `background:color-mix(in srgb,var(${v >= 0 ? "--accent" : "--gold"}) ${Math.round(Math.min(1, Math.abs(v)) * 80)}%,var(--surface))${Math.abs(v) > .5 ? ";color:var(--accent-ink)" : ""}`;
   function pick(i) { if (i < 0 || sel.includes(i)) return; sel = [sel[1], i]; draw(); }
   $("#ewTab").addEventListener("click", e => { const r = e.target.closest("tr[data-i]"); if (r) pick(+r.dataset.i); });
@@ -2395,7 +2376,7 @@ const embVec = (v, d = 2) => "(" + v.map(x => x.toFixed(d)).join(", ") + ")";
     });
     const guess = WV.king.map((v, q) => v - WV.man[q] + WV.woman[q]);
     const near = ALL.map(k => [k, d7(WV[k], guess)]).filter(([k]) => !["king", "man", "woman"].includes(k)).sort((p, q) => p[1] - q[1])[0];
-    stats($("#ewStats"), [["Pair", `${names[a]}, ${names[b]}`], ["Distance in 7D", d7(V[a], V[b]).toFixed(2)], ["Distance in 2D", d2(a, b).toFixed(2)], ["Nearest to king − man + woman", near[0]]]);
+    stats($("#ewStats"), [["Pair", `${names[a]}, ${names[b]}`], ["Distance in 7D", d7(V[a], V[b]).toFixed(2)], ["Distance in 2D", d2(a, b).toFixed(2)], ctl.set === "people" ? ["Nearest to king − man + woman", near[0]] : [`Nearest word to ${names[b]}`, names.filter((_, i) => i !== b).sort((p, q) => d7(WV[p], V[b]) - d7(WV[q], V[b]))[0]]]);
     $("#ewNote").textContent = ctl.set === "pets" ? "Click a row or a point to compare two words. Cat and kitten share almost every dimension, so they land side by side; dog differs in feline, and houses, which is not a living being, lands far away." :
       `Click a row or a point to compare two words. ${ctl.an ? "The gold arrows man → woman and king → queen are parallel and of equal length: both pairs differ only in the gender dimension, so king − man + woman lands on queen. " : ""}Royalty separates the kings and queens from the men and women.`;
   }
